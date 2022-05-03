@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
+import 'package:magicstep/src/widgets/custom_drop_down.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -53,11 +54,20 @@ class _SignUpPageState extends State<SignUpPage> {
                   },
                 ),
                 const Divider(color: Colors.transparent),
-                CustomTextField(
-                  label: "Business Type",
-                  onSave: (e) {
-                    _signUpInput.businessType = '';
+                Text(
+                  'Business Type',
+                  style: Theme.of(context).textTheme.headline6?.copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                      ),
+                ),
+                const SizedBox(height: 5),
+                CustomDropDownField(
+                  items: const ["Food", "Grocery", "Medical", "Fashion"],
+                  onSelected: (e) {
+                    _signUpInput.businessType = e;
                   },
+                  hintText: '',
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
@@ -79,6 +89,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: CustomButton(
                     title: "Verify",
                     onTap: () {},
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(color: Colors.white),
                   ),
                 ),
                 const Divider(color: Colors.transparent),
@@ -139,6 +153,15 @@ class _SignUpPageState extends State<SignUpPage> {
                   label: "Confirm Password",
                   onSave: (e) {
                     _signUpInput.confirmPassword = e;
+                  },
+                  validator: (e) {
+                    if (e == null || e.isEmpty) {
+                      return "Please confirm password";
+                    }
+                    if (_signUpInput.password != e) {
+                      return "Passwords do not match";
+                    }
+                    return null;
                   },
                 ),
                 const Divider(color: Colors.transparent),

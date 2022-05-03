@@ -61,8 +61,8 @@ class MyApp extends StatelessWidget {
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
           theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          // darkTheme: ThemeData.dark(),
+          // themeMode: settingsController.themeMode,
 
           ///
           home: const SplashScreen(),

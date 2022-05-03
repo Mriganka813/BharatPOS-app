@@ -5,10 +5,12 @@ class CustomButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final EdgeInsets padding;
+  final TextStyle? style;
   const CustomButton(
       {Key? key,
       required this.title,
       required this.onTap,
+      this.style,
       this.padding = const EdgeInsets.all(10)})
       : super(key: key);
 
@@ -27,10 +29,11 @@ class CustomButton extends StatelessWidget {
       },
       child: Text(
         title,
-        style: Theme.of(context).textTheme.headline5?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+        style: style ??
+            Theme.of(context).textTheme.headline5?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
       ),
     );
   }
