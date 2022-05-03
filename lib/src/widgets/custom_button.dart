@@ -5,11 +5,13 @@ class CustomButton extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final EdgeInsets padding;
+  final bool isDisabled;
   final TextStyle? style;
   const CustomButton(
       {Key? key,
       required this.title,
       required this.onTap,
+      this.isDisabled = false,
       this.style,
       this.padding = const EdgeInsets.all(10)})
       : super(key: key);
@@ -18,7 +20,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        backgroundColor: ColorsConst.primaryColor,
+        backgroundColor: isDisabled ? Colors.grey : ColorsConst.primaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),

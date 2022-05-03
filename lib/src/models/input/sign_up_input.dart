@@ -5,6 +5,7 @@ class SignUpInput {
     this.businessName,
     this.businessType,
     this.address,
+    this.verificationCode,
     this.phoneNumber,
     this.confirmPassword,
   });
@@ -16,6 +17,7 @@ class SignUpInput {
   String? businessType;
   String? address;
   String? phoneNumber;
+  String? verificationCode;
 
   Map<String, dynamic> toMap() => {
         "email": email,

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
   final Widget? prefixIcon;
   final String? hintText;
   final String? label;
+  final TextInputType? inputType;
 
   const CustomTextField({
     Key? key,
@@ -15,48 +16,70 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.hintText,
     this.label,
+    this.inputType,
     this.prefixIcon,
   }) : super(key: key);
+
+  @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label != null)
+        if (widget.label != null)
           Text(
-            label ?? '',
+            widget.label ?? '',
             style: Theme.of(context).textTheme.headline6?.copyWith(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
                 ),
           ),
-        if (label != null) const SizedBox(height: 5),
+        if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
+          textInputAction: TextInputAction.next,
           validator: (e) {
-            if (validator != null) {
-              return validator!(e);
+            if (widget.validator != null) {
+              return widget.validator!(e);
             }
             if (e == null || e.isEmpty) {
-              return '${label ?? "Field"} is required';
+              return '${widget.label ?? "Field"} is required';
             }
             return null;
           },
+          controller: _controller,
           onChanged: (e) {
-            if (onChanged == null) {
+            if (widget.onChanged == null) {
               return;
             }
-            onChanged!(e);
+            widget.onChanged!(e);
           },
           onSaved: (e) {
-            if (onSave == null) {
+            if (widget.onSave == null) {
               return;
             }
-            onSave!(e);
+            widget.onSave!(e);
           },
+          keyboardType: widget.inputType,
           decoration: InputDecoration(
-            prefixIcon: prefixIcon,
-            hintText: hintText,
+            prefixIcon: widget.prefixIcon,
+            hintText: widget.hintText,
             contentPadding: const EdgeInsets.symmetric(
               vertical: 2,
               horizontal: 10,

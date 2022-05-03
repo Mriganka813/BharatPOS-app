@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/pages/products_list.dart';
+import 'package:magicstep/src/pages/sign_in.dart';
+import 'package:magicstep/src/services/auth.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,61 +13,83 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            GridView(
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Sharma City Mart",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () async {
+                      await const AuthService().clearCookies();
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        SignInPage.routeName,
+                        (route) => false,
+                      );
+                    },
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
               ),
-              padding: const EdgeInsets.all(10),
-              children: [
-                HomeCard(
-                  icon: const Icon(Icons.bookmark),
-                  title: "Products",
-                  onTap: () {
-                    Navigator.pushNamed(context, ProductsListPage.routeName);
-                  },
+              GridView(
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1,
                 ),
-                HomeCard(
-                  icon: const Icon(Icons.bookmark),
-                  title: "Products",
-                  onTap: () {},
-                ),
-                HomeCard(
-                  icon: const Icon(Icons.bookmark),
-                  title: "Products",
-                  onTap: () {},
-                ),
-                HomeCard(
-                  icon: const Icon(Icons.bookmark),
-                  title: "Products",
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const Text("Sharma City mart"),
-            const Spacer(),
-            const Text("Create Invoice"),
-            Row(
-              children: const [
-                Expanded(
-                  child: Card(
-                    child: Icon(Icons.arrow_circle_up_rounded),
+                padding: const EdgeInsets.all(10),
+                children: [
+                  HomeCard(
+                    icon: const Icon(Icons.bookmark),
+                    title: "Products",
+                    onTap: () {
+                      Navigator.pushNamed(context, ProductsListPage.routeName);
+                    },
                   ),
-                ),
-                Expanded(
-                  child: Card(
-                    child: Icon(Icons.arrow_circle_down_rounded),
+                  HomeCard(
+                    icon: const Icon(Icons.bookmark),
+                    title: "Products",
+                    onTap: () {},
                   ),
-                ),
-              ],
-            )
-          ],
+                  HomeCard(
+                    icon: const Icon(Icons.bookmark),
+                    title: "Products",
+                    onTap: () {},
+                  ),
+                  HomeCard(
+                    icon: const Icon(Icons.bookmark),
+                    title: "Products",
+                    onTap: () {},
+                  ),
+                ],
+              ),
+              const Text("Sharma City mart"),
+              const Spacer(),
+              const Text("Create Invoice"),
+              Row(
+                children: const [
+                  Expanded(
+                    child: Card(
+                      child: Icon(Icons.arrow_circle_up_rounded),
+                    ),
+                  ),
+                  Expanded(
+                    child: Card(
+                      child: Icon(Icons.arrow_circle_down_rounded),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
