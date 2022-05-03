@@ -131,16 +131,15 @@ class _SignUpPageState extends State<SignUpPage> {
                           CustomTextField(
                             label: "Address",
                             onSave: (e) {
-                              _signUpInput.address = '';
+                              _signUpInput.address = e;
                             },
                           ),
                           const Divider(color: Colors.transparent),
                           CustomTextField(
                             inputType: TextInputType.phone,
                             label: "Phone Number",
-                            onChanged: (e) {},
                             onSave: (e) {
-                              _signUpInput.phoneNumber;
+                              _signUpInput.phoneNumber = e!;
                             },
                           ),
                           const Divider(color: Colors.transparent),

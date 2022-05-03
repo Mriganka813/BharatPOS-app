@@ -35,6 +35,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
           return;
         }
         _selected = e;
+        widget.onSelected(e);
       },
       validator: (e) {
         if (e == null || e.isEmpty) {

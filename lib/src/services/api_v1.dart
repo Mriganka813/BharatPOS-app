@@ -10,6 +10,7 @@ class ApiV1Service {
   );
   static final Dio _dio = Dio(
     BaseOptions(
+      contentType: 'application/json',
       baseUrl: Const.apiV1Url,
       connectTimeout: 5000,
       receiveTimeout: 3000,
