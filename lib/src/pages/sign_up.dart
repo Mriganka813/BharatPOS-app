@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 
@@ -15,6 +14,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool _hasAgreed = false;
   final _formKey = GlobalKey<FormState>();
+  final SignUpInput _signUpInput = SignUpInput();
 
   @override
   Widget build(BuildContext context) {
@@ -48,22 +48,30 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 60),
                 CustomTextField(
                   label: "Business Name",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.businessName = e;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Business Type",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.businessType = '';
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Address",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.address = '';
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Phone Number",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.phoneNumber;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 Align(
@@ -76,17 +84,23 @@ class _SignUpPageState extends State<SignUpPage> {
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Verification Code",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.verificationCode;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Email",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.email = e;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Password",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.password = e;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 Row(
@@ -123,14 +137,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 const Divider(color: Colors.transparent),
                 CustomTextField(
                   label: "Confirm Password",
-                  onSave: (e) {},
+                  onSave: (e) {
+                    _signUpInput.confirmPassword = e;
+                  },
                 ),
                 const Divider(color: Colors.transparent),
                 const SizedBox(height: 5),
                 CustomButton(
                   onTap: () {
-                    Navigator.pushNamed(context, HomePage.routeName);
-                    return;
                     if (_formKey.currentState?.validate() ?? false) {
                       _formKey.currentState?.save();
                     }

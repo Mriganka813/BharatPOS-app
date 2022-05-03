@@ -4,6 +4,7 @@ class CustomTextField extends StatelessWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
+  final Widget? prefixIcon;
   final String? hintText;
   final String? label;
 
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.hintText,
     this.label,
+    this.prefixIcon,
   }) : super(key: key);
 
   @override
@@ -53,6 +55,7 @@ class CustomTextField extends StatelessWidget {
             onSave!(e);
           },
           decoration: InputDecoration(
+            prefixIcon: prefixIcon,
             hintText: hintText,
             contentPadding: const EdgeInsets.symmetric(
               vertical: 2,

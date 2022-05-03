@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/pages/products_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,22 +23,28 @@ class _HomePageState extends State<HomePage> {
                 childAspectRatio: 1,
               ),
               padding: const EdgeInsets.all(10),
-              children: const [
+              children: [
                 HomeCard(
-                  icon: Icon(Icons.bookmark),
+                  icon: const Icon(Icons.bookmark),
                   title: "Products",
+                  onTap: () {
+                    Navigator.pushNamed(context, ProductsListPage.routeName);
+                  },
                 ),
                 HomeCard(
-                  icon: Icon(Icons.bookmark),
+                  icon: const Icon(Icons.bookmark),
                   title: "Products",
+                  onTap: () {},
                 ),
                 HomeCard(
-                  icon: Icon(Icons.bookmark),
+                  icon: const Icon(Icons.bookmark),
                   title: "Products",
+                  onTap: () {},
                 ),
                 HomeCard(
-                  icon: Icon(Icons.bookmark),
+                  icon: const Icon(Icons.bookmark),
                   title: "Products",
+                  onTap: () {},
                 ),
               ],
             ),
@@ -67,25 +74,32 @@ class _HomePageState extends State<HomePage> {
 
 class HomeCard extends StatelessWidget {
   final Widget icon;
+  final VoidCallback onTap;
   final String title;
   const HomeCard({
     Key? key,
     required this.icon,
     required this.title,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: icon,
-            ),
-            Text(title),
-          ],
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: icon,
+              ),
+              Text(title),
+            ],
+          ),
         ),
       ),
     );
