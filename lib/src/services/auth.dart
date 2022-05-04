@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:magicstep/src/config/const.dart';
 import 'package:magicstep/src/models/input/sign_up_input.dart';
 import 'package:magicstep/src/models/user.dart';
 import 'package:magicstep/src/services/api_v1.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AuthService {
   const AuthService();
@@ -35,24 +33,16 @@ class AuthService {
     return User.fromMap(response.data['user']);
   }
 
+  /// Save cookies after sign in/up
   Future<void> _saveCookie(Response response) async {
-    Directory tempDir = await getTemporaryDirectory();
-    final tempPath = tempDir.path;
-    final PersistCookieJar cj = PersistCookieJar(
-      ignoreExpires: true,
-      storage: FileStorage(tempPath),
-    );
     List<Cookie> cookies = [Cookie("token", response.data['token'])];
+    final cj = await ApiV1Service.getCookieJar();
     await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
   }
 
+  /// Clear cookies before log out
   Future<void> clearCookies() async {
-    Directory tempDir = await getTemporaryDirectory();
-    final tempPath = tempDir.path;
-    final PersistCookieJar cj = PersistCookieJar(
-      ignoreExpires: true,
-      storage: FileStorage(tempPath),
-    );
+    final cj = await ApiV1Service.getCookieJar();
     await cj.deleteAll();
   }
 

@@ -1,13 +1,12 @@
+import 'dart:io';
+
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:magicstep/src/config/const.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ApiV1Service {
-  // Cookie files will be saved in files in "./cookies"
-  static final cj = PersistCookieJar(
-    ignoreExpires: true, //save/load even cookies that have expired.
-  );
   static final Dio _dio = Dio(
     BaseOptions(
       contentType: 'application/json',
@@ -19,9 +18,20 @@ class ApiV1Service {
   const ApiV1Service();
 
   ///
-  initCookiesManager() {
-    final cookieJar = CookieJar();
-    _dio.interceptors.add(CookieManager(cookieJar));
+  Future<PersistCookieJar> initCookiesManager() async {
+    // Cookie files will be saved in files in "./cookies"
+    final cj = await getCookieJar();
+    _dio.interceptors.add(CookieManager(cj));
+    return cj;
+  }
+
+  static Future<PersistCookieJar> getCookieJar() async {
+    Directory tempDir = await getTemporaryDirectory();
+    final tempPath = tempDir.path;
+    return PersistCookieJar(
+      ignoreExpires: true,
+      storage: FileStorage(tempPath),
+    );
   }
 
   ///

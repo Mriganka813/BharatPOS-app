@@ -19,6 +19,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^5.0.2
+  intl: ^0.17.0
   path_provider: ^2.0.9
 
 dev_dependencies:
@@ -36,3 +37,7 @@ flutter:
   assets:
     # Add assets from the images directory to the application.
     - assets/images/
+  fonts:
+    - family: MyFlutterApp
+      fonts:
+        - asset: assets/custom-icons.ttf

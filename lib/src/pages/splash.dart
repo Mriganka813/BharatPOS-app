@@ -1,11 +1,8 @@
-import 'dart:io';
-
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/config/const.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:magicstep/src/services/api_v1.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -24,12 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> authStatus() async {
-    Directory tempDir = await getTemporaryDirectory();
-    final tempPath = tempDir.path;
-    final PersistCookieJar cj = PersistCookieJar(
-      ignoreExpires: true,
-      storage: FileStorage(tempPath),
-    );
+    final cj = await const ApiV1Service().initCookiesManager();
     final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
     final isAuthenticated = cookies.isNotEmpty;
     Future.delayed(
