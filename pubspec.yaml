@@ -15,6 +15,7 @@ dependencies:
   dio_cookie_manager: ^2.0.0
   flutter:
     sdk: flutter
+  flutter_barcode_scanner: ^2.0.0
   flutter_bloc: ^8.0.1
   flutter_localizations:
     sdk: flutter
@@ -38,6 +39,6 @@ flutter:
     # Add assets from the images directory to the application.
     - assets/images/
   fonts:
-    - family: MyFlutterApp
+    - family: CustomIcons
       fonts:
-        - asset: assets/custom-icons.ttf
+        - asset: assets/CustomIcons.ttf

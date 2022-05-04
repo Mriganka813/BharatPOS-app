@@ -143,40 +143,40 @@ class _SignUpPageState extends State<SignUpPage> {
                             },
                           ),
                           const Divider(color: Colors.transparent),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: CustomButton(
-                              title: "Verify",
-                              onTap: () {
-                                if ((_signUpInput.phoneNumber ?? "").length <
-                                    10) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      backgroundColor: Colors.red,
-                                      content: Text(
-                                        "Please enter a valid phone number",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                _authCubit.sendOtp(_signUpInput);
-                              },
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(color: Colors.white),
-                            ),
-                          ),
-                          const Divider(color: Colors.transparent),
-                          CustomTextField(
-                            label: "Verification Code",
-                            onSave: (e) {
-                              _signUpInput.verificationCode;
-                            },
-                          ),
-                          const Divider(color: Colors.transparent),
+                          // Align(
+                          //   alignment: Alignment.centerLeft,
+                          //   child: CustomButton(
+                          //     title: "Verify",
+                          //     onTap: () {
+                          //       if ((_signUpInput.phoneNumber ?? "").length <
+                          //           10) {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //           const SnackBar(
+                          //             backgroundColor: Colors.red,
+                          //             content: Text(
+                          //               "Please enter a valid phone number",
+                          //               style: TextStyle(color: Colors.white),
+                          //             ),
+                          //           ),
+                          //         );
+                          //         return;
+                          //       }
+                          //       _authCubit.sendOtp(_signUpInput);
+                          //     },
+                          //     style: Theme.of(context)
+                          //         .textTheme
+                          //         .titleSmall
+                          //         ?.copyWith(color: Colors.white),
+                          //   ),
+                          // ),
+                          // const Divider(color: Colors.transparent),
+                          // CustomTextField(
+                          //   label: "Verification Code",
+                          //   onSave: (e) {
+                          //     _signUpInput.verificationCode;
+                          //   },
+                          // ),
+                          // const Divider(color: Colors.transparent),
                           CustomTextField(
                             label: "Email",
                             inputType: TextInputType.emailAddress,

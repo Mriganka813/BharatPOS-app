@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/home/home_cubit.dart';
+import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/services/auth.dart';
@@ -71,7 +72,11 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.all(10),
                       children: [
                         HomeCard(
-                          icon: const Icon(CustomIcons.product),
+                          icon: const Icon(
+                            CustomIcons.product,
+                            size: 50,
+                            color: ColorsConst.primaryColor,
+                          ),
                           title: "Products",
                           onTap: () {
                             Navigator.pushNamed(
@@ -81,17 +86,29 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         HomeCard(
-                          icon: const Icon(Icons.bookmark),
+                          icon: const Icon(
+                            CustomIcons.person,
+                            size: 50,
+                            color: ColorsConst.primaryColor,
+                          ),
                           title: "Party",
                           onTap: () {},
                         ),
                         HomeCard(
-                          icon: const Icon(Icons.bookmark),
-                          title: "Income Exprense",
+                          icon: const Icon(
+                            CustomIcons.report_svg,
+                            color: ColorsConst.primaryColor,
+                            size: 50,
+                          ),
+                          title: "Income Expense",
                           onTap: () {},
                         ),
                         HomeCard(
-                          icon: const Icon(Icons.bookmark),
+                          icon: const Icon(
+                            CustomIcons.growth_graph,
+                            color: ColorsConst.primaryColor,
+                            size: 50,
+                          ),
                           title: "Reports",
                           onTap: () {},
                         ),
@@ -99,17 +116,74 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const Text("Sharma City mart"),
                     const Spacer(),
-                    const Text("Create Invoice"),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Create Invoice",
+                        textAlign: TextAlign.left,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                    ),
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
-                          child: Card(
-                            child: Icon(Icons.arrow_circle_up_rounded),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    const Icon(
+                                      CustomIcons.arrow_down,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "Purchase",
+                                      style:
+                                          Theme.of(context).textTheme.headline6,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         Expanded(
-                          child: Card(
-                            child: Icon(Icons.arrow_circle_down_rounded),
+                          child: GestureDetector(
+                            onTap: () {},
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    const Icon(
+                                      CustomIcons.arrow_up,
+                                      color: ColorsConst.primaryColor,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      "Sale",
+                                      style:
+                                          Theme.of(context).textTheme.headline6,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -146,14 +220,23 @@ class HomeCard extends StatelessWidget {
         onTap();
       },
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 5,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: icon,
               ),
-              Text(title),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline6,
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
