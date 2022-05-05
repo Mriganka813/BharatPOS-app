@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/home/home_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/services/auth.dart';
@@ -92,7 +93,12 @@ class _HomePageState extends State<HomePage> {
                             color: ColorsConst.primaryColor,
                           ),
                           title: "Party",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              PartyListPage.routeName,
+                            );
+                          },
                         ),
                         HomeCard(
                           icon: const Icon(
@@ -114,7 +120,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    const Text("Sharma City mart"),
                     const Spacer(),
                     Align(
                       alignment: Alignment.centerLeft,

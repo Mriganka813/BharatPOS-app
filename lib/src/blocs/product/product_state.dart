@@ -5,8 +5,16 @@ abstract class ProductState {}
 
 class ProductInitial extends ProductState {}
 
-class ProductsListRender extends ProductState {}
+class ProductsListRender extends ProductState {
+  final List<Product> products;
+  ProductsListRender(this.products);
+}
 
-class CreateProductSuccess extends ProductState {}
+class ProductCreated extends ProductState {}
 
-class ProductError extends ProductState {}
+class ProductCreationFailed extends ProductState {}
+
+class ProductsError extends ProductState {
+  final String message;
+  ProductsError(this.message);
+}

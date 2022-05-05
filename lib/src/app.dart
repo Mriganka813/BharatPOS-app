@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/pages/home.dart';
+import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/pages/sign_up.dart';
@@ -83,6 +84,8 @@ class MyApp extends StatelessWidget {
                     return const ProductsListPage();
                   case CreateProduct.routeName:
                     return const CreateProduct();
+                  case PartyListPage.routeName:
+                    return const PartyListPage();
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   default:

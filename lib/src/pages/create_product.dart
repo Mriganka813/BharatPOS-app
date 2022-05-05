@@ -96,10 +96,11 @@ class _CreateProductState extends State<CreateProduct> {
                             onPressed: () async {
                               String barcodeScanRes =
                                   await FlutterBarcodeScanner.scanBarcode(
-                                      "#000000",
-                                      "#000000",
-                                      false,
-                                      ScanMode.DEFAULT);
+                                "#000000",
+                                "#000000",
+                                false,
+                                ScanMode.BARCODE,
+                              );
                             },
                             icon: const Icon(CustomIcons.camera),
                           )
