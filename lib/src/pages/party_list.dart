@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 
 class PartyListPage extends StatefulWidget {
@@ -15,6 +16,9 @@ class _PartyListPageState extends State<PartyListPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Party'),
+        ),
         floatingActionButton: Container(
           margin: const EdgeInsets.only(
             right: 10,
@@ -22,7 +26,7 @@ class _PartyListPageState extends State<PartyListPage> {
           ),
           child: FloatingActionButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/create-product');
+              Navigator.pushNamed(context, CreatePartyPage.routeName);
             },
             backgroundColor: ColorsConst.primaryColor,
             child: const Icon(
@@ -39,11 +43,6 @@ class _PartyListPageState extends State<PartyListPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Party",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                const SizedBox(height: 10),
                 const CustomTextField(
                   prefixIcon: Icon(Icons.search),
                   hintText: "Search",

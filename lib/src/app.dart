@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/pages/create_expense.dart';
+import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/pages/create_product.dart';
+import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
@@ -26,6 +29,7 @@ class MyApp extends StatelessWidget {
       // returns to the app after it has been killed while running in the
       // background.
       restorationScopeId: 'app',
+      debugShowCheckedModeBanner: false,
 
       // Provide the generated AppLocalizations to the MaterialApp. This
       // allows descendant Widgets to display the correct translations
@@ -85,13 +89,17 @@ class MyApp extends StatelessWidget {
               case ProductsListPage.routeName:
                 return const ProductsListPage();
               case CreateProduct.routeName:
-                return CreateProduct(
-                  id: routeSettings.arguments as String?,
-                );
+                return CreateProduct(id: routeSettings.arguments as String?);
               case PartyListPage.routeName:
                 return const PartyListPage();
               case ReportsPage.routeName:
                 return const ReportsPage();
+              case ExpensePage.routeName:
+                return const ExpensePage();
+              case CreateExpensePage.routeName:
+                return const CreateExpensePage();
+              case CreatePartyPage.routeName:
+                return const CreatePartyPage();
               default:
                 return const SplashScreen();
             }

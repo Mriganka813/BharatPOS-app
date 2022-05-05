@@ -39,6 +39,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(title: const Text('Products List')),
         floatingActionButton: Container(
           margin: const EdgeInsets.only(
             right: 10,
@@ -61,11 +62,6 @@ class _ProductsListPageState extends State<ProductsListPage> {
           padding: const EdgeInsets.all(20),
           shrinkWrap: true,
           children: [
-            Text(
-              "Products List",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            const Divider(color: Colors.transparent),
             const CustomTextField(
               prefixIcon: Icon(Icons.search),
               hintText: 'Search',
