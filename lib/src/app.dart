@@ -3,6 +3,7 @@ import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
+import 'package:magicstep/src/pages/reports.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/pages/sign_up.dart';
 import 'package:magicstep/src/pages/splash.dart';
@@ -60,7 +61,19 @@ class MyApp extends StatelessWidget {
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
+          theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              elevation: 0,
+              iconTheme: const IconThemeData(
+                color: Colors.black,
+              ),
+              titleTextStyle: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
           // darkTheme: ThemeData.dark(),
           // themeMode: settingsController.themeMode,
 
@@ -83,9 +96,13 @@ class MyApp extends StatelessWidget {
                   case ProductsListPage.routeName:
                     return const ProductsListPage();
                   case CreateProduct.routeName:
-                    return const CreateProduct();
+                    return CreateProduct(
+                      id: routeSettings.arguments as String?,
+                    );
                   case PartyListPage.routeName:
                     return const PartyListPage();
+                  case ReportsPage.routeName:
+                    return const ReportsPage();
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   default:

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/product/product_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
 
@@ -44,8 +45,9 @@ class _ProductsListPageState extends State<ProductsListPage> {
             bottom: 20,
           ),
           child: FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/create-product');
+            onPressed: () async {
+              await Navigator.pushNamed(context, '/create-product');
+              _productCubit.getProducts();
             },
             backgroundColor: ColorsConst.primaryColor,
             child: const Icon(
@@ -82,13 +84,18 @@ class _ProductsListPageState extends State<ProductsListPage> {
                     },
                     itemBuilder: (context, index) {
                       return ProductCardHorizontal(
-                        img: ProductsListPage.imgAddress,
-                        color: 'Black',
-                        productName: state.products[index].name ?? "",
-                        salePrice:
-                            "${state.products[index].sellingPrice ?? ""}",
-                        purchasePrice: "${state.products[index]}",
-                        quantity: "${state.products[index].quantity ?? ""}",
+                        product: state.products[index],
+                        onDelete: () {
+                          _productCubit.deleteProduct(state.products[index]);
+                        },
+                        onEdit: () async {
+                          await Navigator.pushNamed(
+                            context,
+                            CreateProduct.routeName,
+                            arguments: state.products[index].id,
+                          );
+                          _productCubit.getProducts();
+                        },
                       );
                     },
                   );

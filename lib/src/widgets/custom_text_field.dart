@@ -8,11 +8,13 @@ class CustomTextField extends StatefulWidget {
   final String? hintText;
   final String? label;
   final TextInputType? inputType;
+  final String? value;
 
   const CustomTextField({
     Key? key,
     this.onChanged,
     this.onSave,
+    this.value,
     this.validator,
     this.hintText,
     this.label,
@@ -63,7 +65,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             return null;
           },
-          controller: _controller,
+          controller: widget.value != null
+              ? TextEditingController(text: widget.value)
+              : _controller,
           onChanged: (e) {
             if (widget.onChanged == null) {
               return;

@@ -4,6 +4,7 @@ import 'package:magicstep/src/blocs/home/home_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
+import 'package:magicstep/src/pages/reports.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/services/auth.dart';
 import 'package:magicstep/src/widgets/custom_icons.dart';
@@ -116,7 +117,9 @@ class _HomePageState extends State<HomePage> {
                             size: 50,
                           ),
                           title: "Reports",
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, ReportsPage.routeName);
+                          },
                         ),
                       ],
                     ),

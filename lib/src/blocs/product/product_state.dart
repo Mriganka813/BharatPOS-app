@@ -10,6 +10,8 @@ class ProductsListRender extends ProductState {
   ProductsListRender(this.products);
 }
 
+class ProductLoading extends ProductState {}
+
 class ProductCreated extends ProductState {}
 
 class ProductCreationFailed extends ProductState {}

@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/models/product.dart';
 
 class ProductCardHorizontal extends StatelessWidget {
-  final String productName;
-  final String img;
-  final String quantity;
-  final String color;
-  final String purchasePrice;
-  final String salePrice;
-
+  final Product product;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
   const ProductCardHorizontal({
     Key? key,
-    required this.color,
-    required this.img,
-    required this.productName,
-    required this.purchasePrice,
-    required this.quantity,
-    required this.salePrice,
+    required this.product,
+    required this.onDelete,
+    required this.onEdit,
   }) : super(key: key);
 
   @override
@@ -28,10 +22,10 @@ class ProductCardHorizontal extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            img,
-            height: 200,
-          ),
+          // Image.network(
+          //   img,
+          //   height: 200,
+          // ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -39,26 +33,50 @@ class ProductCardHorizontal extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    productName,
+                    product.name ?? "",
                     style: Theme.of(context).textTheme.headline6,
                   ),
                   const SizedBox(height: 2),
-                  Text('$quantity pcs'),
+                  Text('${product.quantity} pcs'),
+                  // const SizedBox(height: 2),
+                  // Text(color),
                   const SizedBox(height: 2),
-                  Text(color),
+                  Text('Purchase Price ${product.sellingPrice}'),
                   const SizedBox(height: 2),
-                  Text('Purchase Price $purchasePrice'),
-                  const SizedBox(height: 2),
-                  Text('Sale Price $salePrice'),
+                  Text('Sale Price ${product.sellingPrice}'),
                 ],
               ),
             ),
           ),
           GestureDetector(
             onTap: () {},
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.more_vert),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton<int>(
+                child: const Icon(Icons.more_vert_rounded),
+                onSelected: (int e) {
+                  if (e == 0) {
+                    onEdit();
+                  } else if (e == 1) {
+                    onDelete();
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return <PopupMenuItem<int>>[
+                    const PopupMenuItem<int>(
+                      value: 0,
+                      child: Text('Edit'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 1,
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    )
+                  ];
+                },
+              ),
             ),
           )
         ],

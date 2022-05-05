@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:magicstep/src/models/input/product_input.dart';
 import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/services/product.dart';
@@ -14,12 +13,12 @@ class ProductCubit extends Cubit<ProductState> {
 
   ///
   void getProducts() async {
+    emit(ProductLoading());
     final response = await _productService.getProducts();
     if ((response.statusCode ?? 400) > 300) {
       emit(ProductsError('Failed to get products'));
       return;
     }
-    log("${response.data}");
     final products = List.generate(
       response.data['inventories'].length,
       (int index) => Product.fromMap(
@@ -31,12 +30,32 @@ class ProductCubit extends Cubit<ProductState> {
 
   ///
   void createProduct(ProductFormInput product) async {
-    final response = await _productService.createProduct(product);
-    if (response.statusCode == 200) {
-      emit(ProductCreated());
-      getProducts();
-    } else {
-      emit(ProductCreationFailed());
+    emit(ProductLoading());
+    try {
+      final response = product.id == null
+          ? await _productService.createProduct(product)
+          : await _productService.updateProduct(product);
+      if ((response.statusCode ?? 400) > 300) {
+        emit(ProductsError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(ProductsError(err.response?.data['message'] ?? err.message));
     }
+    emit(ProductCreated());
+  }
+
+  ///
+  void deleteProduct(Product product) async {
+    try {
+      final response = await _productService.deleteProduct(product);
+      if ((response.statusCode ?? 400) > 300) {
+        emit(ProductsError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(ProductsError(err.message));
+    }
+    getProducts();
   }
 }

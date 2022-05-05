@@ -47,4 +47,16 @@ class ApiV1Service {
       {Map<String, dynamic>? data}) async {
     return await _dio.get(url);
   }
+
+  ///
+  static Future<Response> putRequest(String url,
+      {Map<String, dynamic>? data}) async {
+    return await _dio.put(url, data: data);
+  }
+
+  ///
+  static Future<Response> deleteRequest(String url,
+      {Map<String, dynamic>? data}) async {
+    return await _dio.delete(url);
+  }
 }
