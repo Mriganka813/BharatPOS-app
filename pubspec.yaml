@@ -17,11 +17,16 @@ dependencies:
     sdk: flutter
   flutter_barcode_scanner: ^2.0.0
   flutter_bloc: ^8.0.1
+  flutter_html_to_pdf: ^0.7.0
   flutter_localizations:
     sdk: flutter
   flutter_secure_storage: ^5.0.2
   intl: ^0.17.0
   path_provider: ^2.0.9
+  pdf: ^3.7.4
+  permission_handler: ^9.2.0
+  uc_pdfview: ^0.0.3
+  url_launcher: ^6.1.0
 
 dev_dependencies:
   flutter_test:
