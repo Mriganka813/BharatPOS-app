@@ -34,12 +34,8 @@ class _ExpensePageState extends State<ExpensePage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            child: const Text('Expense'),
-          ),
-        ],
+      body: const Center(
+        child: Text('Expense'),
       ),
     );
   }

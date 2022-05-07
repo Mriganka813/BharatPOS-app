@@ -65,6 +65,7 @@ class _CreateProductState extends State<CreateProduct> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Form(
           key: _formKey,
           child: BlocListener<ProductCubit, ProductState>(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/home/home_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/pages/create_purchase.dart';
 import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/party_list.dart';
 import 'package:magicstep/src/pages/products_list.dart';
@@ -140,7 +141,10 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, CreatePurchasePage.routeName);
+                              },
                               child: Card(
                                 elevation: 5,
                                 shape: RoundedRectangleBorder(

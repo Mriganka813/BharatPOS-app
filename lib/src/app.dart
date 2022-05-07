@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:magicstep/src/pages/create_expense.dart';
 import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/pages/create_product.dart';
+import 'package:magicstep/src/pages/create_purchase.dart';
 import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
@@ -75,11 +76,11 @@ class MyApp extends StatelessWidget {
 
       // Define a function to handle named routes in order to support
       // Flutter web url navigation and deep linking.
-      onGenerateRoute: (RouteSettings routeSettings) {
+      onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
-          settings: routeSettings,
+          settings: settings,
           builder: (BuildContext context) {
-            switch (routeSettings.name) {
+            switch (settings.name) {
               case SignInPage.routeName:
                 return const SignInPage();
               case SignUpPage.routeName:
@@ -87,9 +88,11 @@ class MyApp extends StatelessWidget {
               case HomePage.routeName:
                 return const HomePage();
               case ProductsListPage.routeName:
-                return const ProductsListPage();
+                return ProductsListPage(
+                  isSelecting: settings.arguments as bool,
+                );
               case CreateProduct.routeName:
-                return CreateProduct(id: routeSettings.arguments as String?);
+                return CreateProduct(id: settings.arguments as String?);
               case PartyListPage.routeName:
                 return const PartyListPage();
               case ReportsPage.routeName:
@@ -100,6 +103,8 @@ class MyApp extends StatelessWidget {
                 return const CreateExpensePage();
               case CreatePartyPage.routeName:
                 return const CreatePartyPage();
+              case CreatePurchasePage.routeName:
+                return const CreatePurchasePage();
               default:
                 return const SplashScreen();
             }

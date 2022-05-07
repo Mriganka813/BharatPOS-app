@@ -15,6 +15,7 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(title: const Text('Reports')),
         body: Padding(
           padding: const EdgeInsets.all(20.0),

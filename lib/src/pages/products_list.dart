@@ -7,12 +7,16 @@ import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
 
 class ProductsListPage extends StatefulWidget {
-  const ProductsListPage({Key? key}) : super(key: key);
+  /// Will be used to check if user is
+  /// selecting products instead of viewing them
+  final bool isSelecting;
+  const ProductsListPage({
+    Key? key,
+    required this.isSelecting,
+  }) : super(key: key);
 
   ///
   static const routeName = '/products-list';
-  static const imgAddress =
-      'https://png.pngitem.com/pimgs/s/127-1273781_samsung-9f-hd-png-download.png';
 
   @override
   State<ProductsListPage> createState() => _ProductsListPageState();
