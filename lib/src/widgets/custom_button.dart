@@ -8,6 +8,7 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onTap;
   final EdgeInsets padding;
   final bool isDisabled;
+  final bool isLoading;
   final TextStyle? style;
   final ButtonType type;
   const CustomButton({
@@ -15,6 +16,7 @@ class CustomButton extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.isDisabled = false,
+    this.isLoading = false,
     this.style,
     this.padding = const EdgeInsets.all(10),
     this.type = ButtonType.normal,
@@ -45,16 +47,18 @@ class CustomButton extends StatelessWidget {
       onPressed: () {
         onTap();
       },
-      child: Text(
-        title,
-        style: style ??
-            Theme.of(context).textTheme.headline5?.copyWith(
-                  color: type == ButtonType.normal
-                      ? Colors.white
-                      : ColorsConst.primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-      ),
+      child: isLoading
+          ? const CircularProgressIndicator()
+          : Text(
+              title,
+              style: style ??
+                  Theme.of(context).textTheme.headline5?.copyWith(
+                        color: type == ButtonType.normal
+                            ? Colors.white
+                            : ColorsConst.primaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+            ),
     );
   }
 }

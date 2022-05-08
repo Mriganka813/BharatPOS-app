@@ -29,12 +29,12 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await _saveCookie(response);
+    await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 
   /// Save cookies after sign in/up
-  Future<void> _saveCookie(Response response) async {
+  Future<void> saveCookie(Response response) async {
     List<Cookie> cookies = [Cookie("token", response.data['token'])];
     final cj = await ApiV1Service.getCookieJar();
     await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
@@ -59,7 +59,7 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await _saveCookie(response);
+    await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 }

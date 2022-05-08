@@ -25,6 +25,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: SplashScreen.routeName,
       theme: ThemeData(
+        progressIndicatorTheme:
+            const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,

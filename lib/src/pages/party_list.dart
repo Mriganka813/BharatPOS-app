@@ -42,8 +42,12 @@ class _PartyListPageState extends State<PartyListPage> {
             bottom: 20,
           ),
           child: FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, CreatePartyPage.routeName);
+            onPressed: () async {
+              final result =
+                  await Navigator.pushNamed(context, CreatePartyPage.routeName);
+              if (result is bool && result) {
+                _partyCubit.getMyParties();
+              }
             },
             backgroundColor: ColorsConst.primaryColor,
             child: const Icon(
@@ -122,7 +126,9 @@ class _PartyListPageState extends State<PartyListPage> {
               );
             }
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+              ),
             );
           },
         ),

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
+  final bool isLoading;
   final Widget? prefixIcon;
   final String? hintText;
   final String? label;
   final TextInputType? inputType;
+  final List<TextInputFormatter>? inputFormatters;
   final String? value;
 
   const CustomTextField({
@@ -18,8 +21,10 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.hintText,
     this.label,
+    this.isLoading = false,
     this.inputType,
     this.prefixIcon,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -48,13 +53,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.label != null)
           Text(
             widget.label ?? '',
-            style: Theme.of(context).textTheme.headline6?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                ?.copyWith(color: Colors.black, fontWeight: FontWeight.normal),
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
+          inputFormatters: widget.inputFormatters,
           textInputAction: TextInputAction.next,
           validator: (e) {
             if (widget.validator != null) {
@@ -65,6 +71,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             return null;
           },
+          enabled: !widget.isLoading,
           controller: widget.value != null
               ? TextEditingController(text: widget.value)
               : _controller,

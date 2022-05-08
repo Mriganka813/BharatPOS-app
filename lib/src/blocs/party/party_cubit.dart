@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:magicstep/src/models/input/party_input.dart';
 import 'package:magicstep/src/models/party.dart';
+import 'package:magicstep/src/services/auth.dart';
 import 'package:magicstep/src/services/party.dart';
 import 'package:meta/meta.dart';
 
@@ -11,16 +13,23 @@ class PartyCubit extends Cubit<PartyState> {
   final PartyService _partyService = const PartyService();
 
   void createParty(PartyInput p) async {
-    emit(PartyInitial());
-    final response = await _partyService.createParty(p);
-    if ((response.statusCode ?? 400) > 300) {
+    emit(PartyLoading());
+    try {
+      final response = await _partyService.createParty(p);
+      if ((response.statusCode ?? 400) > 300) {
+        emit(PartyError());
+        return;
+      }
+      const AuthService().saveCookie(response);
+    } on DioError {
       emit(PartyError());
-      return;
     }
-    return emit(PartySuccess());
+    emit(PartySuccess());
+    return;
   }
 
   void getMyParties() async {
+    emit(PartyLoading());
     final response = await _partyService.getParties();
     if ((response.statusCode ?? 400) > 300) {
       emit(PartyError());
