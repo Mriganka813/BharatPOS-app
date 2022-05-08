@@ -12,21 +12,31 @@ class AuthCubit extends Cubit<AuthState> {
   ///
   signIn(String email, String password) async {
     emit(AuthLoading());
-    final user = await _authService.signInRequest(email, password);
-    if (user == null) {
+    try {
+      final user = await _authService.signInRequest(email, password);
+      if (user == null) {
+        emit(AuthError('Invalid email or password'));
+        return;
+      }
+      emit(SignInSucces());
+    } catch (err) {
       emit(AuthError('Invalid email or password'));
     }
-    emit(SignInSucces());
   }
 
   ///
   signUp(SignUpInput signUpInput) async {
     emit(AuthLoading());
-    final user = await _authService.signUpRequest(signUpInput);
-    if (user == null) {
+    try {
+      final user = await _authService.signUpRequest(signUpInput);
+      if (user == null) {
+        emit(AuthError('Invalid email or password'));
+        return;
+      }
+      emit(SignInSucces());
+    } catch (err) {
       emit(AuthError('Invalid email or password'));
     }
-    emit(SignInSucces());
   }
 
   ///

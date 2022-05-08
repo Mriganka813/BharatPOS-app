@@ -22,6 +22,7 @@ dependencies:
     sdk: flutter
   flutter_secure_storage: ^5.0.2
   intl: ^0.17.0
+  open_file: ^3.2.1
   path_provider: ^2.0.9
   pdf: ^3.7.4
   permission_handler: ^9.2.0

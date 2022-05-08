@@ -1,14 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:magicstep/src/models/expense.dart';
-import 'package:magicstep/src/pages/pdf_preview.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:magicstep/src/widgets/invoice_template.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:permission_handler/permission_handler.dart';
 
 class ReportsPage extends StatefulWidget {
   static const String routeName = '/reports_page';
@@ -20,8 +17,13 @@ class ReportsPage extends StatefulWidget {
 
 class _ReportsPageState extends State<ReportsPage> {
   void createPdf() async {
-    final pdf = pw.Document();
-    final header = ['Header', "Description", "Mode of payment", "Amount"];
+    // final Directory? dir = await getTemporaryDirectory();
+    // final file = File("${dir?.path}/example.pdf");
+    // final output = await file.writeAsBytes(await pdf.save()); //
+    // await Permission.storage.request();
+    // Navigator.pushNamed(context, PdfPreviewPage.routeName,
+    //     arguments: output.path);
+    // launchUrlString("file://${output.path}");
     final List<Expense> expenses = [
       Expense(
         header: "This company",
@@ -54,98 +56,22 @@ class _ReportsPageState extends State<ReportsPage> {
         modeOfPayment: "Cash",
       ),
     ];
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a6,
-        build: (pw.Context context) {
-          return pw.Container(
-            color: PdfColor.fromHex("#ffffff"),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-              children: [
-                pw.Row(
-                  children: [
-                    pw.Text(""),
-                  ],
-                ),
-                pw.Table(
-                  children: [
-                    pw.TableRow(
-                      children: [
-                        pw.Container(
-                          color: PdfColor.fromHex("#F0AD3C"),
-                          child: pw.Text("ID"),
-                        ),
-                        ...List.generate(
-                          header.length,
-                          (index) => pw.Container(
-                            color: PdfColor.fromHex("#F0AD3C"),
-                            child: pw.Text(header[index]),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ...List.generate(
-                      expenses.length,
-                      (index) {
-                        final expense = expenses[index];
-                        return pw.TableRow(
-                          children: [
-                            pw.Container(
-                              color: PdfColor.fromHex("#F0AD3C"),
-                              child: pw.Text("$index"),
-                            ),
-                            pw.Container(
-                              color: PdfColor.fromHex("#F0AD3C"),
-                              child: pw.Text(expense.header ?? ""),
-                            ),
-                            pw.Container(
-                              color: PdfColor.fromHex("#F0AD3C"),
-                              child: pw.Text(expense.description ?? ""),
-                            ),
-                            pw.Container(
-                              color: PdfColor.fromHex("#F0AD3C"),
-                              child: pw.Text(expense.modeOfPayment ?? ""),
-                            ),
-                            pw.Container(
-                              color: PdfColor.fromHex("#F0AD3C"),
-                              child: pw.Text("${expense.amount ?? 0}"),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    // [
-                    //   ...[
-                    //     'Description',
-                    //     'Qty',
-                    //     'Unit Price',
-                    //     'Amount',
-                    //   ].map(
-                    //     (e) {
-                    //       return pw.Container(
-                    //         color: PdfColor.fromHex("#F0AD3C"),
-                    //         child: pw.Text(e),
-                    //       );
-                    //     },
-                    //   ),
-                    // ],
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+    final targetPath = await getTemporaryDirectory();
+    const targetFileName = "example_pdf_file";
+    final htmlContent = invoiceTemplate(
+      companyName: "Sharma city mart",
+      expenses: expenses,
+      headers: ["ID", "Name", "Description", "Mode of payment", "Amt"],
+      total: "2000",
     );
-    final Directory? dir = await getTemporaryDirectory();
-    final file = File("${dir?.path}/example.pdf");
-    final output = await file.writeAsBytes(await pdf.save()); //
-    await Permission.storage.request();
-    Navigator.pushNamed(context, PdfPreviewPage.routeName,
-        arguments: output.path);
-    // launchUrlString("file://${output.path}");
+    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+      htmlContent,
+      targetPath.path,
+      targetFileName,
+    );
+    OpenFile.open(generatedPdfFile.path);
+
+    // launchUrlString('file://${generatedPdfFile.path}');
   }
 
   @override

@@ -40,7 +40,9 @@ String invoiceTemplate({
               <div>Email: info@dotnettec.com</div>
               <div>Phone: +91 9800000000</div>
             </div>
-
+            <br/>
+            <br/>
+            <br/>
             <div class="col-sm-6">
               <h6 class="mb-3">To:</h6>
               <div>
@@ -55,20 +57,20 @@ String invoiceTemplate({
 
           <div class="table-responsive-sm">
             <table class="table table-striped">
-              <thead>
-                ${headers.map((e) => '''<tr>
+              <tr>
+                ${headers.map((e) => '''
                   <th class="left">$e</th>
-                </tr>''')}
-              </thead>
+                ''')}
+              </tr>
               <tbody>
-                ${expenses.map((e) => '''<tr>
-                  <td class="left">${e.header}</td>
-                  <td class="left">${e.description}</td>
-                  <td class="left">${e.modeOfPayment}</td>
-                  <td class="right">${e.amount}</td>
-                </tr>''')}
                 
-
+                ${List.generate(expenses.length, (index) => '''<tr>
+                  <td class="left">$index</td>
+                  <td class="left">${expenses[index].header}</td>
+                  <td class="left">${expenses[index].description}</td>
+                  <td class="left">${expenses[index].modeOfPayment}</td>
+                  <td class="right">${expenses[index].amount}</td>
+                </tr>''')}
                 <!-- Add rows from here on -->
               </tbody>
             </table>
@@ -83,6 +85,9 @@ String invoiceTemplate({
                     <td class="left">
                       <strong>Total</strong>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td class="right">
                       <strong>$total</strong>
                     </td>

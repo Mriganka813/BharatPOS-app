@@ -9,10 +9,10 @@ import 'package:magicstep/src/widgets/product_card_horizontal.dart';
 class ProductsListPage extends StatefulWidget {
   /// Will be used to check if user is
   /// selecting products instead of viewing them
-  final bool isSelecting;
+  final bool? isSelecting;
   const ProductsListPage({
     Key? key,
-    required this.isSelecting,
+    this.isSelecting = false,
   }) : super(key: key);
 
   ///
