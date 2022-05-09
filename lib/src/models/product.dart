@@ -16,6 +16,7 @@ class Product {
     this.quantity,
     this.user,
     this.id,
+    this.purchaseQuantity = 1,
     this.createdAt,
     this.v,
   });
@@ -26,6 +27,7 @@ class Product {
   int? quantity;
   String? user;
   String? id;
+  int purchaseQuantity;
   DateTime? createdAt;
   int? v;
 

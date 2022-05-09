@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/product/product_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
@@ -9,7 +10,7 @@ import 'package:magicstep/src/widgets/product_card_horizontal.dart';
 class ProductsListPage extends StatefulWidget {
   /// Will be used to check if user is
   /// selecting products instead of viewing them
-  final bool? isSelecting;
+  final bool isSelecting;
   const ProductsListPage({
     Key? key,
     this.isSelecting = false,
@@ -24,12 +25,14 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> {
   late final ProductCubit _productCubit;
+  late List<Product> _products;
 
   ///
   @override
   void initState() {
     super.initState();
     _productCubit = ProductCubit()..getProducts();
+    _products = [];
   }
 
   @override
@@ -49,17 +52,43 @@ class _ProductsListPageState extends State<ProductsListPage> {
             right: 10,
             bottom: 20,
           ),
-          child: FloatingActionButton(
-            onPressed: () async {
-              await Navigator.pushNamed(context, '/create-product');
-              _productCubit.getProducts();
-            },
-            backgroundColor: ColorsConst.primaryColor,
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 40,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (widget.isSelecting)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context, _products);
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: ColorsConst.primaryColor,
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        ),
+                        Text("Continue"),
+                      ],
+                    ),
+                  ),
+                ),
+              FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.pushNamed(context, '/create-product');
+                  _productCubit.getProducts();
+                },
+                backgroundColor: ColorsConst.primaryColor,
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
+            ],
           ),
         ),
         body: ListView(
@@ -83,25 +112,59 @@ class _ProductsListPageState extends State<ProductsListPage> {
                       return const SizedBox(height: 5);
                     },
                     itemBuilder: (context, index) {
-                      return ProductCardHorizontal(
-                        product: state.products[index],
-                        onDelete: () {
-                          _productCubit.deleteProduct(state.products[index]);
+                      return GestureDetector(
+                        onTap: () {
+                          if (widget.isSelecting) {
+                            final product = state.products[index];
+                            setState(() {
+                              !_products.contains(product)
+                                  ? _products.add(product)
+                                  : _products.remove(product);
+                            });
+                          }
                         },
-                        onEdit: () async {
-                          await Navigator.pushNamed(
-                            context,
-                            CreateProduct.routeName,
-                            arguments: state.products[index].id,
-                          );
-                          _productCubit.getProducts();
-                        },
+                        child: Stack(
+                          children: [
+                            ProductCardHorizontal(
+                              product: state.products[index],
+                              onDelete: () {
+                                _productCubit
+                                    .deleteProduct(state.products[index]);
+                              },
+                              onEdit: () async {
+                                await Navigator.pushNamed(
+                                  context,
+                                  CreateProduct.routeName,
+                                  arguments: state.products[index].id,
+                                );
+                                _productCubit.getProducts();
+                              },
+                            ),
+                            if (_products.contains(state.products[index]))
+                              const Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    radius: 15,
+                                    backgroundColor: Colors.green,
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              )
+                          ],
+                        ),
                       );
                     },
                   );
                 }
                 return const Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: ColorsConst.primaryColor,
+                  ),
                 );
               },
             ),

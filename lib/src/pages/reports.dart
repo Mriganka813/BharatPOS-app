@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:magicstep/src/models/expense.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
-import 'package:magicstep/src/widgets/invoice_template.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ReportsPage extends StatefulWidget {
@@ -58,18 +55,18 @@ class _ReportsPageState extends State<ReportsPage> {
     ];
     final targetPath = await getTemporaryDirectory();
     const targetFileName = "example_pdf_file";
-    final htmlContent = invoiceTemplate(
-      companyName: "Sharma city mart",
-      expenses: expenses,
-      headers: ["ID", "Name", "Description", "Mode of payment", "Amt"],
-      total: "2000",
-    );
-    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      targetPath.path,
-      targetFileName,
-    );
-    OpenFile.open(generatedPdfFile.path);
+    // final htmlContent = invoiceTemplate(
+    //   companyName: "Sharma city mart",
+    //   products: expenses,
+    //   headers: ["ID", "Name", "Description", "Mode of payment", "Amt"],
+    //   total: "2000",
+    // );
+    // final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+    //   htmlContent,
+    //   targetPath.path,
+    //   targetFileName,
+    // );
+    // OpenFile.open(generatedPdfFile.path);
 
     // launchUrlString('file://${generatedPdfFile.path}');
   }

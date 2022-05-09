@@ -1,14 +1,11 @@
-import 'package:magicstep/src/models/expense.dart';
+import 'package:magicstep/src/models/product.dart';
 
 String invoiceTemplate({
   required String companyName,
-  required List<Expense> expenses,
+  required List<Product> products,
   required List<String> headers,
   required String total,
 }) {
-  if (expenses.length != headers.length) {
-    throw Exception("Headers and expenses must be of same length");
-  }
   return '''
 <!DOCTYPE html>
 <html lang="en">
@@ -64,12 +61,12 @@ String invoiceTemplate({
               </tr>
               <tbody>
                 
-                ${List.generate(expenses.length, (index) => '''<tr>
+                ${List.generate(products.length, (index) => '''<tr>
                   <td class="left">$index</td>
-                  <td class="left">${expenses[index].header}</td>
-                  <td class="left">${expenses[index].description}</td>
-                  <td class="left">${expenses[index].modeOfPayment}</td>
-                  <td class="right">${expenses[index].amount}</td>
+                  <td class="left">${products[index].name}</td>
+                  <td class="left">${products[index].purchaseQuantity}</td>
+                  <td class="left">${products[index].sellingPrice}</td>
+                  <td class="right">${products[index].purchaseQuantity * (products[index].sellingPrice ?? 1)}</td>
                 </tr>''')}
                 <!-- Add rows from here on -->
               </tbody>

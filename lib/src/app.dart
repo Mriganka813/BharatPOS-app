@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/models/product.dart';
+import 'package:magicstep/src/pages/checkout.dart';
 import 'package:magicstep/src/pages/create_expense.dart';
 import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/pages/create_purchase.dart';
+import 'package:magicstep/src/pages/create_sale.dart';
 import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
@@ -54,7 +57,7 @@ class MyApp extends StatelessWidget {
                 return const HomePage();
               case ProductsListPage.routeName:
                 return ProductsListPage(
-                  isSelecting: settings.arguments as bool?,
+                  isSelecting: settings.arguments as bool,
                 );
               case CreateProduct.routeName:
                 return CreateProduct(id: settings.arguments as String?);
@@ -68,8 +71,14 @@ class MyApp extends StatelessWidget {
                 return const CreateExpensePage();
               case CreatePartyPage.routeName:
                 return const CreatePartyPage();
-              case CreatePurchasePage.routeName:
-                return const CreatePurchasePage();
+              case CreateSale.routeName:
+                return const CreateSale();
+              case CreatePurchase.routeName:
+                return const CreatePurchase();
+              case CheckoutPage.routeName:
+                return CheckoutPage(
+                  products: settings.arguments as List<Product>,
+                );
               default:
                 return const SplashScreen();
             }
