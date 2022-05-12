@@ -6,6 +6,7 @@ import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
+import 'package:slidable_button/slidable_button.dart';
 
 class CreatePurchase extends StatefulWidget {
   static const routeName = '/create_purchase';
@@ -116,30 +117,56 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               ],
             ),
             const Divider(color: Colors.transparent),
-            TextButton(
-              onPressed: () {
-                if (_orderItems.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text(
-                        "Please select products before continuing",
-                        style: TextStyle(color: Colors.white),
+            SlidableButton(
+              width: double.maxFinite,
+              buttonWidth: 100.0,
+              color: Colors.green,
+              isRestart: true,
+              buttonColor: Colors.green,
+              dismissible: false,
+              label: const Center(
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white,
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Swipe to continue",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(color: Colors.white),
+                  ),
+                ],
+              ),
+              height: 50,
+              onChanged: (position) {
+                if (position == SlidableButtonPosition.right) {
+                  if (_orderItems.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          "Please select products before continuing",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
+                    );
+                    return;
+                  }
+                  Navigator.pushNamed(
+                    context,
+                    CheckoutPage.routeName,
+                    arguments: CheckoutPageArgs(
+                      invoiceType: OrderType.sale,
+                      orderInput: _orderInput,
                     ),
                   );
-                  return;
                 }
-                Navigator.pushNamed(
-                  context,
-                  CheckoutPage.routeName,
-                  arguments: CheckoutPageArgs(
-                    invoiceType: OrderType.sale,
-                    orderInput: _orderInput,
-                  ),
-                );
               },
-              child: const Text("Swipe to continue"),
             ),
           ],
         ),

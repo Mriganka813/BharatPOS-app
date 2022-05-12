@@ -52,7 +52,7 @@ class CustomButton extends StatelessWidget {
           : Text(
               title,
               style: style ??
-                  Theme.of(context).textTheme.headline5?.copyWith(
+                  Theme.of(context).textTheme.headline6?.copyWith(
                         color: type == ButtonType.normal
                             ? Colors.white
                             : ColorsConst.primaryColor,
