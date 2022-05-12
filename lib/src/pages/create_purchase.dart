@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/checkout.dart';
+import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
@@ -58,15 +59,13 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                             });
                           },
                           onDelete: () {
-                            if (_orderItem.quantity == 1) {
-                              setState(() {
-                                _orderInput.orderItems?.removeAt(index);
-                              });
-                              return;
-                            }
-                            setState(() {
-                              _orderItem.quantity -= 1;
-                            });
+                            setState(
+                              () {
+                                _orderItem.quantity == 1
+                                    ? _orderInput.orderItems?.removeAt(index)
+                                    : _orderItem.quantity -= 1;
+                              },
+                            );
                           },
                           productQuantity: _orderItem.quantity,
                         );
@@ -81,7 +80,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               children: [
                 Expanded(
                   child: CustomButton(
-                    title: "Add manually",
+                    title: "Add Product",
                     onTap: () async {
                       final result = await Navigator.pushNamed(
                         context,
@@ -107,8 +106,10 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                 const VerticalDivider(color: Colors.transparent),
                 Expanded(
                   child: CustomButton(
-                    title: "Scan barcode",
-                    onTap: () {},
+                    title: "Create Product",
+                    onTap: () {
+                      Navigator.pushNamed(context, CreateProduct.routeName);
+                    },
                     type: ButtonType.outlined,
                   ),
                 ),
