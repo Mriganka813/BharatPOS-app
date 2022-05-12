@@ -33,8 +33,17 @@ class ProductService {
     return response;
   }
 
-  ///
+  /// Fetch Product by barcode
+  Future<Response> getProductByBarcode(String barcode) async {
+    return await ApiV1Service.getRequest('/inventory/barcode/$barcode');
+  }
 
+  ///
+  Future<Response> searchProducts(String keyword) async {
+    return await ApiV1Service.getRequest('/inventories?keyword=$keyword');
+  }
+
+  ///
   Future<Response> deleteProduct(Product product) async {
     final response =
         await ApiV1Service.deleteRequest('/del/inventory/${product.id}');

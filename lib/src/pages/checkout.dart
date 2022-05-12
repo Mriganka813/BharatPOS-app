@@ -105,6 +105,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
             );
+            Future.delayed(const Duration(milliseconds: 400), () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            });
           }
         },
         child: BlocBuilder<CheckoutCubit, CheckoutState>(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/config/colors.dart';
 
 class GlobalServices {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -16,5 +17,30 @@ class GlobalServices {
       content: Text(message),
       duration: Duration(seconds: time),
     ));
+  }
+
+  void showBottomSheetLoader() {
+    final BuildContext? context = navigatorKey.currentContext;
+    if (context == null) {
+      return;
+    }
+    showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      isDismissible: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10),
+          topRight: Radius.circular(10),
+        ),
+      ),
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(ColorsConst.primaryColor),
+          ),
+        );
+      },
+    );
   }
 }

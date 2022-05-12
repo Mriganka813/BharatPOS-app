@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/checkout.dart';
 import 'package:magicstep/src/pages/products_list.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
+
+import '../services/product.dart';
 
 class CreateSale extends StatefulWidget {
   static const routeName = '/create_sale';
@@ -99,7 +104,7 @@ class _CreateSaleState extends State<CreateSale> {
                               ))
                           .toList();
                       setState(() {
-                        _orderInput.orderItems = orderItems;
+                        _orderInput.orderItems?.addAll(orderItems);
                       });
                     },
                   ),
@@ -108,7 +113,9 @@ class _CreateSaleState extends State<CreateSale> {
                 Expanded(
                   child: CustomButton(
                     title: "Scan barcode",
-                    onTap: () {},
+                    onTap: () async {
+                      _searchProductByBarcode();
+                    },
                     type: ButtonType.outlined,
                   ),
                 ),
@@ -144,5 +151,40 @@ class _CreateSaleState extends State<CreateSale> {
         ),
       ),
     );
+  }
+
+  ///
+  Future<void> _searchProductByBarcode() async {
+    locator<GlobalServices>().showBottomSheetLoader();
+    final barcode = await FlutterBarcodeScanner.scanBarcode(
+      "#000000",
+      "Cancel",
+      false,
+      ScanMode.BARCODE,
+    );
+    try {
+      /// Fetch product by barcode
+      final res = await const ProductService().getProductByBarcode(barcode);
+      final product = Product.fromMap(res.data['inventory']);
+      final order = OrderItemInput(product: product, quantity: 1, price: 0);
+      final hasProduct =
+          _orderInput.orderItems?.any((e) => e.product?.id == product.id);
+
+      /// Check if product already exists
+      if (hasProduct ?? false) {
+        final i = _orderInput.orderItems
+            ?.indexWhere((e) => e.product?.id == product.id);
+
+        /// Increase quantity if product already exists
+        setState(() {
+          _orderInput.orderItems![i!].quantity += 1;
+        });
+      } else {
+        setState(() {
+          _orderInput.orderItems?.add(order);
+        });
+      }
+    } catch (_) {}
+    Navigator.pop(context);
   }
 }
