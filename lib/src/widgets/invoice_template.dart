@@ -64,9 +64,9 @@ String invoiceTemplate({
                 ${List.generate(products.length, (index) => '''<tr>
                   <td class="left">$index</td>
                   <td class="left">${products[index].name}</td>
-                  <td class="left">${products[index].purchaseQuantity}</td>
+                  <td class="left">${products[index].quantity}</td>
                   <td class="left">${products[index].sellingPrice}</td>
-                  <td class="right">${products[index].purchaseQuantity * (products[index].sellingPrice ?? 1)}</td>
+                  <td class="right">${products[index].quantity ?? 0 * (products[index].sellingPrice ?? 1)}</td>
                 </tr>''')}
                 <!-- Add rows from here on -->
               </tbody>

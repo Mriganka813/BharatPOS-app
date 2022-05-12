@@ -95,12 +95,14 @@ class ProductCardHorizontal extends StatelessWidget {
 
 class ProductCardPurchase extends StatelessWidget {
   final Product product;
+  final int productQuantity;
   final VoidCallback onAdd;
   final VoidCallback onDelete;
   const ProductCardPurchase({
     Key? key,
     required this.product,
     required this.onAdd,
+    required this.productQuantity,
     required this.onDelete,
   }) : super(key: key);
 
@@ -140,7 +142,7 @@ class ProductCardPurchase extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(3.0),
-                        child: Text("${product.purchaseQuantity}"),
+                        child: Text("$productQuantity"),
                       ),
                       IconButton(
                         onPressed: () {

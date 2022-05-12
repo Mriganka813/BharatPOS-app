@@ -1,13 +1,3 @@
-// To parse this JSON data, do
-//
-//     final product = productFromMap(jsonString);
-
-import 'dart:convert';
-
-Product productFromMap(String str) => Product.fromMap(json.decode(str));
-
-String productToMap(Product data) => json.encode(data.toMap());
-
 class Product {
   Product({
     this.name,
@@ -16,7 +6,6 @@ class Product {
     this.quantity,
     this.user,
     this.id,
-    this.purchaseQuantity = 1,
     this.createdAt,
     this.v,
   });
@@ -27,7 +16,6 @@ class Product {
   int? quantity;
   String? user;
   String? id;
-  int purchaseQuantity;
   DateTime? createdAt;
   int? v;
 

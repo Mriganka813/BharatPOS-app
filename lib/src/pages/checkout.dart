@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:magicstep/src/blocs/checkout/checkout_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/product.dart';
+import 'package:magicstep/src/models/input/order_input.dart';
+import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_drop_down.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../widgets/invoice_template.dart';
+enum OrderType { purchase, sale }
+
+class CheckoutPageArgs {
+  final OrderType invoiceType;
+  final OrderInput orderInput;
+  const CheckoutPageArgs({
+    required this.invoiceType,
+    required this.orderInput,
+  });
+}
 
 class CheckoutPage extends StatefulWidget {
-  final List<Product> products;
+  final CheckoutPageArgs args;
   static const routeName = '/checkout';
   const CheckoutPage({
     Key? key,
-    this.products = const [],
+    required this.args,
   }) : super(key: key);
 
   @override
@@ -23,31 +31,44 @@ class CheckoutPage extends StatefulWidget {
 
 class _CheckoutPageState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
+  late CheckoutCubit _checkoutCubit;
+  @override
+  void initState() {
+    super.initState();
+    _checkoutCubit = CheckoutCubit();
+  }
+
+  @override
+  void dispose() {
+    _checkoutCubit.close();
+    super.dispose();
+  }
 
   ///
   void viewPdf() async {
-    final targetPath = await getTemporaryDirectory();
-    const targetFileName = "example_pdf_file";
-    final htmlContent = invoiceTemplate(
-      companyName: "Sharma city mart",
-      products: widget.products,
-      headers: ["ID", "Name", "Qty", "Price", "Amt"],
-      total: totalPrice(),
-    );
-    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      targetPath.path,
-      targetFileName,
-    );
-    OpenFile.open(generatedPdfFile.path);
+    // final targetPath = await getTemporaryDirectory();
+    // const targetFileName = "example_pdf_file";
+    // final htmlContent = invoiceTemplate(
+    //   companyName: "Sharma city mart",
+    //   products: ),
+    //   headers: ["ID", "Name", "Qty", "Price", "Amt"],
+    //   total: totalPrice(),
+    // );
+    // final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+    //   htmlContent,
+    //   targetPath.path,
+    //   targetFileName,
+    // );
+    // OpenFile.open(generatedPdfFile.path);
   }
 
   ///
   String totalPrice() {
-    return widget.products.fold(0, (acc, prod) {
-      final price = (prod.purchaseQuantity * (prod.sellingPrice ?? 0));
-      return (acc as int) + price;
-    }).toString();
+    return "";
+    // return widget.args.orderInput.orderItems?.fold(0, (acc, orderItem) {
+    //   final price = (orderItem.quantity * (orderItem.price ?? 0));
+    //   return (acc as int) + price;
+    // }).toString();
   }
 
   @override
@@ -55,13 +76,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("${widget.products.length} products"),
+        title: Text(
+          "${widget.args.orderInput.orderItems?.fold<int>(0, (acc, item) => item.quantity + acc)} products",
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: Center(
               child: Text(
-                totalPrice(),
+                "₹ ${totalPrice()}",
                 style: Theme.of(context).appBarTheme.titleTextStyle,
               ),
             ),
@@ -80,64 +103,58 @@ class _CheckoutPageState extends State<CheckoutPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomTextField(
-                suffixIcon: Icon(Icons.add_circle_outline_rounded),
+              CustomTextField(
+                label: "Party",
+                suffixIcon: const Icon(Icons.add_circle_outline_rounded),
+                hintText: "Optional",
+                validator: (e) => null,
               ),
-              const Divider(color: Colors.transparent),
+              const Divider(color: Colors.transparent, height: 20),
               CustomDropDownField(
                 items: const <String>[
                   "Cash",
                   "Credit",
                   "Bank Transfer",
                 ],
-                onSelected: (e) {},
-                hintText: "Select mode of payment",
+                onSelected: (e) {
+                  setState(() {
+                    widget.args.orderInput.modeOfPayment = e;
+                  });
+                },
+                hintText: "Mode of payment",
               ),
-              const Divider(color: Colors.transparent),
+              const Divider(color: Colors.transparent, height: 30),
               const Text("Amount Recieved"),
               const Divider(color: Colors.transparent),
-              CustomTextField(
-                initialValue: totalPrice(),
-                inputType: TextInputType.phone,
-                onSave: (e) {},
+              Center(
+                child: Text(
+                  "₹ ${totalPrice()}",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline2,
+                ),
               ),
               const Divider(color: Colors.transparent),
-              const Text("Change/Balance"),
-              const Divider(color: Colors.transparent),
-              CustomTextField(
-                inputType: TextInputType.phone,
-                initialValue: "0",
-                onSave: (e) {},
-              ),
               const Spacer(),
               Row(
                 children: [
-                  TextButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          color: ColorsConst.primaryColor,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    onPressed: () {
-                      viewPdf();
-                    },
-                    child: const Text(
-                      "Share",
-                      style: TextStyle(
-                        color: ColorsConst.primaryColor,
-                      ),
+                  CustomButton(
+                    title: "Share",
+                    onTap: () {},
+                    type: ButtonType.outlined,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 10,
                     ),
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _formKey.currentState?.save();
+                      if (_formKey.currentState?.validate() ?? false) {
+                        viewPdf();
+                      }
+                      _checkoutCubit.createSalesOrder(widget.args.orderInput);
+                    },
                     style: TextButton.styleFrom(
                       backgroundColor: ColorsConst.primaryColor,
                       shape: const CircleBorder(),

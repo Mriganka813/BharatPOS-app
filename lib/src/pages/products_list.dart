@@ -56,26 +56,34 @@ class _ProductsListPageState extends State<ProductsListPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (widget.isSelecting)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context, _products);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: ColorsConst.primaryColor,
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.check,
-                          color: Colors.white,
+                FloatingActionButton.extended(
+                  heroTag: 'products-list-page',
+                  onPressed: () async {
+                    if (_products.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            "Please select products before continuing",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
-                        Text("Continue"),
-                      ],
-                    ),
+                      );
+                      return;
+                    }
+                    Navigator.pop(context, _products);
+                  },
+                  backgroundColor: ColorsConst.primaryColor,
+                  icon: const Icon(Icons.arrow_forward),
+                  label: Text(
+                    "Continue",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: Colors.white),
                   ),
                 ),
+              if (widget.isSelecting) const SizedBox(width: 20),
               FloatingActionButton(
                 onPressed: () async {
                   await Navigator.pushNamed(context, '/create-product');

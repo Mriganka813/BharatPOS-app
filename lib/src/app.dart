@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/checkout.dart';
 import 'package:magicstep/src/pages/create_expense.dart';
 import 'package:magicstep/src/pages/create_party.dart';
@@ -77,7 +76,7 @@ class MyApp extends StatelessWidget {
                 return const CreatePurchase();
               case CheckoutPage.routeName:
                 return CheckoutPage(
-                  products: settings.arguments as List<Product>,
+                  args: settings.arguments as CheckoutPageArgs,
                 );
               default:
                 return const SplashScreen();

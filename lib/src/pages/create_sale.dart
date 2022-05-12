@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/checkout.dart';
 import 'package:magicstep/src/pages/products_list.dart';
@@ -14,26 +15,29 @@ class CreateSale extends StatefulWidget {
 }
 
 class _CreateSaleState extends State<CreateSale> {
-  late List<Product> _products;
+  late OrderInput _orderInput;
 
   @override
   void initState() {
     super.initState();
-    _products = [];
+    _orderInput = OrderInput(
+      orderItems: [],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final _orderItems = _orderInput.orderItems ?? [];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sale'),
+        title: const Text('Sales'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
             Expanded(
-              child: _products.isEmpty
+              child: _orderItems.isEmpty
                   ? const Center(
                       child: Text(
                         'No products added yet',
@@ -42,26 +46,29 @@ class _CreateSaleState extends State<CreateSale> {
                   : ListView.separated(
                       physics: const ClampingScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: _products.length,
+                      itemCount: _orderItems.length,
                       itemBuilder: (context, index) {
+                        final _orderItem = _orderItems[index];
+                        final product = _orderItems[index].product!;
                         return ProductCardPurchase(
-                          product: _products[index],
+                          product: product,
                           onAdd: () {
                             setState(() {
-                              _products[index].purchaseQuantity += 1;
+                              _orderItem.quantity += 1;
                             });
                           },
                           onDelete: () {
-                            if (_products[index].purchaseQuantity == 1) {
+                            if (_orderItem.quantity == 1) {
                               setState(() {
-                                _products.removeAt(index);
+                                _orderInput.orderItems?.removeAt(index);
                               });
                               return;
                             }
                             setState(() {
-                              _products[index].purchaseQuantity -= 1;
+                              _orderItem.quantity -= 1;
                             });
                           },
+                          productQuantity: _orderItem.quantity,
                         );
                       },
                       separatorBuilder: (context, index) {
@@ -84,8 +91,15 @@ class _CreateSaleState extends State<CreateSale> {
                       if (result == null && result is! List<Product>) {
                         return;
                       }
+                      final orderItems = (result as List<Product>)
+                          .map((e) => OrderItemInput(
+                                product: e,
+                                quantity: 0,
+                                price: 0,
+                              ))
+                          .toList();
                       setState(() {
-                        _products = result as List<Product>;
+                        _orderInput.orderItems = orderItems;
                       });
                     },
                   ),
@@ -103,7 +117,7 @@ class _CreateSaleState extends State<CreateSale> {
             const Divider(color: Colors.transparent),
             TextButton(
               onPressed: () {
-                if (_products.isEmpty) {
+                if (_orderItems.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.red,
@@ -118,7 +132,10 @@ class _CreateSaleState extends State<CreateSale> {
                 Navigator.pushNamed(
                   context,
                   CheckoutPage.routeName,
-                  arguments: _products,
+                  arguments: CheckoutPageArgs(
+                    invoiceType: OrderType.sale,
+                    orderInput: _orderInput,
+                  ),
                 );
               },
               child: const Text("Swipe to continue"),
