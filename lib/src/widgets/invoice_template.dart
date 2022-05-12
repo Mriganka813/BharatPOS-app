@@ -1,8 +1,8 @@
-import 'package:magicstep/src/models/product.dart';
+import 'package:magicstep/src/models/input/order_input.dart';
 
 String invoiceTemplate({
   required String companyName,
-  required List<Product> products,
+  required OrderInput order,
   required List<String> headers,
   required String total,
 }) {
@@ -54,20 +54,23 @@ String invoiceTemplate({
 
           <div class="table-responsive-sm">
             <table class="table table-striped">
-              <tr>
-                ${headers.map((e) => '''
-                  <th class="left">$e</th>
-                ''')}
-              </tr>
+              <thead>
+                ${List.generate(headers.length, (int index) {
+    return '<th class="left">${headers[index]}</th>';
+  })}
+              </thead>
               <tbody>
                 
-                ${List.generate(products.length, (index) => '''<tr>
-                  <td class="left">$index</td>
-                  <td class="left">${products[index].name}</td>
-                  <td class="left">${products[index].quantity}</td>
-                  <td class="left">${products[index].sellingPrice}</td>
-                  <td class="right">${products[index].quantity ?? 0 * (products[index].sellingPrice ?? 1)}</td>
-                </tr>''')}
+                ${List.generate((order.orderItems ?? []).length, (index) {
+    final orderItem = order.orderItems![index];
+    return '<tr>'
+        '<td class="left">$index</td>'
+        '<td class="left">${orderItem.product?.name}</td>'
+        '<td class="left">${orderItem.quantity}</td>'
+        '<td class="left">${orderItem.product?.sellingPrice}</td>'
+        '<td class="right">${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
+        '</tr>';
+  })}
                 <!-- Add rows from here on -->
               </tbody>
             </table>

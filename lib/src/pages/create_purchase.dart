@@ -94,7 +94,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                       final orderItems = (result as List<Product>)
                           .map((e) => OrderItemInput(
                                 product: e,
-                                quantity: 0,
+                                quantity: 1,
                                 price: 0,
                               ))
                           .toList();
@@ -161,7 +161,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                     context,
                     CheckoutPage.routeName,
                     arguments: CheckoutPageArgs(
-                      invoiceType: OrderType.sale,
+                      invoiceType: OrderType.purchase,
                       orderInput: _orderInput,
                     ),
                   );

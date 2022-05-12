@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:magicstep/src/blocs/checkout/checkout_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
+import 'package:magicstep/src/models/user.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
+import 'package:magicstep/src/services/user.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_drop_down.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:magicstep/src/widgets/invoice_template.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum OrderType { purchase, sale }
 
@@ -46,37 +54,37 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  void viewPdf() async {
-    // final targetPath = await getTemporaryDirectory();
-    // const targetFileName = "example_pdf_file";
-    // final htmlContent = invoiceTemplate(
-    //   companyName: "Sharma city mart",
-    //   products: ),
-    //   headers: ["ID", "Name", "Qty", "Price", "Amt"],
-    //   total: totalPrice(),
-    // );
-    // final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-    //   htmlContent,
-    //   targetPath.path,
-    //   targetFileName,
-    // );
-    // OpenFile.open(generatedPdfFile.path);
+  void _viewPdf(User user) async {
+    final targetPath = await getTemporaryDirectory();
+    const targetFileName = "example_pdf_file";
+    final htmlContent = invoiceTemplate(
+      companyName: user.businessName ?? "",
+      order: widget.args.orderInput,
+      headers: ["ID", "Name", "Qty", "Price", "Amt"],
+      total: totalPrice() ?? "",
+    );
+    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+      htmlContent,
+      targetPath.path,
+      targetFileName,
+    );
+    OpenFile.open(generatedPdfFile.path);
   }
 
   ///
-  String totalPrice() {
-    return "";
-    // return widget.args.orderInput.orderItems?.fold(0, (acc, orderItem) {
-    //   final price = (orderItem.quantity * (orderItem.price ?? 0));
-    //   return (acc as int) + price;
-    // }).toString();
+  String? totalPrice() {
+    return widget.args.orderInput.orderItems?.fold<int>(
+      0,
+      (acc, curr) {
+        return (curr.quantity * (curr.product?.sellingPrice ?? 1)) + acc;
+      },
+    ).toString();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text(
           "${widget.args.orderInput.orderItems?.fold<int>(0, (acc, item) => item.quantity + acc)} products",
         ),
@@ -171,7 +179,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       children: [
                         CustomButton(
                           title: "Share",
-                          onTap: () {},
+                          onTap: () {
+                            _onTapShare();
+                          },
                           type: ButtonType.outlined,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 30,
@@ -181,15 +191,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         const Spacer(),
                         TextButton(
                           onPressed: () {
-                            _formKey.currentState?.save();
-                            if (_formKey.currentState?.validate() ?? false) {
-                              viewPdf();
-                            }
-                            widget.args.invoiceType == OrderType.purchase
-                                ? _checkoutCubit
-                                    .createPurchaseOrder(widget.args.orderInput)
-                                : _checkoutCubit
-                                    .createSalesOrder(widget.args.orderInput);
+                            _onTapSubmit();
                           },
                           style: TextButton.styleFrom(
                             backgroundColor: ColorsConst.primaryColor,
@@ -211,5 +213,26 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ),
       ),
     );
+  }
+
+  void _onTapShare() async {
+    locator<GlobalServices>().showBottomSheetLoader();
+    try {
+      final res = await UserService.me();
+      if ((res.statusCode ?? 400) < 300) {
+        final user = User.fromMap(res.data['user']);
+        _viewPdf(user);
+      }
+    } catch (err) {}
+    Navigator.pop(context);
+  }
+
+  void _onTapSubmit() async {
+    _formKey.currentState?.save();
+    if (_formKey.currentState?.validate() ?? false) {
+      widget.args.invoiceType == OrderType.purchase
+          ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput)
+          : _checkoutCubit.createSalesOrder(widget.args.orderInput);
+    }
   }
 }

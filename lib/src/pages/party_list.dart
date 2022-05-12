@@ -31,107 +31,105 @@ class _PartyListPageState extends State<PartyListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Party'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Party'),
+      ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(
+          right: 10,
+          bottom: 20,
         ),
-        floatingActionButton: Container(
-          margin: const EdgeInsets.only(
-            right: 10,
-            bottom: 20,
-          ),
-          child: FloatingActionButton(
-            onPressed: () async {
-              final result =
-                  await Navigator.pushNamed(context, CreatePartyPage.routeName);
-              if (result is bool && result) {
-                _partyCubit.getMyParties();
-              }
-            },
-            backgroundColor: ColorsConst.primaryColor,
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 40,
-            ),
+        child: FloatingActionButton(
+          onPressed: () async {
+            final result =
+                await Navigator.pushNamed(context, CreatePartyPage.routeName);
+            if (result is bool && result) {
+              _partyCubit.getMyParties();
+            }
+          },
+          backgroundColor: ColorsConst.primaryColor,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 40,
           ),
         ),
-        body: BlocBuilder<PartyCubit, PartyState>(
-          bloc: _partyCubit,
-          builder: (context, state) {
-            if (state is PartyListRender) {
-              return DefaultTabController(
-                length: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const CustomTextField(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: "Search",
-                      ),
-                      const SizedBox(height: 10),
-                      TabBar(
-                        indicatorColor: ColorsConst.primaryColor,
-                        labelColor: Colors.black,
-                        labelStyle: Theme.of(context).textTheme.bodyLarge,
-                        // <-- Your TabBar
-                        tabs: const [
-                          Tab(
-                            text: "Sale",
+      ),
+      body: BlocBuilder<PartyCubit, PartyState>(
+        bloc: _partyCubit,
+        builder: (context, state) {
+          if (state is PartyListRender) {
+            return DefaultTabController(
+              length: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CustomTextField(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search",
+                    ),
+                    const SizedBox(height: 10),
+                    TabBar(
+                      indicatorColor: ColorsConst.primaryColor,
+                      labelColor: Colors.black,
+                      labelStyle: Theme.of(context).textTheme.bodyLarge,
+                      // <-- Your TabBar
+                      tabs: const [
+                        Tab(
+                          text: "Sale",
+                        ),
+                        Tab(
+                          text: "Purchase",
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          ListView.separated(
+                            shrinkWrap: true,
+                            separatorBuilder: (context, index) {
+                              return const Divider(color: Colors.transparent);
+                            },
+                            itemCount: state.parties.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(state.parties[index].name ?? ""),
+                                trailing: const Text("0"),
+                              );
+                            },
                           ),
-                          Tab(
-                            text: "Purchase",
+                          ListView.separated(
+                            shrinkWrap: true,
+                            separatorBuilder: (context, index) {
+                              return const Divider(color: Colors.transparent);
+                            },
+                            itemCount: state.parties.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Text(state.parties[index].name ?? ""),
+                                trailing: const Text("0"),
+                              );
+                            },
                           ),
                         ],
                       ),
-                      const Divider(),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            ListView.separated(
-                              shrinkWrap: true,
-                              separatorBuilder: (context, index) {
-                                return const Divider(color: Colors.transparent);
-                              },
-                              itemCount: state.parties.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(state.parties[index].name ?? ""),
-                                  trailing: const Text("0"),
-                                );
-                              },
-                            ),
-                            ListView.separated(
-                              shrinkWrap: true,
-                              separatorBuilder: (context, index) {
-                                return const Divider(color: Colors.transparent);
-                              },
-                              itemCount: state.parties.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(state.parties[index].name ?? ""),
-                                  trailing: const Text("0"),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
               ),
             );
-          },
-        ),
+          }
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+            ),
+          );
+        },
       ),
     );
   }
