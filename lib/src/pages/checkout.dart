@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/checkout/checkout_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
@@ -91,84 +92,119 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 10.0,
-          bottom: 20,
-          left: 20,
-          right: 30,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTextField(
-                label: "Party",
-                suffixIcon: const Icon(Icons.add_circle_outline_rounded),
-                hintText: "Optional",
-                validator: (e) => null,
-              ),
-              const Divider(color: Colors.transparent, height: 20),
-              CustomDropDownField(
-                items: const <String>[
-                  "Cash",
-                  "Credit",
-                  "Bank Transfer",
-                ],
-                onSelected: (e) {
-                  setState(() {
-                    widget.args.orderInput.modeOfPayment = e;
-                  });
-                },
-                hintText: "Mode of payment",
-              ),
-              const Divider(color: Colors.transparent, height: 30),
-              const Text("Amount Recieved"),
-              const Divider(color: Colors.transparent),
-              Center(
-                child: Text(
-                  "₹ ${totalPrice()}",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline2,
+      body: BlocListener<CheckoutCubit, CheckoutState>(
+        bloc: _checkoutCubit,
+        listener: (context, state) {
+          if (state is CheckoutSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.green,
+                content: Text(
+                  'Order was created successfully',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-              const Divider(color: Colors.transparent),
-              const Spacer(),
-              Row(
-                children: [
-                  CustomButton(
-                    title: "Share",
-                    onTap: () {},
-                    type: ButtonType.outlined,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 10,
-                    ),
+            );
+          }
+        },
+        child: BlocBuilder<CheckoutCubit, CheckoutState>(
+          bloc: _checkoutCubit,
+          builder: (context, state) {
+            if (state is CheckoutLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    ColorsConst.primaryColor,
                   ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      _formKey.currentState?.save();
-                      if (_formKey.currentState?.validate() ?? false) {
-                        viewPdf();
-                      }
-                      _checkoutCubit.createSalesOrder(widget.args.orderInput);
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: ColorsConst.primaryColor,
-                      shape: const CircleBorder(),
+                ),
+              );
+            }
+            return Padding(
+              padding: const EdgeInsets.only(
+                top: 10.0,
+                bottom: 20,
+                left: 20,
+                right: 30,
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTextField(
+                      label: "Party",
+                      isLoading: true,
+                      suffixIcon: const Icon(Icons.add_circle_outline_rounded),
+                      hintText: "Optional",
+                      validator: (e) => null,
                     ),
-                    child: const Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 40,
-                      color: Colors.white,
+                    const Divider(color: Colors.transparent, height: 20),
+                    CustomDropDownField(
+                      items: const <String>[
+                        "Cash",
+                        "Credit",
+                        "Bank Transfer",
+                      ],
+                      onSelected: (e) {
+                        setState(() {
+                          widget.args.orderInput.modeOfPayment = e;
+                        });
+                      },
+                      hintText: "Mode of payment",
                     ),
-                  )
-                ],
-              )
-            ],
-          ),
+                    const Divider(color: Colors.transparent, height: 30),
+                    const Text("Amount Recieved"),
+                    const Divider(color: Colors.transparent),
+                    Center(
+                      child: Text(
+                        "₹ ${totalPrice()}",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
+                    ),
+                    const Divider(color: Colors.transparent),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        CustomButton(
+                          title: "Share",
+                          onTap: () {},
+                          type: ButtonType.outlined,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 10,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            _formKey.currentState?.save();
+                            if (_formKey.currentState?.validate() ?? false) {
+                              viewPdf();
+                            }
+                            widget.args.invoiceType == OrderType.purchase
+                                ? _checkoutCubit
+                                    .createPurchaseOrder(widget.args.orderInput)
+                                : _checkoutCubit
+                                    .createSalesOrder(widget.args.orderInput);
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: ColorsConst.primaryColor,
+                            shape: const CircleBorder(),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

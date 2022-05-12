@@ -13,6 +13,8 @@ import 'package:magicstep/src/pages/reports.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
 import 'package:magicstep/src/pages/sign_up.dart';
 import 'package:magicstep/src/pages/splash.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -24,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       restorationScopeId: 'app',
+      navigatorKey: locator<GlobalServices>().navigatorKey,
       debugShowCheckedModeBanner: false,
       initialRoute: SplashScreen.routeName,
       theme: ThemeData(

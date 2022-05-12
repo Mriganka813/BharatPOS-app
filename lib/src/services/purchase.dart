@@ -1,16 +1,17 @@
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/services/api_v1.dart';
 
-class SalesService {
-  const SalesService();
+import '../models/input/order_input.dart';
+
+class PurchaseService {
+  const PurchaseService();
 
   ///
-  static Future<Response> createSalesOrder(
+  static Future<Response> createPurchaseOrder(
     OrderInput orderItemInput,
   ) async {
     final response = await ApiV1Service.postRequest(
-      '/salesOrder/new',
+      '/purchaseOrder/new',
       data: {
         'orderItems': orderItemInput.orderItems?.map((e) => e.toMap()).toList(),
         'modeOfPayment': orderItemInput.modeOfPayment,
@@ -22,7 +23,7 @@ class SalesService {
 
   ///
   static Future<Response> getAllSalesOrders() async {
-    final response = await ApiV1Service.getRequest('/salesOrders/me');
+    final response = await ApiV1Service.getRequest('/purchaseOrders/me');
     return response;
   }
 }

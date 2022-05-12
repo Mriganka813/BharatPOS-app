@@ -2,14 +2,14 @@ import 'package:magicstep/src/models/product.dart';
 
 class OrderItem {
   OrderItem({
-    this.price,
-    this.quantity,
+    this.price = 0,
+    this.quantity = 0,
     this.image,
     this.product,
   });
 
-  String? price;
-  int? quantity;
+  int price;
+  int quantity;
   String? image;
   Product? product;
 

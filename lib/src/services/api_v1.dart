@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:magicstep/src/config/const.dart';
+import 'package:magicstep/src/services/dio_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ApiV1Service {
@@ -20,8 +21,10 @@ class ApiV1Service {
   ///
   Future<PersistCookieJar> initCookiesManager() async {
     // Cookie files will be saved in files in "./cookies"
+    _dio.interceptors.clear();
     final cj = await getCookieJar();
     _dio.interceptors.add(CookieManager(cj));
+    _dio.interceptors.add(CustomInterceptor());
     return cj;
   }
 

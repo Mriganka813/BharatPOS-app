@@ -94,7 +94,7 @@ class _CreateSaleState extends State<CreateSale> {
                       final orderItems = (result as List<Product>)
                           .map((e) => OrderItemInput(
                                 product: e,
-                                quantity: 0,
+                                quantity: 1,
                                 price: 0,
                               ))
                           .toList();
