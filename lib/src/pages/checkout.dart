@@ -1,19 +1,25 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:magicstep/src/blocs/checkout/checkout_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/user.dart';
 import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
+import 'package:magicstep/src/services/party.dart';
 import 'package:magicstep/src/services/user.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_drop_down.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:magicstep/src/widgets/invoice_template.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../models/party.dart';
 
 enum OrderType { purchase, sale }
 
@@ -41,15 +47,20 @@ class CheckoutPage extends StatefulWidget {
 class _CheckoutPageState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
   late CheckoutCubit _checkoutCubit;
+  late final TextEditingController _typeAheadController;
+
+  ///
   @override
   void initState() {
     super.initState();
     _checkoutCubit = CheckoutCubit();
+    _typeAheadController = TextEditingController();
   }
 
   @override
   void dispose() {
     _checkoutCubit.close();
+    _typeAheadController.dispose();
     super.dispose();
   }
 
@@ -71,6 +82,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
     OpenFile.open(generatedPdfFile.path);
   }
 
+  Future<Iterable<Party>> _fetchProducts(String pattern) async {
+    if (pattern.length < 2) {
+      return [];
+    } // do something with query
+    try {
+      final response = await const PartyService().getSearch(pattern);
+      final data = response.data['allParty'] as List<dynamic>;
+      return data.map((e) => Party.fromMap(e));
+    } catch (err) {
+      log(err.toString());
+      return [];
+    }
+  }
+
   ///
   String? totalPrice() {
     return widget.args.orderInput.orderItems?.fold<int>(
@@ -84,6 +109,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           "${widget.args.orderInput.orderItems?.fold<int>(0, (acc, item) => item.quantity + acc)} products",
@@ -142,13 +168,54 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomTextField(
-                      label: "Party",
-                      isLoading: true,
-                      suffixIcon: const Icon(Icons.add_circle_outline_rounded),
-                      hintText: "Optional",
-                      validator: (e) => null,
+                    const Divider(color: Colors.transparent),
+                    Text(
+                      "Party",
+                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                          color: Colors.black, fontWeight: FontWeight.normal),
                     ),
+                    const Divider(color: Colors.transparent),
+                    TypeAheadFormField<Party>(
+                      validator: (value) {
+                        if ((value == null || value.isEmpty) &&
+                            widget.args.orderInput.modeOfPayment == "Credit") {
+                          return "Please select a party for credit order";
+                        }
+                        return null;
+                      },
+                      debounceDuration: const Duration(milliseconds: 500),
+                      textFieldConfiguration: TextFieldConfiguration(
+                        controller: _typeAheadController,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          hintText: "Optional",
+                          suffixIcon: const Icon(Icons.add_outlined),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 10,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      suggestionsCallback: (String pattern) {
+                        return _fetchProducts(pattern);
+                      },
+                      itemBuilder: (context, party) {
+                        return ListTile(
+                          leading: const Icon(Icons.shopping_cart),
+                          title: Text(party.name ?? ""),
+                        );
+                      },
+                      onSuggestionSelected: (Party party) {
+                        setState(() {
+                          widget.args.orderInput.party = party;
+                        });
+                        _typeAheadController.text = party.name ?? "";
+                      },
+                    ),
+                    const Divider(color: Colors.transparent, height: 5),
                     const Divider(color: Colors.transparent, height: 20),
                     CustomDropDownField(
                       items: const <String>[
@@ -223,7 +290,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         final user = User.fromMap(res.data['user']);
         _viewPdf(user);
       }
-    } catch (err) {}
+    } catch (_) {}
     Navigator.pop(context);
   }
 

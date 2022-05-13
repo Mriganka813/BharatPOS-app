@@ -46,9 +46,11 @@ class ApiV1Service {
   }
 
   ///
-  static Future<Response> getRequest(String url,
-      {Map<String, dynamic>? data}) async {
-    return await _dio.get(url);
+  static Future<Response> getRequest(
+    String url, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    return await _dio.get(url, queryParameters: queryParameters);
   }
 
   ///
