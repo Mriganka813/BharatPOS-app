@@ -108,7 +108,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                 Expanded(
                   child: CustomButton(
                     title: "Create Product",
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pushNamed(context, CreateProduct.routeName);
                     },
                     type: ButtonType.outlined,

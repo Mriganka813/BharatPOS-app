@@ -100,9 +100,14 @@ class _ProductsListPageState extends State<ProductsListPage> {
         padding: const EdgeInsets.all(20),
         shrinkWrap: true,
         children: [
-          const CustomTextField(
-            prefixIcon: Icon(Icons.search),
+          CustomTextField(
+            prefixIcon: const Icon(Icons.search),
             hintText: 'Search',
+            onChanged: (String e) {
+              if (e.isNotEmpty && e.length > 2) {
+                _productCubit.searchProducts(e);
+              }
+            },
           ),
           const Divider(color: Colors.transparent),
           BlocBuilder<ProductCubit, ProductState>(
