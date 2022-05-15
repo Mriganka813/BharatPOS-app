@@ -83,9 +83,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Future<Iterable<Party>> _fetchProducts(String pattern) async {
-    if (pattern.length < 2) {
+    if (pattern.isEmpty) {
       return [];
-    } // do something with query
+    }
     try {
       final response = await const PartyService().getSearch(pattern);
       final data = response.data['allParty'] as List<dynamic>;
