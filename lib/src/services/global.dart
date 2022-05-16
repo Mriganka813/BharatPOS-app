@@ -3,8 +3,6 @@ import 'package:magicstep/src/config/colors.dart';
 
 class GlobalServices {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
 
   void showSnackBar(
       {required String message, required int time, Color? bgcolor}) {
@@ -17,6 +15,19 @@ class GlobalServices {
       content: Text(message),
       duration: Duration(seconds: time),
     ));
+  }
+
+  void errorSnackBar(String message) {
+    final cntxt = navigatorKey.currentContext;
+    if (cntxt == null) {
+      return;
+    }
+    ScaffoldMessenger.of(cntxt).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+      ),
+    );
   }
 
   void showBottomSheetLoader() {

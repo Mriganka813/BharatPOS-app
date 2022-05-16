@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/auth_cubit/auth_cubit.dart';
+import 'package:magicstep/src/blocs/auth/auth_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/sign_up.dart';

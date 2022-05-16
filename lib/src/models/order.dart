@@ -8,14 +8,14 @@ class Order {
     this.modeOfPayment,
     this.party,
     this.user,
-    this.createdAt,
+    this.createdAt = '',
   });
 
   List<OrderItem>? orderItems;
   String? modeOfPayment;
   Party? party;
   User? user;
-  DateTime? createdAt;
+  String createdAt;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
         orderItems: List<OrderItem>.from(

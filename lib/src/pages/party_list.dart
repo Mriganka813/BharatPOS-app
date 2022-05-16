@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/party/party_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
+import 'package:magicstep/src/models/order.dart';
 import 'package:magicstep/src/pages/create_party.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 
 class PartyListPage extends StatefulWidget {
@@ -20,7 +23,7 @@ class _PartyListPageState extends State<PartyListPage> {
   @override
   void initState() {
     super.initState();
-    _partyCubit = PartyCubit()..getMyParties();
+    _partyCubit = PartyCubit()..getOrders();
   }
 
   @override
@@ -56,81 +59,133 @@ class _PartyListPageState extends State<PartyListPage> {
           ),
         ),
       ),
-      body: BlocBuilder<PartyCubit, PartyState>(
+      body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
-        builder: (context, state) {
-          if (state is PartyListRender) {
-            return DefaultTabController(
-              length: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomTextField(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: "Search",
-                    ),
-                    const SizedBox(height: 10),
-                    TabBar(
-                      indicatorColor: ColorsConst.primaryColor,
-                      labelColor: Colors.black,
-                      labelStyle: Theme.of(context).textTheme.bodyLarge,
-                      // <-- Your TabBar
-                      tabs: const [
-                        Tab(
-                          text: "Sale",
-                        ),
-                        Tab(
-                          text: "Purchase",
-                        ),
-                      ],
-                    ),
-                    const Divider(),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          ListView.separated(
-                            shrinkWrap: true,
-                            separatorBuilder: (context, index) {
-                              return const Divider(color: Colors.transparent);
-                            },
-                            itemCount: state.parties.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(state.parties[index].name ?? ""),
-                                trailing: const Text("0"),
-                              );
-                            },
-                          ),
-                          ListView.separated(
-                            shrinkWrap: true,
-                            separatorBuilder: (context, index) {
-                              return const Divider(color: Colors.transparent);
-                            },
-                            itemCount: state.parties.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                title: Text(state.parties[index].name ?? ""),
-                                trailing: const Text("0"),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+        listener: (context, state) {
+          if (state is PartyError) {
+            locator<GlobalServices>().errorSnackBar(state.message);
           }
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
-            ),
-          );
         },
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                const CustomTextField(
+                  prefixIcon: Icon(Icons.search),
+                  hintText: "Search",
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: BlocBuilder<PartyCubit, PartyState>(
+                    bloc: _partyCubit,
+                    builder: (context, state) {
+                      if (state is OrdersListRender) {
+                        final salesOrders = state.salesOrders;
+                        final purchaseOrders = state.purchaseOrders;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TabBar(
+                              indicatorColor: ColorsConst.primaryColor,
+                              labelColor: Colors.black,
+                              labelStyle: Theme.of(context).textTheme.bodyLarge,
+                              // <-- Your TabBar
+                              tabs: const [
+                                Tab(
+                                  text: "Sale",
+                                ),
+                                Tab(
+                                  text: "Purchase",
+                                ),
+                              ],
+                            ),
+                            const Divider(),
+                            Expanded(
+                              child: TabBarView(
+                                children: [
+                                  SalesOrderList(
+                                    salesOrders: salesOrders,
+                                  ),
+                                  PurchaseOrderList(
+                                    purchaseOrders: purchaseOrders,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation(ColorsConst.primaryColor),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class PurchaseOrderList extends StatelessWidget {
+  const PurchaseOrderList({
+    Key? key,
+    required this.purchaseOrders,
+  }) : super(key: key);
+
+  final List<Order> purchaseOrders;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      separatorBuilder: (context, index) {
+        return const Divider(color: Colors.transparent);
+      },
+      itemCount: purchaseOrders.length,
+      itemBuilder: (context, index) {
+        final order = purchaseOrders[index];
+        return ListTile(
+          title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
+          trailing: const Text("0"),
+        );
+      },
+    );
+  }
+}
+
+class SalesOrderList extends StatelessWidget {
+  const SalesOrderList({
+    Key? key,
+    required this.salesOrders,
+  }) : super(key: key);
+
+  final List<Order> salesOrders;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      separatorBuilder: (context, index) {
+        return const Divider(color: Colors.transparent);
+      },
+      itemCount: salesOrders.length,
+      itemBuilder: (context, index) {
+        final order = salesOrders[index];
+
+        return ListTile(
+          title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
+          trailing: const Text("0"),
+        );
+      },
     );
   }
 }
