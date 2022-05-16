@@ -10,7 +10,7 @@ class AuthCubit extends Cubit<AuthState> {
   final _authService = const AuthService();
 
   ///
-  signIn(String email, String password) async {
+  signIn(String email, String password, [bool rememberMe = false]) async {
     emit(AuthLoading());
     try {
       final user = await _authService.signInRequest(email, password);
