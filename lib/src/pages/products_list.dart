@@ -104,7 +104,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
             prefixIcon: const Icon(Icons.search),
             hintText: 'Search',
             onChanged: (String e) {
-              if (e.isNotEmpty && e.length > 2) {
+              if (e.isNotEmpty) {
                 _productCubit.searchProducts(e);
               }
             },

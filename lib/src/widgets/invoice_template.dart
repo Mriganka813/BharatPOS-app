@@ -26,7 +26,7 @@ String invoiceTemplate({
           <span class="float-right"> <strong>Status:</strong> Pending</span>
         </div>
         <div class="card-body">
-          <div class="row mb-4">
+          <div class="mb-4 row">
             <div class="col-sm-6">
               <h6 class="mb-3">From:</h6>
               <div>
@@ -40,16 +40,6 @@ String invoiceTemplate({
             <br/>
             <br/>
             <br/>
-            <div class="col-sm-6">
-              <h6 class="mb-3">To:</h6>
-              <div>
-                <strong>Robert Maxwel</strong>
-              </div>
-              <div>Attn: Daniel Marek</div>
-              <div>43-190 Mikolow, Poland</div>
-              <div>Email: robert@daniel.com</div>
-              <div>Phone: +48 123 456 349</div>
-            </div>
           </div>
 
           <div class="table-responsive-sm">
@@ -78,7 +68,7 @@ String invoiceTemplate({
           <div class="row">
             <div class="col-lg-4 col-sm-5"></div>
 
-            <div class="col-lg-4 col-sm-5 ml-auto">
+            <div class="ml-auto col-lg-4 col-sm-5">
               <table class="table table-clear">
                 <tbody>
                   <tr>
