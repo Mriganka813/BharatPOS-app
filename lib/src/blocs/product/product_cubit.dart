@@ -54,10 +54,10 @@ class ProductCubit extends Cubit<ProductState> {
         emit(ProductsError(response.data['message']));
         return;
       }
+      emit(ProductCreated());
     } on DioError catch (err) {
       emit(ProductsError(err.response?.data['message'] ?? err.message));
     }
-    emit(ProductCreated());
   }
 
   ///

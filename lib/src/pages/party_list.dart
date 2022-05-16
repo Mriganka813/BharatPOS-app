@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/party/party_cubit.dart';
@@ -153,9 +155,13 @@ class PurchaseOrderList extends StatelessWidget {
       itemCount: purchaseOrders.length,
       itemBuilder: (context, index) {
         final order = purchaseOrders[index];
+        final totalPrice = order.orderItems?.fold<int>(0, (acc, curr) {
+          log("${curr.price}");
+          return acc + curr.price;
+        });
         return ListTile(
           title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
-          trailing: const Text("0"),
+          trailing: Text("$totalPrice"),
         );
       },
     );
@@ -180,10 +186,12 @@ class SalesOrderList extends StatelessWidget {
       itemCount: salesOrders.length,
       itemBuilder: (context, index) {
         final order = salesOrders[index];
-
+        final totalPrice = order.orderItems?.fold<int>(0, (acc, prev) {
+          return acc + (prev.price * prev.quantity);
+        });
         return ListTile(
           title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
-          trailing: const Text("0"),
+          trailing: Text("$totalPrice"),
         );
       },
     );

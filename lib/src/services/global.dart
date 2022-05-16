@@ -4,6 +4,7 @@ import 'package:magicstep/src/config/colors.dart';
 class GlobalServices {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+  ///
   void showSnackBar(
       {required String message, required int time, Color? bgcolor}) {
     final BuildContext? context = navigatorKey.currentContext;
@@ -17,6 +18,7 @@ class GlobalServices {
     ));
   }
 
+  ///
   void errorSnackBar(String message) {
     final cntxt = navigatorKey.currentContext;
     if (cntxt == null) {
@@ -30,6 +32,7 @@ class GlobalServices {
     );
   }
 
+  ///
   void showBottomSheetLoader() {
     final BuildContext? context = navigatorKey.currentContext;
     if (context == null) {

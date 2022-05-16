@@ -177,8 +177,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     const Divider(color: Colors.transparent),
                     TypeAheadFormField<Party>(
                       validator: (value) {
-                        if ((value == null || value.isEmpty) &&
-                            widget.args.orderInput.modeOfPayment == "Credit") {
+                        final isEmpty = (value == null || value.isEmpty);
+                        final isCredit =
+                            widget.args.orderInput.modeOfPayment == "Credit";
+                        if (isEmpty && isCredit) {
                           return "Please select a party for credit order";
                         }
                         return null;

@@ -32,7 +32,7 @@ class Product {
 
   Map<String, dynamic> toMap() => {
         "name": name,
-        "sellingPrice": sellingPrice,
+        "price": sellingPrice,
         "barCode": barCode,
         "quantity": quantity,
         "user": user,

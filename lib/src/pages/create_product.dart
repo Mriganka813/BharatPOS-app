@@ -1,17 +1,18 @@
-// ignore_for_file: unused_local_variable
-
 import 'dart:developer';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/product/product_cubit.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:magicstep/src/models/input/product_input.dart';
 import 'package:magicstep/src/services/product.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_icons.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
+
+import '../blocs/product/product_cubit.dart';
 
 class CreateProduct extends StatefulWidget {
   static const String routeName = '/create-product';
@@ -26,6 +27,7 @@ class _CreateProductState extends State<CreateProduct> {
   late final ProductCubit _productCubit;
   final _formKey = GlobalKey<FormState>();
   late ProductFormInput _formInput;
+  late final AudioCache _audioCache;
 
   ///
   @override
@@ -33,6 +35,9 @@ class _CreateProductState extends State<CreateProduct> {
     super.initState();
     _formInput = ProductFormInput();
     _productCubit = ProductCubit();
+    _audioCache = AudioCache(
+      fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
+    );
     _fetchProductData();
   }
 
@@ -58,6 +63,7 @@ class _CreateProductState extends State<CreateProduct> {
   @override
   void dispose() {
     _productCubit.close();
+    _audioCache.clearAll();
     super.dispose();
   }
 
@@ -75,17 +81,6 @@ class _CreateProductState extends State<CreateProduct> {
           listener: (context, state) {
             if (state is ProductCreated) {
               return Navigator.pop(context);
-            }
-            if (state is ProductsError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red,
-                  content: Text(
-                    state.message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-              );
             }
           },
           child: BlocBuilder<ProductCubit, ProductState>(
@@ -134,7 +129,7 @@ class _CreateProductState extends State<CreateProduct> {
                             const VerticalDivider(color: Colors.transparent),
                             Expanded(
                               child: CustomTextField(
-                                label: "Inventory",
+                                label: "Quantity",
                                 value: _formInput.quantity,
                                 inputType: TextInputType.number,
                                 onSave: (e) {
@@ -154,21 +149,14 @@ class _CreateProductState extends State<CreateProduct> {
                                 onSave: (e) {
                                   _formInput.barCode = e;
                                 },
+                                validator: (e) => null,
                               ),
                             ),
                             const VerticalDivider(color: Colors.transparent),
                             IconButton(
                               onPressed: () async {
-                                String barcodeScanRes =
-                                    await FlutterBarcodeScanner.scanBarcode(
-                                  "#000000",
-                                  "#000000",
-                                  false,
-                                  ScanMode.BARCODE,
-                                );
-                                setState(() {
-                                  _formInput.barCode = barcodeScanRes;
-                                });
+                                _scanBarode();
+                                // Check if the device can vibrate
                               },
                               icon: const Icon(CustomIcons.camera),
                             )
@@ -211,5 +199,23 @@ class _CreateProductState extends State<CreateProduct> {
         ),
       ),
     );
+  }
+
+  Future<void> _scanBarode() async {
+    final res = await FlutterBarcodeScanner.scanBarcode(
+      "#000000",
+      "#000000",
+      false,
+      ScanMode.BARCODE,
+    );
+    if (res.isEmpty) {
+      return;
+    }
+    const _type = FeedbackType.success;
+    Vibrate.feedback(_type);
+    await _audioCache.play('audio/beep.mp3');
+    setState(() {
+      _formInput.barCode = res;
+    });
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:magicstep/src/services/api_v1.dart';
 
@@ -7,11 +9,16 @@ class OrdersService {
 
   ///
   Future<Response> getPurchaseOrders(int pageNumber) async {
-    return await ApiV1Service.getRequest('/purchaseOrders/me?page=$pageNumber');
+    final res =
+        await ApiV1Service.getRequest('/purchaseOrders/me?page=$pageNumber');
+    log("${res.data}");
+    return res;
   }
 
   ///
   Future<Response> getSalesOrders(int pageNumber) async {
-    return await ApiV1Service.getRequest('/salesOrders/me?page=$pageNumber ');
+    final res =
+        await ApiV1Service.getRequest('/salesOrders/me?page=$pageNumber ');
+    return res;
   }
 }

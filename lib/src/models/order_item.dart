@@ -14,8 +14,8 @@ class OrderItem {
   Product? product;
 
   factory OrderItem.fromMap(Map<String, dynamic> json) => OrderItem(
-        price: json["price"],
-        quantity: json["quantity"],
+        price: json["price"] ?? 0,
+        quantity: json["quantity"] ?? 1,
         image: json["image"],
         product:
             json["product"] is Map ? Product.fromMap(json["product"]) : null,

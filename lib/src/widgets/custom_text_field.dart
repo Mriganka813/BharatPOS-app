@@ -51,7 +51,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
-          initialValue: widget.initialValue,
           inputFormatters: widget.inputFormatters,
           textInputAction: TextInputAction.next,
           validator: (e) {
@@ -63,6 +62,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             return null;
           },
+          controller: widget.value != null || widget.initialValue != null
+              ? TextEditingController(text: widget.value ?? widget.initialValue)
+              : null,
           enabled: !widget.isLoading,
           onChanged: (e) {
             if (widget.onChanged == null) {
