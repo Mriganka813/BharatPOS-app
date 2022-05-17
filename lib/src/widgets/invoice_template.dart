@@ -1,8 +1,10 @@
 import 'package:magicstep/src/models/input/order_input.dart';
+import 'package:magicstep/src/models/user.dart';
 
 String invoiceTemplate({
   required String companyName,
   required OrderInput order,
+  required User user,
   required List<String> headers,
   required String total,
 }) {
@@ -32,10 +34,11 @@ String invoiceTemplate({
               <div>
                 <strong>$companyName</strong>
               </div>
-              <div>Madalinskiego 8</div>
-              <div>71-101 Szczecin, Poland</div>
-              <div>Email: info@dotnettec.com</div>
-              <div>Phone: +91 9800000000</div>
+              ${user.address?.toString().split(',').map((e) {
+            return '<div>$e</div>';
+          }).toList().join("\n")}
+              <div>Email: ${user.email ?? ""}</div>
+              <div>Phone: ${user.phoneNumber}</div>
             </div>
             <br/>
             <br/>

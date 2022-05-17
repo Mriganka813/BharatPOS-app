@@ -71,6 +71,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final htmlContent = invoiceTemplate(
       companyName: user.businessName ?? "",
       order: widget.args.orderInput,
+      user: user,
       headers: ["ID", "Name", "Qty", "Price", "Amt"],
       total: totalPrice() ?? "",
     );

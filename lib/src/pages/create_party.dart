@@ -81,17 +81,10 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
-                      validator: (e) {
-                        if (e == null || e.isEmpty) {
-                          return 'Please enter a valid address';
-                        }
-                        if (e.length < 4) {
-                          return 'Please should be more than 4 characters';
-                        }
-                        return null;
-                      },
+                      validator: (e) => null,
                       isLoading: isLoading,
                       label: 'Address',
+                      hintText: "Optional",
                       onSave: (e) {
                         _partyInput.address = e;
                       },

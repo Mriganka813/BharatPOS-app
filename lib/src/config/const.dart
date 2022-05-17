@@ -3,6 +3,6 @@ class Const {
 
   ///
   static const apiUrl =
-      'https://c331-2401-4900-1f28-101b-edb2-e245-edc1-dd14.ngrok.io';
+      'https://d153-2401-4900-1f28-18f7-d493-2d76-4aed-475c.ngrok.io';
   static const apiV1Url = apiUrl + '/api/v1';
 }

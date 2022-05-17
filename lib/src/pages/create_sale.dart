@@ -1,5 +1,7 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/product.dart';
 import 'package:magicstep/src/pages/checkout.dart';
@@ -22,10 +24,14 @@ class CreateSale extends StatefulWidget {
 
 class _CreateSaleState extends State<CreateSale> {
   late OrderInput _orderInput;
+  late final AudioCache _audioCache;
 
   @override
   void initState() {
     super.initState();
+    _audioCache = AudioCache(
+      fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
+    );
     _orderInput = OrderInput(
       orderItems: [],
     );
@@ -189,6 +195,9 @@ class _CreateSaleState extends State<CreateSale> {
       false,
       ScanMode.BARCODE,
     );
+    const _type = FeedbackType.success;
+    Vibrate.feedback(_type);
+    await _audioCache.play('audio/beep.mp3');
     try {
       /// Fetch product by barcode
       final res = await const ProductService().getProductByBarcode(barcode);
