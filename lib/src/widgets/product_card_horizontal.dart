@@ -49,7 +49,7 @@ class ProductCardHorizontal extends StatelessWidget {
                   // const SizedBox(height: 2),
                   // Text(color),
                   const SizedBox(height: 2),
-                  Text('Purchase Price ${product.sellingPrice}'),
+                  Text('Purchase Price ${product.purchasePrice}'),
                   const SizedBox(height: 2),
                   Text('Sale Price ${product.sellingPrice}'),
                 ],

@@ -129,16 +129,26 @@ class _CreateProductState extends State<CreateProduct> {
                             const VerticalDivider(color: Colors.transparent),
                             Expanded(
                               child: CustomTextField(
-                                label: "Quantity",
+                                label: "Purchase Price",
                                 value: _formInput.quantity,
                                 inputType: TextInputType.number,
                                 onSave: (e) {
-                                  _formInput.quantity = e;
+                                  _formInput.purchasePrice = e;
                                 },
                               ),
                             ),
                           ],
                         ),
+                        const Divider(color: Colors.transparent),
+                        CustomTextField(
+                          label: "Quantity",
+                          value: _formInput.quantity,
+                          inputType: TextInputType.number,
+                          onSave: (e) {
+                            _formInput.quantity = e;
+                          },
+                        ),
+                        const Divider(color: Colors.transparent),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [

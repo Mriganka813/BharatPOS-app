@@ -9,6 +9,7 @@ import 'package:magicstep/src/blocs/checkout/checkout_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/order_input.dart';
 import 'package:magicstep/src/models/user.dart';
+import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/services/party.dart';
@@ -170,12 +171,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Divider(color: Colors.transparent),
-                    Text(
-                      "Party",
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
-                          color: Colors.black, fontWeight: FontWeight.normal),
-                    ),
-                    const Divider(color: Colors.transparent),
                     TypeAheadFormField<Party>(
                       validator: (value) {
                         final isEmpty = (value == null || value.isEmpty);
@@ -191,8 +186,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         controller: _typeAheadController,
                         autofocus: true,
                         decoration: InputDecoration(
-                          hintText: "Optional",
-                          suffixIcon: const Icon(Icons.add_outlined),
+                          hintText: "Party",
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                CreatePartyPage.routeName,
+                              );
+                            },
+                            child: const Icon(Icons.add_circle_outline_rounded),
+                          ),
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 2,
                             horizontal: 10,
@@ -207,7 +210,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       },
                       itemBuilder: (context, party) {
                         return ListTile(
-                          leading: const Icon(Icons.shopping_cart),
+                          leading: const Icon(Icons.person),
                           title: Text(party.name ?? ""),
                         );
                       },

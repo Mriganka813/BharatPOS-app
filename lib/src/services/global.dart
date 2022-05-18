@@ -33,6 +33,20 @@ class GlobalServices {
   }
 
   ///
+  void successSnackBar(String message) {
+    final cntxt = navigatorKey.currentContext;
+    if (cntxt == null) {
+      return;
+    }
+    ScaffoldMessenger.of(cntxt).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
+  ///
   void showBottomSheetLoader() {
     final BuildContext? context = navigatorKey.currentContext;
     if (context == null) {
