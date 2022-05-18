@@ -126,6 +126,9 @@ class _ProductsListPageState extends State<ProductsListPage> {
                       onTap: () {
                         if (widget.isSelecting) {
                           final product = state.products[index];
+                          if ((product.quantity ?? 0) < 1) {
+                            return;
+                          }
                           setState(() {
                             !_products.contains(product)
                                 ? _products.add(product)
