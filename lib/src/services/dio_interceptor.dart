@@ -8,6 +8,7 @@ class CustomInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     log("${err.response?.data}");
+    log("${err.response?.statusCode}");
     final message = err.response?.data['message'] ?? "Something went wrong";
     locator<GlobalServices>().errorSnackBar(message);
     return super.onError(err, handler);

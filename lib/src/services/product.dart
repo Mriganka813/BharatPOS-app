@@ -7,16 +7,28 @@ class ProductService {
   const ProductService();
 
   Future<Response> createProduct(ProductFormInput input) async {
+    final inputMap = FormData.fromMap(input.toMap());
+    final filePath = input.imageFile?.path ?? "";
+    if (filePath.isNotEmpty) {
+      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
+      inputMap.files.add(image);
+    }
     final response =
-        await ApiV1Service.postRequest('/inventory/new', data: input.toMap());
+        await ApiV1Service.postRequest('/inventory/new', formData: inputMap);
     return response;
   }
 
   ///
   Future<Response> updateProduct(ProductFormInput input) async {
+    final inputMap = FormData.fromMap(input.toMap());
+    final filePath = input.imageFile?.path ?? "";
+    if (filePath.isNotEmpty) {
+      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
+      inputMap.files.add(image);
+    }
     final response = await ApiV1Service.putRequest(
       '/update/inventory/${input.id}',
-      data: input.toMap(),
+      formData: inputMap,
     );
     return response;
   }

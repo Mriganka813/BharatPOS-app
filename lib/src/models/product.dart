@@ -7,6 +7,7 @@ class Product {
     this.purchasePrice,
     this.user,
     this.id,
+    this.image,
     this.createdAt,
     this.v,
   });
@@ -16,6 +17,7 @@ class Product {
   String? barCode;
   int? quantity;
   String? user;
+  String? image;
   String? id;
   DateTime? createdAt;
   int? v;
@@ -28,6 +30,7 @@ class Product {
         quantity: json["quantity"],
         purchasePrice: json['purchasePrice'],
         user: json["user"],
+        image: json['image'],
         id: json["_id"],
         createdAt: DateTime.parse(json["createdAt"]),
         v: json["__v"],
@@ -37,6 +40,7 @@ class Product {
         "name": name,
         "sellingPrice": sellingPrice,
         "barCode": barCode,
+        "image": image,
         "quantity": quantity,
         "user": user,
         "_id": id,

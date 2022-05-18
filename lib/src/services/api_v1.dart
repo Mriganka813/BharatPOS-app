@@ -41,8 +41,9 @@ class ApiV1Service {
   static Future<Response> postRequest(
     String url, {
     Map<String, dynamic>? data,
+    FormData? formData,
   }) async {
-    return await _dio.post(url, data: data);
+    return await _dio.post(url, data: formData ?? data);
   }
 
   ///
@@ -54,9 +55,12 @@ class ApiV1Service {
   }
 
   ///
-  static Future<Response> putRequest(String url,
-      {Map<String, dynamic>? data}) async {
-    return await _dio.put(url, data: data);
+  static Future<Response> putRequest(
+    String url, {
+    Map<String, dynamic>? data,
+    FormData? formData,
+  }) async {
+    return await _dio.put(url, data: formData ?? data);
   }
 
   ///

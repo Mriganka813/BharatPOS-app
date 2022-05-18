@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 class ProductFormInput {
   ProductFormInput({
     this.name,
@@ -6,6 +8,8 @@ class ProductFormInput {
     this.id,
     this.purchasePrice,
     this.quantity,
+    this.image,
+    this.imageFile,
   });
 
   String? name;
@@ -14,6 +18,8 @@ class ProductFormInput {
   String? sellingPrice;
   String? barCode;
   String? quantity;
+  String? image;
+  XFile? imageFile;
 
   Map<String, dynamic> toMap() => {
         "name": name,
@@ -29,6 +35,7 @@ class ProductFormInput {
         sellingPrice: map['sellingPrice'].toString(),
         barCode: map['barCode'].toString(),
         quantity: map['quantity'].toString(),
+        image: map['image'].toString(),
         id: map['_id'].toString(),
       );
 }
