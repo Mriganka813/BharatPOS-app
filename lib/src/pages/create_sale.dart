@@ -37,6 +37,18 @@ class _CreateSaleState extends State<CreateSale> {
     );
   }
 
+  void _onAdd(OrderItemInput orderItem) {
+    final qty = orderItem.quantity + 1;
+    final availableQty = orderItem.product?.quantity ?? 0;
+    if (qty > availableQty) {
+      locator<GlobalServices>().infoSnackBar("Quantity not available");
+      return;
+    }
+    setState(() {
+      orderItem.quantity += 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _orderItems = _orderInput.orderItems ?? [];
@@ -65,9 +77,7 @@ class _CreateSaleState extends State<CreateSale> {
                         return ProductCardPurchase(
                           product: product,
                           onAdd: () {
-                            setState(() {
-                              _orderItem.quantity += 1;
-                            });
+                            _onAdd(_orderItem);
                           },
                           onDelete: () {
                             if (_orderItem.quantity == 1) {

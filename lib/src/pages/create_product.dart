@@ -203,7 +203,7 @@ class _CreateProductState extends State<CreateProduct> {
                         Expanded(
                           child: CustomTextField(
                             label: "Purchase Price",
-                            value: _formInput.quantity,
+                            value: _formInput.purchasePrice,
                             inputType: TextInputType.number,
                             onSave: (e) {
                               _formInput.purchasePrice = e;

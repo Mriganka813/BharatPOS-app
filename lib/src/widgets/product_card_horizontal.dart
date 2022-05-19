@@ -127,63 +127,78 @@ class ProductCardPurchase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Image.network(
-          //   img,
-          //   height: 200,
-          // ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name ?? "",
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          onAdd();
-                        },
-                        icon: const Icon(Icons.add_circle_outline_rounded),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Text("$productQuantity"),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          onDelete();
-                        },
-                        icon: const Icon(Icons.remove_circle_outline_rounded),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-
-                  // const SizedBox(height: 2),
-                  // Text(color),
-                  const SizedBox(height: 2),
-                  Text('Purchase Price ${product.sellingPrice}'),
-                  const SizedBox(height: 2),
-                  Text('Sale Price ${product.sellingPrice}'),
-                ],
+    return SizedBox(
+      height: 200,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: product.image != null
+                      ? CachedNetworkImage(
+                          imageUrl: product.image!,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset('assets/images/image_placeholder.png'),
+                ),
               ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name ?? "",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            onAdd();
+                          },
+                          icon: const Icon(Icons.add_circle_outline_rounded),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: Text("$productQuantity"),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            onDelete();
+                          },
+                          icon: const Icon(Icons.remove_circle_outline_rounded),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // const SizedBox(height: 2),
+                    // Text(color),
+                    const SizedBox(height: 2),
+                    Text('Purchase Price ${product.purchasePrice}'),
+                    const SizedBox(height: 2),
+                    Text('Sale Price ${product.sellingPrice}'),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

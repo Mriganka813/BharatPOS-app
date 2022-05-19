@@ -27,6 +27,12 @@ class _CreatePurchaseState extends State<CreatePurchase> {
     );
   }
 
+  void _onAdd(OrderItemInput orderItem) {
+    setState(() {
+      orderItem.quantity += 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final _orderItems = _orderInput.orderItems ?? [];
@@ -55,9 +61,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                         return ProductCardPurchase(
                           product: product,
                           onAdd: () {
-                            setState(() {
-                              _orderItem.quantity += 1;
-                            });
+                            _onAdd(_orderItem);
                           },
                           onDelete: () {
                             setState(
