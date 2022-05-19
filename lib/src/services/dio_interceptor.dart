@@ -7,9 +7,12 @@ import 'package:magicstep/src/services/locator.dart';
 class CustomInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
+    log(err.toString());
     log("${err.response?.data}");
     log("${err.response?.statusCode}");
-    final message = err.response?.data['message'] ?? "Something went wrong";
+    final message = err.response?.data['message'] ??
+        "${err.response?.data}" ??
+        "Something went wrong";
     locator<GlobalServices>().errorSnackBar(message);
     return super.onError(err, handler);
   }
