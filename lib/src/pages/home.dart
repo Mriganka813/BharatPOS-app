@@ -84,7 +84,6 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               ProductsListPage.routeName,
-                              arguments: false,
                             );
                           },
                         ),

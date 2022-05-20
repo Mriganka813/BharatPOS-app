@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/product/product_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/product.dart';
+import 'package:magicstep/src/pages/checkout.dart';
 import 'package:magicstep/src/pages/create_product.dart';
 import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
@@ -10,13 +11,22 @@ import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:magicstep/src/widgets/product_card_horizontal.dart';
 
+class ProductListPageArgs {
+  final bool isSelecting;
+  final OrderType orderType;
+  const ProductListPageArgs({
+    required this.isSelecting,
+    required this.orderType,
+  });
+}
+
 class ProductsListPage extends StatefulWidget {
   /// Will be used to check if user is
   /// selecting products instead of viewing them
-  final bool isSelecting;
+  final ProductListPageArgs? args;
   const ProductsListPage({
     Key? key,
-    this.isSelecting = false,
+    this.args,
   }) : super(key: key);
 
   ///
@@ -58,7 +68,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (widget.isSelecting)
+            if (widget.args?.isSelecting ?? false)
               Expanded(
                 child: CustomButton(
                     title: "Continue",
@@ -82,7 +92,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                       );
                     }),
               ),
-            if (widget.isSelecting) const SizedBox(width: 20),
+            if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
             FloatingActionButton(
               onPressed: () async {
                 await Navigator.pushNamed(context, '/create-product');
@@ -126,7 +136,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (widget.isSelecting) {
+                        if (widget.args?.isSelecting ?? false) {
                           final product = state.products[index];
                           if ((product.quantity ?? 0) < 1) {
                             locator<GlobalServices>()

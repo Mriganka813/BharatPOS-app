@@ -90,7 +90,10 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                       final result = await Navigator.pushNamed(
                         context,
                         ProductsListPage.routeName,
-                        arguments: true,
+                        arguments: const ProductListPageArgs(
+                          isSelecting: true,
+                          orderType: OrderType.purchase,
+                        ),
                       );
                       if (result == null && result is! List<Product>) {
                         return;

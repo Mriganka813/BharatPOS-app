@@ -108,7 +108,10 @@ class _CreateSaleState extends State<CreateSale> {
                       final result = await Navigator.pushNamed(
                         context,
                         ProductsListPage.routeName,
-                        arguments: true,
+                        arguments: const ProductListPageArgs(
+                          isSelecting: false,
+                          orderType: OrderType.sale,
+                        ),
                       );
                       if (result == null && result is! List<Product>) {
                         return;
