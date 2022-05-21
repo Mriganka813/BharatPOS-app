@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
                 return const HomePage();
               case ProductsListPage.routeName:
                 return ProductsListPage(
-                  isSelecting: settings.arguments as bool,
+                  args: settings.arguments as ProductListPageArgs?,
                 );
               case CreateProduct.routeName:
                 return CreateProduct(id: settings.arguments as String?);

@@ -45,6 +45,7 @@ class CustomButton extends StatelessWidget {
               padding: padding,
             ),
       onPressed: () {
+        if (isDisabled) return;
         onTap();
       },
       child: isLoading

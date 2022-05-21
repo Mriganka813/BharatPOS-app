@@ -15,6 +15,8 @@ dependencies:
   cookie_jar: ^3.0.1
   dio: ^4.0.6
   dio_cookie_manager: ^2.0.0
+  firebase_auth: ^3.3.18
+  firebase_core: ^1.17.0
   flutter:
     sdk: flutter
   flutter_barcode_scanner: ^2.0.0
