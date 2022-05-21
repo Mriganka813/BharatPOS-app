@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      await const AuthService().clearCookies();
+                      await const AuthService().signOut();
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         SignInPage.routeName,

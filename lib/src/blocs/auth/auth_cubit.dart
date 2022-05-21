@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:magicstep/src/models/input/sign_up_input.dart';
 import 'package:magicstep/src/services/auth.dart';
 import 'package:magicstep/src/services/global.dart';
@@ -11,7 +11,7 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   final _authService = const AuthService();
-  final _authInstace = FirebaseAuth.instance;
+  final _authInstace = fb.FirebaseAuth.instance;
   String? _verificationId;
 
   ///
@@ -33,10 +33,10 @@ class AuthCubit extends Cubit<AuthState> {
   ///
   signUp(SignUpInput signUpInput) async {
     emit(AuthLoading());
-    await verifyOtp(signUpInput.verificationCode!);
-    final user = _authInstace.currentUser;
+    final user = await _verifyOtp(signUpInput.verificationCode!);
     if (user == null) {
       emit(AuthError("Please verify phone number first"));
+      return;
     }
     try {
       final user = await _authService.signUpRequest(signUpInput);
@@ -54,10 +54,10 @@ class AuthCubit extends Cubit<AuthState> {
   verifyPhoneNumber(String phoneNumber) async {
     await _authInstace.verifyPhoneNumber(
       phoneNumber: '+91$phoneNumber',
-      verificationCompleted: (PhoneAuthCredential credential) async {
+      verificationCompleted: (fb.PhoneAuthCredential credential) async {
         _onVerificationCompleted(credential);
       },
-      verificationFailed: (FirebaseAuthException e) {
+      verificationFailed: (fb.FirebaseAuthException e) {
         emit(AuthError("Could not verify phone number"));
       },
       codeSent: (String verificationId, int? resendToken) {
@@ -68,25 +68,28 @@ class AuthCubit extends Cubit<AuthState> {
     );
   }
 
-  _onVerificationCompleted(PhoneAuthCredential credential) {
+  ///
+  _onVerificationCompleted(fb.PhoneAuthCredential credential) {
     final smsCode = credential.smsCode;
     if (smsCode == null) {
       return;
     }
     emit(OtpRetrieved(smsCode));
-    verifyOtp(smsCode);
+    _verifyOtp(smsCode);
   }
 
   ///
-  verifyOtp(String otp) async {
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+  Future<fb.UserCredential?> _verifyOtp(String otp) async {
+    if (_verificationId == null) {
+      return null;
+    }
+    final creds = fb.PhoneAuthProvider.credential(
         verificationId: _verificationId!, smsCode: otp);
     try {
-      await _authInstace.signInWithCredential(credential);
-      emit(PhoneVerified());
-    } catch (err) {
-      emit(
-          AuthError("Could not verify phone number, please enter correct otp"));
+      final user = await _authInstace.signInWithCredential(creds);
+      return user;
+    } catch (_) {
+      return null;
     }
   }
 }

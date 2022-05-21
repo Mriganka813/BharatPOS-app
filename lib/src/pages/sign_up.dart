@@ -5,6 +5,8 @@ import 'package:magicstep/src/blocs/auth/auth_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/sign_up_input.dart';
 import 'package:magicstep/src/pages/home.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_drop_down.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
@@ -42,6 +44,9 @@ class _SignUpPageState extends State<SignUpPage> {
       body: BlocListener<AuthCubit, AuthState>(
         bloc: _authCubit,
         listener: (context, state) {
+          if (state is AuthError) {
+            locator<GlobalServices>().errorSnackBar(state.message);
+          }
           if (state is SignInSucces) {
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -54,7 +59,6 @@ class _SignUpPageState extends State<SignUpPage> {
           key: _formKey,
           child: BlocBuilder<AuthCubit, AuthState>(
             bloc: _authCubit,
-            buildWhen: (previous, current) => current is! AuthError,
             builder: (context, state) {
               bool isLoading = false;
               if (state is AuthLoading) {
@@ -238,6 +242,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Divider(color: Colors.transparent),
                     const SizedBox(height: 5),
                     CustomButton(
+                      isDisabled: isLoading,
                       onTap: () {
                         _formKey.currentState?.save();
                         final isValid =
