@@ -118,10 +118,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       inputType: TextInputType.phone,
                       label: "Phone Number",
                       inputFormatters: [LengthLimitingTextInputFormatter(10)],
-                      onSave: (e) {
+                      onChanged: (e) {
                         setState(() {
                           _signUpInput.phoneNumber = e;
                         });
+                      },
+                      onSave: (e) {
+                        _signUpInput.phoneNumber = e;
                       },
                     ),
                     const Divider(color: Colors.transparent),
@@ -143,7 +146,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             );
                             return;
                           }
-                          _authCubit.sendOtp(_signUpInput);
+                          _authCubit.verifyPhoneNumber(
+                            _signUpInput.phoneNumber!,
+                          );
                         },
                         style: Theme.of(context)
                             .textTheme
@@ -153,9 +158,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
+                      value: state is OtpRetrieved ? state.otp : null,
+                      inputFormatters: [LengthLimitingTextInputFormatter(6)],
                       label: "Verification Code",
+                      inputType: TextInputType.phone,
+                      validator: (e) {
+                        if (e == null || e.isEmpty || e.length < 6) {
+                          return "Please enter a valid verification code";
+                        }
+                        return null;
+                      },
                       onSave: (e) {
-                        _signUpInput.verificationCode;
+                        _signUpInput.verificationCode = e;
                       },
                     ),
                     const Divider(color: Colors.transparent),
