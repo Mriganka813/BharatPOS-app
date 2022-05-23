@@ -14,11 +14,13 @@ import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/services/party.dart';
 import 'package:magicstep/src/services/user.dart';
+import 'package:magicstep/src/utils.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_drop_down.dart';
 import 'package:magicstep/src/widgets/invoice_template.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:whatsapp_share2/whatsapp_share2.dart';
 
 import '../models/party.dart';
 
@@ -67,7 +69,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   void _viewPdf(User user) async {
-    final targetPath = await getTemporaryDirectory();
+    final targetPath = await getExternalCacheDirectories();
     const targetFileName = "example_pdf_file";
     final htmlContent = invoiceTemplate(
       companyName: user.businessName ?? "",
@@ -78,10 +80,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
       htmlContent,
-      targetPath.path,
+      targetPath!.first.path,
       targetFileName,
     );
-    OpenFile.open(generatedPdfFile.path);
+
+    final input = _typeAheadController.value.text.trim();
+    if (input.length == 10 && int.tryParse(input) != null) {
+      await WhatsappShare.shareFile(
+        text: 'Invoice',
+        phone: '91$input',
+        filePath: [generatedPdfFile.path],
+      );
+      return;
+    }
+    final party = widget.args.orderInput.party;
+    if (party == null) {
+      final path = generatedPdfFile.path;
+      await Share.shareFiles([path], mimeTypes: ['application/pdf']);
+      return;
+    }
+    final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
+    if (!isValidPhoneNumber) {
+      locator<GlobalServices>()
+          .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
+      return;
+    }
+    await WhatsappShare.shareFile(
+      text: 'Invoice',
+      phone: '91${party.phoneNumber ?? ""}',
+      filePath: [generatedPdfFile.path],
+    );
   }
 
   Future<Iterable<Party>> _fetchProducts(String pattern) async {
