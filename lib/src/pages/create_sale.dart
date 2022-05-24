@@ -109,7 +109,7 @@ class _CreateSaleState extends State<CreateSale> {
                         context,
                         ProductsListPage.routeName,
                         arguments: const ProductListPageArgs(
-                          isSelecting: false,
+                          isSelecting: true,
                           orderType: OrderType.sale,
                         ),
                       );

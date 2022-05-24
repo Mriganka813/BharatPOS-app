@@ -193,6 +193,8 @@ class ProductCardPurchase extends StatelessWidget {
                     Text('Purchase Price ${product.purchasePrice}'),
                     const SizedBox(height: 2),
                     Text('Sale Price ${product.sellingPrice}'),
+                    const SizedBox(height: 2),
+                    Text('Qty ${product.quantity ?? 0}'),
                   ],
                 ),
               ),

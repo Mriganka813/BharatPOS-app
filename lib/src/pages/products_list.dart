@@ -54,6 +54,25 @@ class _ProductsListPageState extends State<ProductsListPage> {
     super.dispose();
   }
 
+  void _selectProduct(Product product) {
+    if (widget.args?.isSelecting ?? false) {
+      if ((product.quantity ?? 0) < 1) {
+        locator<GlobalServices>().infoSnackBar('Item not available');
+        return;
+      }
+
+      if (widget.args?.orderType == OrderType.sale &&
+          (product.quantity ?? 0) < 1) {
+        return;
+      }
+      setState(() {
+        !_products.contains(product)
+            ? _products.add(product)
+            : _products.remove(product);
+      });
+    }
+  }
+
   ///
   @override
   Widget build(BuildContext context) {
@@ -136,19 +155,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: () {
-                        if (widget.args?.isSelecting ?? false) {
-                          final product = state.products[index];
-                          if ((product.quantity ?? 0) < 1) {
-                            locator<GlobalServices>()
-                                .infoSnackBar('Item not available');
-                            return;
-                          }
-                          setState(() {
-                            !_products.contains(product)
-                                ? _products.add(product)
-                                : _products.remove(product);
-                          });
-                        }
+                        _selectProduct(state.products[index]);
                       },
                       child: Stack(
                         children: [
