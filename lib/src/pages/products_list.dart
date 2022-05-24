@@ -55,22 +55,21 @@ class _ProductsListPageState extends State<ProductsListPage> {
   }
 
   void _selectProduct(Product product) {
-    if (widget.args?.isSelecting ?? false) {
-      if ((product.quantity ?? 0) < 1) {
-        locator<GlobalServices>().infoSnackBar('Item not available');
-        return;
-      }
-
-      if (widget.args?.orderType == OrderType.sale &&
-          (product.quantity ?? 0) < 1) {
-        return;
-      }
-      setState(() {
-        !_products.contains(product)
-            ? _products.add(product)
-            : _products.remove(product);
-      });
+    final canSelect = widget.args?.isSelecting ?? false;
+    if (!canSelect) {
+      return;
     }
+    final isSale = widget.args?.orderType == OrderType.sale;
+    if (isSale && (product.quantity ?? 0) < 1) {
+      locator<GlobalServices>().infoSnackBar('Item not available');
+      return;
+    }
+
+    setState(() {
+      !_products.contains(product)
+          ? _products.add(product)
+          : _products.remove(product);
+    });
   }
 
   ///
