@@ -262,6 +262,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           widget.args.orderInput.modeOfPayment = e;
                         });
                       },
+                      validator: (e) {
+                        if ((e ?? "").isEmpty) {
+                          return 'Please select a mode of payment';
+                        }
+                        return null;
+                      },
                       hintText: "Mode of payment",
                     ),
                     const Divider(color: Colors.transparent, height: 30),
