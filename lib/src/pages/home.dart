@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                               color: ColorsConst.primaryColor,
                               size: 50,
                             ),
-                            title: "Income Expense",
+                            title: "Expense",
                             onTap: () {
                               Navigator.pushNamed(
                                 context,
