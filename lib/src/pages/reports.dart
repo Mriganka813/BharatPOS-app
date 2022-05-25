@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/models/expense.dart';
-import 'package:magicstep/src/pages/pdf_preview.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:path_provider/path_provider.dart';
@@ -143,8 +142,8 @@ class _ReportsPageState extends State<ReportsPage> {
     final file = File("${dir?.path}/example.pdf");
     final output = await file.writeAsBytes(await pdf.save()); //
     await Permission.storage.request();
-    Navigator.pushNamed(context, PdfPreviewPage.routeName,
-        arguments: output.path);
+    // Navigator.pushNamed(context, PdfPreviewPage.routeName,
+    // arguments: output.path);
     // launchUrlString("file://${output.path}");
   }
 

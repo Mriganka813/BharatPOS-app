@@ -6,7 +6,6 @@ import 'package:magicstep/src/pages/create_purchase.dart';
 import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
-import 'package:magicstep/src/pages/pdf_preview.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/pages/reports.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
@@ -106,8 +105,8 @@ class MyApp extends StatelessWidget {
                 return const CreatePartyPage();
               case CreatePurchasePage.routeName:
                 return const CreatePurchasePage();
-              case PdfPreviewPage.routeName:
-                return PdfPreviewPage(pdfPath: settings.arguments as String);
+              // case PdfPreviewPage.routeName:
+              //   return PdfPreviewPage(pdfPath: settings.arguments as String);
               default:
                 return const SplashScreen();
             }
