@@ -7,28 +7,16 @@ class ProductService {
   const ProductService();
 
   Future<Response> createProduct(ProductFormInput input) async {
-    final inputMap = FormData.fromMap(input.toMap());
-    final filePath = input.imageFile?.path ?? "";
-    if (filePath.isNotEmpty) {
-      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
-      inputMap.files.add(image);
-    }
     final response =
-        await ApiV1Service.postRequest('/inventory/new', formData: inputMap);
+        await ApiV1Service.postRequest('/inventory/new', data: input.toMap());
     return response;
   }
 
   ///
   Future<Response> updateProduct(ProductFormInput input) async {
-    final inputMap = FormData.fromMap(input.toMap());
-    final filePath = input.imageFile?.path ?? "";
-    if (filePath.isNotEmpty) {
-      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
-      inputMap.files.add(image);
-    }
     final response = await ApiV1Service.putRequest(
       '/update/inventory/${input.id}',
-      formData: inputMap,
+      data: input.toMap(),
     );
     return response;
   }
@@ -45,17 +33,8 @@ class ProductService {
     return response;
   }
 
-  /// Fetch Product by barcode
-  Future<Response> getProductByBarcode(String barcode) async {
-    return await ApiV1Service.getRequest('/inventory/barcode/$barcode');
-  }
-
   ///
-  Future<Response> searchProducts(String keyword) async {
-    return await ApiV1Service.getRequest('/inventories?keyword=$keyword');
-  }
 
-  ///
   Future<Response> deleteProduct(Product product) async {
     final response =
         await ApiV1Service.deleteRequest('/del/inventory/${product.id}');
