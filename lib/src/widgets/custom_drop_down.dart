@@ -4,11 +4,13 @@ class CustomDropDownField extends StatefulWidget {
   final List<String> items;
   final String? hintText;
   final Function(String) onSelected;
+  final Function(String?)? validator;
   final String? initialValue;
   const CustomDropDownField({
     Key? key,
     required this.items,
     required this.onSelected,
+    this.validator,
     this.initialValue,
     required this.hintText,
   }) : super(key: key);
@@ -40,6 +42,9 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
         widget.onSelected(e);
       },
       validator: (e) {
+        if (widget.validator != null) {
+          return widget.validator!(e);
+        }
         if (e == null || e.isEmpty) {
           return 'Please select a Business Type';
         }
