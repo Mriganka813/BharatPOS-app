@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:magicstep/src/pages/create_expense.dart';
 import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/pages/create_product.dart';
+import 'package:magicstep/src/pages/create_purchase.dart';
 import 'package:magicstep/src/pages/expense.dart';
 import 'package:magicstep/src/pages/home.dart';
 import 'package:magicstep/src/pages/party_list.dart';
+import 'package:magicstep/src/pages/pdf_preview.dart';
 import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/pages/reports.dart';
 import 'package:magicstep/src/pages/sign_in.dart';
@@ -75,11 +77,11 @@ class MyApp extends StatelessWidget {
 
       // Define a function to handle named routes in order to support
       // Flutter web url navigation and deep linking.
-      onGenerateRoute: (RouteSettings routeSettings) {
+      onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
-          settings: routeSettings,
+          settings: settings,
           builder: (BuildContext context) {
-            switch (routeSettings.name) {
+            switch (settings.name) {
               case SignInPage.routeName:
                 return const SignInPage();
               case SignUpPage.routeName:
@@ -87,9 +89,11 @@ class MyApp extends StatelessWidget {
               case HomePage.routeName:
                 return const HomePage();
               case ProductsListPage.routeName:
-                return const ProductsListPage();
+                return ProductsListPage(
+                  isSelecting: settings.arguments as bool,
+                );
               case CreateProduct.routeName:
-                return CreateProduct(id: routeSettings.arguments as String?);
+                return CreateProduct(id: settings.arguments as String?);
               case PartyListPage.routeName:
                 return const PartyListPage();
               case ReportsPage.routeName:
@@ -97,11 +101,13 @@ class MyApp extends StatelessWidget {
               case ExpensePage.routeName:
                 return const ExpensePage();
               case CreateExpensePage.routeName:
-                return CreateExpensePage(
-                  id: routeSettings.arguments as String?,
-                );
+                return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:
                 return const CreatePartyPage();
+              case CreatePurchasePage.routeName:
+                return const CreatePurchasePage();
+              case PdfPreviewPage.routeName:
+                return PdfPreviewPage(pdfPath: settings.arguments as String);
               default:
                 return const SplashScreen();
             }

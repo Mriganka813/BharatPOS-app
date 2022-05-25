@@ -1,9 +1,3 @@
-import 'dart:convert';
-
-Expense expenseFromMap(String str) => Expense.fromMap(json.decode(str));
-
-String expenseToMap(Expense data) => json.encode(data.toMap());
-
 class Expense {
   Expense({
     this.header,

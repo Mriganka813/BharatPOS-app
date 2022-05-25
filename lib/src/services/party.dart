@@ -11,8 +11,8 @@ class PartyService {
   }
 
   /// Get all parties for the current user
-  Future<Response> getParties(PartyInput party) async {
-    return await ApiV1Service.getRequest('/party/me', data: party.toMap());
+  Future<Response> getParties() async {
+    return await ApiV1Service.getRequest('/party/me');
   }
 
   Future<Response> deleteParty(Party party) async {
