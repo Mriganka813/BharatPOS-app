@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/party/party_cubit.dart';
 import 'package:magicstep/src/models/input/party_input.dart';
+import 'package:magicstep/src/services/global.dart';
+import 'package:magicstep/src/services/locator.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 
@@ -37,47 +41,77 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
       appBar: AppBar(
         title: const Text('Create Party'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              CustomTextField(
-                label: 'Name',
-                onSave: (e) {
-                  _partyInput.name = e;
-                },
-              ),
-              const Divider(color: Colors.transparent),
-              CustomTextField(
-                label: 'Phone Number',
-                onSave: (e) {
-                  _partyInput.phoneNumber = e;
-                },
-              ),
-              const Divider(color: Colors.transparent),
-              CustomTextField(
-                label: 'Address',
-                onSave: (e) {
-                  _partyInput.address = e;
-                },
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.centerRight,
-                child: CustomButton(
-                  title: "Save",
-                  onTap: () {
-                    _formKey.currentState?.save();
-                    if (_formKey.currentState?.validate() ?? false) {}
-                  },
+      body: BlocListener<PartyCubit, PartyState>(
+        bloc: _partyCubit,
+        listener: (context, state) {
+          if (state is PartySuccess) {
+            locator<GlobalServices>().successSnackBar('Party created');
+            Navigator.of(context).pop(true);
+          }
+        },
+        child: BlocBuilder<PartyCubit, PartyState>(
+          bloc: _partyCubit,
+          builder: (context, state) {
+            bool isLoading = false;
+            if (state is PartyLoading) {
+              isLoading = true;
+            }
+            return Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CustomTextField(
+                      label: 'Name',
+                      isLoading: isLoading,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(13),
+                      ],
+                      onSave: (e) {
+                        _partyInput.name = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      isLoading: isLoading,
+                      inputType: TextInputType.phone,
+                      label: 'Phone Number',
+                      onSave: (e) {
+                        _partyInput.phoneNumber = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      validator: (e) => null,
+                      isLoading: isLoading,
+                      label: 'Address',
+                      hintText: "Optional",
+                      onSave: (e) {
+                        _partyInput.address = e;
+                      },
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: CustomButton(
+                        title: "Save",
+                        isLoading: isLoading,
+                        onTap: () {
+                          _formKey.currentState?.save();
+                          if (_formKey.currentState?.validate() ?? false) {
+                            _partyCubit.createParty(_partyInput);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                  ],
                 ),
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

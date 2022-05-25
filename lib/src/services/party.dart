@@ -15,6 +15,17 @@ class PartyService {
     return await ApiV1Service.getRequest('/party/me');
   }
 
+  /// Get all parties
+  Future<Response> getSearch(String searchQuery) async {
+    return await ApiV1Service.getRequest(
+      '/party/search',
+      queryParameters: {
+        "searchQuery": searchQuery,
+        "limit": 10,
+      },
+    );
+  }
+
   Future<Response> deleteParty(Party party) async {
     return await ApiV1Service.deleteRequest('/del/party/${party.id}');
   }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:magicstep/src/config/const.dart';
 import 'package:magicstep/src/models/input/sign_up_input.dart';
 import 'package:magicstep/src/models/user.dart';
@@ -29,15 +30,21 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await _saveCookie(response);
+    await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 
   /// Save cookies after sign in/up
-  Future<void> _saveCookie(Response response) async {
+  Future<void> saveCookie(Response response) async {
     List<Cookie> cookies = [Cookie("token", response.data['token'])];
     final cj = await ApiV1Service.getCookieJar();
     await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+  }
+
+  ///
+  Future<void> signOut() async {
+    await clearCookies();
+    await fb.FirebaseAuth.instance.signOut();
   }
 
   /// Clear cookies before log out
@@ -59,7 +66,7 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await _saveCookie(response);
+    await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 }

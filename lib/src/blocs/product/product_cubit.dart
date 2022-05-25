@@ -29,6 +29,21 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   ///
+  void searchProducts(String pattern) async {
+    emit(ProductLoading());
+    try {
+      final response = await _productService.searchProducts(pattern);
+      final data = response.data['InventoriesRes'];
+      final prods = List.generate(data.length, (int index) {
+        return Product.fromMap(data[index]);
+      });
+      emit(ProductsListRender(prods));
+    } on DioError {
+      emit(ProductsError('Failed to get products'));
+    }
+  }
+
+  ///
   void createProduct(ProductFormInput product) async {
     emit(ProductLoading());
     try {
@@ -39,10 +54,10 @@ class ProductCubit extends Cubit<ProductState> {
         emit(ProductsError(response.data['message']));
         return;
       }
+      emit(ProductCreated());
     } on DioError catch (err) {
       emit(ProductsError(err.response?.data['message'] ?? err.message));
     }
-    emit(ProductCreated());
   }
 
   ///
