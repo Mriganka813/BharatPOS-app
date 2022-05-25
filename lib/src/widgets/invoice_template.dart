@@ -1,14 +1,13 @@
-import 'package:magicstep/src/models/expense.dart';
+import 'package:magicstep/src/models/input/order_input.dart';
+import 'package:magicstep/src/models/user.dart';
 
 String invoiceTemplate({
   required String companyName,
-  required List<Expense> expenses,
+  required OrderInput order,
+  required User user,
   required List<String> headers,
   required String total,
 }) {
-  if (expenses.length != headers.length) {
-    throw Exception("Headers and expenses must be of same length");
-  }
   return '''
 <!DOCTYPE html>
 <html lang="en">
@@ -29,46 +28,42 @@ String invoiceTemplate({
           <span class="float-right"> <strong>Status:</strong> Pending</span>
         </div>
         <div class="card-body">
-          <div class="row mb-4">
+          <div class="mb-4 row">
             <div class="col-sm-6">
               <h6 class="mb-3">From:</h6>
               <div>
                 <strong>$companyName</strong>
               </div>
-              <div>Madalinskiego 8</div>
-              <div>71-101 Szczecin, Poland</div>
-              <div>Email: info@dotnettec.com</div>
-              <div>Phone: +91 9800000000</div>
+              ${user.address?.toString().split(',').map((e) {
+            return '<div>$e</div>';
+          }).toList().join("\n")}
+              <div>Email: ${user.email ?? ""}</div>
+              <div>Phone: ${user.phoneNumber}</div>
             </div>
-
-            <div class="col-sm-6">
-              <h6 class="mb-3">To:</h6>
-              <div>
-                <strong>Robert Maxwel</strong>
-              </div>
-              <div>Attn: Daniel Marek</div>
-              <div>43-190 Mikolow, Poland</div>
-              <div>Email: robert@daniel.com</div>
-              <div>Phone: +48 123 456 349</div>
-            </div>
+            <br/>
+            <br/>
+            <br/>
           </div>
 
           <div class="table-responsive-sm">
             <table class="table table-striped">
               <thead>
-                ${headers.map((e) => '''<tr>
-                  <th class="left">$e</th>
-                </tr>''')}
+                ${List.generate(headers.length, (int index) {
+    return '<th class="left">${headers[index]}</th>';
+  })}
               </thead>
               <tbody>
-                ${expenses.map((e) => '''<tr>
-                  <td class="left">${e.header}</td>
-                  <td class="left">${e.description}</td>
-                  <td class="left">${e.modeOfPayment}</td>
-                  <td class="right">${e.amount}</td>
-                </tr>''')}
                 
-
+                ${List.generate((order.orderItems ?? []).length, (index) {
+    final orderItem = order.orderItems![index];
+    return '<tr>'
+        '<td class="left">$index</td>'
+        '<td class="left">${orderItem.product?.name}</td>'
+        '<td class="left">${orderItem.quantity}</td>'
+        '<td class="left">${orderItem.product?.sellingPrice}</td>'
+        '<td class="right">${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
+        '</tr>';
+  })}
                 <!-- Add rows from here on -->
               </tbody>
             </table>
@@ -76,13 +71,16 @@ String invoiceTemplate({
           <div class="row">
             <div class="col-lg-4 col-sm-5"></div>
 
-            <div class="col-lg-4 col-sm-5 ml-auto">
+            <div class="ml-auto col-lg-4 col-sm-5">
               <table class="table table-clear">
                 <tbody>
                   <tr>
                     <td class="left">
                       <strong>Total</strong>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td class="right">
                       <strong>$total</strong>
                     </td>
