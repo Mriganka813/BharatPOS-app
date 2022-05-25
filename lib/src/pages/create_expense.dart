@@ -30,6 +30,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
     super.initState();
     _formInput = ExpenseFormInput();
     _expenseCubit = ExpenseCubit();
+    _fetchExpenseData();
   }
 
   void _fetchExpenseData() async {
@@ -107,6 +108,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                           const Divider(color: Colors.transparent),
                           CustomTextField(
                             label: 'Amount',
+                            value: _formInput.amount,
                             onSave: (e) {
                               _formInput.amount = e;
                             },
@@ -126,6 +128,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                             onSelected: (e) {
                               _formInput.modeOfPayment = e;
                             },
+                            initialValue: _formInput.modeOfPayment,
                             hintText: 'Mode of Payment',
                           ),
                           const Spacer(),

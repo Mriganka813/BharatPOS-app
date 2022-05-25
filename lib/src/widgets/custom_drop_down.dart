@@ -4,10 +4,12 @@ class CustomDropDownField extends StatefulWidget {
   final List<String> items;
   final String? hintText;
   final Function(String) onSelected;
+  final String? initialValue;
   const CustomDropDownField({
     Key? key,
     required this.items,
     required this.onSelected,
+    this.initialValue,
     required this.hintText,
   }) : super(key: key);
 
@@ -43,7 +45,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
         }
         return null;
       },
-      value: _selected,
+      value: _selected ?? widget.initialValue,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
           vertical: 2,

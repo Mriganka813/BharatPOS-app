@@ -23,7 +23,7 @@ class ExpenseFormInput {
         header: map['header'],
         description: map['description'].toString(),
         modeOfPayment: map['modeOfPayment'].toString(),
-        amount: map['_amount'],
+        amount: map['amount']?.toString(),
         id: map['_id'].toString(),
       );
 }

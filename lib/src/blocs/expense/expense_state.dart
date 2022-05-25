@@ -14,6 +14,8 @@ class ExpenseLoading extends ExpenseState {}
 
 class ExpenseCreated extends ExpenseState {}
 
+class ExpenseSuccess extends ExpenseState {}
+
 class ExpenseCreationFailed extends ExpenseState {}
 
 class ExpenseError extends ExpenseState {
