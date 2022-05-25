@@ -101,9 +101,7 @@ class MyApp extends StatelessWidget {
               case ExpensePage.routeName:
                 return const ExpensePage();
               case CreateExpensePage.routeName:
-                return CreateExpensePage(
-                  id: routeSettings.arguments as String?,
-                );
+                return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:
                 return const CreatePartyPage();
               case CreatePurchasePage.routeName:
