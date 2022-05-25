@@ -108,7 +108,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                           CustomTextField(
                             label: 'Amount',
                             onSave: (e) {
-                              _formInput.amount = e as int?;
+                              _formInput.amount = e;
                             },
                           ),
                           const Divider(color: Colors.transparent),

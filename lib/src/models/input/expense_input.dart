@@ -7,7 +7,7 @@ class ExpenseFormInput {
       this.id});
 
   String? header;
-  int? amount;
+  String? amount;
   String? description;
   String? modeOfPayment;
   String? id;
