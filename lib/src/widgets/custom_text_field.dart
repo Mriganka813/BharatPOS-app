@@ -1,34 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
-  final bool isLoading;
-  final String? initialValue;
   final Widget? prefixIcon;
   final String? hintText;
   final String? label;
   final TextInputType? inputType;
-  final List<TextInputFormatter>? inputFormatters;
   final String? value;
-  final Widget? suffixIcon;
 
   const CustomTextField({
     Key? key,
     this.onChanged,
-    this.initialValue,
     this.onSave,
     this.value,
     this.validator,
     this.hintText,
     this.label,
-    this.isLoading = false,
     this.inputType,
-    this.suffixIcon,
     this.prefixIcon,
-    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -36,6 +27,19 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,14 +48,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.label != null)
           Text(
             widget.label ?? '',
-            style: Theme.of(context)
-                .textTheme
-                .headline6
-                ?.copyWith(color: Colors.black, fontWeight: FontWeight.normal),
+            style: Theme.of(context).textTheme.headline6?.copyWith(
+                  color: Colors.black,
+                  fontWeight: FontWeight.normal,
+                ),
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
-          inputFormatters: widget.inputFormatters,
           textInputAction: TextInputAction.next,
           validator: (e) {
             if (widget.validator != null) {
@@ -62,10 +65,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             return null;
           },
-          controller: widget.value != null || widget.initialValue != null
-              ? TextEditingController(text: widget.value ?? widget.initialValue)
-              : null,
-          enabled: !widget.isLoading,
+          controller: widget.value != null
+              ? TextEditingController(text: widget.value)
+              : _controller,
           onChanged: (e) {
             if (widget.onChanged == null) {
               return;
@@ -82,7 +84,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
           decoration: InputDecoration(
             prefixIcon: widget.prefixIcon,
             hintText: widget.hintText,
-            suffixIcon: widget.suffixIcon,
             contentPadding: const EdgeInsets.symmetric(
               vertical: 2,
               horizontal: 10,

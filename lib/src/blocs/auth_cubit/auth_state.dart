@@ -9,15 +9,6 @@ class AuthLoading extends AuthState {}
 
 class SignUpSucess extends AuthState {}
 
-class PhoneVerified extends AuthState {}
-
-class OtpRetrieved extends AuthState {
-  final String otp;
-  OtpRetrieved(this.otp);
-}
-
-class OtpVerified extends AuthState {}
-
 class SignInSucces extends AuthState {}
 
 class AuthError extends AuthState {

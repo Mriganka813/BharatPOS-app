@@ -1,13 +1,21 @@
+// To parse this JSON data, do
+//
+//     final product = productFromMap(jsonString);
+
+import 'dart:convert';
+
+Product productFromMap(String str) => Product.fromMap(json.decode(str));
+
+String productToMap(Product data) => json.encode(data.toMap());
+
 class Product {
   Product({
     this.name,
     this.sellingPrice,
     this.barCode,
     this.quantity,
-    this.purchasePrice,
     this.user,
     this.id,
-    this.image,
     this.createdAt,
     this.v,
   });
@@ -17,20 +25,16 @@ class Product {
   String? barCode;
   int? quantity;
   String? user;
-  String? image;
   String? id;
   DateTime? createdAt;
   int? v;
-  int? purchasePrice;
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
         sellingPrice: json["sellingPrice"],
         barCode: json["barCode"],
         quantity: json["quantity"],
-        purchasePrice: json['purchasePrice'],
         user: json["user"],
-        image: json['image'],
         id: json["_id"],
         createdAt: DateTime.parse(json["createdAt"]),
         v: json["__v"],
@@ -40,11 +44,9 @@ class Product {
         "name": name,
         "sellingPrice": sellingPrice,
         "barCode": barCode,
-        "image": image,
         "quantity": quantity,
         "user": user,
         "_id": id,
-        'purchasePrice': purchasePrice,
         "createdAt": createdAt?.toIso8601String(),
         "__v": v,
       };

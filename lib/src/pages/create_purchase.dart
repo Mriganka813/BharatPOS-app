@@ -1,41 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/models/input/order_input.dart';
-import 'package:magicstep/src/models/product.dart';
-import 'package:magicstep/src/pages/checkout.dart';
-import 'package:magicstep/src/pages/create_product.dart';
-import 'package:magicstep/src/pages/products_list.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/product_card_horizontal.dart';
-import 'package:slidable_button/slidable_button.dart';
 
-class CreatePurchase extends StatefulWidget {
+class CreatePurchasePage extends StatefulWidget {
   static const routeName = '/create_purchase';
-  const CreatePurchase({Key? key}) : super(key: key);
+  const CreatePurchasePage({Key? key}) : super(key: key);
 
   @override
-  State<CreatePurchase> createState() => _CreatePurchaseState();
+  State<CreatePurchasePage> createState() => _CreatePurchasePageState();
 }
 
-class _CreatePurchaseState extends State<CreatePurchase> {
-  late OrderInput _orderInput;
-
-  @override
-  void initState() {
-    super.initState();
-    _orderInput = OrderInput(
-      orderItems: [],
-    );
-  }
-
-  void _onAdd(OrderItemInput orderItem) {
-    setState(() {
-      orderItem.quantity += 1;
-    });
-  }
-
+class _CreatePurchasePageState extends State<CreatePurchasePage> {
   @override
   Widget build(BuildContext context) {
-    final _orderItems = _orderInput.orderItems ?? [];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Purchase'),
@@ -44,137 +20,32 @@ class _CreatePurchaseState extends State<CreatePurchase> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Expanded(
-              child: _orderItems.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No products added yet',
-                      ),
-                    )
-                  : ListView.separated(
-                      physics: const ClampingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: _orderItems.length,
-                      itemBuilder: (context, index) {
-                        final _orderItem = _orderItems[index];
-                        final product = _orderItems[index].product!;
-                        return ProductCardPurchase(
-                          product: product,
-                          onAdd: () {
-                            _onAdd(_orderItem);
-                          },
-                          onDelete: () {
-                            setState(
-                              () {
-                                _orderItem.quantity == 1
-                                    ? _orderInput.orderItems?.removeAt(index)
-                                    : _orderItem.quantity -= 1;
-                              },
-                            );
-                          },
-                          productQuantity: _orderItem.quantity,
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(color: Colors.transparent);
-                      },
-                    ),
-            ),
-            const Divider(color: Colors.transparent),
+            const Spacer(),
             Row(
               children: [
                 Expanded(
                   child: CustomButton(
-                    title: "Add Product",
+                    title: "Add manually",
                     onTap: () async {
                       final result = await Navigator.pushNamed(
-                        context,
-                        ProductsListPage.routeName,
-                        arguments: const ProductListPageArgs(
-                          isSelecting: true,
-                          orderType: OrderType.purchase,
-                        ),
-                      );
-                      if (result == null && result is! List<Product>) {
+                          context, CreatePurchasePage.routeName,
+                          arguments: true);
+                      if (result == null) {
                         return;
                       }
-                      final orderItems = (result as List<Product>)
-                          .map((e) => OrderItemInput(
-                                product: e,
-                                quantity: 1,
-                                price: 0,
-                              ))
-                          .toList();
-                      setState(() {
-                        _orderInput.orderItems = orderItems;
-                      });
                     },
                   ),
                 ),
                 const VerticalDivider(color: Colors.transparent),
                 Expanded(
                   child: CustomButton(
-                    title: "Create Product",
-                    onTap: () {
-                      Navigator.pushNamed(context, CreateProduct.routeName);
-                    },
+                    title: "Scan barcode",
+                    onTap: () {},
                     type: ButtonType.outlined,
                   ),
                 ),
               ],
-            ),
-            const Divider(color: Colors.transparent),
-            SlidableButton(
-              width: double.maxFinite,
-              buttonWidth: 100.0,
-              color: Colors.green,
-              isRestart: true,
-              buttonColor: Colors.green,
-              dismissible: false,
-              label: const Center(
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Swipe to continue",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-              height: 50,
-              onChanged: (position) {
-                if (position == SlidableButtonPosition.right) {
-                  if (_orderItems.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          "Please select products before continuing",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                    return;
-                  }
-                  Navigator.pushNamed(
-                    context,
-                    CheckoutPage.routeName,
-                    arguments: CheckoutPageArgs(
-                      invoiceType: OrderType.purchase,
-                      orderInput: _orderInput,
-                    ),
-                  );
-                }
-              },
-            ),
+            )
           ],
         ),
       ),
