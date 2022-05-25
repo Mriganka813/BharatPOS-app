@@ -67,6 +67,7 @@ class _ExpensePageState extends State<ExpensePage> {
             bloc: _expenseCubit,
             builder: (context, state) {
               if (state is ExpenseListRender) {
+                print(state.expense.length);
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
                   itemCount: state.expense.length,
@@ -78,7 +79,7 @@ class _ExpensePageState extends State<ExpensePage> {
                     return ExpenseCardHorizontal(
                       expense: state.expense[index],
                       onDelete: () {
-                        _expenseCubit.deleteProduct(state.expense[index]);
+                        _expenseCubit.deleteExpense(state.expense[index]);
                       },
                       onEdit: () async {
                         await Navigator.pushNamed(

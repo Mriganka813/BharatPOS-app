@@ -13,6 +13,7 @@ class ExpenseService {
 
   ///
   Future<Response> updateExpense(ExpenseFormInput input) async {
+    print('${input.id}');
     final response = await ApiV1Service.putRequest(
       '/update/expense/${input.id}',
       data: input.toMap(),

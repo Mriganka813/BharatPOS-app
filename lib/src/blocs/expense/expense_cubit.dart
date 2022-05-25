@@ -15,14 +15,15 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   void getExpense() async {
     emit(ExpenseLoading());
     final response = await _expenseService.getAllExpense();
+    // print(response);
     if ((response.statusCode ?? 400) > 300) {
-      emit(ExpenseError('Failed to get products'));
+      emit(ExpenseError('Failed to get expenses'));
       return;
     }
     final expenses = List.generate(
-      response.data['expenses'].length,
+      response.data['allExpense'].length,
       (int index) => Expense.fromMap(
-        response.data['expenses'][index],
+        response.data['allExpense'][index],
       ),
     );
     emit(ExpenseListRender(expenses));
@@ -46,7 +47,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   }
 
   ///
-  void deleteProduct(Expense expense) async {
+  void deleteExpense(Expense expense) async {
     try {
       final response =
           await _expenseService.deleteExpense(expense.id.toString());

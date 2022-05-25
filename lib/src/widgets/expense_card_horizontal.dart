@@ -22,10 +22,6 @@ class ExpenseCardHorizontal extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image.network(
-          //   img,
-          //   height: 200,
-          // ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -37,13 +33,11 @@ class ExpenseCardHorizontal extends StatelessWidget {
                     style: Theme.of(context).textTheme.headline6,
                   ),
                   const SizedBox(height: 2),
-                  Text('${expense.description} pcs'),
-                  // const SizedBox(height: 2),
-                  // Text(color),
+                  Text('${expense.description}'),
                   const SizedBox(height: 2),
-                  Text('Amount ${expense.amount}'),
+                  Text('Amount : ₹${expense.amount}'),
                   const SizedBox(height: 2),
-                  Text('Mode: ${expense.modeOfPayment}'),
+                  Text('Paymnet Method : ${expense.modeOfPayment}'),
                 ],
               ),
             ),
