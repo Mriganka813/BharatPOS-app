@@ -7,13 +7,46 @@ String invoiceTemplate({
   required User user,
   required List<String> headers,
   required String total,
+  required DateTime date,
 }) {
+  ///
+  String dateFormat() => '${date.day}/${date.month}/${date.year}';
+
+  ///
+  String? addressRows() => user.address
+      ?.toString()
+      .split(',')
+      .map((e) => '<div>$e</div>')
+      .toList()
+      .join(" ");
+
+  ///
+  String headerRows() => List.generate(
+        headers.length,
+        (int index) => '<th class="left">${headers[index]}</th>',
+      ).join(' ');
+
+  ///
+  String itemRows() => List.generate(
+        (order.orderItems ?? []).length,
+        (index) {
+          final orderItem = order.orderItems![index];
+          return '<tr>'
+              '<td class="left">${orderItem.product?.name}</td>'
+              '<td class="left">${orderItem.quantity}</td>'
+              '<td class="left">${orderItem.product?.sellingPrice}</td>'
+              '<td class="left">${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
+              '</tr>';
+        },
+      ).join(' ');
+
+  ///
   return '''
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>DotNetTec - Invoice html template bootstrap</title>
+    <title>Shopos - Invoice</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css"
@@ -24,8 +57,7 @@ String invoiceTemplate({
       <div class="card">
         <div class="card-header">
           Invoice
-          <strong>01/01/2020</strong>
-          <span class="float-right"> <strong>Status:</strong> Pending</span>
+          <span class="float-right"> <strong>Date:</strong>${dateFormat()}</span>
         </div>
         <div class="card-body">
           <div class="mb-4 row">
@@ -34,65 +66,41 @@ String invoiceTemplate({
               <div>
                 <strong>$companyName</strong>
               </div>
-              ${user.address?.toString().split(',').map((e) {
-            return '<div>$e</div>';
-          }).toList().join("\n")}
+              ${addressRows()}
               <div>Email: ${user.email ?? ""}</div>
               <div>Phone: ${user.phoneNumber}</div>
             </div>
-            <br/>
-            <br/>
-            <br/>
+            <br />
+            <br />
+            <br />
           </div>
 
           <div class="table-responsive-sm">
             <table class="table table-striped">
               <thead>
-                ${List.generate(headers.length, (int index) {
-    return '<th class="left">${headers[index]}</th>';
-  })}
+                ${headerRows()}
               </thead>
               <tbody>
-                
-                ${List.generate((order.orderItems ?? []).length, (index) {
-    final orderItem = order.orderItems![index];
-    return '<tr>'
-        '<td class="left">$index</td>'
-        '<td class="left">${orderItem.product?.name}</td>'
-        '<td class="left">${orderItem.quantity}</td>'
-        '<td class="left">${orderItem.product?.sellingPrice}</td>'
-        '<td class="right">${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
-        '</tr>';
-  })}
-                <!-- Add rows from here on -->
+                ${itemRows()}
+              </tbody>
+              <tbody>
+                <tr>
+                  <td colspan="3" class="left">
+                    <strong>Total</strong>
+                  </td>
+                  <td class="right">
+                    <strong>$total</strong>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
-          <div class="row">
-            <div class="col-lg-4 col-sm-5"></div>
-
-            <div class="ml-auto col-lg-4 col-sm-5">
-              <table class="table table-clear">
-                <tbody>
-                  <tr>
-                    <td class="left">
-                      <strong>Total</strong>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td class="right">
-                      <strong>$total</strong>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
+        <div class="card-footer text-center">Thank you for your business!</div>
       </div>
     </div>
   </body>
 </html>
+
 ''';
 }

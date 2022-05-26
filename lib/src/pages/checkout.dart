@@ -72,10 +72,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final targetPath = await getExternalCacheDirectories();
     const targetFileName = "example_pdf_file";
     final htmlContent = invoiceTemplate(
+      date: DateTime.now(),
       companyName: user.businessName ?? "",
       order: widget.args.orderInput,
       user: user,
-      headers: ["ID", "Name", "Qty", "Price", "Amt"],
+      headers: ["Name", "Qty", "Price", "Amt"],
       total: totalPrice() ?? "",
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
@@ -93,6 +94,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
       return;
     }
+
     final party = widget.args.orderInput.party;
     if (party == null) {
       final path = generatedPdfFile.path;

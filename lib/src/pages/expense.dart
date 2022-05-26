@@ -67,7 +67,6 @@ class _ExpensePageState extends State<ExpensePage> {
             bloc: _expenseCubit,
             builder: (context, state) {
               if (state is ExpenseListRender) {
-                print(state.expense.length);
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
                   itemCount: state.expense.length,
@@ -94,7 +93,11 @@ class _ExpensePageState extends State<ExpensePage> {
                 );
               }
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    ColorsConst.primaryColor,
+                  ),
+                ),
               );
             },
           ),
