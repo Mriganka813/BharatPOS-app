@@ -75,8 +75,74 @@ class _CreateProductState extends State<CreateProduct> {
     super.dispose();
   }
 
-  void pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  void _showImagePickerOptions() async {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      builder: (cntxt) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(cntxt);
+                        _pickImage(ImageSource.camera);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Center(
+                            child: Icon(
+                              Icons.camera,
+                              size: 60,
+                            ),
+                          ),
+                          Divider(color: Colors.transparent),
+                          Text('Camera')
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(cntxt);
+                        _pickImage(ImageSource.gallery);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Center(
+                            child: Icon(
+                              Icons.photo_rounded,
+                              size: 60,
+                            ),
+                          ),
+                          Divider(color: Colors.transparent),
+                          Text('Album')
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(color: Colors.transparent),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source);
     if (image == null) {
       return;
     }
@@ -131,7 +197,9 @@ class _CreateProductState extends State<CreateProduct> {
                     ),
                     const Divider(color: Colors.transparent),
                     GestureDetector(
-                      onTap: () => pickImage(),
+                      onTap: () {
+                        _showImagePickerOptions();
+                      },
                       child: SizedBox(
                         height: 160,
                         child: ClipRRect(
