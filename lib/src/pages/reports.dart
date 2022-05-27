@@ -1,6 +1,8 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:magicstep/src/models/expense.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
+import 'package:magicstep/src/widgets/custom_datePicker.dart';
 import 'package:magicstep/src/widgets/custom_text_field.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -123,16 +125,37 @@ class _ReportsPageState extends State<ReportsPage> {
               title: const Text("Expense Report"),
             ),
             const SizedBox(height: 40),
-            CustomTextField(
-              label: "Start Date",
-              onChanged: (value) {},
-              hintText: "dd/mm/yyyy",
+            // CustomTextField(
+            //   label: "Start Date",
+            //   onChanged: (value) {},
+            //   hintText: "dd/mm/yyyy",
+            // ),
+            // const Divider(color: Colors.transparent),
+            // CustomTextField(
+            //   label: "End Date",
+            //   hintText: "dd/mm/yyyy",
+            //   onChanged: (value) {},
+            // ),
+            CustomDatePicker(
+              "Start Date",
+              (e) {
+                print(e);
+              },
+              (e) {},
+              (e) {
+                return e.toString();
+              },
             ),
             const Divider(color: Colors.transparent),
-            CustomTextField(
-              label: "End Date",
-              hintText: "dd/mm/yyyy",
-              onChanged: (value) {},
+            CustomDatePicker(
+              "End Date",
+              (e) {
+                print(e);
+              },
+              (e) {},
+              (e) {
+                return e.toString();
+              },
             ),
             const Spacer(),
             Row(
