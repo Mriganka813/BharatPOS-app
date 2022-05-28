@@ -83,7 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Set up your profile to to enjoy our services",
+                        "Set up your profile to enjoy our services",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),

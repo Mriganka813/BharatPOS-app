@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/expense/expense_cubit.dart';
 import 'package:magicstep/src/blocs/product/product_cubit.dart';
@@ -70,7 +71,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
             bloc: _expenseCubit,
             listener: (context, state) {
               if (state is ExpenseCreated) {
-                return Navigator.pop(context);
+                return Navigator.pop(context, true);
               }
               if (state is ExpenseError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -109,6 +110,10 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                           CustomTextField(
                             label: 'Amount',
                             value: _formInput.amount,
+                            inputType: TextInputType.phone,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(10),
+                            ],
                             onSave: (e) {
                               _formInput.amount = e;
                             },
@@ -118,6 +123,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                             label: 'Description',
                             hintText: "Optional",
                             value: _formInput.description,
+                            validator: (e) => null,
                             onSave: (e) {
                               _formInput.description = e;
                             },

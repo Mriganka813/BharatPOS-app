@@ -56,6 +56,7 @@ class _ExpensePageState extends State<ExpensePage> {
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
+        physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         children: [
           const CustomTextField(
@@ -101,6 +102,7 @@ class _ExpensePageState extends State<ExpensePage> {
               );
             },
           ),
+          const SizedBox(height: 80),
         ],
       ),
     );
