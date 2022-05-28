@@ -16,6 +16,24 @@ class ReportCreated extends ReportState {}
 
 class ReportSuccess extends ReportState {}
 
+class ReportsView extends ReportState {
+  final List<Expense>? expenses;
+  final List<Order>? orders;
+  ReportsView({
+    this.expenses,
+    this.orders,
+  });
+}
+
+class ReportsDownload extends ReportState {
+  final List<Expense>? expenses;
+  final List<Order>? orders;
+  ReportsDownload({
+    this.expenses,
+    this.orders,
+  });
+}
+
 class ReportCreationFailed extends ReportState {}
 
 class ReportError extends ReportState {
