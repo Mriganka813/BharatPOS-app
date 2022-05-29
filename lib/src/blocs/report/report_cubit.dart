@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:magicstep/src/models/expense.dart';
@@ -54,6 +56,7 @@ class ReportCubit extends Cubit<ReportState> {
 
   _emitPurchaseReport(Response res, [bool isDownload = false]) {
     final data = res.data['purchase'];
+    log(data.toString());
     final orders =
         List.generate(data.length, (index) => Order.fromMap(data[index]));
     emit(isDownload
@@ -62,9 +65,9 @@ class ReportCubit extends Cubit<ReportState> {
   }
 
   _emitExpenseReport(Response res, [bool isDownload = false]) {
-    final data = res.data['expense'];
+    final data = res.data['expense'] as List;
     final expenses =
-        List.generate(data.lenth, (index) => Expense.fromMap(data[index]));
+        List.generate(data.length, (index) => Expense.fromMap(data[index]));
     emit(isDownload
         ? ReportsDownload(expenses: expenses)
         : ReportsView(expenses: expenses));

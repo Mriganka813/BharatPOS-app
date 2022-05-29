@@ -5,6 +5,7 @@ import 'package:magicstep/src/config/colors.dart';
 import 'package:magicstep/src/models/input/report_input.dart';
 import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
+import 'package:magicstep/src/services/pdf.dart';
 import 'package:magicstep/src/widgets/custom_button.dart';
 import 'package:magicstep/src/widgets/custom_date_picker.dart';
 
@@ -57,8 +58,16 @@ class _ReportsPageState extends State<ReportsPage> {
       ),
       body: BlocListener<ReportCubit, ReportState>(
         bloc: _reportCubit,
-        listener: (context, state) {
-          if (state is ReportsView) {}
+        listener: (context, state) async {
+          if (state is ReportsView) {
+            if (state.expenses != null) {
+              const PdfService()
+                  .generateExpensesPdfPreview(state.expenses ?? []);
+            }
+            if (state.orders != null) {
+              const PdfService().generateOrdersPdfPreview(state.orders ?? []);
+            }
+          }
           if (state is ReportsDownload) {}
         },
         child: Padding(
