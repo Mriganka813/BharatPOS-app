@@ -59,11 +59,6 @@ class _ExpensePageState extends State<ExpensePage> {
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         children: [
-          const CustomTextField(
-            prefixIcon: Icon(Icons.search),
-            hintText: 'Search',
-          ),
-          const Divider(color: Colors.transparent),
           BlocBuilder<ExpenseCubit, ExpenseState>(
             bloc: _expenseCubit,
             builder: (context, state) {
