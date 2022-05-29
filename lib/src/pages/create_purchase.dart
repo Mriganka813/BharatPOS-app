@@ -111,7 +111,10 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                     },
                   ),
                 ),
-                const VerticalDivider(color: Colors.transparent),
+                const VerticalDivider(
+                  color: Colors.transparent,
+                  width: 7,
+                ),
                 Expanded(
                   child: CustomButton(
                     title: "Create Product",
@@ -129,7 +132,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               buttonWidth: 100.0,
               color: Colors.green,
               isRestart: true,
-              buttonColor: Colors.green,
+              buttonColor: Colors.white24,
               dismissible: false,
               label: const Center(
                 child: Icon(
