@@ -13,7 +13,8 @@ class PurchaseService {
     final response = await ApiV1Service.postRequest(
       '/purchaseOrder/new',
       data: {
-        'orderItems': orderItemInput.orderItems?.map((e) => e.toMap()).toList(),
+        'orderItems':
+            orderItemInput.orderItems?.map((e) => e.toPurchaseMap()).toList(),
         'modeOfPayment': orderItemInput.modeOfPayment,
         'party': orderItemInput.party?.id,
       },

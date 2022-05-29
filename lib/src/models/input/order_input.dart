@@ -1,4 +1,5 @@
 import 'package:magicstep/src/models/product.dart';
+import 'package:magicstep/src/pages/checkout.dart';
 
 import '../party.dart';
 import '../user.dart';
@@ -30,8 +31,11 @@ class OrderInput {
         createdAt: json["createdAt"],
       );
 
-  Map<String, dynamic> toMap() => {
-        "orderItems": orderItems?.map((e) => e.toMap()).toList(),
+  Map<String, dynamic> toMap(OrderType type) => {
+        "orderItems": orderItems
+            ?.map((e) =>
+                type == OrderType.sale ? e.toSaleMap() : e.toPurchaseMap())
+            .toList(),
         "modeOfPayment": modeOfPayment,
         "party": party?.id,
         "user": user?.id,
@@ -56,8 +60,13 @@ class OrderItemInput {
         product: json["product"],
       );
 
-  Map<String, dynamic> toMap() => {
-        "price": price,
+  Map<String, dynamic> toSaleMap() => {
+        "price": (product?.sellingPrice ?? 1),
+        "quantity": quantity,
+        "product": product?.id,
+      };
+  Map<String, dynamic> toPurchaseMap() => {
+        "price": (product?.purchasePrice ?? 1),
         "quantity": quantity,
         "product": product?.id,
       };

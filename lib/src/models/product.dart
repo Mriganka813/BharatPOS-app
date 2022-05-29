@@ -1,10 +1,10 @@
 class Product {
   Product({
     this.name,
-    this.sellingPrice,
+    required this.sellingPrice,
     this.barCode,
     this.quantity,
-    this.purchasePrice,
+    required this.purchasePrice,
     this.user,
     this.id,
     this.image,
@@ -13,7 +13,7 @@ class Product {
   });
 
   String? name;
-  int? sellingPrice;
+  int sellingPrice;
   String? barCode;
   int? quantity;
   String? user;
@@ -21,14 +21,14 @@ class Product {
   String? id;
   DateTime? createdAt;
   int? v;
-  int? purchasePrice;
+  int purchasePrice;
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
-        sellingPrice: json["sellingPrice"],
+        sellingPrice: json["sellingPrice"] ?? 1,
         barCode: json["barCode"],
         quantity: json["quantity"],
-        purchasePrice: json['purchasePrice'],
+        purchasePrice: json['purchasePrice'] ?? 1,
         user: json["user"],
         image: json['image'],
         id: json["_id"],

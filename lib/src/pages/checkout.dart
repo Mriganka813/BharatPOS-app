@@ -133,6 +133,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return widget.args.orderInput.orderItems?.fold<int>(
       0,
       (acc, curr) {
+        if (widget.args.invoiceType == OrderType.purchase) {
+          return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+        }
         return (curr.quantity * (curr.product?.sellingPrice ?? 1)) + acc;
       },
     ).toString();
