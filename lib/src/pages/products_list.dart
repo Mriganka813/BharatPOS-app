@@ -76,133 +76,142 @@ class _ProductsListPageState extends State<ProductsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Products List')),
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(
-          right: 10,
-          left: 30,
-          bottom: 20,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (widget.args?.isSelecting ?? false)
-              Expanded(
-                child: CustomButton(
-                    title: "Continue",
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    onTap: () {
-                      if (_products.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text(
-                              "Please select products before continuing",
-                              style: TextStyle(color: Colors.white),
+        appBar: AppBar(title: const Text('Products List')),
+        floatingActionButton: Container(
+          margin: const EdgeInsets.only(
+            right: 10,
+            left: 30,
+            bottom: 20,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (widget.args?.isSelecting ?? false)
+                Expanded(
+                  child: CustomButton(
+                      title: "Continue",
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      onTap: () {
+                        if (_products.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                "Please select products before continuing",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
-                          ),
+                          );
+                          return;
+                        }
+                        Navigator.pop(
+                          context,
+                          _products,
                         );
-                        return;
-                      }
-                      Navigator.pop(
-                        context,
-                        _products,
-                      );
-                    }),
+                      }),
+                ),
+              if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
+              FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.pushNamed(context, '/create-product');
+                  _productCubit.getProducts();
+                },
+                backgroundColor: ColorsConst.primaryColor,
+                child: const Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
-            if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
-            FloatingActionButton(
-              onPressed: () async {
-                await Navigator.pushNamed(context, '/create-product');
-                _productCubit.getProducts();
-              },
-              backgroundColor: ColorsConst.primaryColor,
-              child: const Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 40,
+            ],
+          ),
+        ),
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 70),
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                shrinkWrap: true,
+                children: [
+                  const Divider(color: Colors.transparent),
+                  BlocBuilder<ProductCubit, ProductState>(
+                    bloc: _productCubit,
+                    builder: (context, state) {
+                      if (state is ProductsListRender) {
+                        return ListView.separated(
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: state.products.length,
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(height: 5);
+                          },
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                _selectProduct(state.products[index]);
+                              },
+                              child: Stack(
+                                children: [
+                                  ProductCardHorizontal(
+                                    product: state.products[index],
+                                    onDelete: () {
+                                      _productCubit
+                                          .deleteProduct(state.products[index]);
+                                    },
+                                    onEdit: () async {
+                                      await Navigator.pushNamed(
+                                        context,
+                                        CreateProduct.routeName,
+                                        arguments: state.products[index].id,
+                                      );
+                                      _productCubit.getProducts();
+                                    },
+                                  ),
+                                  if (_products.contains(state.products[index]))
+                                    const Align(
+                                      alignment: Alignment.topRight,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor: Colors.green,
+                                          child: Icon(
+                                            Icons.check,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: ColorsConst.primaryColor,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: CustomTextField(
+                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search',
+                onChanged: (String e) {
+                  if (e.isNotEmpty) {
+                    _productCubit.searchProducts(e);
+                  }
+                },
               ),
             ),
           ],
-        ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        shrinkWrap: true,
-        children: [
-          CustomTextField(
-            prefixIcon: const Icon(Icons.search),
-            hintText: 'Search',
-            onChanged: (String e) {
-              if (e.isNotEmpty) {
-                _productCubit.searchProducts(e);
-              }
-            },
-          ),
-          const Divider(color: Colors.transparent),
-          BlocBuilder<ProductCubit, ProductState>(
-            bloc: _productCubit,
-            builder: (context, state) {
-              if (state is ProductsListRender) {
-                return ListView.separated(
-                  physics: const ClampingScrollPhysics(),
-                  itemCount: state.products.length,
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 5);
-                  },
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        _selectProduct(state.products[index]);
-                      },
-                      child: Stack(
-                        children: [
-                          ProductCardHorizontal(
-                            product: state.products[index],
-                            onDelete: () {
-                              _productCubit
-                                  .deleteProduct(state.products[index]);
-                            },
-                            onEdit: () async {
-                              await Navigator.pushNamed(
-                                context,
-                                CreateProduct.routeName,
-                                arguments: state.products[index].id,
-                              );
-                              _productCubit.getProducts();
-                            },
-                          ),
-                          if (_products.contains(state.products[index]))
-                            const Align(
-                              alignment: Alignment.topRight,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: CircleAvatar(
-                                  radius: 15,
-                                  backgroundColor: Colors.green,
-                                  child: Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            )
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: ColorsConst.primaryColor,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }

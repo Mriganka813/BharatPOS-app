@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:magicstep/src/models/expense.dart';
 
 class ExpenseCardHorizontal extends StatelessWidget {
@@ -14,6 +15,10 @@ class ExpenseCardHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime? timestamp = expense.createdAt;
+    String date = DateFormat('dd-MM-yyyy').format(timestamp!);
+    String time = DateFormat('kk:mm').format(timestamp);
+
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -29,16 +34,29 @@ class ExpenseCardHorizontal extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(height: 2),
                   Text(
                     expense.header ?? "",
                     style: Theme.of(context).textTheme.headline6,
                   ),
                   const SizedBox(height: 2),
+                  Text('Date : $date'),
+                  const SizedBox(height: 2),
+                  Text('Time : $time'),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Text('Net Amount :'),
+                      Text(' ₹${expense.amount}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text('Payment Method : ${expense.modeOfPayment}'),
+                  const SizedBox(height: 2),
                   Text('${expense.description}'),
-                  const SizedBox(height: 2),
-                  Text('Amount : ₹${expense.amount}'),
-                  const SizedBox(height: 2),
-                  Text('Paymnet Method : ${expense.modeOfPayment}'),
                   const SizedBox(height: 2),
                 ],
               ),
