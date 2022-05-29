@@ -37,4 +37,20 @@ class PartyService {
       data: party.toMap(),
     );
   }
+
+  ///
+  Future<List<Party>> getCreditPurchaseParties() async {
+    final response = await ApiV1Service.getRequest('/party/purchase/credit');
+    return (response.data['data'] as List)
+        .map((e) => Party.fromMap(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  ///
+  Future<List<Party>> getCreditSaleParties() async {
+    final response = await ApiV1Service.getRequest('/party/sale/credit');
+    return (response.data['data'] as List)
+        .map((e) => Party.fromMap(e as Map<String, dynamic>))
+        .toList();
+  }
 }

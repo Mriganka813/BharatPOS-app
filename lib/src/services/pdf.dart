@@ -11,16 +11,30 @@ class PdfService {
   const PdfService();
 
   void generateExpensesPdfPreview(List<Expense> expenses) async {
-    final content = await reportsExpenseTemplate(expenses: expenses);
+    final content = reportsExpenseTemplate(expenses: expenses);
     _viewPDf(content, 'expenses');
   }
 
   void generateOrdersPdfPreview(List<Order> orders) async {
-    final content = await reportsOrderTemplate(orders: orders);
+    final content = reportsOrderTemplate(orders: orders);
     _viewPDf(content, 'orders');
   }
 
-  _viewPDf(String content, String fileName) async {
+  void downloadOrdersPdfPreview(List<Order> orders) async {
+    final content = reportsOrderTemplate(orders: orders);
+    _downloadPdf(content, 'orders');
+  }
+
+  void downloadExpensePdfPreview(List<Expense> expenses) async {
+    final content = reportsExpenseTemplate(expenses: expenses);
+    _downloadPdf(content, 'expenses');
+  }
+
+  void _downloadPdf(String content, String fileName) async {
+    _viewPDf(content, fileName);
+  }
+
+  void _viewPDf(String content, String fileName) async {
     final targetPath = await getExternalCacheDirectories();
     final path = targetPath!.first.path;
     final pdf =
@@ -32,23 +46,12 @@ class PdfService {
   void pdfFromOrder(User user, List<Expense> expenses) async {
     final targetPath = await getExternalCacheDirectories();
     const targetFileName = "example_pdf_file";
-    final htmlContent = await reportsExpenseTemplate(expenses: expenses);
+    final htmlContent = reportsExpenseTemplate(expenses: expenses);
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
       htmlContent,
       targetPath!.first.path,
       targetFileName,
     );
-    OpenFile.open(generatedPdfFile.path);
-    // final party = widget.args.orderInput.party;
-    // if (party == null) {
-    //   final path = generatedPdfFile.path;
-    //   await Share.shareFiles([path], mimeTypes: ['application/pdf']);
-    //   return;
-    // }
-    // await WhatsappShare.shareFile(
-    //   text: 'Invoice',
-    //   phone: '91${party.phoneNumber ?? ""}',
-    //   filePath: [generatedPdfFile.path],
-    // );
+    await OpenFile.open(generatedPdfFile.path);
   }
 }

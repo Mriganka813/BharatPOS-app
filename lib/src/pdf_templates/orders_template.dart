@@ -1,28 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:magicstep/src/models/order.dart';
 import 'package:magicstep/src/models/order_item.dart';
-import 'package:magicstep/src/models/user.dart';
-import 'package:magicstep/src/services/user.dart';
 
-Future<String> reportsOrderTemplate({
+String reportsOrderTemplate({
   required List<Order> orders,
-}) async {
-  final Response res = await UserService.me();
-  final user = User.fromMap(res.data['user']);
-  final DateTime date = DateTime.now();
-
-  ///
-  String dateFormat() => '${date.day}/${date.month}/${date.year}';
-
-  ///
-  String? addressRows() => user.address
-      ?.toString()
-      .split(',')
-      .map((e) => '<div>$e</div>')
-      .toList()
-      .join(" ");
-
+}) {
   ///
   String headerRows() {
     final headers = ['Date', 'Time', 'Party', 'Product', 'Amount', 'Total'];
@@ -78,28 +60,7 @@ Future<String> reportsOrderTemplate({
   <body>
     <div class="container">
       <div class="card">
-        <div class="card-header">
-          Invoice
-          <span class="float-right">
-            <strong>Date:</strong>&nbsp;${dateFormat()}</span
-          >
-        </div>
         <div class="card-body">
-          <div class="mb-4 row">
-            <div class="col-sm-6">
-              <h6 class="mb-3">From:</h6>
-              <div>
-                <strong>${user.businessName ?? ""}</strong>
-              </div>
-              ${addressRows()}
-              <div>Email: ${user.email ?? ""}</div>
-              <div>Phone: ${user.phoneNumber ?? ""}</div>
-            </div>
-            <br />
-            <br />
-            <br />
-          </div>
-
           <div class="table-responsive-sm">
             <table class="table table-striped">
               <thead>
@@ -123,7 +84,6 @@ Future<String> reportsOrderTemplate({
             </table>
           </div>
         </div>
-        <div class="text-center card-footer">Thank you for your business!</div>
       </div>
     </div>
   </body>

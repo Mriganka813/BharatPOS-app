@@ -21,13 +21,13 @@ class ReportCubit extends Cubit<ReportState> {
     emit(ReportLoading());
     final res = await _reportService.getAllReport(input);
     if (input.type == ReportType.sale) {
-      _emitSalesReport(res);
+      _emitSalesReport(res, true);
     }
     if (input.type == ReportType.purchase) {
-      _emitPurchaseReport(res);
+      _emitPurchaseReport(res, true);
     }
     if (input.type == ReportType.expense) {
-      _emitExpenseReport(res);
+      _emitExpenseReport(res, true);
     }
   }
 

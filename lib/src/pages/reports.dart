@@ -23,6 +23,7 @@ class _ReportsPageState extends State<ReportsPage> {
   final ReportInput _reportInput = ReportInput();
   final _formKey = GlobalKey<FormState>();
   late final ReportCubit _reportCubit;
+  bool _showLoader = false;
 
   ///
   @override
@@ -59,6 +60,14 @@ class _ReportsPageState extends State<ReportsPage> {
       body: BlocListener<ReportCubit, ReportState>(
         bloc: _reportCubit,
         listener: (context, state) async {
+          if (_showLoader) {
+            Navigator.pop(context);
+          }
+          setState(() {
+            _showLoader = false;
+          });
+
+          /// View
           if (state is ReportsView) {
             if (state.expenses != null) {
               const PdfService()
@@ -68,7 +77,15 @@ class _ReportsPageState extends State<ReportsPage> {
               const PdfService().generateOrdersPdfPreview(state.orders ?? []);
             }
           }
-          if (state is ReportsDownload) {}
+          if (state is ReportsDownload) {
+            if (state.expenses != null) {
+              const PdfService()
+                  .downloadExpensePdfPreview(state.expenses ?? []);
+            }
+            if (state.orders != null) {
+              const PdfService().downloadOrdersPdfPreview(state.orders ?? []);
+            }
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -183,7 +200,18 @@ class _ReportsPageState extends State<ReportsPage> {
                             ?.copyWith(color: Colors.white, fontSize: 18),
                         title: "Download",
                         onTap: () {
-                          _onSubmit();
+                          if (_formKey.currentState?.validate() ?? false) {
+                            if (_reportInput.type == null) {
+                              locator<GlobalServices>()
+                                  .errorSnackBar("Please select a report type");
+                              return;
+                            }
+                            setState(() {
+                              _showLoader = true;
+                            });
+                            locator<GlobalServices>().showBottomSheetLoader();
+                            _reportCubit.downloadReport(_reportInput);
+                          }
                         },
                       ),
                     ),
@@ -203,6 +231,10 @@ class _ReportsPageState extends State<ReportsPage> {
         locator<GlobalServices>().errorSnackBar("Please select a report type");
         return;
       }
+      setState(() {
+        _showLoader = true;
+      });
+      locator<GlobalServices>().showBottomSheetLoader();
       _reportCubit.getReport(_reportInput);
     }
   }

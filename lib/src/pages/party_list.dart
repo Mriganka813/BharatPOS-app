@@ -1,10 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:magicstep/src/blocs/party/party_cubit.dart';
 import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/order.dart';
+import 'package:magicstep/src/models/party.dart';
 import 'package:magicstep/src/pages/create_party.dart';
 import 'package:magicstep/src/services/global.dart';
 import 'package:magicstep/src/services/locator.dart';
@@ -25,7 +23,7 @@ class _PartyListPageState extends State<PartyListPage> {
   @override
   void initState() {
     super.initState();
-    _partyCubit = PartyCubit()..getOrders();
+    _partyCubit = PartyCubit()..getInitialCreditParties();
   }
 
   @override
@@ -83,9 +81,9 @@ class _PartyListPageState extends State<PartyListPage> {
                   child: BlocBuilder<PartyCubit, PartyState>(
                     bloc: _partyCubit,
                     builder: (context, state) {
-                      if (state is OrdersListRender) {
-                        final salesOrders = state.salesOrders;
-                        final purchaseOrders = state.purchaseOrders;
+                      if (state is CreditPartiesListRender) {
+                        final salesParties = state.saleParties;
+                        final purchaseParties = state.purchaseParties;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -107,12 +105,8 @@ class _PartyListPageState extends State<PartyListPage> {
                             Expanded(
                               child: TabBarView(
                                 children: [
-                                  SalesOrderList(
-                                    salesOrders: salesOrders,
-                                  ),
-                                  PurchaseOrderList(
-                                    purchaseOrders: purchaseOrders,
-                                  ),
+                                  PartiesListView(parties: salesParties),
+                                  PartiesListView(parties: purchaseParties),
                                 ],
                               ),
                             ),
@@ -137,13 +131,13 @@ class _PartyListPageState extends State<PartyListPage> {
   }
 }
 
-class PurchaseOrderList extends StatelessWidget {
-  const PurchaseOrderList({
+class PartiesListView extends StatelessWidget {
+  const PartiesListView({
     Key? key,
-    required this.purchaseOrders,
+    required this.parties,
   }) : super(key: key);
 
-  final List<Order> purchaseOrders;
+  final List<Party> parties;
 
   @override
   Widget build(BuildContext context) {
@@ -152,46 +146,12 @@ class PurchaseOrderList extends StatelessWidget {
       separatorBuilder: (context, index) {
         return const Divider(color: Colors.transparent);
       },
-      itemCount: purchaseOrders.length,
+      itemCount: parties.length,
       itemBuilder: (context, index) {
-        final order = purchaseOrders[index];
-        final totalPrice = order.orderItems?.fold<int>(0, (acc, curr) {
-          log("${curr.price}");
-          return acc + curr.price;
-        });
+        final party = parties[index];
         return ListTile(
-          title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
-          trailing: Text("$totalPrice"),
-        );
-      },
-    );
-  }
-}
-
-class SalesOrderList extends StatelessWidget {
-  const SalesOrderList({
-    Key? key,
-    required this.salesOrders,
-  }) : super(key: key);
-
-  final List<Order> salesOrders;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      separatorBuilder: (context, index) {
-        return const Divider(color: Colors.transparent);
-      },
-      itemCount: salesOrders.length,
-      itemBuilder: (context, index) {
-        final order = salesOrders[index];
-        final totalPrice = order.orderItems?.fold<int>(0, (acc, prev) {
-          return acc + (prev.price * prev.quantity);
-        });
-        return ListTile(
-          title: Text(order.party?.name ?? order.modeOfPayment ?? ''),
-          trailing: Text("$totalPrice"),
+          title: Text(party.name ?? ""),
+          trailing: Text("${party.totalCreditAmount}"),
         );
       },
     );
