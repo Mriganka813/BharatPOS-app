@@ -1,3 +1,5 @@
+import 'package:in_app_update/in_app_update.dart';
+
 class Utils {
   const Utils();
 
@@ -13,5 +15,16 @@ class Utils {
   }
 
   /// Check for app updates
-  Future<void> checkUpdates() async {}
+  Future<void> checkUpdates() async {
+    final update = await InAppUpdate.checkForUpdate();
+    if (update.updateAvailability < 0) {
+      return;
+    }
+    if (update.immediateUpdateAllowed) {
+      await InAppUpdate.startFlexibleUpdate();
+      await InAppUpdate.completeFlexibleUpdate();
+      return;
+    }
+    await InAppUpdate.performImmediateUpdate();
+  }
 }

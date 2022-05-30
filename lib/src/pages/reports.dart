@@ -177,45 +177,15 @@ class _ReportsPageState extends State<ReportsPage> {
                   value: _reportInput.endDate,
                 ),
                 const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        title: "View",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(color: Colors.white, fontSize: 18),
-                        onTap: () {
-                          _onSubmit();
-                        },
-                      ),
-                    ),
-                    const VerticalDivider(),
-                    Expanded(
-                      child: CustomButton(
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(color: Colors.white, fontSize: 18),
-                        title: "Download",
-                        onTap: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            if (_reportInput.type == null) {
-                              locator<GlobalServices>()
-                                  .errorSnackBar("Please select a report type");
-                              return;
-                            }
-                            setState(() {
-                              _showLoader = true;
-                            });
-                            locator<GlobalServices>().showBottomSheetLoader();
-                            _reportCubit.downloadReport(_reportInput);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+                CustomButton(
+                  title: "View",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(color: Colors.white, fontSize: 18),
+                  onTap: () {
+                    _onSubmit();
+                  },
                 ),
               ],
             ),
