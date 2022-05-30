@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:magicstep/src/services/user.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/services/user.dart';
 
 import '../../models/user.dart';
 

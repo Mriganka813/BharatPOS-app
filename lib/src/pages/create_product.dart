@@ -9,13 +9,13 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:magicstep/src/models/input/product_input.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
-import 'package:magicstep/src/services/product.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_icons.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/models/input/product_input.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/product.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_icons.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 
 import '../blocs/product/product_cubit.dart';
 

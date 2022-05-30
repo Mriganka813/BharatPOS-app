@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/expense.dart';
-import 'package:magicstep/src/models/input/report_input.dart';
-import 'package:magicstep/src/models/order.dart';
-import 'package:magicstep/src/models/report.dart';
-import 'package:magicstep/src/pages/reports.dart';
-import 'package:magicstep/src/services/report.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/models/expense.dart';
+import 'package:shopos/src/models/input/report_input.dart';
+import 'package:shopos/src/models/order.dart';
+import 'package:shopos/src/models/report.dart';
+import 'package:shopos/src/pages/reports.dart';
+import 'package:shopos/src/services/report.dart';
 
 part 'report_state.dart';
 

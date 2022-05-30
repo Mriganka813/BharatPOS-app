@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:magicstep/src/models/input/sign_up_input.dart';
-import 'package:magicstep/src/services/auth.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/models/input/sign_up_input.dart';
+import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
 
 part 'auth_state.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/config/colors.dart';
+import 'package:shopos/src/config/colors.dart';
 
 enum ButtonType { normal, outlined }
 

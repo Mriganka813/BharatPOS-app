@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/product/product_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/product.dart';
-import 'package:magicstep/src/pages/checkout.dart';
-import 'package:magicstep/src/pages/create_product.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
-import 'package:magicstep/src/widgets/product_card_horizontal.dart';
+import 'package:shopos/src/blocs/product/product_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_product.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/widgets/product_card_horizontal.dart';
 
 class ProductListPageArgs {
   final bool isSelecting;

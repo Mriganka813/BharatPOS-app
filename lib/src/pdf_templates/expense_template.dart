@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:magicstep/src/models/expense.dart';
+import 'package:shopos/src/models/expense.dart';
 
 String reportsExpenseTemplate({
   required List<Expense> expenses,

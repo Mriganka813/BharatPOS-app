@@ -1,4 +1,4 @@
-package com.example.magicstep
+package com.shopos.magicstep
 
 import android.content.ComponentName
 import android.content.Intent

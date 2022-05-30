@@ -1,5 +1,5 @@
-import 'package:magicstep/src/models/product.dart';
-import 'package:magicstep/src/pages/checkout.dart';
+import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/checkout.dart';
 
 import '../party.dart';
 import '../user.dart';

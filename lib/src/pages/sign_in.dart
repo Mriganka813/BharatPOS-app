@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/auth/auth_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/pages/home.dart';
-import 'package:magicstep/src/pages/sign_up.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/blocs/auth/auth_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/pages/home.dart';
+import 'package:shopos/src/pages/sign_up.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
