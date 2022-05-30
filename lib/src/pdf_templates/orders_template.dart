@@ -42,7 +42,7 @@ String reportsOrderTemplate({
 
   ///
   String total() {
-    return "1200";
+    return orders.fold<int>(0, (acc, e) => acc += e.total ?? 0).toString();
   }
 
   ///

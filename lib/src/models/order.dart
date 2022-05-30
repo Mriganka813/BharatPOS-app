@@ -8,6 +8,7 @@ class Order {
     this.modeOfPayment,
     this.party,
     this.user,
+    this.total = 0,
     this.createdAt = '',
   });
 
@@ -15,6 +16,7 @@ class Order {
   String? modeOfPayment;
   Party? party;
   User? user;
+  int? total;
   String createdAt;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
@@ -27,6 +29,7 @@ class Order {
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
         user: json["user"] is Map ? User.fromMap(json["user"]) : null,
         createdAt: json["createdAt"],
+        total: json['total'] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
