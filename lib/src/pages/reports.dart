@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/report/report_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/input/report_input.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
-import 'package:magicstep/src/services/pdf.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_date_picker.dart';
+import 'package:shopos/src/blocs/report/report_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/input/report_input.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/pdf.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_date_picker.dart';
 
 enum ReportType { sale, purchase, expense }
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/expense/expense_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/pages/create_expense.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
-import 'package:magicstep/src/widgets/expense_card_horizontal.dart';
+import 'package:shopos/src/blocs/expense/expense_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/pages/create_expense.dart';
+import 'package:shopos/src/widgets/expense_card_horizontal.dart';
 
 class ExpensePage extends StatefulWidget {
   static const String routeName = '/expense';

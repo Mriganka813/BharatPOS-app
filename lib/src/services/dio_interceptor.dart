@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
 
 class CustomInterceptor extends Interceptor {
   @override

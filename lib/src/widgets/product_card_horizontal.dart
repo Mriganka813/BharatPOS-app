@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/models/product.dart';
+import 'package:shopos/src/models/product.dart';
 
 class ProductCardHorizontal extends StatelessWidget {
   final Product product;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class CustomDatePicker extends StatelessWidget {
   final String? label;

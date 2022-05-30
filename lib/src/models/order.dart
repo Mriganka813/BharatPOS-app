@@ -1,6 +1,6 @@
-import 'package:magicstep/src/models/order_item.dart';
-import 'package:magicstep/src/models/party.dart';
-import 'package:magicstep/src/models/user.dart';
+import 'package:shopos/src/models/order_item.dart';
+import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/models/user.dart';
 
 class Order {
   Order({

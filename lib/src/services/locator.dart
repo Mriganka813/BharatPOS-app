@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:magicstep/src/services/global.dart';
+import 'package:shopos/src/services/global.dart';
 
 GetIt locator = GetIt.instance;
 

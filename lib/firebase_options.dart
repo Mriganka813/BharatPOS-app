@@ -70,7 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '716795950025',
     projectId: 'magicstep-ca8f1',
     storageBucket: 'magicstep-ca8f1.appspot.com',
-    iosClientId: '716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com',
-    iosBundleId: 'com.example.magicstep',
+    iosClientId:
+        '716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com',
+    iosBundleId: 'com.shopos.magicstep',
   );
 }

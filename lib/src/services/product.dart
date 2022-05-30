@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/input/product_input.dart';
-import 'package:magicstep/src/models/product.dart';
-import 'package:magicstep/src/services/api_v1.dart';
+import 'package:shopos/src/models/input/product_input.dart';
+import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/services/api_v1.dart';
 
 class ProductService {
   const ProductService();

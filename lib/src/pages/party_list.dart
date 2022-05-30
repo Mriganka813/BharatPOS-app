@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/party/party_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/party.dart';
-import 'package:magicstep/src/pages/create_party.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/blocs/party/party_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class PartyListPage extends StatefulWidget {
   static const routeName = '/party_list';

@@ -1,5 +1,5 @@
-import 'package:magicstep/src/models/input/order_input.dart';
-import 'package:magicstep/src/models/user.dart';
+import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/user.dart';
 
 String invoiceTemplate({
   required String companyName,

@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/input/order_input.dart';
-import 'package:magicstep/src/services/purchase.dart';
-import 'package:magicstep/src/services/sales.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/services/purchase.dart';
+import 'package:shopos/src/services/sales.dart';
 
 part 'checkout_state.dart';
 

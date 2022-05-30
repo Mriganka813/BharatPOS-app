@@ -11,4 +11,7 @@ class Utils {
     }
     return true;
   }
+
+  /// Check for app updates
+  Future<void> checkUpdates() async {}
 }

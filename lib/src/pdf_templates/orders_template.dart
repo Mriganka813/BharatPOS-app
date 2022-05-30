@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
-import 'package:magicstep/src/models/order.dart';
-import 'package:magicstep/src/models/order_item.dart';
+import 'package:shopos/src/models/order.dart';
+import 'package:shopos/src/models/order_item.dart';
 
 String reportsOrderTemplate({
   required List<Order> orders,

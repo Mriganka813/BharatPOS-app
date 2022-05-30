@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/expense.dart';
-import 'package:magicstep/src/models/input/expense_input.dart';
-import 'package:magicstep/src/services/expense.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/models/expense.dart';
+import 'package:shopos/src/models/input/expense_input.dart';
+import 'package:shopos/src/services/expense.dart';
 
 part 'expense_state.dart';
 

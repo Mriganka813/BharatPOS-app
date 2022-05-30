@@ -4,13 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/expense/expense_cubit.dart';
-import 'package:magicstep/src/blocs/product/product_cubit.dart';
-import 'package:magicstep/src/models/input/expense_input.dart';
-import 'package:magicstep/src/services/expense.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_drop_down.dart';
-import 'package:magicstep/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/blocs/expense/expense_cubit.dart';
+import 'package:shopos/src/blocs/product/product_cubit.dart';
+import 'package:shopos/src/models/input/expense_input.dart';
+import 'package:shopos/src/services/expense.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_drop_down.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class CreateExpensePage extends StatefulWidget {
   static const String routeName = '/create_expense';
