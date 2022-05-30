@@ -144,7 +144,7 @@ class PartiesListView extends StatelessWidget {
     return ListView.separated(
       shrinkWrap: true,
       separatorBuilder: (context, index) {
-        return const Divider(color: Colors.transparent);
+        return const Divider();
       },
       itemCount: parties.length,
       itemBuilder: (context, index) {
