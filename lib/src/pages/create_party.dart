@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/models/input/party_input.dart';
@@ -66,9 +65,6 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                     CustomTextField(
                       label: 'Name',
                       isLoading: isLoading,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(13),
-                      ],
                       onSave: (e) {
                         _partyInput.name = e;
                       },

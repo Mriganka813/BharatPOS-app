@@ -39,8 +39,6 @@ class _ReportsPageState extends State<ReportsPage> {
     super.dispose();
   }
 
-  void createPdf() async {}
-
   ///
   void _toggleReportType(ReportType type) {
     setState(() {
@@ -75,15 +73,6 @@ class _ReportsPageState extends State<ReportsPage> {
             }
             if (state.orders != null) {
               const PdfService().generateOrdersPdfPreview(state.orders ?? []);
-            }
-          }
-          if (state is ReportsDownload) {
-            if (state.expenses != null) {
-              const PdfService()
-                  .downloadExpensePdfPreview(state.expenses ?? []);
-            }
-            if (state.orders != null) {
-              const PdfService().downloadOrdersPdfPreview(state.orders ?? []);
             }
           }
         },
