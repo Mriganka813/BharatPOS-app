@@ -147,7 +147,7 @@ class _CreateSaleState extends State<CreateSale> {
               buttonWidth: 100.0,
               color: Colors.green,
               isRestart: true,
-              buttonColor: Colors.green,
+              buttonColor: Colors.white24,
               dismissible: false,
               label: const Center(
                 child: Icon(
