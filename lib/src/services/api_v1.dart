@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:magicstep/src/config/const.dart';
-import 'package:magicstep/src/services/dio_interceptor.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shopos/src/config/const.dart';
+import 'package:shopos/src/services/dio_interceptor.dart';
 
 class ApiV1Service {
   static final Dio _dio = Dio(

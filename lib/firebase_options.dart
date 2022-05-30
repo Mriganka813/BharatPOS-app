@@ -58,7 +58,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCQGX2lwqSIcFhCpqO3E4Vot4Ic8ZS78G8',
-    appId: '1:716795950025:android:7d5f2b8207545e0596ee18',
+    appId: '1:716795950025:android:fdc6444f1f4932d496ee18',
     messagingSenderId: '716795950025',
     projectId: 'magicstep-ca8f1',
     storageBucket: 'magicstep-ca8f1.appspot.com',
@@ -66,11 +66,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDeg3_6u4BCi7CSNIbgoj3OzQvTxg0FC4Q',
-    appId: '1:716795950025:ios:9a13f8504dd5f8ce96ee18',
+    appId: '1:716795950025:ios:0f0164222804678e96ee18',
     messagingSenderId: '716795950025',
     projectId: 'magicstep-ca8f1',
     storageBucket: 'magicstep-ca8f1.appspot.com',
-    iosClientId: '716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com',
-    iosBundleId: 'com.example.magicstep',
+    androidClientId: '716795950025-05nk5lg38cgb4tobhrma8s8h780ks9td.apps.googleusercontent.com',
+    iosClientId: '716795950025-b5bod5cb2s5kmgiq6gedrf1jd88vtojb.apps.googleusercontent.com',
+    iosBundleId: 'com.shopos.magicstep',
   );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:magicstep/src/models/expense.dart';
+import 'package:shopos/src/models/expense.dart';
 
 class ExpenseCardHorizontal extends StatelessWidget {
   final Expense expense;

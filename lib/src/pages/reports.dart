@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/report/report_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/models/input/report_input.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
-import 'package:magicstep/src/services/pdf.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/custom_date_picker.dart';
+import 'package:shopos/src/blocs/report/report_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/input/report_input.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/pdf.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/custom_date_picker.dart';
 
 enum ReportType { sale, purchase, expense }
 
@@ -38,8 +38,6 @@ class _ReportsPageState extends State<ReportsPage> {
     _reportCubit.close();
     super.dispose();
   }
-
-  void createPdf() async {}
 
   ///
   void _toggleReportType(ReportType type) {
@@ -75,15 +73,6 @@ class _ReportsPageState extends State<ReportsPage> {
             }
             if (state.orders != null) {
               const PdfService().generateOrdersPdfPreview(state.orders ?? []);
-            }
-          }
-          if (state is ReportsDownload) {
-            if (state.expenses != null) {
-              const PdfService()
-                  .downloadExpensePdfPreview(state.expenses ?? []);
-            }
-            if (state.orders != null) {
-              const PdfService().downloadOrdersPdfPreview(state.orders ?? []);
             }
           }
         },
@@ -177,45 +166,15 @@ class _ReportsPageState extends State<ReportsPage> {
                   value: _reportInput.endDate,
                 ),
                 const Spacer(),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        title: "View",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline6
-                            ?.copyWith(color: Colors.white, fontSize: 18),
-                        onTap: () {
-                          _onSubmit();
-                        },
-                      ),
-                    ),
-                    const VerticalDivider(),
-                    Expanded(
-                      child: CustomButton(
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(color: Colors.white, fontSize: 18),
-                        title: "Download",
-                        onTap: () {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            if (_reportInput.type == null) {
-                              locator<GlobalServices>()
-                                  .errorSnackBar("Please select a report type");
-                              return;
-                            }
-                            setState(() {
-                              _showLoader = true;
-                            });
-                            locator<GlobalServices>().showBottomSheetLoader();
-                            _reportCubit.downloadReport(_reportInput);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+                CustomButton(
+                  title: "View",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      ?.copyWith(color: Colors.white, fontSize: 18),
+                  onTap: () {
+                    _onSubmit();
+                  },
                 ),
               ],
             ),

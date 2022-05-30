@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/pages/checkout.dart';
-import 'package:magicstep/src/pages/create_expense.dart';
-import 'package:magicstep/src/pages/create_party.dart';
-import 'package:magicstep/src/pages/create_product.dart';
-import 'package:magicstep/src/pages/create_purchase.dart';
-import 'package:magicstep/src/pages/create_sale.dart';
-import 'package:magicstep/src/pages/expense.dart';
-import 'package:magicstep/src/pages/home.dart';
-import 'package:magicstep/src/pages/party_list.dart';
-import 'package:magicstep/src/pages/products_list.dart';
-import 'package:magicstep/src/pages/reports.dart';
-import 'package:magicstep/src/pages/sign_in.dart';
-import 'package:magicstep/src/pages/sign_up.dart';
-import 'package:magicstep/src/pages/splash.dart';
-import 'package:magicstep/src/services/global.dart';
-import 'package:magicstep/src/services/locator.dart';
+import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_expense.dart';
+import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/pages/create_product.dart';
+import 'package:shopos/src/pages/create_purchase.dart';
+import 'package:shopos/src/pages/create_sale.dart';
+import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/home.dart';
+import 'package:shopos/src/pages/party_credit.dart';
+import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/products_list.dart';
+import 'package:shopos/src/pages/reports.dart';
+import 'package:shopos/src/pages/sign_in.dart';
+import 'package:shopos/src/pages/sign_up.dart';
+import 'package:shopos/src/pages/splash.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -81,6 +82,8 @@ class MyApp extends StatelessWidget {
                 return CheckoutPage(
                   args: settings.arguments as CheckoutPageArgs,
                 );
+              case PartyCreditPage.routeName:
+                return PartyCreditPage(partyId: settings.arguments as String);
               default:
                 return const SplashScreen();
             }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:magicstep/src/blocs/home/home_cubit.dart';
-import 'package:magicstep/src/config/colors.dart';
-import 'package:magicstep/src/pages/create_purchase.dart';
-import 'package:magicstep/src/pages/create_sale.dart';
-import 'package:magicstep/src/pages/expense.dart';
-import 'package:magicstep/src/pages/party_list.dart';
-import 'package:magicstep/src/pages/products_list.dart';
-import 'package:magicstep/src/pages/reports.dart';
-import 'package:magicstep/src/pages/sign_in.dart';
-import 'package:magicstep/src/services/auth.dart';
-import 'package:magicstep/src/widgets/custom_icons.dart';
+import 'package:shopos/src/blocs/home/home_cubit.dart';
+import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/pages/create_purchase.dart';
+import 'package:shopos/src/pages/create_sale.dart';
+import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/products_list.dart';
+import 'package:shopos/src/pages/reports.dart';
+import 'package:shopos/src/pages/sign_in.dart';
+import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/widgets/custom_icons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

@@ -2,30 +2,24 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/models/input/party_input.dart';
-import 'package:magicstep/src/models/order.dart';
-import 'package:magicstep/src/models/page_meta.dart';
-import 'package:magicstep/src/models/party.dart';
-import 'package:magicstep/src/services/auth.dart';
-import 'package:magicstep/src/services/orders.dart';
-import 'package:magicstep/src/services/party.dart';
 import 'package:meta/meta.dart';
+import 'package:shopos/src/models/input/party_input.dart';
+import 'package:shopos/src/models/order.dart';
+import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/services/party.dart';
 
 part 'party_state.dart';
 
 class PartyCubit extends Cubit<PartyState> {
-  final PageMeta _salesPageMeta = PageMeta();
-  final PageMeta _purchasePageMeta = PageMeta();
   final List<Party> _saleParties = [];
   final List<Party> _purchaseParties = [];
-
-  ///
-  static const OrdersService _ordersService = OrdersService();
+  final PartyService _partyService = const PartyService();
 
   ///
   PartyCubit() : super(PartyInitial());
-  final PartyService _partyService = const PartyService();
 
+  /// Create a new party
   void createParty(PartyInput p) async {
     emit(PartyLoading());
     try {
@@ -42,6 +36,7 @@ class PartyCubit extends Cubit<PartyState> {
     return;
   }
 
+  /// Get the intial credit parties
   void getInitialCreditParties() async {
     emit(PartyLoading());
     try {
@@ -61,6 +56,7 @@ class PartyCubit extends Cubit<PartyState> {
     }
   }
 
+  /// Get my parties
   void getMyParties() async {
     emit(PartyLoading());
     final response = await _partyService.getParties();
@@ -75,6 +71,7 @@ class PartyCubit extends Cubit<PartyState> {
     return emit(PartyListRender(parties));
   }
 
+  /// Delete a party
   void deleteParty(Party p) async {
     final response = await _partyService.deleteParty(p);
     if ((response.statusCode ?? 400) > 300) {
@@ -85,6 +82,7 @@ class PartyCubit extends Cubit<PartyState> {
     return emit(PartySuccess());
   }
 
+  /// Update party
   void updateParty(PartyInput p) async {
     final response = await _partyService.updateParty(p);
     if ((response.statusCode ?? 400) > 300) {
@@ -93,4 +91,7 @@ class PartyCubit extends Cubit<PartyState> {
     }
     return emit(PartySuccess());
   }
+
+  ///
+
 }

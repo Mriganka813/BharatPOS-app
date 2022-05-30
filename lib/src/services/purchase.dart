@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:magicstep/src/services/api_v1.dart';
+import 'package:shopos/src/services/api_v1.dart';
 
 import '../models/input/order_input.dart';
 

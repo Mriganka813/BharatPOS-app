@@ -1,4 +1,4 @@
-import 'package:magicstep/src/pages/reports.dart';
+import 'package:shopos/src/pages/reports.dart';
 
 class ReportInput {
   ReportInput({

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/models/input/order_input.dart';
-import 'package:magicstep/src/models/product.dart';
-import 'package:magicstep/src/pages/checkout.dart';
-import 'package:magicstep/src/pages/create_product.dart';
-import 'package:magicstep/src/pages/products_list.dart';
-import 'package:magicstep/src/widgets/custom_button.dart';
-import 'package:magicstep/src/widgets/product_card_horizontal.dart';
+import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_product.dart';
+import 'package:shopos/src/pages/products_list.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/product_card_horizontal.dart';
 import 'package:slidable_button/slidable_button.dart';
 
 class CreatePurchase extends StatefulWidget {

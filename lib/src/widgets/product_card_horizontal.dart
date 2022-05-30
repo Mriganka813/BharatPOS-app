@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:magicstep/src/models/product.dart';
+import 'package:shopos/src/models/product.dart';
 
 class ProductCardHorizontal extends StatelessWidget {
   final Product product;
@@ -57,6 +57,8 @@ class ProductCardHorizontal extends StatelessWidget {
                   children: [
                     Text(
                       product.name ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     const SizedBox(height: 2),
@@ -161,6 +163,8 @@ class ProductCardPurchase extends StatelessWidget {
                   children: [
                     Text(
                       product.name ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     const SizedBox(height: 10),

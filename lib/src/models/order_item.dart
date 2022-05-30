@@ -1,4 +1,4 @@
-import 'package:magicstep/src/models/product.dart';
+import 'package:shopos/src/models/product.dart';
 
 class OrderItem {
   OrderItem({

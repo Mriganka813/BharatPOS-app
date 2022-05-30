@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
-import 'package:magicstep/src/config/const.dart';
-import 'package:magicstep/src/models/input/sign_up_input.dart';
-import 'package:magicstep/src/models/user.dart';
-import 'package:magicstep/src/services/api_v1.dart';
+import 'package:shopos/src/config/const.dart';
+import 'package:shopos/src/models/input/sign_up_input.dart';
+import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/services/api_v1.dart';
 
 class AuthService {
   const AuthService();

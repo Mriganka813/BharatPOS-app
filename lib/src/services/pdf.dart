@@ -1,11 +1,11 @@
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
-import 'package:magicstep/src/models/expense.dart';
-import 'package:magicstep/src/models/order.dart';
-import 'package:magicstep/src/models/user.dart';
-import 'package:magicstep/src/pdf_templates/expense_template.dart';
-import 'package:magicstep/src/pdf_templates/orders_template.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shopos/src/models/expense.dart';
+import 'package:shopos/src/models/order.dart';
+import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pdf_templates/expense_template.dart';
+import 'package:shopos/src/pdf_templates/orders_template.dart';
 
 class PdfService {
   const PdfService();
