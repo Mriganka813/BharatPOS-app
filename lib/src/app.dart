@@ -9,6 +9,7 @@ import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/paymentChat.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -84,6 +85,8 @@ class MyApp extends StatelessWidget {
                 );
               case PartyCreditPage.routeName:
                 return PartyCreditPage(partyId: settings.arguments as String);
+              case payChat.routeName:
+                return payChat();
               default:
                 return const SplashScreen();
             }

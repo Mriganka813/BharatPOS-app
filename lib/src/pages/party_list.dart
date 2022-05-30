@@ -4,6 +4,7 @@ import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/pages/paymentChat.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
@@ -152,6 +153,9 @@ class PartiesListView extends StatelessWidget {
         return ListTile(
           title: Text(party.name ?? ""),
           trailing: Text("${party.totalCreditAmount}"),
+          onTap: () async {
+            await Navigator.pushNamed(context, payChat.routeName);
+          },
         );
       },
     );
