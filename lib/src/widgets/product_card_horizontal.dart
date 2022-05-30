@@ -57,6 +57,8 @@ class ProductCardHorizontal extends StatelessWidget {
                   children: [
                     Text(
                       product.name ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     const SizedBox(height: 2),
@@ -161,6 +163,8 @@ class ProductCardPurchase extends StatelessWidget {
                   children: [
                     Text(
                       product.name ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     const SizedBox(height: 10),
