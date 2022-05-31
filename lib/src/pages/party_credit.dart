@@ -56,130 +56,95 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         shadowColor: Colors.white,
         elevation: 0,
-        title: Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 10, left: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.args.partName + "\n" + widget.args.partyContactNo,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                    IconButton(
-                        onPressed: () {},
-                        splashRadius: 20,
-                        icon: const Icon(
-                          Icons.more_vert,
-                          size: 25,
-                          color: Colors.black,
-                        ))
-                  ],
-                ),
-              ],
-            )),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            splashRadius: 20,
+            icon: const Icon(
+              Icons.more_vert,
+              size: 25,
+              color: Colors.black,
+            ),
+          ),
+        ],
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.args.partName),
+            Text(
+              widget.args.partyContactNo,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 12, right: 12),
-        child: SingleChildScrollView(
-          reverse: true,
-          child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
-            bloc: _specificpartyCubit,
-            builder: (context, state) {
-              if (state is SpecificPartyListRender) {
-                final specificParties = state.specificparty.reversed.toList();
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: specificParties.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final party = specificParties[index];
-                    if (party.modeOfPayment == "Credit") {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: currentdate("${party.createdAt}"),
-                          ),
-                          ListTile(
-                            trailing: SizedBox(
-                              height: 50,
-                              width: 111,
-                              child: Card(
-                                clipBehavior: Clip.hardEdge,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                      color: Colors.black, width: 0.5),
-                                  borderRadius: BorderRadius.circular(10.0),
+        child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
+          bloc: _specificpartyCubit,
+          builder: (context, state) {
+            if (state is SpecificPartyListRender) {
+              final specificParties = state.specificparty;
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                reverse: true,
+                itemCount: specificParties.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final party = specificParties[index];
+                  return Column(
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 15, bottom: 15),
+                          child: currentdate("${party.createdAt}"),
+                        ),
+                      ),
+                      Align(
+                        alignment: party.modeOfPayment == "Settle"
+                            ? Alignment.centerLeft
+                            : Alignment.centerRight,
+                        child: SizedBox(
+                          height: 50,
+                          width: 111,
+                          child: Card(
+                            clipBehavior: Clip.hardEdge,
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  color: Colors.black, width: 0.5),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "${party.total}",
+                                style: TextStyle(
+                                  color: party.modeOfPayment == "Settle"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontSize: 20,
                                 ),
-                                elevation: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "${party.total}",
-                                    style: const TextStyle(
-                                        color: Colors.red, fontSize: 20),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
-                        ],
-                      );
-                    } else if (party.modeOfPayment == "Settle") {
-                      return Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Container(
-                              child: currentdate("${party.createdAt}"),
-                            ),
-                          ),
-                          ListTile(
-                            leading: SizedBox(
-                              height: 50,
-                              width: 111,
-                              child: Card(
-                                clipBehavior: Clip.hardEdge,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                      color: Colors.black, width: 0.5),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                elevation: 0,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Text(
-                                    "${party.total}",
-                                    style: const TextStyle(
-                                        color: Colors.green, fontSize: 20),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return const Text("test");
-                  },
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
-                ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               );
-            },
-          ),
+            }
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+              ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: BottomAppBar(

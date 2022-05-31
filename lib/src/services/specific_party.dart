@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/specific_party.dart';
 import 'package:shopos/src/services/api_v1.dart';
 
