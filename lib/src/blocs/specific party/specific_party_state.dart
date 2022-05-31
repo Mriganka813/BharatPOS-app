@@ -9,4 +9,11 @@ class SpecificPartyListRender extends SpecificPartyState {
   SpecificPartyListRender(this.specificparty);
 }
 
+class SpecificPartyLoading extends SpecificPartyState {}
+
+class SpecificPartyError extends SpecificPartyState {
+  late final String message;
+  SpecificPartyError(this.message);
+}
+
 class DeletePartyState extends SpecificPartyState {}

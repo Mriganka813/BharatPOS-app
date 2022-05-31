@@ -84,9 +84,8 @@ class MyApp extends StatelessWidget {
                   args: settings.arguments as CheckoutPageArgs,
                 );
               case PartyCreditPage.routeName:
-                return PartyCreditPage(partyId: settings.arguments as String);
-              case payChat.routeName:
-                return payChat();
+                return PartyCreditPage(
+                    args: settings.arguments as ScreenArguments);
               default:
                 return const SplashScreen();
             }
