@@ -5,8 +5,10 @@ class Party {
     this.id,
     this.createdAt,
     this.totalCreditAmount,
+    this.totalSettleAmount,
     this.v,
     this.total,
+    this.balance,
   });
 
   String? name;
@@ -15,7 +17,9 @@ class Party {
   DateTime? createdAt;
   String? v;
   int? totalCreditAmount;
+  int? totalSettleAmount;
   int? total;
+  int? balance;
 
   factory Party.fromMap(Map<String, dynamic> json) => Party(
         name: json["name"],
@@ -23,6 +27,8 @@ class Party {
         id: json["_id"],
         createdAt: DateTime.parse(json["createdAt"]),
         totalCreditAmount: json["totalCreditAmount"],
+        totalSettleAmount: json['totalSettleAmount'],
+        balance: json['balance'],
         total: json["total"],
         v: json["__v"].toString(),
       );

@@ -1,12 +1,17 @@
-import 'package:shopos/src/models/specific_party.dart';
+import 'package:shopos/src/models/order.dart';
+import 'package:shopos/src/models/party.dart';
 
 abstract class SpecificPartyState {}
 
 class SpecificPartyInitial extends SpecificPartyState {}
 
 class SpecificPartyListRender extends SpecificPartyState {
-  final List<SpecificParty> specificparty;
-  SpecificPartyListRender(this.specificparty);
+  final List<Order> specificparty;
+  final Party partyDetails;
+  SpecificPartyListRender({
+    required this.specificparty,
+    required this.partyDetails,
+  });
 }
 
 class SpecificPartyLoading extends SpecificPartyState {}

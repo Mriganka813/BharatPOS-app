@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
-import 'package:shopos/src/models/specific_party.dart';
+import 'package:shopos/src/models/party.dart';
 
 class ScreenArguments {
   final String partyId;
@@ -29,19 +29,16 @@ class PartyCreditPage extends StatefulWidget {
 
 class _PartyCreditPageState extends State<PartyCreditPage> {
   late final SpecificPartyCubit _specificpartyCubit;
-  late SpecificParty _specificPartyInput;
+  late Party _specificPartyInput;
 
   @override
   void initState() {
     super.initState();
-    if (widget.args.tabbarNo == 0) {
-      _specificpartyCubit = SpecificPartyCubit()
-        ..getInitialCreditHistory(widget.args.partyId);
-    } else {
-      _specificpartyCubit = SpecificPartyCubit()
-        ..getInitialpurchasedHistory(widget.args.partyId);
-    }
-    _specificPartyInput = SpecificParty();
+    _specificpartyCubit = SpecificPartyCubit();
+    widget.args.tabbarNo == 0
+        ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId)
+        : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
+    _specificPartyInput = Party();
   }
 
   @override
@@ -87,24 +84,24 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           bloc: _specificpartyCubit,
           builder: (context, state) {
             if (state is SpecificPartyListRender) {
-              final specificParties = state.specificparty;
+              final orders = state.specificparty;
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
                 reverse: true,
-                itemCount: specificParties.length,
+                itemCount: orders.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final party = specificParties[index];
+                  final order = orders[index];
                   return Column(
                     children: [
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 15, bottom: 15),
-                          child: currentdate("${party.createdAt}"),
+                          child: currentdate(order.createdAt),
                         ),
                       ),
                       Align(
-                        alignment: party.modeOfPayment == "Settle"
+                        alignment: order.modeOfPayment == "Settle"
                             ? Alignment.centerLeft
                             : Alignment.centerRight,
                         child: SizedBox(
@@ -121,9 +118,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "${party.total}",
+                                "${order.total}",
                                 style: TextStyle(
-                                  color: party.modeOfPayment == "Settle"
+                                  color: order.modeOfPayment == "Settle"
                                       ? Colors.green
                                       : Colors.red,
                                   fontSize: 20,
@@ -160,25 +157,34 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Text(
-                        "Balance Due",
-                        textScaleFactor: 1.7,
+                BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
+                  bloc: _specificpartyCubit,
+                  builder: (context, state) {
+                    String balance = '---';
+                    if (state is SpecificPartyListRender) {
+                      balance = "${state.partyDetails.balance ?? 0}";
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          const Text(
+                            "Balance Due",
+                            textScaleFactor: 1.7,
+                          ),
+                          Text(
+                            balance,
+                            textScaleFactor: 1.7,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ],
                       ),
-                      Text(
-                        "500",
-                        textScaleFactor: 1.7,
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    ],
-                  ),
+                    );
+                  },
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -279,10 +285,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _specificPartyInput.modeOfPayment = modeofPayment;
-                          _specificPartyInput.total = int.parse(value.text);
-                          _specificPartyInput.id = widget.args.partyId;
-                          _specificPartyInput.createdAt = DateTime.now();
+                          // _specificPartyInput.modeOfPayment = modeofPayment;
+                          // _specificPartyInput.total = int.parse(value.text);
+                          // _specificPartyInput.id = widget.args.partyId;
+                          // _specificPartyInput.createdAt = DateTime.now();
                           value.clear();
                         });
                         if (widget.args.tabbarNo == 0) {
