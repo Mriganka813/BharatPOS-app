@@ -152,9 +152,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         child: Container(
           height: 120,
           width: double.maxFinite,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
+          decoration: const BoxDecoration(color: Colors.white),
           child: SingleChildScrollView(
             reverse: true,
             padding: const EdgeInsets.only(bottom: 20),
@@ -175,7 +173,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         "500",
                         textScaleFactor: 1.7,
                         style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold),
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
                       )
                     ],
                   ),
@@ -193,17 +193,21 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         child: const Text(
                           "Received",
                           style: TextStyle(
-                              color: Color.fromRGBO(32, 150, 82, 100)),
+                            color: Color.fromRGBO(32, 150, 82, 100),
+                          ),
                           textScaleFactor: 1.7,
                         ),
                         style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )),
+                            const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                          ),
                           backgroundColor: MaterialStateProperty.all(
-                              const Color.fromRGBO(148, 255, 194, 100)),
+                            const Color.fromRGBO(148, 255, 194, 100),
+                          ),
                         ),
                       ),
                     ),
@@ -222,11 +226,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          )),
+                            const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                            ),
+                          ),
                           backgroundColor: MaterialStateProperty.all(
-                              const Color.fromRGBO(255, 209, 209, 10)),
+                            const Color.fromRGBO(255, 209, 209, 10),
+                          ),
                         ),
                       ),
                     ),
