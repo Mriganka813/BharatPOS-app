@@ -5,8 +5,6 @@ import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/specific_party.dart';
-import 'package:shopos/src/services/global.dart';
-import 'package:shopos/src/services/locator.dart';
 
 class ScreenArguments {
   final String partyId;
@@ -31,7 +29,7 @@ class PartyCreditPage extends StatefulWidget {
 
 class _PartyCreditPageState extends State<PartyCreditPage> {
   late final SpecificPartyCubit _specificpartyCubit;
-  late SpecificParty _SpecificPartyInput;
+  late SpecificParty _specificPartyInput;
 
   @override
   void initState() {
@@ -43,7 +41,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
       _specificpartyCubit = SpecificPartyCubit()
         ..getInitialpurchasedHistory(widget.args.partyId);
     }
-    _SpecificPartyInput = SpecificParty();
+    _specificPartyInput = SpecificParty();
   }
 
   @override
@@ -72,7 +70,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   children: [
                     Text(
                       widget.args.partName + "\n" + widget.args.partyContactNo,
-                      style: TextStyle(color: Colors.black),
+                      style: const TextStyle(color: Colors.black),
                     ),
                     IconButton(
                         onPressed: () {},
@@ -94,7 +92,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
             bloc: _specificpartyCubit,
             builder: (context, state) {
-              print(state.toString());
               if (state is SpecificPartyListRender) {
                 final specificParties = state.specificparty.reversed.toList();
                 return ListView.builder(
@@ -111,7 +108,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             child: currentdate("${party.createdAt}"),
                           ),
                           ListTile(
-                            trailing: Container(
+                            trailing: SizedBox(
                               height: 50,
                               width: 111,
                               child: Card(
@@ -146,7 +143,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             ),
                           ),
                           ListTile(
-                            leading: Container(
+                            leading: SizedBox(
                               height: 50,
                               width: 111,
                               child: Card(
@@ -181,7 +178,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
                 ),
               );
-              ;
             },
           ),
         ),
@@ -222,7 +218,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: 140,
                       child: ElevatedButton(
@@ -246,7 +242,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: 140,
                       child: ElevatedButton(
@@ -280,8 +276,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
   modelOpen(context, String modeofPayment) {
-    print(modeofPayment);
-
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -313,18 +307,18 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          _SpecificPartyInput.modeOfPayment = modeofPayment;
-                          _SpecificPartyInput.total = int.parse(value.text);
-                          _SpecificPartyInput.id = widget.args.partyId;
-                          _SpecificPartyInput.createdAt = DateTime.now();
+                          _specificPartyInput.modeOfPayment = modeofPayment;
+                          _specificPartyInput.total = int.parse(value.text);
+                          _specificPartyInput.id = widget.args.partyId;
+                          _specificPartyInput.createdAt = DateTime.now();
                           value.clear();
                         });
                         if (widget.args.tabbarNo == 0) {
                           _specificpartyCubit
-                              .updateCreditHistory(_SpecificPartyInput);
+                              .updateCreditHistory(_specificPartyInput);
                         } else {
                           _specificpartyCubit
-                              .updatepurchaseHistory(_SpecificPartyInput);
+                              .updatepurchaseHistory(_specificPartyInput);
                         }
                         Navigator.pop(context);
                       },

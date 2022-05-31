@@ -1,20 +1,15 @@
-// ignore_for_file: file_names, camel_case_types, prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names, avoid_types_as_parameter_names
-
-import 'dart:developer';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class payChat extends StatefulWidget {
+class PayChat extends StatefulWidget {
   static const String routeName = '/Specific_party';
-  payChat({Key? key}) : super(key: key);
+  const PayChat({Key? key}) : super(key: key);
 
   @override
-  State<payChat> createState() => _payChatState();
+  State<PayChat> createState() => _PayChatState();
 }
 
-class _payChatState extends State<payChat> {
+class _PayChatState extends State<PayChat> {
   var MoneyList = [];
 
   TextEditingController value = TextEditingController();
@@ -36,7 +31,7 @@ class _payChatState extends State<payChat> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "Amit Kumar\n+91-6000637319",
                     style: TextStyle(color: Colors.black),
                   ),
@@ -62,7 +57,7 @@ class _payChatState extends State<payChat> {
         child: SingleChildScrollView(
           reverse: true,
           child: ListView.builder(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: MoneyList.length,
             itemBuilder: (BuildContext context, int index) {
@@ -76,13 +71,14 @@ class _payChatState extends State<payChat> {
                       ),
                     ),
                     ListTile(
-                      trailing: Container(
+                      trailing: SizedBox(
                         height: 50,
                         width: 111,
                         child: Card(
                           clipBehavior: Clip.hardEdge,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.black, width: 0.5),
+                            side: const BorderSide(
+                                color: Colors.black, width: 0.5),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           elevation: 0,
@@ -90,7 +86,8 @@ class _payChatState extends State<payChat> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               MoneyList[index][1],
-                              style: TextStyle(color: Colors.red, fontSize: 20),
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -109,13 +106,14 @@ class _payChatState extends State<payChat> {
                       ),
                     ),
                     ListTile(
-                      leading: Container(
+                      leading: SizedBox(
                         height: 50,
                         width: 111,
                         child: Card(
                           clipBehavior: Clip.hardEdge,
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.black, width: 0.5),
+                            side: const BorderSide(
+                                color: Colors.black, width: 0.5),
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           elevation: 0,
@@ -123,8 +121,8 @@ class _payChatState extends State<payChat> {
                             padding: const EdgeInsets.all(8),
                             child: Text(
                               MoneyList[index][1],
-                              style:
-                                  TextStyle(color: Colors.green, fontSize: 20),
+                              style: const TextStyle(
+                                  color: Colors.green, fontSize: 20),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -134,7 +132,7 @@ class _payChatState extends State<payChat> {
                   ],
                 );
               }
-              return Text("");
+              return const Text("");
             },
           ),
         ),
@@ -144,12 +142,12 @@ class _payChatState extends State<payChat> {
         child: Container(
           height: 120,
           width: double.maxFinite,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
           ),
           child: SingleChildScrollView(
             reverse: true,
-            padding: EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.only(bottom: 20),
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,7 +156,7 @@ class _payChatState extends State<payChat> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    children: const [
                       Text(
                         "Balance Due",
                         textScaleFactor: 1.7,
@@ -175,14 +173,14 @@ class _payChatState extends State<payChat> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: 140,
                       child: ElevatedButton(
                         onPressed: () {
                           modelOpen(context, "Green");
                         },
-                        child: Text(
+                        child: const Text(
                           "Received",
                           style: TextStyle(
                               color: Color.fromRGBO(32, 150, 82, 100)),
@@ -191,22 +189,22 @@ class _payChatState extends State<payChat> {
                         style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
+                                  const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           )),
                           backgroundColor: MaterialStateProperty.all(
-                              Color.fromRGBO(148, 255, 194, 100)),
+                              const Color.fromRGBO(148, 255, 194, 100)),
                         ),
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: 50,
                       width: 140,
                       child: ElevatedButton(
                         onPressed: () {
                           modelOpen(context, "Red");
                         },
-                        child: Text(
+                        child: const Text(
                           "Given",
                           style: TextStyle(color: Colors.red),
                           textScaleFactor: 1.7,
@@ -214,11 +212,11 @@ class _payChatState extends State<payChat> {
                         style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
+                                  const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           )),
                           backgroundColor: MaterialStateProperty.all(
-                              Color.fromRGBO(255, 209, 209, 10)),
+                              const Color.fromRGBO(255, 209, 209, 10)),
                         ),
                       ),
                     ),
@@ -245,7 +243,7 @@ class _payChatState extends State<payChat> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Enter Amount",
+                  const Text("Enter Amount",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
                   Padding(
@@ -257,7 +255,7 @@ class _payChatState extends State<payChat> {
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         controller: value,
-                        decoration: InputDecoration(hintText: "₹"),
+                        decoration: const InputDecoration(hintText: "₹"),
                       ),
                     ),
                   ),
@@ -269,7 +267,7 @@ class _payChatState extends State<payChat> {
                         });
                         Navigator.pop(context);
                       },
-                      child: Text("Confirm"))
+                      child: const Text("Confirm"))
                 ],
               ),
             ),
@@ -282,7 +280,7 @@ class _payChatState extends State<payChat> {
     var datereq = DateFormat.MMMM().format(dt);
     return Text(
       dt.day.toString() + " " + datereq + ", " + dt.year.toString(),
-      style: TextStyle(color: Colors.black45),
+      style: const TextStyle(color: Colors.black45),
     );
   }
 }
