@@ -23,7 +23,7 @@ class SpecificParty {
 
   Map<String, dynamic> toMap() => {
         "modeOfPayment": modeOfPayment,
-        "total": total,
+        "amount": total,
         "_id": id,
         "createdAt": createdAt?.toIso8601String(),
         "__v": v,

@@ -11,6 +11,7 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
 
   SpecificPartyCubit() : super(SpecificPartyInitial());
 
+  ///
   void getInitialCreditHistory(String id) async {
     emit(SpecificPartyLoading());
     try {
@@ -25,6 +26,7 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
     }
   }
 
+  ///
   void getInitialpurchasedHistory(String id) async {
     emit(SpecificPartyLoading());
     try {
@@ -37,5 +39,25 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       log("$err");
       SpecificPartyError("Error fetching parties");
     }
+  }
+
+  ///
+  void updateCreditHistory(SpecificParty p) async {
+    final response = await _partyService.updateSalesCredit(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    return emit(SpecificPartySuccess());
+  }
+
+  ///
+  void updatepurchaseHistory(SpecificParty p) async {
+    final response = await _partyService.updatepurchasedCredit(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    return emit(SpecificPartySuccess());
   }
 }

@@ -16,4 +16,6 @@ class SpecificPartyError extends SpecificPartyState {
   SpecificPartyError(this.message);
 }
 
+class SpecificPartySuccess extends SpecificPartyState {}
+
 class DeletePartyState extends SpecificPartyState {}

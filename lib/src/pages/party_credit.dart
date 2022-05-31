@@ -31,6 +31,7 @@ class PartyCreditPage extends StatefulWidget {
 
 class _PartyCreditPageState extends State<PartyCreditPage> {
   late final SpecificPartyCubit _specificpartyCubit;
+  late SpecificParty _SpecificPartyInput;
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
       _specificpartyCubit = SpecificPartyCubit()
         ..getInitialpurchasedHistory(widget.args.partyId);
     }
+    _SpecificPartyInput = SpecificParty();
   }
 
   @override
@@ -50,7 +52,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     super.dispose();
   }
 
-  @override
   TextEditingController value = TextEditingController();
 
   @override
@@ -93,8 +94,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
             bloc: _specificpartyCubit,
             builder: (context, state) {
+              // print(state.toString());
               if (state is SpecificPartyListRender) {
-                final specificParties = state.specificparty;
+                final specificParties = state.specificparty.reversed.toList();
                 return ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
@@ -225,7 +227,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       width: 140,
                       child: ElevatedButton(
                         onPressed: () {
-                          modelOpen(context, "Green");
+                          modelOpen(context, "Settle");
                         },
                         child: const Text(
                           "Received",
@@ -249,7 +251,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       width: 140,
                       child: ElevatedButton(
                         onPressed: () {
-                          modelOpen(context, "Red");
+                          modelOpen(context, "Credit");
                         },
                         child: const Text(
                           "Given",
@@ -277,7 +279,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     );
   }
 
-  modelOpen(context, Key) {
+  modelOpen(context, String modeofPayment) {
+    print(modeofPayment);
+
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -309,9 +313,19 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          // MoneyList.add([Key, value.text]);
+                          _SpecificPartyInput.modeOfPayment = modeofPayment;
+                          _SpecificPartyInput.total = int.parse(value.text);
+                          _SpecificPartyInput.id = widget.args.partyId;
+                          _SpecificPartyInput.createdAt = DateTime.now();
                           value.clear();
                         });
+                        if (widget.args.tabbarNo == 0) {
+                          _specificpartyCubit
+                              .updateCreditHistory(_SpecificPartyInput);
+                        } else {
+                          _specificpartyCubit
+                              .updatepurchaseHistory(_SpecificPartyInput);
+                        }
                         Navigator.pop(context);
                       },
                       child: const Text("Confirm"))
