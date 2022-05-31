@@ -1,6 +1,4 @@
 import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/models/specific_party.dart';
@@ -13,23 +11,28 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
 
   SpecificPartyCubit() : super(SpecificPartyInitial());
 
-//crete credit
-  void credit() {}
-
-//create settle
-  void settle() {}
-
-  void getInitialCreditParties(String id) async {
+  void getInitialCreditHistory(String id) async {
     emit(SpecificPartyLoading());
     try {
-      debugPrint(id);
       final sales = await _partyService.getSalesCreditHistory(id);
-      final purchase = await _partyService.getpurchaseCreditHistory(id);
       _specificsaleParties.clear();
       _specificpurchaseParties.clear();
       _specificsaleParties.addAll(sales);
-      _specificpurchaseParties.addAll(purchase);
       emit(SpecificPartyListRender(sales));
+    } catch (err) {
+      log("$err");
+      SpecificPartyError("Error fetching parties");
+    }
+  }
+
+  void getInitialpurchasedHistory(String id) async {
+    emit(SpecificPartyLoading());
+    try {
+      final purchase = await _partyService.getpurchaseCreditHistory(id);
+      _specificsaleParties.clear();
+      _specificpurchaseParties.clear();
+      _specificpurchaseParties.addAll(purchase);
+      emit(SpecificPartyListRender(purchase));
     } catch (err) {
       log("$err");
       SpecificPartyError("Error fetching parties");

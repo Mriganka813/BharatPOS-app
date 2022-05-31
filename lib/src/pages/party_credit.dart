@@ -12,8 +12,10 @@ class ScreenArguments {
   final String partyId;
   final String partName;
   final String partyContactNo;
+  final int tabbarNo;
 
-  ScreenArguments(this.partyId, this.partName, this.partyContactNo);
+  ScreenArguments(
+      this.partyId, this.partName, this.partyContactNo, this.tabbarNo);
 }
 
 class PartyCreditPage extends StatefulWidget {
@@ -33,8 +35,13 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   @override
   void initState() {
     super.initState();
-    _specificpartyCubit = SpecificPartyCubit()
-      ..getInitialCreditParties(widget.args.partyId);
+    if (widget.args.tabbarNo == 0) {
+      _specificpartyCubit = SpecificPartyCubit()
+        ..getInitialCreditHistory(widget.args.partyId);
+    } else {
+      _specificpartyCubit = SpecificPartyCubit()
+        ..getInitialpurchasedHistory(widget.args.partyId);
+    }
   }
 
   @override

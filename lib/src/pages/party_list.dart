@@ -107,8 +107,14 @@ class _PartyListPageState extends State<PartyListPage> {
                             Expanded(
                               child: TabBarView(
                                 children: [
-                                  PartiesListView(parties: salesParties),
-                                  PartiesListView(parties: purchaseParties),
+                                  PartiesListView(
+                                    parties: salesParties,
+                                    tabno: 0,
+                                  ),
+                                  PartiesListView(
+                                    parties: purchaseParties,
+                                    tabno: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -137,9 +143,11 @@ class PartiesListView extends StatelessWidget {
   const PartiesListView({
     Key? key,
     required this.parties,
+    required this.tabno,
   }) : super(key: key);
 
   final List<Party> parties;
+  final int tabno;
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +165,7 @@ class PartiesListView extends StatelessWidget {
           onTap: () async {
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
-                    party.id!, party.name!, party.phoneNumber!));
+                    party.id!, party.name!, party.phoneNumber!, tabno));
           },
         );
       },
