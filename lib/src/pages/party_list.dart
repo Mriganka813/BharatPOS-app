@@ -4,6 +4,8 @@ import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/pages/party_credit.dart';
+import 'package:shopos/src/pages/paymentChat.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
@@ -105,8 +107,14 @@ class _PartyListPageState extends State<PartyListPage> {
                             Expanded(
                               child: TabBarView(
                                 children: [
-                                  PartiesListView(parties: salesParties),
-                                  PartiesListView(parties: purchaseParties),
+                                  PartiesListView(
+                                    parties: salesParties,
+                                    tabno: 0,
+                                  ),
+                                  PartiesListView(
+                                    parties: purchaseParties,
+                                    tabno: 1,
+                                  ),
                                 ],
                               ),
                             ),
@@ -135,9 +143,11 @@ class PartiesListView extends StatelessWidget {
   const PartiesListView({
     Key? key,
     required this.parties,
+    required this.tabno,
   }) : super(key: key);
 
   final List<Party> parties;
+  final int tabno;
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +162,11 @@ class PartiesListView extends StatelessWidget {
         return ListTile(
           title: Text(party.name ?? ""),
           trailing: Text("${party.totalCreditAmount}"),
+          onTap: () async {
+            await Navigator.pushNamed(context, PartyCreditPage.routeName,
+                arguments: ScreenArguments(
+                    party.id!, party.name!, party.phoneNumber!, tabno));
+          },
         );
       },
     );
