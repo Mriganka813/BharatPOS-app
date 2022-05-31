@@ -94,7 +94,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
             bloc: _specificpartyCubit,
             builder: (context, state) {
-              // print(state.toString());
+              print(state.toString());
               if (state is SpecificPartyListRender) {
                 final specificParties = state.specificparty.reversed.toList();
                 return ListView.builder(

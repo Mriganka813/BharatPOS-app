@@ -44,20 +44,22 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   ///
   void updateCreditHistory(SpecificParty p) async {
     final response = await _partyService.updateSalesCredit(p);
+    final sales = await _partyService.getSalesCreditHistory(p.id!);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
-    return emit(SpecificPartySuccess());
+    return emit(SpecificPartyListRender(sales));
   }
 
   ///
   void updatepurchaseHistory(SpecificParty p) async {
     final response = await _partyService.updatepurchasedCredit(p);
+    final purchase = await _partyService.getpurchaseCreditHistory(p.id!);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
-    return emit(SpecificPartySuccess());
+    return emit(SpecificPartyListRender(purchase));
   }
 }
