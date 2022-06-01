@@ -59,16 +59,23 @@ class PartyCubit extends Cubit<PartyState> {
   /// Get my parties
   void getMyParties() async {
     emit(PartyLoading());
-    final response = await _partyService.getParties();
-    if ((response.statusCode ?? 400) > 300) {
-      emit(PartyError("Error fetching parties"));
-      return;
-    }
-    final parties = List.generate(
-      response.data['allParty'].length,
-      (i) => Party.fromMap(response.data['allParty'][i]),
-    );
-    return emit(PartyListRender(parties));
+    // final response = await _partyService.getParties();
+    // if ((response.statusCode ?? 400) > 300) {
+    //   emit(PartyError("Error fetching parties"));
+    //   return;
+    // }
+    // final parties = List.generate(
+    //   response.data['allParty'].length,
+    //   (i) => Party.fromMap(response.data['allParty'][i]),
+    // );
+    final sales = await _partyService.getCreditSaleParties();
+    final purchase = await _partyService.getCreditPurchaseParties();
+    _saleParties.clear();
+    _purchaseParties.clear();
+    _saleParties.addAll(sales);
+    _purchaseParties.addAll(purchase);
+    return emit(CreditPartiesListRender(
+        purchaseParties: _purchaseParties, saleParties: _saleParties));
   }
 
   /// Delete a party

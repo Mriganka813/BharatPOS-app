@@ -49,6 +49,7 @@ class _PartyListPageState extends State<PartyListPage> {
           onPressed: () async {
             final result =
                 await Navigator.pushNamed(context, CreatePartyPage.routeName);
+            // print(result.toString());
             if (result is bool && result) {
               _partyCubit.getMyParties();
             }
@@ -83,6 +84,7 @@ class _PartyListPageState extends State<PartyListPage> {
                   child: BlocBuilder<PartyCubit, PartyState>(
                     bloc: _partyCubit,
                     builder: (context, state) {
+                      print(state.toString());
                       if (state is CreditPartiesListRender) {
                         final salesParties = state.saleParties;
                         final purchaseParties = state.purchaseParties;
