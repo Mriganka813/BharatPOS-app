@@ -81,6 +81,7 @@ class _ReportsPageState extends State<ReportsPage> {
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.leading,

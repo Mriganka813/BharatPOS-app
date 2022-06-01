@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
@@ -56,7 +54,6 @@ class ReportCubit extends Cubit<ReportState> {
 
   _emitPurchaseReport(Response res, [bool isDownload = false]) {
     final data = res.data['purchase'];
-    log(data.toString());
     final orders =
         List.generate(data.length, (index) => Order.fromMap(data[index]));
     emit(isDownload

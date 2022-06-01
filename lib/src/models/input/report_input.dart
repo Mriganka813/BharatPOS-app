@@ -11,9 +11,16 @@ class ReportInput {
   DateTime? endDate;
   ReportType? type;
 
-  Map<String, dynamic> toMap() => {
-        "start_date": startDate?.toIso8601String(),
-        "end_date": endDate?.toIso8601String(),
-        "type": type.toString().split('.').last,
-      };
+  Map<String, dynamic> toMap() {
+    final endDateString = (endDate)
+        ?.add(const Duration(days: 1))
+        .subtract(const Duration(seconds: 1))
+        .toIso8601String();
+
+    return {
+      "start_date": startDate?.toUtc().toIso8601String(),
+      "end_date": endDateString,
+      "type": type.toString().split('.').last,
+    };
+  }
 }
