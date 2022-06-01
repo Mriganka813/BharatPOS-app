@@ -285,10 +285,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          // _specificPartyInput.modeOfPayment = modeofPayment;
-                          // _specificPartyInput.total = int.parse(value.text);
-                          // _specificPartyInput.id = widget.args.partyId;
-                          // _specificPartyInput.createdAt = DateTime.now();
+                          _specificPartyInput.modeOfPayment = modeofPayment;
+                          _specificPartyInput.total = int.parse(value.text);
+                          _specificPartyInput.id = widget.args.partyId;
+                          _specificPartyInput.createdAt = DateTime.now();
                           value.clear();
                         });
                         if (widget.args.tabbarNo == 0) {
