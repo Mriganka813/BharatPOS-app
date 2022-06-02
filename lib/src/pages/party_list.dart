@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
@@ -58,7 +56,6 @@ class _PartyListPageState extends State<PartyListPage>
                 context, CreatePartyPage.routeName,
                 arguments: partyType);
             if (result is bool) {
-              log('$result');
               if (result) {
                 _partyCubit.getInitialCreditParties();
               }
