@@ -41,8 +41,8 @@ class _ExpensePageState extends State<ExpensePage> {
           bottom: 20,
         ),
         child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, CreateExpensePage.routeName);
+          onPressed: () async {
+            await Navigator.pushNamed(context, CreateExpensePage.routeName);
             _expenseCubit.getExpense();
           },
           backgroundColor: ColorsConst.primaryColor,
