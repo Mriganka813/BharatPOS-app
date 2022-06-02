@@ -186,7 +186,7 @@ class _CreateProductState extends State<CreateProduct> {
               bloc: _productCubit,
               builder: (context, state) {
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Text(
                       "Add Image",
@@ -314,17 +314,14 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent, height: 40),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: CustomButton(
-                        title: "Save",
-                        onTap: () {
-                          _formKey.currentState?.save();
-                          if (_formKey.currentState?.validate() ?? false) {
-                            _productCubit.createProduct(_formInput);
-                          }
-                        },
-                      ),
+                    CustomButton(
+                      title: "Save",
+                      onTap: () {
+                        _formKey.currentState?.save();
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _productCubit.createProduct(_formInput);
+                        }
+                      },
                     ),
                   ],
                 );

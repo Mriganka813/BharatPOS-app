@@ -97,6 +97,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 20),
                           CustomTextField(
@@ -138,18 +139,14 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                             hintText: 'Mode of Payment',
                           ),
                           const Spacer(),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: CustomButton(
-                              title: 'Save',
-                              onTap: () {
-                                _formKey.currentState?.save();
-                                if (_formKey.currentState?.validate() ??
-                                    false) {
-                                  _expenseCubit.createExpense(_formInput);
-                                }
-                              },
-                            ),
+                          CustomButton(
+                            title: 'Save',
+                            onTap: () {
+                              _formKey.currentState?.save();
+                              if (_formKey.currentState?.validate() ?? false) {
+                                _expenseCubit.createExpense(_formInput);
+                              }
+                            },
                           ),
                           const SizedBox(height: 20),
                         ],

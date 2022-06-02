@@ -16,13 +16,17 @@ class PartyService {
   }
 
   /// Get all parties
-  Future<Response> getSearch(String searchQuery) async {
+  Future<Response> getSearch(String searchQuery, {String? type}) async {
+    final params = {
+      "searchQuery": searchQuery,
+      "limit": 10,
+    };
+    if (type != null) {
+      params.addAll({"type": type});
+    }
     return await ApiV1Service.getRequest(
       '/party/search',
-      queryParameters: {
-        "searchQuery": searchQuery,
-        "limit": 10,
-      },
+      queryParameters: params,
     );
   }
 

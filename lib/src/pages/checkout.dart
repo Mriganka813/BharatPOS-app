@@ -114,12 +114,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  Future<Iterable<Party>> _fetchProducts(String pattern) async {
+  Future<Iterable<Party>> _searchParties(String pattern) async {
     if (pattern.isEmpty) {
       return [];
     }
+    final type =
+        widget.args.invoiceType == OrderType.sale ? "customer" : "supplier";
+
     try {
-      final response = await const PartyService().getSearch(pattern);
+      final response =
+          await const PartyService().getSearch(pattern, type: type);
       final data = response.data['allParty'] as List<dynamic>;
       return data.map((e) => Party.fromMap(e));
     } catch (err) {
@@ -225,6 +229,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               Navigator.pushNamed(
                                 context,
                                 CreatePartyPage.routeName,
+                                arguments: widget.args.invoiceType ==
+                                        OrderType.purchase
+                                    ? 'customer'
+                                    : 'supplier',
                               );
                             },
                             child: const Icon(Icons.add_circle_outline_rounded),
@@ -239,7 +247,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ),
                       suggestionsCallback: (String pattern) {
-                        return _fetchProducts(pattern);
+                        return _searchParties(pattern);
                       },
                       itemBuilder: (context, party) {
                         return ListTile(

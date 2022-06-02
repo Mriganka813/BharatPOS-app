@@ -9,7 +9,6 @@ import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
-import 'package:shopos/src/pages/paymentChat.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -74,7 +73,7 @@ class MyApp extends StatelessWidget {
               case CreateExpensePage.routeName:
                 return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:
-                return const CreatePartyPage();
+                return CreatePartyPage(partyType: settings.arguments as String);
               case CreateSale.routeName:
                 return const CreateSale();
               case CreatePurchase.routeName:

@@ -9,7 +9,11 @@ import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class CreatePartyPage extends StatefulWidget {
   static const String routeName = '/create_party';
-  const CreatePartyPage({Key? key}) : super(key: key);
+  final String partyType;
+  const CreatePartyPage({
+    Key? key,
+    required this.partyType,
+  }) : super(key: key);
 
   @override
   State<CreatePartyPage> createState() => _CreatePartyPageState();
@@ -23,7 +27,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
   @override
   void initState() {
     super.initState();
-    _partyInput = PartyInput();
+    _partyInput = PartyInput(type: widget.partyType);
     _partyCubit = PartyCubit();
   }
 
@@ -38,14 +42,14 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Create Party'),
+        title: Text('Create ${widget.partyType} party'),
       ),
       body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
         listener: (context, state) {
           if (state is PartySuccess) {
             locator<GlobalServices>().successSnackBar('Party created');
-            Navigator.of(context).pop(true);
+            Navigator.pop(context, true);
           }
         },
         child: BlocBuilder<PartyCubit, PartyState>(
@@ -60,6 +64,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 20),
                     CustomTextField(
@@ -89,18 +94,15 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                       },
                     ),
                     const Spacer(),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: CustomButton(
-                        title: "Save",
-                        isLoading: isLoading,
-                        onTap: () {
-                          _formKey.currentState?.save();
-                          if (_formKey.currentState?.validate() ?? false) {
-                            _partyCubit.createParty(_partyInput);
-                          }
-                        },
-                      ),
+                    CustomButton(
+                      title: "Save",
+                      isLoading: isLoading,
+                      onTap: () {
+                        _formKey.currentState?.save();
+                        if (_formKey.currentState?.validate() ?? false) {
+                          _partyCubit.createParty(_partyInput);
+                        }
+                      },
                     ),
                     const SizedBox(height: 40),
                   ],

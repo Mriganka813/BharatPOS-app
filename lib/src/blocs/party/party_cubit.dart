@@ -6,7 +6,6 @@ import 'package:meta/meta.dart';
 import 'package:shopos/src/models/input/party_input.dart';
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/party.dart';
-import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/party.dart';
 
 part 'party_state.dart';
@@ -28,7 +27,6 @@ class PartyCubit extends Cubit<PartyState> {
         emit(PartyError("Error creating party"));
         return;
       }
-      const AuthService().saveCookie(response);
     } on DioError {
       emit(PartyError("Error creating party"));
     }
@@ -57,18 +55,18 @@ class PartyCubit extends Cubit<PartyState> {
   }
 
   /// Get my parties
-  void getMyParties() async {
+  Future<void> getMyParties() async {
     emit(PartyLoading());
-    final response = await _partyService.getParties();
-    if ((response.statusCode ?? 400) > 300) {
+    try {
+      final response = await _partyService.getParties();
+      final parties = List.generate(
+        response.data['allParty'].length,
+        (i) => Party.fromMap(response.data['allParty'][i]),
+      );
+      return emit(PartyListRender(parties));
+    } catch (err) {
       emit(PartyError("Error fetching parties"));
-      return;
     }
-    final parties = List.generate(
-      response.data['allParty'].length,
-      (i) => Party.fromMap(response.data['allParty'][i]),
-    );
-    return emit(PartyListRender(parties));
   }
 
   /// Delete a party
