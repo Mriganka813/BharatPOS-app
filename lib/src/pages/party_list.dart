@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
@@ -118,10 +119,12 @@ class _PartyListPageState extends State<PartyListPage>
                                 PartiesListView(
                                   parties: salesParties,
                                   tabno: 0,
+                                  partyCubit: _partyCubit,
                                 ),
                                 PartiesListView(
                                   parties: purchaseParties,
                                   tabno: 1,
+                                  partyCubit: _partyCubit,
                                 ),
                               ],
                             ),
@@ -151,6 +154,7 @@ class PartiesListView extends StatelessWidget {
     Key? key,
     required this.parties,
     required this.tabno,
+    required this.partyCubit,
   }) : super(key: key);
 
   final List<Party> parties;
@@ -174,8 +178,36 @@ class PartiesListView extends StatelessWidget {
                 arguments: ScreenArguments(
                     party.id!, party.name!, party.phoneNumber!, tabno));
           },
+          onLongPress: () {
+            showModal(party.id!, context);
+            // print("object");
+          },
         );
       },
     );
+  }
+
+  final PartyCubit partyCubit;
+  showModal(String _id, context) {
+    List<DialogButton> button = [];
+    Alert(
+        context: context,
+        closeIcon: Container(),
+        buttons: button,
+        content: Column(
+          children: [
+            ListTile(
+              title: const Text("Edit"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: const Text("Delete"),
+              onTap: () {
+                partyCubit.deleteParty(Party(id: _id));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        )).show();
   }
 }
