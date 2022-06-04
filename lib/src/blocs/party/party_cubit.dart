@@ -73,8 +73,6 @@ class PartyCubit extends Cubit<PartyState> {
       emit(PartyError("Error deleting party"));
       return;
     }
-
-    return emit(PartySuccess());
   }
 
   /// Update party

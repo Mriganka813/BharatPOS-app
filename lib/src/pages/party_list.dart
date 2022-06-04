@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
@@ -210,5 +211,28 @@ class _PartiesListViewState extends State<PartiesListView> {
         type: widget.type,
       ),
     );
+  }
+
+  showModal(String _id, context) {
+    List<DialogButton> button = [];
+    Alert(
+        context: context,
+        closeIcon: Container(),
+        buttons: button,
+        content: Column(
+          children: [
+            ListTile(
+              title: const Text("Edit"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: const Text("Delete"),
+              onTap: () {
+                widget.partyCubit.deleteParty(Party(id: _id));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        )).show();
   }
 }
