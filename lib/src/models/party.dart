@@ -29,7 +29,7 @@ class Party {
         createdAt: DateTime.parse(json["createdAt"]),
         totalCreditAmount: json["totalCreditAmount"],
         totalSettleAmount: json['totalSettleAmount'],
-        balance: json['balance'],
+        balance: json['balance'] ?? 0,
         total: json["total"],
         v: json["__v"].toString(),
       );

@@ -42,7 +42,6 @@ class SpecificPartyService {
   Future<Party> getCreditPurchaseParty(String id) async {
     final response =
         await ApiV1Service.getRequest('/party/purchase/credit/$id');
-    print(response.data);
     return Party.fromMap(response.data['data'] as Map<String, dynamic>);
   }
 
