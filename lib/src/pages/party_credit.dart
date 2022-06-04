@@ -62,17 +62,17 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         backgroundColor: Colors.white,
         shadowColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            splashRadius: 20,
-            icon: const Icon(
-              Icons.more_vert,
-              size: 25,
-              color: Colors.black,
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     splashRadius: 20,
+        //     icon: const Icon(
+        //       Icons.more_vert,
+        //       size: 25,
+        //       color: Colors.black,
+        //     ),
+        //   ),
+        // ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
