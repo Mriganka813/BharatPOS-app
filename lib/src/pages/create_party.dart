@@ -2,18 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/models/input/party_input.dart';
+import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 
+class CreatePartyArguments {
+  final String partyId;
+  final String partName;
+  final String partyContactNo;
+  final String partyAddress;
+  final String partyType;
+
+  CreatePartyArguments(this.partyId, this.partName, this.partyContactNo,
+      this.partyAddress, this.partyType);
+}
+
 class CreatePartyPage extends StatefulWidget {
   static const String routeName = '/create_party';
-  final String partyType;
-  const CreatePartyPage({
-    Key? key,
-    required this.partyType,
-  }) : super(key: key);
+  final CreatePartyArguments args;
+  const CreatePartyPage({Key? key, required this.args}) : super(key: key);
 
   @override
   State<CreatePartyPage> createState() => _CreatePartyPageState();
@@ -27,7 +36,8 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
   @override
   void initState() {
     super.initState();
-    _partyInput = PartyInput(type: widget.partyType);
+    _partyInput =
+        PartyInput(type: widget.args.partyType, id: widget.args.partyId);
     _partyCubit = PartyCubit();
   }
 
@@ -42,7 +52,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Create ${widget.partyType} party'),
+        title: Text('Create ${widget.args.partyType} party'),
       ),
       body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
@@ -70,6 +80,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                     CustomTextField(
                       label: 'Name',
                       isLoading: isLoading,
+                      initialValue: widget.args.partName,
                       onSave: (e) {
                         _partyInput.name = e;
                       },
@@ -78,6 +89,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                     CustomTextField(
                       isLoading: isLoading,
                       inputType: TextInputType.phone,
+                      initialValue: widget.args.partyContactNo,
                       label: 'Phone Number',
                       onSave: (e) {
                         _partyInput.phoneNumber = e;
@@ -87,6 +99,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                     CustomTextField(
                       validator: (e) => null,
                       isLoading: isLoading,
+                      initialValue: widget.args.partyAddress,
                       label: 'Address',
                       hintText: "Optional",
                       onSave: (e) {
@@ -100,7 +113,9 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                       onTap: () {
                         _formKey.currentState?.save();
                         if (_formKey.currentState?.validate() ?? false) {
-                          _partyCubit.createParty(_partyInput);
+                          _partyInput.id == ""
+                              ? _partyCubit.createParty(_partyInput)
+                              : _partyCubit.updateParty(_partyInput);
                         }
                       },
                     ),

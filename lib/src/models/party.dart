@@ -9,12 +9,14 @@ class Party {
       this.v,
       this.total,
       this.balance,
+      this.address,
       this.modeOfPayment});
 
   String? name;
   String? phoneNumber;
   String? id;
   String? modeOfPayment;
+  String? address;
   DateTime? createdAt;
   String? v;
   int? totalCreditAmount;
@@ -31,6 +33,7 @@ class Party {
         totalSettleAmount: json['totalSettleAmount'],
         balance: json['balance'],
         total: json["total"],
+        address: json["address"],
         v: json["__v"].toString(),
       );
 
@@ -41,6 +44,7 @@ class Party {
         "createdAt": createdAt?.toIso8601String(),
         "modeOfPayment": modeOfPayment,
         "amount": total,
+        "address": address,
         "__v": v,
       };
 }

@@ -55,7 +55,7 @@ class _PartyListPageState extends State<PartyListPage>
                 _tabController.index == 0 ? 'customer' : 'supplier';
             final result = await Navigator.pushNamed(
                 context, CreatePartyPage.routeName,
-                arguments: partyType);
+                arguments: CreatePartyArguments("", "", "", "", partyType));
             if (result is bool) {
               if (result) {
                 _partyCubit.getInitialCreditParties();
@@ -73,6 +73,7 @@ class _PartyListPageState extends State<PartyListPage>
       body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
         listener: (context, state) {
+          print(state.toString());
           if (state is PartyError) {
             locator<GlobalServices>().errorSnackBar(state.message);
           }
@@ -179,8 +180,7 @@ class PartiesListView extends StatelessWidget {
                     party.id!, party.name!, party.phoneNumber!, tabno));
           },
           onLongPress: () {
-            showModal(party.id!, context);
-            // print("object");
+            showModal(party, context, tabno);
           },
         );
       },
@@ -188,7 +188,9 @@ class PartiesListView extends StatelessWidget {
   }
 
   final PartyCubit partyCubit;
-  showModal(String _id, context) {
+  showModal(Party _party, context, int tabno) {
+    final String _partyType;
+    tabno == 0 ? _partyType = "customer" : _partyType = "supplier";
     List<DialogButton> button = [];
     Alert(
         context: context,
@@ -198,12 +200,17 @@ class PartiesListView extends StatelessWidget {
           children: [
             ListTile(
               title: const Text("Edit"),
-              onTap: () {},
+              onTap: () async {
+                await Navigator.pushNamed(context, CreatePartyPage.routeName,
+                    arguments: CreatePartyArguments(_party.id!, _party.name!,
+                        _party.phoneNumber!, _party.address!, _partyType));
+                Navigator.pop(context);
+              },
             ),
             ListTile(
               title: const Text("Delete"),
               onTap: () {
-                partyCubit.deleteParty(Party(id: _id));
+                partyCubit.deleteParty(_party);
                 Navigator.pop(context);
               },
             ),

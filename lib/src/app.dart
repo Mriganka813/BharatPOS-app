@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
             const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: AppBarTheme(
           systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
             statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -77,7 +78,8 @@ class MyApp extends StatelessWidget {
               case CreateExpensePage.routeName:
                 return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:
-                return CreatePartyPage(partyType: settings.arguments as String);
+                return CreatePartyPage(
+                    args: settings.arguments as CreatePartyArguments);
               case CreateSale.routeName:
                 return const CreateSale();
               case CreatePurchase.routeName:
