@@ -45,7 +45,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.2
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: assets/shopos_logo.png
   flutter_lints: ^1.0.0
 
 flutter:
