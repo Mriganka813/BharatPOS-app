@@ -48,6 +48,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
   TextEditingController value = TextEditingController();
+  int balance_edit = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -56,17 +57,17 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         backgroundColor: Colors.white,
         shadowColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            splashRadius: 20,
-            icon: const Icon(
-              Icons.more_vert,
-              size: 25,
-              color: Colors.black,
-            ),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     splashRadius: 20,
+        //     icon: const Icon(
+        //       Icons.more_vert,
+        //       size: 25,
+        //       color: Colors.black,
+        //     ),
+        //   ),
+        // ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -160,10 +161,12 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
                   bloc: _specificpartyCubit,
                   builder: (context, state) {
-                    String balance = '---';
+                    int balance = 0;
                     if (state is SpecificPartyListRender) {
-                      balance = "${state.partyDetails.balance ?? 0}";
+                      balance = state.partyDetails.balance ?? 0;
+                      // print(balance);
                     }
+                    balance = balance + balance_edit;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Row(
@@ -174,7 +177,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             textScaleFactor: 1.7,
                           ),
                           Text(
-                            balance,
+                            "$balance",
                             textScaleFactor: 1.7,
                             style: const TextStyle(
                               color: Colors.red,
@@ -289,6 +292,12 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                           _specificPartyInput.total = int.parse(value.text);
                           _specificPartyInput.id = widget.args.partyId;
                           _specificPartyInput.createdAt = DateTime.now();
+
+                          if (_specificPartyInput.modeOfPayment == "Settle") {
+                            balance_edit = balance_edit - int.parse(value.text);
+                          } else {
+                            balance_edit = balance_edit + int.parse(value.text);
+                          }
                           value.clear();
                         });
                         if (widget.args.tabbarNo == 0) {
