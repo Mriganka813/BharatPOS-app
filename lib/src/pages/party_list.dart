@@ -73,7 +73,6 @@ class _PartyListPageState extends State<PartyListPage>
       body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
         listener: (context, state) {
-          print(state.toString());
           if (state is PartyError) {
             locator<GlobalServices>().errorSnackBar(state.message);
           }
@@ -91,6 +90,7 @@ class _PartyListPageState extends State<PartyListPage>
                 child: BlocBuilder<PartyCubit, PartyState>(
                   bloc: _partyCubit,
                   builder: (context, state) {
+                    print(state.toString());
                     if (state is CreditPartiesListRender) {
                       final salesParties = state.saleParties;
                       final purchaseParties = state.purchaseParties;
@@ -205,6 +205,7 @@ class PartiesListView extends StatelessWidget {
                     arguments: CreatePartyArguments(_party.id!, _party.name!,
                         _party.phoneNumber!, _party.address!, _partyType));
                 Navigator.pop(context);
+                partyCubit.getInitialCreditParties();
               },
             ),
             ListTile(
