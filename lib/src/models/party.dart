@@ -44,7 +44,9 @@ class Party {
         "createdAt": createdAt?.toIso8601String(),
         "modeOfPayment": modeOfPayment,
         "amount": total,
+        "total": total,
         "address": address,
+        "balance": balance,
         "__v": v,
       };
 }

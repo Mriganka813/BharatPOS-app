@@ -42,7 +42,6 @@ class SpecificPartyService {
   Future<Party> getCreditPurchaseParty(String id) async {
     final response =
         await ApiV1Service.getRequest('/party/purchase/credit/$id');
-    print(response.data);
     return Party.fromMap(response.data['data'] as Map<String, dynamic>);
   }
 
@@ -50,5 +49,33 @@ class SpecificPartyService {
   Future<Party> getCreditSaleParty(String id) async {
     final response = await ApiV1Service.getRequest('/party/sale/credit/$id');
     return Party.fromMap(response.data['data'] as Map<String, dynamic>);
+  }
+
+  ///
+  Future<Response> updatepurchasedAmount(Party party) async {
+    return await ApiV1Service.putRequest(
+      '/upd/purchaseOrder/${party.id}',
+      data: {"total": party.total},
+    );
+  }
+
+  ///
+  Future<Response> updatesaleAmount(Party party) async {
+    return await ApiV1Service.putRequest(
+      '/upd/salesOrder/${party.id}',
+      data: {"total": party.total},
+    );
+  }
+
+  ///
+  Future<Response> deletesaleAmount(String id) async {
+    final response = await ApiV1Service.deleteRequest('/salesOrder/$id');
+    return response;
+  }
+
+  ///
+  Future<Response> deletepurchaseAmount(String id) async {
+    final response = await ApiV1Service.deleteRequest('/purchaseOrder/$id');
+    return response;
   }
 }

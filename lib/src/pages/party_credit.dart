@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
 
 class ScreenArguments {
   final String partyId;
@@ -49,25 +52,13 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
   TextEditingController value = TextEditingController();
   int balance_edit = 0;
+  int green = 0;
+  int red = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        shadowColor: Colors.white,
-        elevation: 0,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {},
-        //     splashRadius: 20,
-        //     icon: const Icon(
-        //       Icons.more_vert,
-        //       size: 25,
-        //       color: Colors.black,
-        //     ),
-        //   ),
-        // ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -84,6 +75,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
           bloc: _specificpartyCubit,
           builder: (context, state) {
+            print(state.toString());
             if (state is SpecificPartyListRender) {
               final orders = state.specificparty;
               return ListView.builder(
@@ -108,25 +100,36 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         child: SizedBox(
                           height: 50,
                           width: 111,
-                          child: Card(
-                            clipBehavior: Clip.hardEdge,
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                  color: Colors.black, width: 0.5),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            elevation: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "${order.total}",
-                                style: TextStyle(
-                                  color: order.modeOfPayment == "Settle"
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontSize: 20,
+                          child: GestureDetector(
+                            onLongPress: () async {
+                              HapticFeedback.vibrate();
+                              await openEditModal(
+                                  order.id!,
+                                  order.total!,
+                                  order.createdAt,
+                                  order.modeOfPayment!,
+                                  context);
+                            },
+                            child: Card(
+                              clipBehavior: Clip.hardEdge,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Colors.black, width: 0.5),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  "${order.total}",
+                                  style: TextStyle(
+                                    color: order.modeOfPayment == "Settle"
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontSize: 20,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
@@ -164,9 +167,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     int balance = 0;
                     if (state is SpecificPartyListRender) {
                       balance = state.partyDetails.balance ?? 0;
-                      // print(balance);
                     }
-                    balance = balance + balance_edit;
+                    balance = balance + balance_edit + green - red;
+                    // print(balance.toString() + " balance");
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Row(
@@ -256,8 +259,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     );
   }
 
+// add settle and credit
   modelOpen(context, String modeofPayment) {
     return showModalBottomSheet(
+        barrierColor: Colors.transparent,
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) {
@@ -269,9 +274,12 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
                   const Text("Enter Amount",
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 30)),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
                   Padding(
                     padding: const EdgeInsets.all(30),
                     child: Container(
@@ -285,31 +293,32 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _specificPartyInput.modeOfPayment = modeofPayment;
-                          _specificPartyInput.total = int.parse(value.text);
-                          _specificPartyInput.id = widget.args.partyId;
-                          _specificPartyInput.createdAt = DateTime.now();
+                  CustomButton(
+                    onTap: () {
+                      setState(() {
+                        _specificPartyInput.modeOfPayment = modeofPayment;
+                        _specificPartyInput.total = int.parse(value.text);
+                        _specificPartyInput.id = widget.args.partyId;
+                        _specificPartyInput.createdAt = DateTime.now();
 
-                          if (_specificPartyInput.modeOfPayment == "Settle") {
-                            balance_edit = balance_edit - int.parse(value.text);
-                          } else {
-                            balance_edit = balance_edit + int.parse(value.text);
-                          }
-                          value.clear();
-                        });
-                        if (widget.args.tabbarNo == 0) {
-                          _specificpartyCubit
-                              .updateCreditHistory(_specificPartyInput);
+                        if (_specificPartyInput.modeOfPayment == "Settle") {
+                          balance_edit = balance_edit - int.parse(value.text);
                         } else {
-                          _specificpartyCubit
-                              .updatepurchaseHistory(_specificPartyInput);
+                          balance_edit = balance_edit + int.parse(value.text);
                         }
-                        Navigator.pop(context);
-                      },
-                      child: const Text("Confirm"))
+                        value.clear();
+                      });
+                      if (widget.args.tabbarNo == 0) {
+                        _specificpartyCubit
+                            .updateCreditHistory(_specificPartyInput);
+                      } else {
+                        _specificpartyCubit
+                            .updatepurchaseHistory(_specificPartyInput);
+                      }
+                      Navigator.pop(context);
+                    },
+                    title: "Confirm",
+                  )
                 ],
               ),
             ),
@@ -317,9 +326,110 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         });
   }
 
+// update settle and credit model
+  modelOpenUpdate(context, String id, int amount, String type) {
+    String newtotal = amount.toString();
+    return showModalBottomSheet(
+        barrierColor: Colors.transparent,
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            reverse: true,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text("Enter Amount",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+                  Padding(
+                    padding: const EdgeInsets.all(30),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black)),
+                      child: TextFormField(
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          initialValue: amount.toString(),
+                          decoration: const InputDecoration(
+                            hintText: "₹",
+                          ),
+                          onChanged: (e) {
+                            setState(() {
+                              newtotal = e;
+                            });
+                          }),
+                    ),
+                  ),
+                  CustomButton(
+                    onTap: () {
+                      int amountnew = int.parse(newtotal);
+                      widget.args.tabbarNo == 0
+                          ? _specificpartyCubit.updateAmountCustomer(
+                              Party(id: id, total: amountnew),
+                              widget.args.partyId)
+                          : _specificpartyCubit.updateAmountSupplier(
+                              Party(id: id, total: amountnew),
+                              widget.args.partyId);
+                      setState(() {
+                        if (type == "Settle") {
+                          green = amountnew - amount;
+                        } else {
+                          red = amount - amountnew;
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
+                    title: "Confirm",
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+// edit credit or settle
+  openEditModal(String id, int total, String createdAt, String type, context) {
+    Alert(
+        style: const AlertStyle(
+          animationType: AnimationType.grow,
+          isButtonVisible: false,
+          overlayColor: Colors.transparent,
+        ),
+        context: context,
+        content: Column(
+          children: [
+            ListTile(
+              title: const Text("Edit"),
+              onTap: () async {
+                Navigator.pop(context);
+                await modelOpenUpdate(context, id, total, type);
+              },
+            ),
+            ListTile(
+              title: const Text("Delete"),
+              onTap: () {
+                widget.args.tabbarNo == 0
+                    ? _specificpartyCubit.deleteCustomerExpense(
+                        Party(id: id), widget.args.partyId)
+                    : _specificpartyCubit.deleteSupplierExpense(
+                        Party(id: id), widget.args.partyId);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        )).show();
+  }
+
   currentdate(String dates) {
     DateTime d = DateTime.parse(dates);
-    // var dt = DateTime.now();
     var datereq = DateFormat.MMMM().format(d);
     return Text(
       d.day.toString() + " " + datereq + ", " + d.year.toString(),

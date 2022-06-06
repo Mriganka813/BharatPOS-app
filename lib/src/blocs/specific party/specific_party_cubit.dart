@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/models/order.dart';
@@ -79,5 +80,66 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       partyDetails: _partyDetails,
       specificparty: purchase,
     ));
+  }
+
+  ///
+  void updateAmountCustomer(Party p, String partyId) async {
+    // print(p.toMap());
+    // final response = await _partyService.updatepurchasedAmount(p);
+    final response = await _partyService.updatesaleAmount(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    final sales = await _partyService.getSalesCreditHistory(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetails, specificparty: sales));
+  }
+
+  ///
+  void updateAmountSupplier(Party p, String partyId) async {
+    final response = await _partyService.updatepurchasedAmount(p);
+    // final response = await _partyService.updatesaleAmount(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetails, specificparty: purchase));
+  }
+
+  ///
+  ///
+  void deleteCustomerExpense(Party p, String partyId) async {
+    try {
+      final response = await _partyService.deletesaleAmount(p.id.toString());
+      if ((response.statusCode ?? 400) > 300) {
+        emit(SpecificPartyError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(SpecificPartyError(err.message));
+    }
+    final sales = await _partyService.getSalesCreditHistory(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetails, specificparty: sales));
+  }
+
+  ///
+  void deleteSupplierExpense(Party p, String partyId) async {
+    try {
+      final response =
+          await _partyService.deletepurchaseAmount(p.id.toString());
+      if ((response.statusCode ?? 400) > 300) {
+        emit(SpecificPartyError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(SpecificPartyError(err.message));
+    }
+    final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetails, specificparty: purchase));
   }
 }
