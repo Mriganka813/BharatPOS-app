@@ -86,8 +86,6 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
 
   ///
   void updateAmountCustomer(Party p, String partyId) async {
-    // print(p.toMap());
-    // final response = await _partyService.updatepurchasedAmount(p);
     final response = await _partyService.updatesaleAmount(p);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
@@ -102,7 +100,6 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   ///
   void updateAmountSupplier(Party p, String partyId) async {
     final response = await _partyService.updatepurchasedAmount(p);
-    // final response = await _partyService.updatesaleAmount(p);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
       return;
@@ -113,7 +110,6 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
         partyDetails: _partyDetail, specificparty: purchase));
   }
 
-  ///
   ///
   void deleteCustomerExpense(Party p, String partyId) async {
     try {

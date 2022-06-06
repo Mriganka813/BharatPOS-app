@@ -166,7 +166,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   builder: (context, state) {
                     int balance = 0;
                     if (state is SpecificPartyListRender) {
-                      print(state.partyDetails.balance);
                       balance = state.partyDetails.balance ?? 0;
                     }
                     return Padding(
