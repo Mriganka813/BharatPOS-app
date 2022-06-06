@@ -38,10 +38,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   void initState() {
     super.initState();
     _specificpartyCubit = SpecificPartyCubit();
+    fetchdata();
+    _specificPartyInput = Party();
+  }
+
+  void fetchdata() {
     widget.args.tabbarNo == 0
         ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId)
         : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
-    _specificPartyInput = Party();
   }
 
   @override
@@ -51,9 +55,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
   TextEditingController value = TextEditingController();
-  int balance_edit = 0;
-  int green = 0;
-  int red = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
           bloc: _specificpartyCubit,
           builder: (context, state) {
-            print(state.toString());
             if (state is SpecificPartyListRender) {
               final orders = state.specificparty;
               return ListView.builder(
@@ -166,10 +166,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   builder: (context, state) {
                     int balance = 0;
                     if (state is SpecificPartyListRender) {
+                      print(state.partyDetails.balance);
                       balance = state.partyDetails.balance ?? 0;
                     }
-                    balance = balance + balance_edit + green - red;
-                    // print(balance.toString() + " balance");
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Row(
@@ -301,11 +300,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         _specificPartyInput.id = widget.args.partyId;
                         _specificPartyInput.createdAt = DateTime.now();
 
-                        if (_specificPartyInput.modeOfPayment == "Settle") {
-                          balance_edit = balance_edit - int.parse(value.text);
-                        } else {
-                          balance_edit = balance_edit + int.parse(value.text);
-                        }
                         value.clear();
                       });
                       if (widget.args.tabbarNo == 0) {
@@ -377,13 +371,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                           : _specificpartyCubit.updateAmountSupplier(
                               Party(id: id, total: amountnew),
                               widget.args.partyId);
-                      setState(() {
-                        if (type == "Settle") {
-                          green = amountnew - amount;
-                        } else {
-                          red = amount - amountnew;
-                        }
-                      });
+
                       Navigator.pop(context);
                     },
                     title: "Confirm",

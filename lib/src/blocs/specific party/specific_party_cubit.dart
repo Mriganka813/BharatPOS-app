@@ -62,8 +62,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
+    final _partyDetail = await _partyService.getCreditSaleParty(p.id!);
     return emit(SpecificPartyListRender(
-      partyDetails: _partyDetails,
+      partyDetails: _partyDetail,
       specificparty: sales,
     ));
   }
@@ -76,8 +77,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
+    final _partyDetail = await _partyService.getCreditPurchaseParty(p.id!);
     return emit(SpecificPartyListRender(
-      partyDetails: _partyDetails,
+      partyDetails: _partyDetail,
       specificparty: purchase,
     ));
   }
@@ -92,8 +94,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       return;
     }
     final sales = await _partyService.getSalesCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
     return emit(SpecificPartyListRender(
-        partyDetails: _partyDetails, specificparty: sales));
+        partyDetails: _partyDetail, specificparty: sales));
   }
 
   ///
@@ -105,8 +108,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       return;
     }
     final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditPurchaseParty(partyId);
     return emit(SpecificPartyListRender(
-        partyDetails: _partyDetails, specificparty: purchase));
+        partyDetails: _partyDetail, specificparty: purchase));
   }
 
   ///
@@ -122,8 +126,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError(err.message));
     }
     final sales = await _partyService.getSalesCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
     return emit(SpecificPartyListRender(
-        partyDetails: _partyDetails, specificparty: sales));
+        partyDetails: _partyDetail, specificparty: sales));
   }
 
   ///
@@ -139,7 +144,8 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError(err.message));
     }
     final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditPurchaseParty(partyId);
     return emit(SpecificPartyListRender(
-        partyDetails: _partyDetails, specificparty: purchase));
+        partyDetails: _partyDetail, specificparty: purchase));
   }
 }
