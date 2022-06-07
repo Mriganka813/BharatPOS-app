@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/models/order.dart';
@@ -61,8 +62,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
+    final _partyDetail = await _partyService.getCreditSaleParty(p.id!);
     return emit(SpecificPartyListRender(
-      partyDetails: _partyDetails,
+      partyDetails: _partyDetail,
       specificparty: sales,
     ));
   }
@@ -75,9 +77,71 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
+    final _partyDetail = await _partyService.getCreditPurchaseParty(p.id!);
     return emit(SpecificPartyListRender(
-      partyDetails: _partyDetails,
+      partyDetails: _partyDetail,
       specificparty: purchase,
     ));
+  }
+
+  ///
+  void updateAmountCustomer(Party p, String partyId) async {
+    final response = await _partyService.updatesaleAmount(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    final sales = await _partyService.getSalesCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetail, specificparty: sales));
+  }
+
+  ///
+  void updateAmountSupplier(Party p, String partyId) async {
+    final response = await _partyService.updatepurchasedAmount(p);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(SpecificPartyError("Error updating party"));
+      return;
+    }
+    final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditPurchaseParty(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetail, specificparty: purchase));
+  }
+
+  ///
+  void deleteCustomerExpense(Party p, String partyId) async {
+    try {
+      final response = await _partyService.deletesaleAmount(p.id.toString());
+      if ((response.statusCode ?? 400) > 300) {
+        emit(SpecificPartyError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(SpecificPartyError(err.message));
+    }
+    final sales = await _partyService.getSalesCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetail, specificparty: sales));
+  }
+
+  ///
+  void deleteSupplierExpense(Party p, String partyId) async {
+    try {
+      final response =
+          await _partyService.deletepurchaseAmount(p.id.toString());
+      if ((response.statusCode ?? 400) > 300) {
+        emit(SpecificPartyError(response.data['message']));
+        return;
+      }
+    } on DioError catch (err) {
+      emit(SpecificPartyError(err.message));
+    }
+    final purchase = await _partyService.getpurchaseCreditHistory(partyId);
+    final _partyDetail = await _partyService.getCreditPurchaseParty(partyId);
+    return emit(SpecificPartyListRender(
+        partyDetails: _partyDetail, specificparty: purchase));
   }
 }

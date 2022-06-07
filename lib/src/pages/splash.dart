@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -25,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
     final isAuthenticated = cookies.isNotEmpty;
     Future.delayed(
-      const Duration(milliseconds: 600),
+      const Duration(milliseconds: 6000),
       () => Navigator.pushReplacementNamed(
         context,
         isAuthenticated ? HomePage.routeName : SignInPage.routeName,
@@ -35,9 +37,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
+      primary: false,
+      appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Colors.blue,
+        ),
+        backgroundColor: Colors.blue,
+      ),
+      backgroundColor: Colors.blue,
       body: Center(
-        child: Text("Splash"),
+        child: SvgPicture.asset("assets/icon/splashlogo.svg"),
       ),
     );
   }

@@ -58,18 +58,16 @@ class _PartyListPageState extends State<PartyListPage>
           onPressed: () async {
             final partyType =
                 _tabController.index == 0 ? 'customer' : 'supplier';
-            final result = await Navigator.pushNamed(
+            await Navigator.pushNamed(
               context,
               CreatePartyPage.routeName,
               arguments: partyType,
             );
-
-            /// TODO fix this
-            // if (result is bool) {
-            //   if (result) {
-            //     _partyCubit.getInitialCreditParties();
-            //   }
-            // }
+            if (partyType == 'customer') {
+              _customerPartyCubit.getCustomerParties();
+            } else {
+              _supplierPartyCubit.getSupplierParties();
+            }
           },
           backgroundColor: ColorsConst.primaryColor,
           child: const Icon(
@@ -213,17 +211,32 @@ class _PartiesListViewState extends State<PartiesListView> {
     );
   }
 
-  showModal(String _id, context) {
+  showModal(String _id, context, Party party, String partyType) {
     List<DialogButton> button = [];
     Alert(
         context: context,
-        closeIcon: Container(),
-        buttons: button,
+        style: AlertStyle(
+          isButtonVisible: false,
+          animationType: AnimationType.grow,
+        ),
         content: Column(
           children: [
             ListTile(
               title: const Text("Edit"),
-              onTap: () {},
+              onTap: () async {
+                await Navigator.pushNamed(
+                  context,
+                  CreatePartyPage.routeName,
+                  arguments: CreatePartyArguments(
+                    party: party,
+                    type: partyType,
+                  ),
+                );
+                Navigator.pop(context);
+                widget.type == PartyType.customer
+                    ? widget.partyCubit.getCustomerParties()
+                    : widget.partyCubit.getSupplierParties();
+              },
             ),
             ListTile(
               title: const Text("Delete"),
