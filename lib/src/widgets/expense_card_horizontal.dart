@@ -16,8 +16,8 @@ class ExpenseCardHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime? timestamp = expense.createdAt;
-    String date = DateFormat('dd-MM-yyyy').format(timestamp!);
-    String time = DateFormat('kk:mm').format(timestamp);
+    String date = DateFormat('dd-MM-yyyy').format(timestamp!.toLocal());
+    String time = DateFormat('jm').format(timestamp.toLocal());
 
     return Card(
       elevation: 5,
@@ -46,7 +46,7 @@ class ExpenseCardHorizontal extends StatelessWidget {
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      Text('Net Amount :'),
+                      const Text('Net Amount :'),
                       Text(' ₹${expense.amount}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
