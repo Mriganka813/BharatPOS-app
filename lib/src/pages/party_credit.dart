@@ -149,11 +149,13 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        elevation: 0,
+        elevation: 100,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Container(
           height: 120,
           width: double.maxFinite,
-          decoration: const BoxDecoration(color: Colors.white),
+          decoration: const BoxDecoration(
+              border: Border(top: BorderSide(color: Colors.black12))),
           child: SingleChildScrollView(
             reverse: true,
             padding: const EdgeInsets.only(bottom: 20),
@@ -166,6 +168,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   builder: (context, state) {
                     int balance = 0;
                     if (state is SpecificPartyListRender) {
+                      // print(state.partyDetails.toMap());
                       balance = state.partyDetails.balance ?? 0;
                     }
                     return Padding(
@@ -177,14 +180,23 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             "Balance Due",
                             textScaleFactor: 1.7,
                           ),
-                          Text(
-                            "$balance",
-                            textScaleFactor: 1.7,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
+                          balance >= 0
+                              ? Text(
+                                  "$balance",
+                                  textScaleFactor: 1.7,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : Text(
+                                  "$balance",
+                                  textScaleFactor: 1.7,
+                                  style: const TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
                         ],
                       ),
                     );
@@ -260,8 +272,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 // add settle and credit
   modelOpen(context, String modeofPayment) {
     return showModalBottomSheet(
-        barrierColor: Colors.transparent,
         isScrollControlled: true,
+        elevation: 5,
         context: context,
         builder: (BuildContext context) {
           return SingleChildScrollView(
@@ -269,50 +281,65 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             child: Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text("Enter Amount",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-                  Padding(
-                    padding: const EdgeInsets.all(30),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black)),
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        controller: value,
-                        decoration: const InputDecoration(hintText: "₹"),
+              child: Container(
+                decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.black12))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text("Add Amount",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20)),
+                    Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black38),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          controller: value,
+                          textInputAction: TextInputAction.next,
+                          decoration: const InputDecoration(
+                              hintText: "₹",
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 2,
+                                horizontal: 10,
+                              ),
+                              border: InputBorder.none),
+                        ),
                       ),
                     ),
-                  ),
-                  CustomButton(
-                    onTap: () {
-                      setState(() {
-                        _specificPartyInput.modeOfPayment = modeofPayment;
-                        _specificPartyInput.total = int.parse(value.text);
-                        _specificPartyInput.id = widget.args.partyId;
-                        _specificPartyInput.createdAt = DateTime.now();
+                    CustomButton(
+                      onTap: () {
+                        setState(() {
+                          _specificPartyInput.modeOfPayment = modeofPayment;
+                          _specificPartyInput.total = int.parse(value.text);
+                          _specificPartyInput.id = widget.args.partyId;
+                          _specificPartyInput.createdAt = DateTime.now();
 
-                        value.clear();
-                      });
-                      if (widget.args.tabbarNo == 0) {
-                        _specificpartyCubit
-                            .updateCreditHistory(_specificPartyInput);
-                      } else {
-                        _specificpartyCubit
-                            .updatepurchaseHistory(_specificPartyInput);
-                      }
-                      Navigator.pop(context);
-                    },
-                    title: "Confirm",
-                  )
-                ],
+                          value.clear();
+                        });
+                        if (widget.args.tabbarNo == 0) {
+                          _specificpartyCubit
+                              .updateCreditHistory(_specificPartyInput);
+                        } else {
+                          _specificpartyCubit
+                              .updatepurchaseHistory(_specificPartyInput);
+                        }
+                        Navigator.pop(context);
+                      },
+                      title: "Confirm",
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -332,50 +359,54 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             child: Padding(
               padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Text("Enter Amount",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-                  Padding(
-                    padding: const EdgeInsets.all(30),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black)),
-                      child: TextFormField(
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          initialValue: amount.toString(),
-                          decoration: const InputDecoration(
-                            hintText: "₹",
-                          ),
-                          onChanged: (e) {
-                            setState(() {
-                              newtotal = e;
-                            });
-                          }),
+              child: Container(
+                decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: Colors.black12))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  CustomButton(
-                    onTap: () {
-                      int amountnew = int.parse(newtotal);
-                      widget.args.tabbarNo == 0
-                          ? _specificpartyCubit.updateAmountCustomer(
-                              Party(id: id, total: amountnew),
-                              widget.args.partyId)
-                          : _specificpartyCubit.updateAmountSupplier(
-                              Party(id: id, total: amountnew),
-                              widget.args.partyId);
+                    const Text("Enter Amount",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25)),
+                    Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black)),
+                        child: TextFormField(
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            initialValue: amount.toString(),
+                            decoration: const InputDecoration(
+                              hintText: "₹",
+                            ),
+                            onChanged: (e) {
+                              setState(() {
+                                newtotal = e;
+                              });
+                            }),
+                      ),
+                    ),
+                    CustomButton(
+                      onTap: () {
+                        int amountnew = int.parse(newtotal);
+                        widget.args.tabbarNo == 0
+                            ? _specificpartyCubit.updateAmountCustomer(
+                                Party(id: id, total: amountnew),
+                                widget.args.partyId)
+                            : _specificpartyCubit.updateAmountSupplier(
+                                Party(id: id, total: amountnew),
+                                widget.args.partyId);
 
-                      Navigator.pop(context);
-                    },
-                    title: "Confirm",
-                  )
-                ],
+                        Navigator.pop(context);
+                      },
+                      title: "Confirm",
+                    )
+                  ],
+                ),
               ),
             ),
           );
@@ -388,7 +419,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         style: const AlertStyle(
           animationType: AnimationType.grow,
           isButtonVisible: false,
-          overlayColor: Colors.transparent,
         ),
         context: context,
         content: Column(

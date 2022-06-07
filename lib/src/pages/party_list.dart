@@ -173,7 +173,8 @@ class PartiesListView extends StatelessWidget {
         final party = parties[index];
         return ListTile(
           title: Text(party.name ?? ""),
-          trailing: Text("${party.totalCreditAmount}"),
+          trailing: Text(
+              "${party.balance}"), //here when api will be fixed then we will get the correct value
           onTap: () async {
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
@@ -191,11 +192,12 @@ class PartiesListView extends StatelessWidget {
   showModal(Party _party, context, int tabno) {
     final String _partyType;
     tabno == 0 ? _partyType = "customer" : _partyType = "supplier";
-    List<DialogButton> button = [];
     Alert(
         context: context,
-        closeIcon: Container(),
-        buttons: button,
+        style: AlertStyle(
+          isButtonVisible: false,
+          animationType: AnimationType.grow,
+        ),
         content: Column(
           children: [
             ListTile(
