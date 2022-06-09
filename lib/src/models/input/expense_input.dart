@@ -4,13 +4,15 @@ class ExpenseFormInput {
       this.description,
       this.amount,
       this.modeOfPayment,
-      this.id});
+      this.id,
+      this.createdAt});
 
   String? header;
   String? amount;
   String? description;
   String? modeOfPayment;
   String? id;
+  DateTime? createdAt;
 
   Map<String, dynamic> toMap() => {
         "header": header,
@@ -18,6 +20,7 @@ class ExpenseFormInput {
         "modeOfPayment": modeOfPayment,
         "amount": amount,
         "id": id,
+        "createdAt": createdAt?.toIso8601String()
       };
   factory ExpenseFormInput.fromMap(map) => ExpenseFormInput(
         header: map['header'],
