@@ -10,6 +10,7 @@ import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -90,7 +91,12 @@ class MyApp extends StatelessWidget {
                 );
               case PartyCreditPage.routeName:
                 return PartyCreditPage(
-                    args: settings.arguments as ScreenArguments);
+                  args: settings.arguments as ScreenArguments,
+                );
+              case PdfPreviewPage.routeName:
+                return PdfPreviewPage(
+                  args: settings.arguments as PdfPreviewPageArgs,
+                );
               default:
                 return const SplashScreen();
             }
