@@ -7,21 +7,16 @@ import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/party.dart';
-import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 
 class ScreenArguments {
   final String partyId;
   final String partName;
   final String partyContactNo;
-  final PartyType type;
+  final int tabbarNo;
 
-  ScreenArguments({
-    required this.partyId,
-    required this.partName,
-    required this.partyContactNo,
-    required this.type,
-  });
+  ScreenArguments(
+      this.partyId, this.partName, this.partyContactNo, this.tabbarNo);
 }
 
 class PartyCreditPage extends StatefulWidget {
@@ -43,7 +38,12 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   void initState() {
     super.initState();
     _specificpartyCubit = SpecificPartyCubit();
-    widget.args.type == PartyType.customer
+    fetchdata();
+    _specificPartyInput = Party();
+  }
+
+  void fetchdata() {
+    widget.args.tabbarNo == 0
         ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId)
         : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
   }
@@ -324,7 +324,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
                           value.clear();
                         });
-                        if (widget.args.type == PartyType.customer) {
+                        if (widget.args.tabbarNo == 0) {
                           _specificpartyCubit
                               .updateCreditHistory(_specificPartyInput);
                         } else {
@@ -393,7 +393,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     CustomButton(
                       onTap: () {
                         int amountnew = int.parse(newtotal);
-                        widget.args.type == PartyType.customer
+                        widget.args.tabbarNo == 0
                             ? _specificpartyCubit.updateAmountCustomer(
                                 Party(id: id, total: amountnew),
                                 widget.args.partyId)
@@ -433,7 +433,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             ListTile(
               title: const Text("Delete"),
               onTap: () {
-                widget.args.type == PartyType.customer
+                widget.args.tabbarNo == 0
                     ? _specificpartyCubit.deleteCustomerExpense(
                         Party(id: id), widget.args.partyId)
                     : _specificpartyCubit.deleteSupplierExpense(

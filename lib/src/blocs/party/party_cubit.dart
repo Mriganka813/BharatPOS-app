@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +12,8 @@ import 'package:shopos/src/services/party.dart';
 part 'party_state.dart';
 
 class PartyCubit extends Cubit<PartyState> {
-  final List<Party> _parties = [];
+  final List<Party> _saleParties = [];
+  final List<Party> _purchaseParties = [];
   final PartyService _partyService = const PartyService();
 
   ///
@@ -32,23 +35,23 @@ class PartyCubit extends Cubit<PartyState> {
     return;
   }
 
-  ///
-  void getCustomerParties({String? searchQuery}) async {
+  /// Get the intial credit parties
+  void getInitialCreditParties() async {
+    emit(PartyLoading());
     try {
       final sales = await _partyService.getCreditSaleParties();
-      emit(CreditPartiesListRender(parties: sales));
+      final purchase = await _partyService.getCreditPurchaseParties();
+      _saleParties.clear();
+      _purchaseParties.clear();
+      _saleParties.addAll(sales);
+      _purchaseParties.addAll(purchase);
+      emit(CreditPartiesListRender(
+        purchaseParties: _purchaseParties,
+        saleParties: _saleParties,
+      ));
     } catch (err) {
-      emit(PartyError("Error getting parties"));
-    }
-  }
-
-  ///
-  void getSupplierParties({String? searchQuery}) async {
-    try {
-      final sales = await _partyService.getCreditPurchaseParties();
-      emit(CreditPartiesListRender(parties: sales));
-    } catch (err) {
-      emit(PartyError("Error getting parties"));
+      log("$err");
+      PartyError("Error fetching parties");
     }
   }
 
@@ -74,6 +77,7 @@ class PartyCubit extends Cubit<PartyState> {
       emit(PartyError("Error deleting party"));
       return;
     }
+    getInitialCreditParties();
   }
 
   /// Update party

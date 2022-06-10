@@ -227,13 +227,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           suffixIcon: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
-                                context,
-                                CreatePartyPage.routeName,
-                                arguments: widget.args.invoiceType ==
-                                        OrderType.purchase
-                                    ? 'customer'
-                                    : 'supplier',
-                              );
+                                  context, CreatePartyPage.routeName,
+                                  arguments: CreatePartyArguments(
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    widget.args.invoiceType ==
+                                            OrderType.purchase
+                                        ? 'supplier'
+                                        : 'customer',
+                                  ));
                             },
                             child: const Icon(Icons.add_circle_outline_rounded),
                           ),

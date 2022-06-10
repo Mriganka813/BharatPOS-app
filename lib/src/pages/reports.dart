@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/report_input.dart';
+import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/pdf.dart';
@@ -22,6 +23,7 @@ class ReportsPage extends StatefulWidget {
 class _ReportsPageState extends State<ReportsPage> {
   final ReportInput _reportInput = ReportInput();
   final _formKey = GlobalKey<FormState>();
+  late final PdfService _pdfService;
   late final ReportCubit _reportCubit;
   bool _showLoader = false;
 
@@ -30,6 +32,7 @@ class _ReportsPageState extends State<ReportsPage> {
   void initState() {
     super.initState();
     _reportCubit = ReportCubit();
+    _pdfService = PdfService();
   }
 
   ///
@@ -46,6 +49,26 @@ class _ReportsPageState extends State<ReportsPage> {
           ? _reportInput.type = null
           : _reportInput.type = type;
     });
+  }
+
+  void _handleReportsView(ReportsView state) async {
+    if (state.expenses != null) {
+      final file =
+          await _pdfService.generateExpensesPdfFile(state.expenses ?? []);
+      Navigator.pushNamed(
+        context,
+        PdfPreviewPage.routeName,
+        arguments: PdfPreviewPageArgs(file: file, title: 'Expenses'),
+      );
+    }
+    if (state.orders != null) {
+      final file = await _pdfService.generateOrdersPdfFile(state.orders ?? []);
+      Navigator.pushNamed(
+        context,
+        PdfPreviewPage.routeName,
+        arguments: PdfPreviewPageArgs(file: file, title: 'Orders'),
+      );
+    }
   }
 
   @override
@@ -67,13 +90,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
           /// View
           if (state is ReportsView) {
-            if (state.expenses != null) {
-              const PdfService()
-                  .generateExpensesPdfPreview(state.expenses ?? []);
-            }
-            if (state.orders != null) {
-              const PdfService().generateOrdersPdfPreview(state.orders ?? []);
-            }
+            _handleReportsView(state);
           }
         },
         child: Padding(
