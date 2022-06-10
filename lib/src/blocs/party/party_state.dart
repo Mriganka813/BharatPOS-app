@@ -18,10 +18,10 @@ class PartyListRender extends PartyState {
 }
 
 class CreditPartiesListRender extends PartyState {
-  final List<Party> saleParties;
-  final List<Party> purchaseParties;
-  CreditPartiesListRender(
-      {required this.saleParties, required this.purchaseParties});
+  final List<Party> parties;
+  CreditPartiesListRender({
+    required this.parties,
+  });
 }
 
 class OrdersListRender extends PartyState {
