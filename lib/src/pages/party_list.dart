@@ -20,26 +20,21 @@ class PartyListPage extends StatefulWidget {
 
 class _PartyListPageState extends State<PartyListPage>
     with SingleTickerProviderStateMixin {
+  late final PartyCubit _partyCubit;
   late final TabController _tabController;
-  late final PartyCubit _customerPartyCubit;
-  late final PartyCubit _supplierPartyCubit;
 
   ///
   @override
   void initState() {
     super.initState();
+    _partyCubit = PartyCubit()..getInitialCreditParties();
     _tabController = TabController(length: 2, vsync: this);
-    _supplierPartyCubit = PartyCubit();
-    _customerPartyCubit = PartyCubit();
-    _customerPartyCubit.getCustomerParties();
-    _supplierPartyCubit.getSupplierParties();
   }
 
   @override
   void dispose() {
+    _partyCubit.close();
     _tabController.dispose();
-    _supplierPartyCubit.close();
-    _customerPartyCubit.close();
     super.dispose();
   }
 
@@ -58,15 +53,13 @@ class _PartyListPageState extends State<PartyListPage>
           onPressed: () async {
             final partyType =
                 _tabController.index == 0 ? 'customer' : 'supplier';
-            await Navigator.pushNamed(
-              context,
-              CreatePartyPage.routeName,
-              arguments: partyType,
-            );
-            if (partyType == 'customer') {
-              _customerPartyCubit.getCustomerParties();
-            } else {
-              _supplierPartyCubit.getSupplierParties();
+            final result = await Navigator.pushNamed(
+                context, CreatePartyPage.routeName,
+                arguments: CreatePartyArguments("", "", "", "", partyType));
+            if (result is bool) {
+              if (result) {
+                _partyCubit.getInitialCreditParties();
+              }
             }
           },
           backgroundColor: ColorsConst.primaryColor,
@@ -77,142 +70,128 @@ class _PartyListPageState extends State<PartyListPage>
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TabBar(
-              controller: _tabController,
-              indicatorColor: ColorsConst.primaryColor,
-              labelColor: Colors.black,
-              labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontSize: 17,
-                  ),
-              tabs: const [
-                Tab(
-                  text: "Customer",
-                ),
-                Tab(
-                  text: "Supplier",
-                ),
-              ],
-            ),
-            const Divider(),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  PartiesListView(
-                    type: PartyType.customer,
-                    partyCubit: _customerPartyCubit,
-                  ),
-                  PartiesListView(
-                    type: PartyType.supplier,
-                    partyCubit: _supplierPartyCubit,
-                  ),
-                ],
+      body: BlocListener<PartyCubit, PartyState>(
+        bloc: _partyCubit,
+        listener: (context, state) {
+          if (state is PartyError) {
+            locator<GlobalServices>().errorSnackBar(state.message);
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              const CustomTextField(
+                prefixIcon: Icon(Icons.search),
+                hintText: "Search",
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Expanded(
+                child: BlocBuilder<PartyCubit, PartyState>(
+                  bloc: _partyCubit,
+                  builder: (context, state) {
+                    print(state.toString());
+                    if (state is CreditPartiesListRender) {
+                      final salesParties = state.saleParties;
+                      final purchaseParties = state.purchaseParties;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TabBar(
+                            controller: _tabController,
+                            indicatorColor: ColorsConst.primaryColor,
+                            labelColor: Colors.black,
+                            labelStyle: Theme.of(context).textTheme.bodyLarge,
+                            // <-- Your TabBar
+                            tabs: const [
+                              Tab(
+                                text: "Customer",
+                              ),
+                              Tab(
+                                text: "Supplier",
+                              ),
+                            ],
+                          ),
+                          const Divider(),
+                          Expanded(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                PartiesListView(
+                                  parties: salesParties,
+                                  tabno: 0,
+                                  partyCubit: _partyCubit,
+                                ),
+                                PartiesListView(
+                                  parties: purchaseParties,
+                                  tabno: 1,
+                                  partyCubit: _partyCubit,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation(ColorsConst.primaryColor),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-enum PartyType {
-  customer,
-  supplier,
-}
-
-class PartiesListView extends StatefulWidget {
-  final PartyCubit partyCubit;
+class PartiesListView extends StatelessWidget {
   const PartiesListView({
     Key? key,
-    required this.type,
+    required this.parties,
+    required this.tabno,
     required this.partyCubit,
   }) : super(key: key);
 
-  ///
-  final PartyType type;
+  final List<Party> parties;
+  final int tabno;
 
-  @override
-  State<PartiesListView> createState() => _PartiesListViewState();
-}
-
-class _PartiesListViewState extends State<PartiesListView> {
-  ///
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: CustomTextField(
-            prefixIcon: Icon(Icons.search),
-            hintText: "Search",
-          ),
-        ),
-        const Divider(color: Colors.transparent),
-        Expanded(
-          child: BlocConsumer<PartyCubit, PartyState>(
-            bloc: widget.partyCubit,
-            listener: (context, state) {
-              if (state is PartyError) {
-                locator<GlobalServices>().errorSnackBar(state.message);
-              }
-            },
-            builder: (context, state) {
-              if (state is CreditPartiesListRender) {
-                final parties = state.parties;
-                return ListView.separated(
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) {
-                    return const Divider();
-                  },
-                  itemCount: parties.length,
-                  itemBuilder: (context, index) {
-                    final party = parties[index];
-                    return ListTile(
-                      title: Text(party.name ?? ""),
-                      trailing: Text(
-                          "${(party.totalCreditAmount ?? 0) - (party.totalSettleAmount ?? 0)}"),
-                      onTap: () {
-                        _onTapParty(context, party);
-                      },
-                    );
-                  },
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(ColorsConst.primaryColor),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+    return ListView.separated(
+      shrinkWrap: true,
+      separatorBuilder: (context, index) {
+        return const Divider();
+      },
+      itemCount: parties.length,
+      itemBuilder: (context, index) {
+        final party = parties[index];
+        return ListTile(
+          title: Text(party.name ?? ""),
+          trailing: Text(
+              "${party.balance}"), //here when api will be fixed then we will get the correct value
+          onTap: () async {
+            await Navigator.pushNamed(context, PartyCreditPage.routeName,
+                arguments: ScreenArguments(
+                    party.id!, party.name!, party.phoneNumber!, tabno));
+          },
+          onLongPress: () {
+            showModal(party, context, tabno);
+          },
+        );
+      },
     );
   }
 
-  void _onTapParty(BuildContext context, Party party) async {
-    Navigator.pushNamed(
-      context,
-      PartyCreditPage.routeName,
-      arguments: ScreenArguments(
-        partyId: party.id!,
-        partName: party.name!,
-        partyContactNo: party.phoneNumber!,
-        type: widget.type,
-      ),
-    );
-  }
-
-  showModal(String _id, context, Party party, String partyType) {
-    List<DialogButton> button = [];
+  final PartyCubit partyCubit;
+  showModal(Party _party, context, int tabno) {
+    final String _partyType;
+    tabno == 0 ? _partyType = "customer" : _partyType = "supplier";
     Alert(
         context: context,
         style: AlertStyle(
@@ -224,24 +203,17 @@ class _PartiesListViewState extends State<PartiesListView> {
             ListTile(
               title: const Text("Edit"),
               onTap: () async {
-                await Navigator.pushNamed(
-                  context,
-                  CreatePartyPage.routeName,
-                  arguments: CreatePartyArguments(
-                    party: party,
-                    type: partyType,
-                  ),
-                );
+                await Navigator.pushNamed(context, CreatePartyPage.routeName,
+                    arguments: CreatePartyArguments(_party.id!, _party.name!,
+                        _party.phoneNumber!, _party.address!, _partyType));
                 Navigator.pop(context);
-                widget.type == PartyType.customer
-                    ? widget.partyCubit.getCustomerParties()
-                    : widget.partyCubit.getSupplierParties();
+                partyCubit.getInitialCreditParties();
               },
             ),
             ListTile(
               title: const Text("Delete"),
               onTap: () {
-                widget.partyCubit.deleteParty(Party(id: _id));
+                partyCubit.deleteParty(_party);
                 Navigator.pop(context);
               },
             ),

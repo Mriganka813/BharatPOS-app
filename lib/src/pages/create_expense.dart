@@ -117,6 +117,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
                             ],
                             onSave: (e) {
                               _formInput.amount = e;
+                              _formInput.createdAt = DateTime.now();
                             },
                           ),
                           const Divider(color: Colors.transparent),
