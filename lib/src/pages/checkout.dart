@@ -84,7 +84,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       targetPath!.first.path,
       targetFileName,
     );
-
     final input = _typeAheadController.value.text.trim();
     if (input.length == 10 && int.tryParse(input) != null) {
       await WhatsappShare.shareFile(
@@ -251,6 +250,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ),
                       suggestionsCallback: (String pattern) {
+                        if (int.tryParse(pattern.trim()) != null) {
+                          return Future.value([]);
+                        }
                         return _searchParties(pattern);
                       },
                       itemBuilder: (context, party) {
