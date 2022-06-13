@@ -5,11 +5,13 @@ import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/pages/home.dart';
+import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -192,6 +194,22 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                     ),
                     const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Confirm Password",
+                      onSave: (e) {
+                        _signUpInput.confirmPassword = e;
+                      },
+                      validator: (e) {
+                        if (e == null || e.isEmpty) {
+                          return "Please confirm password";
+                        }
+                        if (_signUpInput.password != e) {
+                          return "Passwords do not match";
+                        }
+                        return null;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
                     Row(
                       children: [
                         Checkbox(
@@ -215,29 +233,33 @@ class _SignUpPageState extends State<SignUpPage> {
                             });
                           },
                         ),
-                        const Expanded(
-                          child: Text(
-                            "By signing up, you agree to our Terms of Service and Privacy Policy",
-                            style: TextStyle(color: Colors.grey),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "By signing up, you agree to our",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              GestureDetector(
+                                child: Text(
+                                  "Terms of Service and Privacy Policy",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      decoration: TextDecoration.underline),
+                                ),
+                                onTap: () async {
+                                  await launchUrl(
+                                    Uri.parse(
+                                        'https://api.getshopos.com/privacy-policy'),
+                                    mode: LaunchMode.inAppWebView,
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                    ),
-                    const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      label: "Confirm Password",
-                      onSave: (e) {
-                        _signUpInput.confirmPassword = e;
-                      },
-                      validator: (e) {
-                        if (e == null || e.isEmpty) {
-                          return "Please confirm password";
-                        }
-                        if (_signUpInput.password != e) {
-                          return "Passwords do not match";
-                        }
-                        return null;
-                      },
                     ),
                     const Divider(color: Colors.transparent),
                     const SizedBox(height: 5),

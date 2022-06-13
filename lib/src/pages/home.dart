@@ -11,6 +11,7 @@ import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -46,19 +47,86 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               appBar: AppBar(
                 title: Text(state.user.businessName ?? ""),
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                      await const AuthService().signOut();
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        SignInPage.routeName,
-                        (route) => false,
-                      );
-                    },
-                    icon: const Icon(Icons.logout),
+              ),
+              drawer: Drawer(
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(
+                          Icons.business_outlined,
+                          color: Colors.black,
+                        ),
+                        title: Title(
+                          color: Colors.black,
+                          child: Text(
+                            state.user.businessName ?? "",
+                            textScaleFactor: 1.4,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        subtitle: Text(state.user.address ?? ""),
+                      ),
+                      Divider(),
+                      ListTile(
+                        leading: Icon(Icons.security_outlined),
+                        title: Title(
+                            color: Colors.black,
+                            child: Text("Change Password")),
+                        onTap: () {},
+                      ),
+                      Divider(
+                        color: Colors.transparent,
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.policy_outlined),
+                        title: Title(
+                            color: Colors.black, child: Text("Privacy Policy")),
+                        onTap: () async {
+                          await launchUrl(
+                            Uri.parse(
+                                'https://api.getshopos.com/privacy-policy'),
+                            mode: LaunchMode.inAppWebView,
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Divider(
+                        color: Colors.transparent,
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.control_point),
+                        title: Title(
+                            color: Colors.black,
+                            child: Text("Terms and Conditions")),
+                        onTap: () async {
+                          await launchUrl(
+                            Uri.parse(
+                                'https://api.getshopos.com/privacy-policy'),
+                            mode: LaunchMode.inAppWebView,
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Divider(
+                        color: Colors.transparent,
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout),
+                        title:
+                            Title(color: Colors.black, child: Text("Logout")),
+                        onTap: () async {
+                          await const AuthService().signOut();
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            SignInPage.routeName,
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
               body: Padding(
                 padding: const EdgeInsets.all(20),
