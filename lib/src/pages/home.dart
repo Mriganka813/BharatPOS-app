@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
@@ -73,7 +74,11 @@ class _HomePageState extends State<HomePage> {
                         title: Title(
                             color: Colors.black,
                             child: Text("Change Password")),
-                        onTap: () {},
+                        onTap: () async {
+                          await Navigator.pushNamed(context, 'changepassword',
+                              arguments: state.user);
+                          Navigator.pop(context);
+                        },
                       ),
                       Divider(
                         color: Colors.transparent,

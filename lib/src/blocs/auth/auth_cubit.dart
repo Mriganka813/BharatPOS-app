@@ -75,7 +75,6 @@ class AuthCubit extends Cubit<AuthState> {
       return;
     }
     emit(OtpRetrieved(smsCode));
-    _verifyOtp(smsCode);
   }
 
   ///

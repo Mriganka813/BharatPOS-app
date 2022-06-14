@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pages/change_password.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_expense.dart';
 import 'package:shopos/src/pages/create_party.dart';
@@ -97,6 +99,8 @@ class MyApp extends StatelessWidget {
                 return PdfPreviewPage(
                   args: settings.arguments as PdfPreviewPageArgs,
                 );
+              case ChangePassword.routeName:
+                return ChangePassword(user: settings.arguments as User?);
               default:
                 return const SplashScreen();
             }

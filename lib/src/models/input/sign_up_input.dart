@@ -26,5 +26,6 @@ class SignUpInput {
         "businessType": businessType,
         "address": address,
         "phoneNumber": phoneNumber,
+        "verificationcode": verificationCode
       };
 }

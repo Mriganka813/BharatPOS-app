@@ -5,7 +5,6 @@ import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/pages/home.dart';
-import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -189,6 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Divider(color: Colors.transparent),
                     CustomTextField(
                       label: "Password",
+                      obsecureText: true,
                       onSave: (e) {
                         _signUpInput.password = e!;
                       },
@@ -196,6 +196,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Divider(color: Colors.transparent),
                     CustomTextField(
                       label: "Confirm Password",
+                      obsecureText: true,
                       onSave: (e) {
                         _signUpInput.confirmPassword = e;
                       },

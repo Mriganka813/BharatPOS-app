@@ -14,22 +14,24 @@ class CustomTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? value;
   final Widget? suffixIcon;
+  final bool obsecureText;
 
-  const CustomTextField({
-    Key? key,
-    this.onChanged,
-    this.initialValue,
-    this.onSave,
-    this.value,
-    this.validator,
-    this.hintText,
-    this.label,
-    this.isLoading = false,
-    this.inputType,
-    this.suffixIcon,
-    this.prefixIcon,
-    this.inputFormatters,
-  }) : super(key: key);
+  const CustomTextField(
+      {Key? key,
+      this.onChanged,
+      this.initialValue,
+      this.onSave,
+      this.value,
+      this.validator,
+      this.hintText,
+      this.label,
+      this.isLoading = false,
+      this.inputType,
+      this.suffixIcon,
+      this.prefixIcon,
+      this.inputFormatters,
+      this.obsecureText = false})
+      : super(key: key);
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -51,6 +53,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
+          obscureText: widget.obsecureText,
           inputFormatters: widget.inputFormatters,
           textInputAction: TextInputAction.next,
           validator: (e) {
