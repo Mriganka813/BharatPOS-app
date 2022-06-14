@@ -15,6 +15,7 @@ class CustomTextField extends StatefulWidget {
   final String? value;
   final Widget? suffixIcon;
   final bool obsecureText;
+  final bool readonly;
 
   const CustomTextField(
       {Key? key,
@@ -30,7 +31,8 @@ class CustomTextField extends StatefulWidget {
       this.suffixIcon,
       this.prefixIcon,
       this.inputFormatters,
-      this.obsecureText = false})
+      this.obsecureText = false,
+      this.readonly = false})
       : super(key: key);
 
   @override
@@ -53,6 +55,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
+          readOnly: widget.readonly,
           obscureText: widget.obsecureText,
           inputFormatters: widget.inputFormatters,
           textInputAction: TextInputAction.next,

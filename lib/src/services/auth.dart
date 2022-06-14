@@ -69,4 +69,22 @@ class AuthService {
     await saveCookie(response);
     return User.fromMap(response.data['user']);
   }
+
+  ///password change request
+  ///
+  Future<bool> PasswordChangeRequest(
+      String oldPassword, String newPassword, String confirmPassword) async {
+    final response = await ApiV1Service.putRequest(
+      '/password/update',
+      data: {
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+      },
+    );
+    if ((response.statusCode ?? 400) > 300) {
+      return false;
+    }
+    return true;
+  }
 }

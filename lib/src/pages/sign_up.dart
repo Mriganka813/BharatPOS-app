@@ -120,6 +120,39 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
+                      label: "Email",
+                      inputType: TextInputType.emailAddress,
+                      onSave: (e) {
+                        _signUpInput.email = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Password",
+                      obsecureText: true,
+                      onSave: (e) {
+                        _signUpInput.password = e!;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Confirm Password",
+                      obsecureText: true,
+                      onSave: (e) {
+                        _signUpInput.confirmPassword = e;
+                      },
+                      validator: (e) {
+                        if (e == null || e.isEmpty) {
+                          return "Please confirm password";
+                        }
+                        if (_signUpInput.password != e) {
+                          return "Passwords do not match";
+                        }
+                        return null;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
                       inputType: TextInputType.phone,
                       label: "Phone Number",
                       inputFormatters: [LengthLimitingTextInputFormatter(10)],
@@ -175,39 +208,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                       onSave: (e) {
                         _signUpInput.verificationCode = e;
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      label: "Email",
-                      inputType: TextInputType.emailAddress,
-                      onSave: (e) {
-                        _signUpInput.email = e;
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      label: "Password",
-                      obsecureText: true,
-                      onSave: (e) {
-                        _signUpInput.password = e!;
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      label: "Confirm Password",
-                      obsecureText: true,
-                      onSave: (e) {
-                        _signUpInput.confirmPassword = e;
-                      },
-                      validator: (e) {
-                        if (e == null || e.isEmpty) {
-                          return "Please confirm password";
-                        }
-                        if (_signUpInput.password != e) {
-                          return "Passwords do not match";
-                        }
-                        return null;
                       },
                     ),
                     const Divider(color: Colors.transparent),
