@@ -100,47 +100,44 @@ class _CreateSaleState extends State<CreateSale> {
             ),
             const Divider(color: Colors.transparent),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: CustomButton(
-                    title: "Add manually",
-                    onTap: () async {
-                      final result = await Navigator.pushNamed(
-                        context,
-                        ProductsListPage.routeName,
-                        arguments: const ProductListPageArgs(
-                          isSelecting: true,
-                          orderType: OrderType.sale,
-                        ),
-                      );
-                      if (result == null && result is! List<Product>) {
-                        return;
-                      }
-                      final orderItems = (result as List<Product>)
-                          .map((e) => OrderItemInput(
-                                product: e,
-                                quantity: 1,
-                                price: 0,
-                              ))
-                          .toList();
-                      setState(() {
-                        _orderInput.orderItems?.addAll(orderItems);
-                      });
-                    },
-                  ),
+                CustomButton(
+                  title: "Add manually",
+                  onTap: () async {
+                    final result = await Navigator.pushNamed(
+                      context,
+                      ProductsListPage.routeName,
+                      arguments: const ProductListPageArgs(
+                        isSelecting: true,
+                        orderType: OrderType.sale,
+                      ),
+                    );
+                    if (result == null && result is! List<Product>) {
+                      return;
+                    }
+                    final orderItems = (result as List<Product>)
+                        .map((e) => OrderItemInput(
+                              product: e,
+                              quantity: 1,
+                              price: 0,
+                            ))
+                        .toList();
+                    setState(() {
+                      _orderInput.orderItems?.addAll(orderItems);
+                    });
+                  },
                 ),
-                const VerticalDivider(
-                  color: Colors.transparent,
-                  width: 3,
-                ),
-                Expanded(
-                  child: CustomButton(
-                    title: "Scan barcode",
-                    onTap: () async {
-                      _searchProductByBarcode();
-                    },
-                    type: ButtonType.outlined,
-                  ),
+                // const VerticalDivider(
+                //   color: Colors.transparent,
+                //   width: 10,
+                // ),
+                CustomButton(
+                  title: "Scan barcode",
+                  onTap: () async {
+                    _searchProductByBarcode();
+                  },
+                  type: ButtonType.outlined,
                 ),
               ],
             ),
