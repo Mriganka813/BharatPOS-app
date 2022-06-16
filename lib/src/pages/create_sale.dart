@@ -129,7 +129,10 @@ class _CreateSaleState extends State<CreateSale> {
                     },
                   ),
                 ),
-                const VerticalDivider(color: Colors.transparent),
+                const VerticalDivider(
+                  color: Colors.transparent,
+                  width: 3,
+                ),
                 Expanded(
                   child: CustomButton(
                     title: "Scan barcode",

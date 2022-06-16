@@ -113,7 +113,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                 ),
                 const VerticalDivider(
                   color: Colors.transparent,
-                  width: 7,
+                  width: 3,
                 ),
                 Expanded(
                   child: CustomButton(
