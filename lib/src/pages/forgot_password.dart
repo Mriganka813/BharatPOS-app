@@ -77,16 +77,9 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                     Visibility(
                       visible: isSubmitVisible,
                       child: CustomTextField(
-                        inputFormatters: [LengthLimitingTextInputFormatter(6)],
+                        value: code,
                         label: "Verification Code",
                         inputType: TextInputType.phone,
-                        value: code,
-                        validator: (e) {
-                          if (e == null || e.isEmpty || e.length < 6) {
-                            return "Please enter a valid verification code";
-                          }
-                          return null;
-                        },
                         onChanged: (e) {
                           setState(() {
                             code = e;
@@ -127,8 +120,16 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                       label: "Confirm New Password",
                       obsecureText: true,
                       onChanged: (e) {
+                        if (newPassword.length < 8)
+                          locator<GlobalServices>().errorSnackBar(
+                              "Password should have minimum 8 character");
+                        if (newPassword == confirmNewPassword) {
+                          locator<GlobalServices>()
+                              .successSnackBar("Password matched ✓");
+                        }
                         setState(() {
                           confirmNewPassword = e;
+                          print(confirmNewPassword);
                         });
                       },
                     ),
@@ -141,25 +142,37 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                     CustomButton(
                         title: "Change",
                         onTap: () async {
-                          isPasswordchanged =
-                              await auth.ForgotPasswordChangeRequest(
-                                  newPassword, confirmNewPassword, phoneNumber);
-                          isPasswordchanged
-                              ? ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                      backgroundColor: Colors.green,
-                                      content: Text(
-                                        "Password Changed sucessfully",
-                                        style: TextStyle(color: Colors.white),
-                                      )))
-                              : ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                      backgroundColor: Colors.red,
-                                      content: Text(
-                                        "something went wrong",
-                                        style: TextStyle(color: Colors.white),
-                                      )));
-                          Navigator.pop(context);
+                          try {
+                            isPasswordchanged =
+                                await auth.ForgotPasswordChangeRequest(
+                                    newPassword,
+                                    confirmNewPassword,
+                                    phoneNumber);
+                            isPasswordchanged
+                                ? ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                        backgroundColor: Colors.green,
+                                        content: Text(
+                                          "Password Changed sucessfully",
+                                          style: TextStyle(color: Colors.white),
+                                        )))
+                                : ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text(
+                                          "something went wrong",
+                                          style: TextStyle(color: Colors.white),
+                                        )));
+                            Navigator.pop(context);
+                          } catch (e) {
+                            print(e.toString());
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "something went wrong",
+                                  style: TextStyle(color: Colors.white),
+                                )));
+                          }
                         })
                   ],
                 ),
@@ -170,10 +183,10 @@ class _ForgotpasswordState extends State<Forgotpassword> {
 
   final _authInstace = fb.FirebaseAuth.instance;
   verifyPhoneNumber(String phoneNumber) async {
+    locator<GlobalServices>().infoSnackBar("Sending Code");
     await _authInstace.verifyPhoneNumber(
       phoneNumber: '+91$phoneNumber',
       verificationCompleted: (fb.PhoneAuthCredential credential) async {
-        print(credential.smsCode);
         setState(() {
           code = credential.smsCode!;
         });
@@ -182,7 +195,7 @@ class _ForgotpasswordState extends State<Forgotpassword> {
         locator<GlobalServices>().errorSnackBar("Verification Failed");
       },
       codeSent: (String verificationId, int? resendToken) {
-        locator<GlobalServices>().infoSnackBar("Code sent");
+        locator<GlobalServices>().successSnackBar("Code sent");
         _verificationId = verificationId;
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
@@ -190,23 +203,24 @@ class _ForgotpasswordState extends State<Forgotpassword> {
   }
 
   verifyOtp() async {
+    locator<GlobalServices>().infoSnackBar("Verifying...");
     fb.PhoneAuthCredential credential = fb.PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: code);
 
     try {
       await _authInstace.signInWithCredential(credential).then((value) {
-        print("You are logged in successfully");
+        locator<GlobalServices>().successSnackBar("Verified ✓");
         setState(() {
           isVerification = false;
         });
       });
     } catch (e) {
+      locator<GlobalServices>().errorSnackBar("Reverify your number");
       setState(() {
         phoneNumber = "";
         code = "";
         isSubmitVisible = false;
       });
-      locator<GlobalServices>().errorSnackBar("Reverify your number");
     }
   }
 }

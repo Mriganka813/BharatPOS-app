@@ -4,7 +4,7 @@ description: POS and accounts ledger.
 # Prevent accidental publishing to pub.dev.
 publish_to: "none"
 
-version: 1.0.1+4
+version: 1.0.1+5
 
 environment:
   sdk: ">=2.16.2 <3.0.0"

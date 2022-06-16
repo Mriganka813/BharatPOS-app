@@ -15,6 +15,7 @@ class ProductService {
     }
     final response =
         await ApiV1Service.postRequest('/inventory/new', formData: inputMap);
+    print(response.toString());
     return response;
   }
 
@@ -52,7 +53,7 @@ class ProductService {
 
   ///
   Future<Response> searchProducts(String keyword) async {
-    return await ApiV1Service.getRequest('/inventories?keyword=$keyword');
+    return await ApiV1Service.getRequest('/inventory/me?keyword=$keyword');
   }
 
   ///

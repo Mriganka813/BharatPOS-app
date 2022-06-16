@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           await launchUrl(
                             Uri.parse(
-                                'https://api.getshopos.com/privacy-policy'),
+                                'https://api.getshopos.com/terms-and-condition'),
                             mode: LaunchMode.inAppWebView,
                           );
                           Navigator.pop(context);

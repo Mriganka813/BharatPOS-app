@@ -242,20 +242,43 @@ class _SignUpPageState extends State<SignUpPage> {
                                 "By signing up, you agree to our",
                                 style: TextStyle(color: Colors.grey),
                               ),
-                              GestureDetector(
-                                child: Text(
-                                  "Terms of Service and Privacy Policy",
-                                  style: TextStyle(
-                                      color: Colors.blue,
-                                      decoration: TextDecoration.underline),
-                                ),
-                                onTap: () async {
-                                  await launchUrl(
-                                    Uri.parse(
-                                        'https://api.getshopos.com/privacy-policy'),
-                                    mode: LaunchMode.inAppWebView,
-                                  );
-                                },
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    child: Text(
+                                      "Terms of Service",
+                                      style: TextStyle(
+                                          color: Colors.blue,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                    onTap: () async {
+                                      await launchUrl(
+                                        Uri.parse(
+                                            'https://api.getshopos.com/privacy-policy'),
+                                        mode: LaunchMode.inAppWebView,
+                                      );
+                                    },
+                                  ),
+                                  Text(
+                                    " and ",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  GestureDetector(
+                                    child: Text(
+                                      "Privacy Policy",
+                                      style: TextStyle(
+                                          color: Colors.blue,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                    onTap: () async {
+                                      await launchUrl(
+                                        Uri.parse(
+                                            'https://api.getshopos.com/terms-and-condition'),
+                                        mode: LaunchMode.inAppWebView,
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),
