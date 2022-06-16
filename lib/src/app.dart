@@ -9,6 +9,7 @@ import 'package:shopos/src/pages/create_product.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/forgot_password.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
@@ -101,6 +102,8 @@ class MyApp extends StatelessWidget {
                 );
               case ChangePassword.routeName:
                 return ChangePassword(user: settings.arguments as User?);
+              case Forgotpassword.routeName:
+                return Forgotpassword();
               default:
                 return const SplashScreen();
             }

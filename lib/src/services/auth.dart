@@ -87,4 +87,23 @@ class AuthService {
     }
     return true;
   }
+
+  ///password change request
+  ///
+  Future<bool> ForgotPasswordChangeRequest(
+      String newPassword, String confirmPassword, String phoneNumber) async {
+    print(newPassword + " " + confirmPassword + " " + phoneNumber);
+    final response = await ApiV1Service.putRequest(
+      '/password/reset',
+      data: {
+        'newPassword': newPassword,
+        'confirmPassword': confirmPassword,
+        'phoneNumber': phoneNumber,
+      },
+    );
+    if ((response.statusCode ?? 400) > 300) {
+      return false;
+    }
+    return true;
+  }
 }

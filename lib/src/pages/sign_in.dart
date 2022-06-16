@@ -119,10 +119,10 @@ class _SignInPageState extends State<SignInPage> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            // Navigator.pushNamed(
-                            //   context,
-                            //   'changepassword',
-                            // );
+                            Navigator.pushNamed(
+                              context,
+                              '/forgotPassword',
+                            );
                           },
                           child: Text(
                             "Forgot Password?",
