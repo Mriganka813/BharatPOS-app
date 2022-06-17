@@ -52,6 +52,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   ///
   verifyPhoneNumber(String phoneNumber) async {
+    locator<GlobalServices>().infoSnackBar("Sending Code");
     await _authInstace.verifyPhoneNumber(
       phoneNumber: '+91$phoneNumber',
       verificationCompleted: (fb.PhoneAuthCredential credential) async {
@@ -61,7 +62,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("Could not verify phone number"));
       },
       codeSent: (String verificationId, int? resendToken) {
-        locator<GlobalServices>().infoSnackBar("Code sent");
+        locator<GlobalServices>().successSnackBar("Code sent");
         _verificationId = verificationId;
       },
       codeAutoRetrievalTimeout: (String verificationId) {},

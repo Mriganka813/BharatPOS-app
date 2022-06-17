@@ -23,9 +23,9 @@ class ProductFormInput {
 
   Map<String, dynamic> toMap() => {
         "name": name,
-        'purchasePrice': purchasePrice,
+        if (purchasePrice != "") 'purchasePrice': purchasePrice,
         "sellingPrice": sellingPrice,
-        "barCode": barCode,
+        if (barCode != "") "barCode": barCode,
         "quantity": quantity,
         "id": id,
       };

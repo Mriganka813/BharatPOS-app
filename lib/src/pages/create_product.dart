@@ -206,7 +206,8 @@ class _CreateProductState extends State<CreateProduct> {
                           borderRadius: BorderRadius.circular(5),
                           child: Stack(
                             children: [
-                              _formInput.image != null
+                              _formInput.image != "null" &&
+                                      _formInput.image != null
                                   ? CachedNetworkImage(
                                       imageUrl: _formInput.image!,
                                       fit: BoxFit.fill,
@@ -271,7 +272,9 @@ class _CreateProductState extends State<CreateProduct> {
                         Expanded(
                           child: CustomTextField(
                             label: "Purchase Price",
-                            value: _formInput.purchasePrice,
+                            value: _formInput.purchasePrice != "null"
+                                ? _formInput.purchasePrice
+                                : "",
                             inputType: TextInputType.number,
                             onSave: (e) {
                               _formInput.purchasePrice = e;
@@ -297,7 +300,9 @@ class _CreateProductState extends State<CreateProduct> {
                         Expanded(
                           child: CustomTextField(
                             label: "Barcode",
-                            value: _formInput.barCode,
+                            value: _formInput.barCode != "null"
+                                ? _formInput.barCode
+                                : "",
                             onSave: (e) {
                               _formInput.barCode = e;
                             },
@@ -320,11 +325,6 @@ class _CreateProductState extends State<CreateProduct> {
                       onTap: () {
                         _formKey.currentState?.save();
                         if (_formKey.currentState?.validate() ?? false) {
-                          if (_formInput.purchasePrice == "" ||
-                              _formInput.barCode == "") {
-                            _formInput.purchasePrice = "0";
-                            _formInput.barCode = "0";
-                          }
                           _productCubit.createProduct(_formInput);
                         }
                       },
