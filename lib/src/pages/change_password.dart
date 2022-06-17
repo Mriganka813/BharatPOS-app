@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 
@@ -82,6 +84,15 @@ class _ChangePasswordState extends State<ChangePassword> {
               CustomButton(
                   title: "Change",
                   onTap: () async {
+                    if (newPassword.length < 8) {
+                      locator<GlobalServices>().errorSnackBar(
+                          "Password should have minimum 8 character");
+                      return;
+                    } else if (newPassword != confirmPassword) {
+                      locator<GlobalServices>()
+                          .errorSnackBar("Password not matched");
+                      return;
+                    }
                     isPasswordchanged = await auth.PasswordChangeRequest(
                         oldPassword, newPassword, confirmPassword);
                     isPasswordchanged

@@ -133,6 +133,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       onSave: (e) {
                         _signUpInput.password = e!;
                       },
+                      validator: (e) {
+                        if (_signUpInput.password!.length < 8) {
+                          return "Password should have minimum 8 character";
+                        }
+                      },
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
@@ -147,6 +152,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         }
                         if (_signUpInput.password != e) {
                           return "Passwords do not match";
+                        }
+                        if (_signUpInput.password!.length < 8) {
+                          return "Password contain minimum 8 character";
                         }
                         return null;
                       },
