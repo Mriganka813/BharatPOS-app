@@ -25,10 +25,10 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
-        sellingPrice: json["sellingPrice"] ?? 1,
+        sellingPrice: json["sellingPrice"] ?? 0,
         barCode: json["barCode"],
         quantity: json["quantity"],
-        purchasePrice: json['purchasePrice'] ?? 1,
+        purchasePrice: json['purchasePrice'] ?? 0,
         user: json["user"],
         image: json['image'],
         id: json["_id"],
