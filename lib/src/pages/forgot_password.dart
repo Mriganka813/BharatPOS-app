@@ -120,17 +120,13 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                       label: "Confirm New Password",
                       obsecureText: true,
                       onChanged: (e) {
-                        if (newPassword.length < 8)
-                          locator<GlobalServices>().errorSnackBar(
-                              "Password should have minimum 8 character");
+                        setState(() {
+                          confirmNewPassword = e;
+                        });
                         if (newPassword == confirmNewPassword) {
                           locator<GlobalServices>()
                               .successSnackBar("Password matched ✓");
                         }
-                        setState(() {
-                          confirmNewPassword = e;
-                          print(confirmNewPassword);
-                        });
                       },
                     ),
                     Divider(
@@ -142,6 +138,11 @@ class _ForgotpasswordState extends State<Forgotpassword> {
                     CustomButton(
                         title: "Change",
                         onTap: () async {
+                          if (newPassword.length < 8) {
+                            locator<GlobalServices>().errorSnackBar(
+                                "Password should have minimum 8 character");
+                            return;
+                          }
                           try {
                             isPasswordchanged =
                                 await auth.ForgotPasswordChangeRequest(
