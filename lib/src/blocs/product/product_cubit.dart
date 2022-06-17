@@ -33,7 +33,7 @@ class ProductCubit extends Cubit<ProductState> {
     emit(ProductLoading());
     try {
       final response = await _productService.searchProducts(pattern);
-      final data = response.data['InventoriesRes'];
+      final data = response.data['inventories'];
       final prods = List.generate(data.length, (int index) {
         return Product.fromMap(data[index]);
       });

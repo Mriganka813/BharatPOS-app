@@ -167,38 +167,48 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   bloc: _specificpartyCubit,
                   builder: (context, state) {
                     int balance = 0;
+                    int negbalance = 0;
                     if (state is SpecificPartyListRender) {
-                      // print(state.partyDetails.toMap());
                       balance = state.partyDetails.balance ?? 0;
+                      negbalance = balance * -1;
                     }
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Text(
-                            "Balance Due",
-                            textScaleFactor: 1.7,
-                          ),
-                          balance >= 0
-                              ? Text(
+                      child: balance >= 0
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const Text(
+                                  "Balance Due",
+                                  textScaleFactor: 1.7,
+                                ),
+                                Text(
                                   "$balance",
                                   textScaleFactor: 1.7,
                                   style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                )
-                              : Text(
-                                  "$balance",
+                                ),
+                              ],
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const Text(
+                                  "Balance Advance",
+                                  textScaleFactor: 1.7,
+                                ),
+                                Text(
+                                  "$negbalance",
                                   textScaleFactor: 1.7,
                                   style: const TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                )
-                        ],
-                      ),
+                                ),
+                              ],
+                            ),
                     );
                   },
                 ),

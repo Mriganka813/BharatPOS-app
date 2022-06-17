@@ -81,10 +81,11 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                     ),
             ),
             const Divider(color: Colors.transparent),
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
+            IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomButton(
                     title: "Add Product",
                     onTap: () async {
                       final result = await Navigator.pushNamed(
@@ -110,21 +111,19 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                       });
                     },
                   ),
-                ),
-                const VerticalDivider(
-                  color: Colors.transparent,
-                  width: 7,
-                ),
-                Expanded(
-                  child: CustomButton(
+                  // const VerticalDivider(
+                  //   color: Colors.transparent,
+                  //   width: 10,
+                  // ),
+                  CustomButton(
                     title: "Create Product",
                     onTap: () {
                       Navigator.pushNamed(context, CreateProduct.routeName);
                     },
                     type: ButtonType.outlined,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Divider(color: Colors.transparent),
             SlidableButton(

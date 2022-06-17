@@ -276,6 +276,7 @@ class _CreateProductState extends State<CreateProduct> {
                             onSave: (e) {
                               _formInput.purchasePrice = e;
                             },
+                            validator: (e) => null,
                           ),
                         ),
                       ],
@@ -319,6 +320,11 @@ class _CreateProductState extends State<CreateProduct> {
                       onTap: () {
                         _formKey.currentState?.save();
                         if (_formKey.currentState?.validate() ?? false) {
+                          if (_formInput.purchasePrice == "" ||
+                              _formInput.barCode == "") {
+                            _formInput.purchasePrice = "0";
+                            _formInput.barCode = "0";
+                          }
                           _productCubit.createProduct(_formInput);
                         }
                       },

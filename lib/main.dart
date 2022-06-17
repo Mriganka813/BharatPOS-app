@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shopos/firebase_options.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/utils.dart';
 
 import 'src/app.dart';
 

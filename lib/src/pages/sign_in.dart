@@ -117,13 +117,21 @@ class _SignInPageState extends State<SignInPage> {
                                   ),
                         ),
                         const Spacer(),
-                        Text(
-                          "Forgot Password?",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: ColorsConst.primaryColor,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/forgotPassword',
+                            );
+                          },
+                          child: Text(
+                            "Forgot Password?",
+                            style:
+                                Theme.of(context).textTheme.headline6?.copyWith(
+                                      color: ColorsConst.primaryColor,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                          ),
                         ),
                       ],
                     ),
@@ -132,6 +140,7 @@ class _SignInPageState extends State<SignInPage> {
                       onSave: (e) {
                         _password = e!;
                       },
+                      obsecureText: true,
                     ),
                     const SizedBox(height: 5),
                     Row(
