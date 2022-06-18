@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:new_version/new_version.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
@@ -27,8 +28,18 @@ class _HomePageState extends State<HomePage> {
   ///
   @override
   void initState() {
+    _checkUpdate();
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
+  }
+
+  Future<void> _checkUpdate() async {
+    final newVersion = NewVersion(androidId: "com.shopos.magicstep");
+    final status = await newVersion.getVersionStatus();
+    if (status!.canUpdate) {
+      newVersion.showUpdateDialog(
+          context: context, versionStatus: status, allowDismissal: false);
+    }
   }
 
   @override
