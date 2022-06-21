@@ -56,6 +56,7 @@ class AuthService {
   /// Send sign in request
   ///
   Future<User?> signInRequest(String email, String password) async {
+    print("jhfhfghfhgfghfghfhgfhgf");
     final response = await ApiV1Service.postRequest(
       '/login',
       data: {
@@ -92,7 +93,7 @@ class AuthService {
   ///
   Future<bool> ForgotPasswordChangeRequest(
       String newPassword, String confirmPassword, String phoneNumber) async {
-    print(newPassword + " " + confirmPassword + " " + phoneNumber);
+    // print(newPassword + " " + confirmPassword + " " + phoneNumber);
     final response = await ApiV1Service.putRequest(
       '/password/reset',
       data: {

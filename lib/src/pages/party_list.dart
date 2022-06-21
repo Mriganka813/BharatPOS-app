@@ -173,8 +173,15 @@ class PartiesListView extends StatelessWidget {
         final party = parties[index];
         return ListTile(
           title: Text(party.name ?? ""),
-          trailing: Text(
-              "${party.balance}"), //here when api will be fixed then we will get the correct value
+          trailing: party.balance! >= 0
+              ? Text(
+                  "${party.balance}",
+                  style: TextStyle(color: Colors.red),
+                )
+              : Text(
+                  "${party.balance!.abs()}",
+                  style: TextStyle(color: Colors.green),
+                ), //here when api will be fixed then we will get the correct value
           onTap: () async {
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
