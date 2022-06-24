@@ -56,7 +56,6 @@ class AuthService {
   /// Send sign in request
   ///
   Future<User?> signInRequest(String email, String password) async {
-    print("jhfhfghfhgfghfghfhgfhgf");
     final response = await ApiV1Service.postRequest(
       '/login',
       data: {

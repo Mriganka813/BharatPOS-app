@@ -16,6 +16,8 @@ import 'package:shopos/src/services/product.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:switcher/core/switcher_size.dart';
+import 'package:switcher/switcher.dart';
 
 import '../blocs/product/product_cubit.dart';
 
@@ -35,6 +37,7 @@ class _CreateProductState extends State<CreateProduct> {
   late final AudioCache _audioCache;
   late final ImagePicker _picker;
   bool _showLoader = false;
+  bool gstSwitch = false;
 
   ///
   @override
@@ -181,6 +184,39 @@ class _CreateProductState extends State<CreateProduct> {
                   locator<GlobalServices>().showBottomSheetLoader();
                 }
               }
+              if (state is gstincludeoptionenable) {
+                setState(() {
+                  if (gstSwitch) {
+                    gstSwitch = false;
+                    _formInput.gst = true;
+                  } else {
+                    gstSwitch = true;
+                    _formInput.gst = false;
+                    _formInput.gstRate = null;
+                    _formInput.sgst = null;
+                    _formInput.cgst = null;
+                    _formInput.igst = null;
+                    _formInput.netSellingPriceGst = null;
+                  }
+                });
+              }
+              if (state is calculateallgst) {
+                if (_formInput.gstRate != null && _formInput.gst) {
+                  int rate = int.parse(_formInput.gstRate!);
+                  int oldsp = int.parse(_formInput.sellingPrice!);
+                  double sgst = oldsp * (rate / 200);
+                  double cgst = oldsp * (rate / 200);
+                  double igst = oldsp * (rate / 100);
+                  double newso = oldsp + igst;
+
+                  setState(() {
+                    _formInput.sgst = sgst.toString();
+                    _formInput.cgst = cgst.toString();
+                    _formInput.igst = igst.toString();
+                    _formInput.netSellingPriceGst = newso.toString();
+                  });
+                }
+              }
             },
             child: BlocBuilder<ProductCubit, ProductState>(
               bloc: _productCubit,
@@ -251,7 +287,7 @@ class _CreateProductState extends State<CreateProduct> {
                     CustomTextField(
                       label: "Name",
                       value: _formInput.name,
-                      onSave: (e) {
+                      onChanged: (e) {
                         _formInput.name = e;
                       },
                     ),
@@ -263,7 +299,7 @@ class _CreateProductState extends State<CreateProduct> {
                             label: "Selling Price",
                             value: _formInput.sellingPrice,
                             inputType: TextInputType.number,
-                            onSave: (e) {
+                            onChanged: (e) {
                               _formInput.sellingPrice = e;
                             },
                           ),
@@ -276,7 +312,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 ? _formInput.purchasePrice
                                 : "",
                             inputType: TextInputType.number,
-                            onSave: (e) {
+                            onChanged: (e) {
                               _formInput.purchasePrice = e;
                             },
                             validator: (e) => null,
@@ -285,11 +321,118 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Switcher(
+                          value: false,
+                          size: SwitcherSize.small,
+                          switcherButtonRadius: 50,
+                          enabledSwitcherButtonRotate: true,
+                          colorOff: Colors.black12,
+                          colorOn: Colors.blue,
+                          onChanged: (bool gststate) {
+                            _productCubit.gst();
+                          },
+                        ),
+                        VerticalDivider(),
+                        gstSwitch
+                            ? Text(
+                                "GST Details",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        color: Colors.black12,
+                                        fontWeight: FontWeight.normal),
+                              )
+                            : Text(
+                                "GST Details",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                              )
+                      ],
+                    ),
+                    Visibility(
+                      visible: !gstSwitch,
+                      child: Column(
+                        children: [
+                          const Divider(color: Colors.transparent),
+                          CustomTextField(
+                            label: "GST Rate (%)",
+                            value: _formInput.gstRate,
+                            inputType: TextInputType.number,
+                            onChanged: (e) {
+                              _formInput.gstRate = e;
+                              _productCubit.calculategst();
+                            },
+                            validator: (e) {
+                              if (!gstSwitch && e == "") return "Enter Rate";
+                            },
+                          ),
+                          const Divider(color: Colors.transparent),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: CustomTextField(
+                                  readonly: true,
+                                  label: "SGST",
+                                  value: _formInput.sgst,
+                                  onChanged: (e) {
+                                    _formInput.sgst = e;
+                                  },
+                                  validator: (e) => null,
+                                ),
+                              ),
+                              VerticalDivider(),
+                              Expanded(
+                                child: CustomTextField(
+                                  readonly: true,
+                                  label: "CGST",
+                                  value: _formInput.cgst,
+                                  onChanged: (e) {
+                                    _formInput.cgst = e;
+                                  },
+                                  validator: (e) => null,
+                                ),
+                              ),
+                              VerticalDivider(),
+                              Expanded(
+                                child: CustomTextField(
+                                  readonly: true,
+                                  label: "IGST",
+                                  value: _formInput.igst,
+                                  onChanged: (e) {
+                                    _formInput.igst = e;
+                                  },
+                                  validator: (e) => null,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(color: Colors.transparent),
+                          CustomTextField(
+                            readonly: true,
+                            label: "Net Selling Price",
+                            value: _formInput.netSellingPriceGst,
+                            onChanged: (e) {
+                              _formInput.netSellingPriceGst = e;
+                            },
+                            validator: (e) => null,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: Colors.transparent),
                     CustomTextField(
                       label: "Quantity",
                       value: _formInput.quantity,
                       inputType: TextInputType.number,
-                      onSave: (e) {
+                      onChanged: (e) {
                         _formInput.quantity = e;
                       },
                     ),
@@ -303,7 +446,7 @@ class _CreateProductState extends State<CreateProduct> {
                             value: _formInput.barCode != "null"
                                 ? _formInput.barCode
                                 : "",
-                            onSave: (e) {
+                            onChanged: (e) {
                               _formInput.barCode = e;
                             },
                             validator: (e) => null,

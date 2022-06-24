@@ -16,6 +16,10 @@ class ProductCreated extends ProductState {}
 
 class ProductCreationFailed extends ProductState {}
 
+class gstincludeoptionenable extends ProductState {}
+
+class calculateallgst extends ProductState {}
+
 class ProductsError extends ProductState {
   final String message;
   ProductsError(this.message);

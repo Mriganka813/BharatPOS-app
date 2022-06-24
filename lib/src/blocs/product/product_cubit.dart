@@ -73,4 +73,14 @@ class ProductCubit extends Cubit<ProductState> {
     }
     getProducts();
   }
+
+  ///
+  void gst() {
+    emit(gstincludeoptionenable());
+  }
+
+  ///
+  void calculategst() {
+    emit(calculateallgst());
+  }
 }

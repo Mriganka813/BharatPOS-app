@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:716795950025:android:7d5f2b8207545e0596ee18",
+        "mobilesdk_app_id": "1:716795950025:android:9ce341f85e8aaadb96ee18",
         "android_client_info": {
-          "package_name": "com.example.magicstep"
+          "package_name": "com.magicstep.fynd"
         }
       },
       "oauth_client": [
         {
-          "client_id": "716795950025-05nk5lg38cgb4tobhrma8s8h780ks9td.apps.googleusercontent.com",
+          "client_id": "716795950025-1hu6bm3ouqd866kiru926hpmtsfefo3d.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.magicstep",
-            "certificate_hash": "1ac4a13469f5f8238325249743fd926b99233ad3"
+            "package_name": "com.magicstep.fynd",
+            "certificate_hash": "5bae223bdbe9facbbcb3f27cca26931399ff4b46"
           }
         },
         {
@@ -57,6 +57,38 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "716795950025-f29419bcsru3pfvjn0c2i3ivrh7ea309.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopos.magicstep",
+            "certificate_hash": "ef5e43581b8a03d4ad643db851ba5a9cfcb4cfcf"
+          }
+        },
+        {
+          "client_id": "716795950025-kih5fib1cql6f93vgo3cn8a0ial0imgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopos.magicstep",
+            "certificate_hash": "1ac4a13469f5f8238325249743fd926b99233ad3"
+          }
+        },
+        {
+          "client_id": "716795950025-lukk65tfg5p1ns82oc9o9qh0p03b3cqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopos.magicstep",
+            "certificate_hash": "5bae223bdbe9facbbcb3f27cca26931399ff4b46"
+          }
+        },
+        {
+          "client_id": "716795950025-vja9d6nn5vnoa0g1bd7pbi3g9v96gfb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shopos.magicstep",
+            "certificate_hash": "87dd8af92e7aa09a41ca2ac7c31375ef4b19ca06"
+          }
+        },
         {
           "client_id": "716795950025-kv03ghga1g7pqedvm5o4bm4e4vab4mav.apps.googleusercontent.com",
           "client_type": 3
