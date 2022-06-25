@@ -10,6 +10,11 @@ class Product {
     this.image,
     this.createdAt,
     this.v,
+    this.cgst,
+    this.igst,
+    this.sgst,
+    this.gstRate,
+    this.baseSellingPriceGst,
   });
 
   String? name;
@@ -22,6 +27,11 @@ class Product {
   DateTime? createdAt;
   int? v;
   int purchasePrice;
+  String? gstRate;
+  String? sgst;
+  String? cgst;
+  String? igst;
+  String? baseSellingPriceGst;
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
@@ -34,6 +44,11 @@ class Product {
         id: json["_id"],
         createdAt: DateTime.parse(json["createdAt"]),
         v: json["__v"],
+        gstRate: json['GSTRate'].toString(),
+        cgst: json['CGST'].toString(),
+        igst: json['IGST'].toString(),
+        sgst: json['SGST'].toString(),
+        baseSellingPriceGst: json['netSellingPrice'].toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -47,5 +62,10 @@ class Product {
         'purchasePrice': purchasePrice,
         "createdAt": createdAt?.toIso8601String(),
         "__v": v,
+        "GSTRate": gstRate,
+        "SGST": sgst,
+        "CGST": cgst,
+        "IGST": igst,
+        "netSellingPrice": baseSellingPriceGst
       };
 }

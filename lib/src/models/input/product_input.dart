@@ -14,7 +14,7 @@ class ProductFormInput {
     this.igst,
     this.sgst,
     this.gstRate,
-    this.netSellingPriceGst,
+    this.baseSellingPriceGst,
     this.imageFile,
   });
 
@@ -26,7 +26,7 @@ class ProductFormInput {
   String? sgst;
   String? cgst;
   String? igst;
-  String? netSellingPriceGst;
+  String? baseSellingPriceGst;
   String? barCode;
   String? quantity;
   String? image;
@@ -45,7 +45,7 @@ class ProductFormInput {
         if (gst) "CGST": cgst,
         if (gst) "IGST": igst,
         if (gst) "condition": gst,
-        if (gst) "netSellingPrice": netSellingPriceGst
+        if (gst) "netSellingPrice": baseSellingPriceGst
       };
   factory ProductFormInput.fromMap(map) => ProductFormInput(
         name: map['name'],
@@ -59,6 +59,6 @@ class ProductFormInput {
         cgst: map['CGST'].toString(),
         igst: map['IGST'].toString(),
         sgst: map['SGST'].toString(),
-        netSellingPriceGst: map['netSellingPrice'].toString(),
+        baseSellingPriceGst: map['netSellingPrice'].toString(),
       );
 }

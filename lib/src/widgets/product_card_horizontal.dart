@@ -131,6 +131,17 @@ class ProductCardPurchase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int baseSellingPrice = 0;
+    int gstvalue = 0;
+    if (product.gstRate != "null") {
+      baseSellingPrice =
+          int.parse(product.baseSellingPriceGst!) * productQuantity;
+      gstvalue = int.parse(product.igst!) * productQuantity;
+    }
+    if (product.gstRate == "null") {
+      baseSellingPrice = product.sellingPrice * productQuantity;
+    }
+    final int SellingPrice = product.sellingPrice * productQuantity;
     return SizedBox(
       height: 200,
       child: Card(
@@ -143,17 +154,44 @@ class ProductCardPurchase extends StatelessWidget {
           children: [
             Expanded(
               flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: product.image != null
-                      ? CachedNetworkImage(
-                          imageUrl: product.image!,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset('assets/images/image_placeholder.png'),
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: product.image != null
+                        ? CachedNetworkImage(
+                            imageUrl: product.image!,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset('assets/images/image_placeholder.png'),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          onAdd();
+                        },
+                        icon: const Icon(Icons.add_circle_outline_rounded),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Text(
+                          "$productQuantity",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          onDelete();
+                        },
+                        icon: const Icon(Icons.remove_circle_outline_rounded),
+                      ),
+                    ],
+                  ),
+                  // Text('Available : ${product.quantity ?? 0}'),
+                ],
               ),
             ),
             Expanded(
@@ -161,46 +199,73 @@ class ProductCardPurchase extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      product.name ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    const SizedBox(height: 10),
                     Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            onAdd();
-                          },
-                          icon: const Icon(Icons.add_circle_outline_rounded),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: Text("$productQuantity"),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            onDelete();
-                          },
-                          icon: const Icon(Icons.remove_circle_outline_rounded),
+                        Text(
+                          product.name ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    Divider(
+                      color: Colors.black54,
+                    ),
 
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Item Subtotal : '),
+                        Text('₹ ${baseSellingPrice}'),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            'Tax GST @${product.gstRate == "null" ? "0" : product.gstRate}% : '),
+                        Text('₹ ${gstvalue}'),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Discount @0% : '),
+                        Text('₹ 0'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Divider(
+                      color: Colors.black54,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Item Total : '),
+                        Text(
+                          '₹ ${SellingPrice}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    // const SizedBox(height: 10),
+
+                    // // const SizedBox(height: 2),
+                    // // Text(color),
                     // const SizedBox(height: 2),
-                    // Text(color),
-                    const SizedBox(height: 2),
-                    Text('Purchase Price ${product.purchasePrice}'),
-                    const SizedBox(height: 2),
-                    Text('Sale Price ${product.sellingPrice}'),
-                    const SizedBox(height: 2),
-                    Text('Qty ${product.quantity ?? 0}'),
+                    // Text('Purchase Price ${product.purchasePrice}'),
+                    // const SizedBox(height: 2),
+                    // Text('Sale Price ${product.sellingPrice}'),
+                    // const SizedBox(height: 2),
+                    // Text('Qty ${product.quantity ?? 0}'),
                   ],
                 ),
               ),

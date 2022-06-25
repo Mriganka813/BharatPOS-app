@@ -196,7 +196,7 @@ class _CreateProductState extends State<CreateProduct> {
                     _formInput.sgst = null;
                     _formInput.cgst = null;
                     _formInput.igst = null;
-                    _formInput.netSellingPriceGst = null;
+                    _formInput.baseSellingPriceGst = null;
                   }
                 });
               }
@@ -207,13 +207,13 @@ class _CreateProductState extends State<CreateProduct> {
                   double sgst = oldsp * (rate / 200);
                   double cgst = oldsp * (rate / 200);
                   double igst = oldsp * (rate / 100);
-                  double newso = oldsp + igst;
+                  double newso = oldsp - igst;
 
                   setState(() {
                     _formInput.sgst = sgst.toString();
                     _formInput.cgst = cgst.toString();
                     _formInput.igst = igst.toString();
-                    _formInput.netSellingPriceGst = newso.toString();
+                    _formInput.baseSellingPriceGst = newso.toString();
                   });
                 }
               }
@@ -417,10 +417,10 @@ class _CreateProductState extends State<CreateProduct> {
                           const Divider(color: Colors.transparent),
                           CustomTextField(
                             readonly: true,
-                            label: "Net Selling Price",
-                            value: _formInput.netSellingPriceGst,
+                            label: "Base Selling Price",
+                            value: _formInput.baseSellingPriceGst,
                             onChanged: (e) {
-                              _formInput.netSellingPriceGst = e;
+                              _formInput.baseSellingPriceGst = e;
                             },
                             validator: (e) => null,
                           ),
