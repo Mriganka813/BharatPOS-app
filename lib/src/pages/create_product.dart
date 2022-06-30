@@ -59,6 +59,7 @@ class _CreateProductState extends State<CreateProduct> {
     }
     try {
       final response = await const ProductService().getProduct(widget.id!);
+      print(response.toString());
       productInput = ProductFormInput.fromMap(response.data['inventory']);
     } on DioError catch (err) {
       log(err.message.toString());
@@ -193,9 +194,9 @@ class _CreateProductState extends State<CreateProduct> {
                     gstSwitch = true;
                     _formInput.gst = false;
                     _formInput.gstRate = null;
-                    _formInput.sgst = null;
-                    _formInput.cgst = null;
-                    _formInput.igst = null;
+                    _formInput.salesgst = null;
+                    _formInput.salecgst = null;
+                    _formInput.saleigst = null;
                     _formInput.baseSellingPriceGst = null;
                   }
                 });
@@ -203,18 +204,42 @@ class _CreateProductState extends State<CreateProduct> {
               if (state is calculateallgst) {
                 if (_formInput.gstRate != null && _formInput.gst) {
                   int rate = int.parse(_formInput.gstRate!);
-                  int oldsp = int.parse(_formInput.sellingPrice!);
-                  double sgst = oldsp * (rate / 200);
-                  double cgst = oldsp * (rate / 200);
-                  double igst = oldsp * (rate / 100);
-                  double newso = oldsp - igst;
 
-                  setState(() {
-                    _formInput.sgst = sgst.toString();
-                    _formInput.cgst = cgst.toString();
-                    _formInput.igst = igst.toString();
-                    _formInput.baseSellingPriceGst = newso.toString();
-                  });
+// salling price
+                  if (_formInput.sellingPrice != null) {
+                    int oldsp = int.parse(_formInput.sellingPrice!);
+                    double basesp = (oldsp * 100 / (100 + rate));
+                    String salesgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+                    String salecgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+                    String saleigst = (oldsp - basesp).toStringAsFixed(2);
+
+                    setState(() {
+                      _formInput.salesgst = salesgst.toString();
+                      _formInput.salecgst = salecgst.toString();
+                      _formInput.saleigst = saleigst.toString();
+                      _formInput.baseSellingPriceGst =
+                          basesp.toStringAsFixed(2).toString();
+                    });
+                  }
+
+// purchase price
+                  if (_formInput.purchasePrice != null) {
+                    int oldpp = int.parse(_formInput.purchasePrice!);
+                    double basepp = (oldpp * 100 / (100 + rate));
+                    String purchasecgst =
+                        ((oldpp - basepp) / 2).toStringAsFixed(2);
+                    String purchasesgst =
+                        ((oldpp - basepp) / 2).toStringAsFixed(2);
+                    String purchaseigst = (oldpp - basepp).toStringAsFixed(2);
+
+                    setState(() {
+                      _formInput.purchasesgst = purchasesgst.toString();
+                      _formInput.purchasecgst = purchasecgst.toString();
+                      _formInput.purchaseigst = purchaseigst.toString();
+                      _formInput.basePurchasePriceGst =
+                          basepp.toStringAsFixed(2).toString();
+                    });
+                  }
                 }
               }
             },
@@ -377,50 +402,60 @@ class _CreateProductState extends State<CreateProduct> {
                           const Divider(color: Colors.transparent),
                           Row(
                             children: [
-                              Expanded(
-                                child: CustomTextField(
-                                  readonly: true,
-                                  label: "SGST",
-                                  value: _formInput.sgst,
-                                  onChanged: (e) {
-                                    _formInput.sgst = e;
-                                  },
-                                  validator: (e) => null,
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Expanded(
-                                child: CustomTextField(
-                                  readonly: true,
-                                  label: "CGST",
-                                  value: _formInput.cgst,
-                                  onChanged: (e) {
-                                    _formInput.cgst = e;
-                                  },
-                                  validator: (e) => null,
-                                ),
-                              ),
-                              VerticalDivider(),
-                              Expanded(
-                                child: CustomTextField(
-                                  readonly: true,
-                                  label: "IGST",
-                                  value: _formInput.igst,
-                                  onChanged: (e) {
-                                    _formInput.igst = e;
-                                  },
-                                  validator: (e) => null,
-                                ),
-                              ),
+                              // Expanded(
+                              //   child: CustomTextField(
+                              //     readonly: true,
+                              //     label: "SGST",
+                              //     value: _formInput.salesgst,
+                              //     onChanged: (e) {
+                              //       _formInput.salesgst = e;
+                              //     },
+                              //     validator: (e) => null,
+                              //   ),
+                              // ),
+                              // VerticalDivider(),
+                              // Expanded(
+                              //   child: CustomTextField(
+                              //     readonly: true,
+                              //     label: "CGST",
+                              //     value: _formInput.salecgst,
+                              //     onChanged: (e) {
+                              //       _formInput.salecgst = e;
+                              //     },
+                              //     validator: (e) => null,
+                              //   ),
+                              // ),
+                              // VerticalDivider(),
+                              // Expanded(
+                              //   child: CustomTextField(
+                              //     readonly: true,
+                              //     label: "IGST",
+                              //     value: _formInput.saleigst,
+                              //     onChanged: (e) {
+                              //       _formInput.saleigst = e;
+                              //     },
+                              //     validator: (e) => null,
+                              //   ),
+                              // ),
                             ],
                           ),
-                          const Divider(color: Colors.transparent),
+                          // const Divider(color: Colors.transparent),
                           CustomTextField(
                             readonly: true,
                             label: "Base Selling Price",
                             value: _formInput.baseSellingPriceGst,
                             onChanged: (e) {
                               _formInput.baseSellingPriceGst = e;
+                            },
+                            validator: (e) => null,
+                          ),
+                          const Divider(color: Colors.transparent),
+                          CustomTextField(
+                            readonly: true,
+                            label: "Base Purchase Price",
+                            value: _formInput.basePurchasePriceGst,
+                            onChanged: (e) {
+                              _formInput.basePurchasePriceGst = e;
                             },
                             validator: (e) => null,
                           ),

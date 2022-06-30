@@ -4,13 +4,14 @@ import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/report_input.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
+import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/pdf.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_date_picker.dart';
 
-enum ReportType { sale, purchase, expense }
+enum ReportType { sale, purchase, expense, stock }
 
 class ReportsPage extends StatefulWidget {
   static const String routeName = '/reports_page';
@@ -53,21 +54,19 @@ class _ReportsPageState extends State<ReportsPage> {
 
   void _handleReportsView(ReportsView state) async {
     if (state.expenses != null) {
-      final file =
-          await _pdfService.generateExpensesPdfFile(state.expenses ?? []);
-      Navigator.pushNamed(
-        context,
-        PdfPreviewPage.routeName,
-        arguments: PdfPreviewPageArgs(file: file, title: 'Expenses'),
-      );
+      Navigator.pushNamed(context, ReportTable.routeName,
+          arguments: tableArg(
+              expenses: state.expenses, type: _reportInput.type.toString()));
     }
     if (state.orders != null) {
-      final file = await _pdfService.generateOrdersPdfFile(state.orders ?? []);
-      Navigator.pushNamed(
-        context,
-        PdfPreviewPage.routeName,
-        arguments: PdfPreviewPageArgs(file: file, title: 'Orders'),
-      );
+      Navigator.pushNamed(context, ReportTable.routeName,
+          arguments: tableArg(
+              orders: state.orders!, type: _reportInput.type.toString()));
+    }
+    if (state.product != null) {
+      Navigator.pushNamed(context, ReportTable.routeName,
+          arguments: tableArg(
+              products: state.product, type: _reportInput.type.toString()));
     }
   }
 
@@ -139,6 +138,19 @@ class _ReportsPageState extends State<ReportsPage> {
                   },
                   title: const Text("Expense Report"),
                 ),
+                CheckboxListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  activeColor: ColorsConst.primaryColor,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _reportInput.type == ReportType.stock,
+                  checkboxShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  onChanged: (value) {
+                    _toggleReportType(ReportType.stock);
+                  },
+                  title: const Text("Stock Report"),
+                ),
                 const SizedBox(height: 40),
                 CustomDatePicker(
                   label: 'Start date',
@@ -154,7 +166,8 @@ class _ReportsPageState extends State<ReportsPage> {
                     });
                   },
                   validator: (DateTime? value) {
-                    if (value == null) {
+                    if (value == null &&
+                        _reportInput.type != ReportType.stock) {
                       return 'Please select start date';
                     }
                     return null;
@@ -176,7 +189,8 @@ class _ReportsPageState extends State<ReportsPage> {
                     });
                   },
                   validator: (DateTime? value) {
-                    if (value == null) {
+                    if (value == null &&
+                        _reportInput.type != ReportType.stock) {
                       return 'Please select end date';
                     }
                     return null;

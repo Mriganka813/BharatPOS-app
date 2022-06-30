@@ -10,11 +10,15 @@ class Product {
     this.image,
     this.createdAt,
     this.v,
-    this.cgst,
-    this.igst,
-    this.sgst,
+    this.salecgst,
+    this.saleigst,
+    this.salesgst,
+    this.purchasecgst,
+    this.purchaseigst,
+    this.purchasesgst,
     this.gstRate,
     this.baseSellingPriceGst,
+    this.basePurchasePriceGst,
   });
 
   String? name;
@@ -28,10 +32,14 @@ class Product {
   int? v;
   int purchasePrice;
   String? gstRate;
-  String? sgst;
-  String? cgst;
-  String? igst;
+  String? salesgst;
+  String? salecgst;
+  String? saleigst;
   String? baseSellingPriceGst;
+  String? purchasesgst;
+  String? purchasecgst;
+  String? purchaseigst;
+  String? basePurchasePriceGst;
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
@@ -45,10 +53,14 @@ class Product {
         createdAt: DateTime.parse(json["createdAt"]),
         v: json["__v"],
         gstRate: json['GSTRate'].toString(),
-        cgst: json['CGST'].toString(),
-        igst: json['IGST'].toString(),
-        sgst: json['SGST'].toString(),
-        baseSellingPriceGst: json['netSellingPrice'].toString(),
+        salecgst: json['saleCGST'].toString(),
+        saleigst: json['saleIGST'].toString(),
+        salesgst: json['saleSGST'].toString(),
+        baseSellingPriceGst: json['baseSellingPrice'].toString(),
+        purchasecgst: json['purchaseCGST'].toString(),
+        purchaseigst: json['purchaseIGST'].toString(),
+        purchasesgst: json['purchaseSGST'].toString(),
+        basePurchasePriceGst: json['basePurchasePrice'].toString(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -63,9 +75,13 @@ class Product {
         "createdAt": createdAt?.toIso8601String(),
         "__v": v,
         "GSTRate": gstRate,
-        "SGST": sgst,
-        "CGST": cgst,
-        "IGST": igst,
-        "netSellingPrice": baseSellingPriceGst
+        "saleSGST": salesgst,
+        "saleCGST": salecgst,
+        "saleIGST": saleigst,
+        "baseSellingPrice": baseSellingPriceGst,
+        "purchaseSGST": purchasesgst,
+        "purchaseCGST": purchasecgst,
+        "purchaseIGST": purchaseigst,
+        "basePurchasePrice": basePurchasePriceGst
       };
 }

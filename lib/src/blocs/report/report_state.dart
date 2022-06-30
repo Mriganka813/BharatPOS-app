@@ -19,19 +19,15 @@ class ReportSuccess extends ReportState {}
 class ReportsView extends ReportState {
   final List<Expense>? expenses;
   final List<Order>? orders;
-  ReportsView({
-    this.expenses,
-    this.orders,
-  });
+  final List<Product>? product;
+  ReportsView({this.expenses, this.orders, this.product});
 }
 
 class ReportsDownload extends ReportState {
   final List<Expense>? expenses;
   final List<Order>? orders;
-  ReportsDownload({
-    this.expenses,
-    this.orders,
-  });
+  final List<Product>? product;
+  ReportsDownload({this.expenses, this.orders, this.product});
 }
 
 class ReportCreationFailed extends ReportState {}

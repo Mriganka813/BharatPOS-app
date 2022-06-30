@@ -10,11 +10,15 @@ class ProductFormInput {
     this.quantity,
     this.image,
     this.gst = false,
-    this.cgst,
-    this.igst,
-    this.sgst,
+    this.salecgst,
+    this.saleigst,
+    this.salesgst,
+    this.purchasecgst,
+    this.purchaseigst,
+    this.purchasesgst,
     this.gstRate,
     this.baseSellingPriceGst,
+    this.basePurchasePriceGst,
     this.imageFile,
   });
 
@@ -23,10 +27,14 @@ class ProductFormInput {
   String? purchasePrice;
   String? sellingPrice;
   String? gstRate;
-  String? sgst;
-  String? cgst;
-  String? igst;
+  String? salesgst;
+  String? salecgst;
+  String? saleigst;
+  String? purchasesgst;
+  String? purchasecgst;
+  String? purchaseigst;
   String? baseSellingPriceGst;
+  String? basePurchasePriceGst;
   String? barCode;
   String? quantity;
   String? image;
@@ -41,11 +49,15 @@ class ProductFormInput {
         "quantity": quantity,
         "id": id,
         if (gst) "GSTRate": gstRate,
-        if (gst) "SGST": sgst,
-        if (gst) "CGST": cgst,
-        if (gst) "IGST": igst,
+        if (gst) "saleSGST": salesgst,
+        if (gst) "saleCGST": salecgst,
+        if (gst) "saleIGST": saleigst,
+        if (gst) "purchaseSGST": purchasesgst,
+        if (gst) "purchaseCGST": purchasecgst,
+        if (gst) "purchaseIGST": purchaseigst,
         if (gst) "condition": gst,
-        if (gst) "netSellingPrice": baseSellingPriceGst
+        if (gst) "baseSellingPrice": baseSellingPriceGst,
+        if (gst) "basePurchasePrice": basePurchasePriceGst
       };
   factory ProductFormInput.fromMap(map) => ProductFormInput(
         name: map['name'],
@@ -56,9 +68,13 @@ class ProductFormInput {
         image: map['image'].toString(),
         id: map['_id'].toString(),
         gstRate: map['GSTRate'].toString(),
-        cgst: map['CGST'].toString(),
-        igst: map['IGST'].toString(),
-        sgst: map['SGST'].toString(),
-        baseSellingPriceGst: map['netSellingPrice'].toString(),
+        salecgst: map['saleCGST'].toString(),
+        saleigst: map['saleIGST'].toString(),
+        salesgst: map['saleSGST'].toString(),
+        purchasecgst: map['purchaseCGST'].toString(),
+        purchaseigst: map['purchaseIGST'].toString(),
+        purchasesgst: map['purchaseSGST'].toString(),
+        baseSellingPriceGst: map['baseSellingPrice'].toString(),
+        basePurchasePriceGst: map['basePurchasePrice'].toString(),
       );
 }

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
@@ -19,7 +20,8 @@ import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/utils.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
-import 'package:shopos/src/widgets/invoice_template.dart';
+import 'package:shopos/src/widgets/invoice_template_withGST.dart';
+import 'package:shopos/src/widgets/invoice_template_withoutGST.dart';
 import 'package:whatsapp_share2/whatsapp_share2.dart';
 
 import '../models/party.dart';
@@ -68,15 +70,95 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  void _viewPdf(User user) async {
+  openShareModal(context) {
+    Alert(
+        style: const AlertStyle(
+          animationType: AnimationType.grow,
+          isButtonVisible: false,
+        ),
+        context: context,
+        title: "Share Invoice",
+        content: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            ListTile(
+              title: const Text("With GST"),
+              onTap: () {
+                _onTapShare(0);
+              },
+            ),
+            ListTile(
+              title: const Text("Without GST"),
+              onTap: () {
+                _onTapShare(1);
+              },
+            ),
+          ],
+        )).show();
+  }
+
+  ///
+  void _viewPdfwithgst(User user) async {
     final targetPath = await getExternalCacheDirectories();
-    const targetFileName = "example_pdf_file";
-    final htmlContent = invoiceTemplate(
+    const targetFileName = "Invoice";
+    final htmlContent = invoiceTemplatewithGST(
+      type: widget.args.invoiceType.toString(),
       date: DateTime.now(),
       companyName: user.businessName ?? "",
       order: widget.args.orderInput,
       user: user,
-      headers: ["Name", "Qty", "Price", "Amt"],
+      headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
+      total: totalPrice() ?? "",
+      subtotal: totalbasePrice() ?? "",
+      gsttotal: totalgstPrice() ?? "",
+    );
+    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+      htmlContent,
+      targetPath!.first.path,
+      targetFileName,
+    );
+    final input = _typeAheadController.value.text.trim();
+    if (input.length == 10 && int.tryParse(input) != null) {
+      await WhatsappShare.shareFile(
+        text: 'Invoice',
+        phone: '91$input',
+        filePath: [generatedPdfFile.path],
+      );
+      return;
+    }
+
+    final party = widget.args.orderInput.party;
+    if (party == null) {
+      final path = generatedPdfFile.path;
+      await Share.shareFiles([path], mimeTypes: ['application/pdf']);
+      return;
+    }
+    final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
+    if (!isValidPhoneNumber) {
+      locator<GlobalServices>()
+          .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
+      return;
+    }
+    await WhatsappShare.shareFile(
+      text: 'Invoice',
+      phone: '91${party.phoneNumber ?? ""}',
+      filePath: [generatedPdfFile.path],
+    );
+  }
+
+  ///
+  void _viewPdfwithoutgst(User user) async {
+    final targetPath = await getExternalCacheDirectories();
+    const targetFileName = "Invoice";
+    final htmlContent = invoiceTemplatewithouGST(
+      type: widget.args.invoiceType.toString(),
+      date: DateTime.now(),
+      companyName: user.businessName ?? "",
+      order: widget.args.orderInput,
+      user: user,
+      headers: ["Name", "Qty", "Rate/Unit", "Amount"],
       total: totalPrice() ?? "",
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
@@ -144,6 +226,62 @@ class _CheckoutPageState extends State<CheckoutPage> {
     ).toString();
   }
 
+  ///
+  String? totalbasePrice() {
+    return widget.args.orderInput.orderItems?.fold<double>(
+      0,
+      (acc, curr) {
+        if (widget.args.invoiceType == OrderType.purchase) {
+          // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+          double sum = 0;
+          if (curr.product!.basePurchasePriceGst! != "null")
+            sum = double.parse(curr.product!.basePurchasePriceGst!);
+          else {
+            sum = curr.product!.purchasePrice.toDouble();
+          }
+          return (curr.quantity * sum) + acc;
+        } else {
+          double sum = 0;
+          if (curr.product!.baseSellingPriceGst! != "null")
+            sum = double.parse(curr.product!.baseSellingPriceGst!);
+          else {
+            sum = curr.product!.sellingPrice.toDouble();
+          }
+          return (curr.quantity * sum) + acc;
+        }
+      },
+    ).toString();
+  }
+
+  ///
+  String? totalgstPrice() {
+    return widget.args.orderInput.orderItems?.fold<double>(
+      0,
+      (acc, curr) {
+        if (widget.args.invoiceType == OrderType.purchase) {
+          // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+          double gstsum = 0;
+          if (curr.product!.purchaseigst! != "null")
+            gstsum = double.parse(curr.product!.purchaseigst!);
+          // else {
+          //   gstsum = curr.product!.sellingPrice;
+          // }
+          return double.parse(
+              ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+        } else {
+          double gstsum = 0;
+          if (curr.product!.saleigst! != "null")
+            gstsum = double.parse(curr.product!.saleigst!);
+          // else {
+          //   gstsum = curr.product!.sellingPrice;
+          // }
+          return double.parse(
+              ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+        }
+      },
+    ).toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,6 +344,66 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // const Divider(color: Colors.transparent),
+                    // const Divider(color: Colors.transparent, height: 30),
+                    Card(
+                      elevation: 0,
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: Column(
+                        children: [
+                          // Divider(color: Colors.black54),
+                          // Text(
+                          //   "INVOICE",
+                          //   style: TextStyle(
+                          //       fontSize: 30, fontWeight: FontWeight.w500),
+                          // ),
+                          // Divider(color: Colors.black54),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Sub Total'),
+                              Text('₹ ${totalbasePrice()}'),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Tax GST'),
+                              Text('₹ ${totalgstPrice()}'),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Discount'),
+                              Text('₹ 0'),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          Divider(color: Colors.black54),
+                          const SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Grand Total'),
+                              Text(
+                                '₹ ${totalPrice()}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+                          // Divider(color: Colors.black54),
+                          // const Divider(color: Colors.transparent),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: Colors.transparent),
                     const Divider(color: Colors.transparent),
                     TypeAheadFormField<Party>(
                       validator: (value) {
@@ -289,24 +487,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       },
                       hintText: "Mode of payment",
                     ),
-                    const Divider(color: Colors.transparent, height: 30),
-                    const Text("Amount Recieved"),
-                    const Divider(color: Colors.transparent),
-                    Center(
-                      child: Text(
-                        "₹ ${totalPrice()}",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline2,
-                      ),
-                    ),
-                    const Divider(color: Colors.transparent),
                     const Spacer(),
                     Row(
                       children: [
                         CustomButton(
                           title: "Share",
                           onTap: () {
-                            _onTapShare();
+                            openShareModal(context);
                           },
                           type: ButtonType.outlined,
                           padding: const EdgeInsets.symmetric(
@@ -341,13 +528,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  void _onTapShare() async {
+  void _onTapShare(int type) async {
     locator<GlobalServices>().showBottomSheetLoader();
     try {
       final res = await UserService.me();
       if ((res.statusCode ?? 400) < 300) {
         final user = User.fromMap(res.data['user']);
-        _viewPdf(user);
+        type == 0 ? _viewPdfwithgst(user) : _viewPdfwithoutgst(user);
       }
     } catch (_) {}
     Navigator.pop(context);

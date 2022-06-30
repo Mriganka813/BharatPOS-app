@@ -13,4 +13,12 @@ class ReportService {
     );
     return response;
   }
+
+  ///
+  Future<Response> getStockReport() async {
+    final response = await ApiV1Service.getRequest(
+      '/report?type=report',
+    );
+    return response;
+  }
 }

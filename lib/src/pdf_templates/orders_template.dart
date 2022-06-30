@@ -7,7 +7,20 @@ String reportsOrderTemplate({
 }) {
   ///
   String headerRows() {
-    final headers = ['Date', 'Time', 'Party', 'Product', 'Amount', 'Total'];
+    // final headers = ['Date', 'Time', 'Party', 'Product', 'Amount', 'Total'];
+    final headers = [
+      'Date',
+      'Time',
+      'Party',
+      'Product',
+      'Amount/Unit',
+      'GST Rate/Unit',
+      'CGST/Unit',
+      'SGST/Unit',
+      'GST/Unit',
+      'Total',
+      'Mode of Payment',
+    ];
     return List.generate(
       headers.length,
       (int index) => '<th class="left">${headers[index]}</th>',
@@ -29,8 +42,13 @@ String reportsOrderTemplate({
                     '<td class="left">$time</td>'
                     '<td class="left">${e.party?.name ?? "N/A"}</td>'
                     '<td class="left">${item.quantity} x ${item.product?.name ?? ""}</td>'
-                    '<td class="left">${item.product?.sellingPrice ?? 0}</td>'
-                    '<td class="left">${(item.quantity) * (item.product?.sellingPrice ?? 1)}</td>'
+                    '<td class="left">${item.product?.baseSellingPriceGst == "null" ? "N/A" : item.product?.baseSellingPriceGst}</td>'
+                    '<td class="left">${item.product?.gstRate == "null" ? "N/A" : item.product?.gstRate}%</td>'
+                    '<td class="left">${item.product?.salecgst == "null" ? "N/A" : item.product?.salecgst}</td>'
+                    '<td class="left">${item.product?.salesgst == "null" ? "N/A" : item.product?.salesgst}</td>'
+                    '<td class="left">${item.product?.saleigst == "null" ? "N/A" : item.product?.saleigst}</td>'
+                    '<td class="left">${(item.quantity) * (item.product?.sellingPrice ?? 0)}</td>'
+                    '<td class="left">${e.modeOfPayment ?? "N/A"}</td>'
                     '</tr>';
               })
               .toList()

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/change_password.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -16,6 +17,7 @@ import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
+import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/pages/splash.dart';
@@ -104,6 +106,10 @@ class MyApp extends StatelessWidget {
                 return ChangePassword(user: settings.arguments as User?);
               case Forgotpassword.routeName:
                 return Forgotpassword();
+              case ReportTable.routeName:
+                return ReportTable(
+                  args: settings.arguments as tableArg,
+                );
               default:
                 return const SplashScreen();
             }
