@@ -59,6 +59,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                         final _orderItem = _orderItems[index];
                         final product = _orderItems[index].product!;
                         return ProductCardPurchase(
+                          type: "purchase",
                           product: product,
                           onAdd: () {
                             _onAdd(_orderItem);

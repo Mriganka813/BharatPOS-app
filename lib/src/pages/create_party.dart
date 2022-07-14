@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/models/input/party_input.dart';
@@ -84,15 +85,26 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                       onSave: (e) {
                         _partyInput.name = e;
                       },
+                      validator: (e) {
+                        if (e!.length <= 3) {
+                          return "Minimum 3 character";
+                        }
+                      },
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
                       isLoading: isLoading,
                       inputType: TextInputType.phone,
                       initialValue: widget.args.partyContactNo,
+                      inputFormatters: [LengthLimitingTextInputFormatter(10)],
                       label: 'Phone Number',
                       onSave: (e) {
                         _partyInput.phoneNumber = e;
+                      },
+                      validator: (e) {
+                        if (e!.length < 10) {
+                          return "Minimum 10-digit";
+                        }
                       },
                     ),
                     const Divider(color: Colors.transparent),

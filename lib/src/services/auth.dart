@@ -92,7 +92,7 @@ class AuthService {
   ///
   Future<bool> ForgotPasswordChangeRequest(
       String newPassword, String confirmPassword, String phoneNumber) async {
-    print(newPassword + " " + confirmPassword + " " + phoneNumber);
+    // print(newPassword + " " + confirmPassword + " " + phoneNumber);
     final response = await ApiV1Service.putRequest(
       '/password/reset',
       data: {

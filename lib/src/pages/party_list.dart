@@ -161,6 +161,8 @@ class PartiesListView extends StatelessWidget {
   final List<Party> parties;
   final int tabno;
 
+  final PartyCubit partyCubit;
+
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
@@ -173,12 +175,20 @@ class PartiesListView extends StatelessWidget {
         final party = parties[index];
         return ListTile(
           title: Text(party.name ?? ""),
-          trailing: Text(
-              "${party.balance}"), //here when api will be fixed then we will get the correct value
+          trailing: party.balance! >= 0
+              ? Text(
+                  "${party.balance}",
+                  style: TextStyle(color: Colors.red),
+                )
+              : Text(
+                  "${party.balance!.abs()}",
+                  style: TextStyle(color: Colors.green),
+                ), //here when api will be fixed then we will get the correct value
           onTap: () async {
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
                     party.id!, party.name!, party.phoneNumber!, tabno));
+            partyCubit.getInitialCreditParties();
           },
           onLongPress: () {
             showModal(party, context, tabno);
@@ -188,7 +198,6 @@ class PartiesListView extends StatelessWidget {
     );
   }
 
-  final PartyCubit partyCubit;
   showModal(Party _party, context, int tabno) {
     final String _partyType;
     tabno == 0 ? _partyType = "customer" : _partyType = "supplier";

@@ -1,14 +1,14 @@
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/user.dart';
 
-String invoiceTemplate({
-  required String companyName,
-  required OrderInput order,
-  required User user,
-  required List<String> headers,
-  required String total,
-  required DateTime date,
-}) {
+String invoiceTemplatewithouGST(
+    {required String companyName,
+    required OrderInput order,
+    required User user,
+    required List<String> headers,
+    required String total,
+    required DateTime date,
+    required String type}) {
   ///
   String dateFormat() => '${date.day}/${date.month}/${date.year}';
 
@@ -31,12 +31,22 @@ String invoiceTemplate({
         (order.orderItems ?? []).length,
         (index) {
           final orderItem = order.orderItems![index];
-          return '<tr>'
-              '<td class="left">${orderItem.product?.name}</td>'
-              '<td class="left">${orderItem.quantity}</td>'
-              '<td class="left">${orderItem.product?.sellingPrice}</td>'
-              '<td class="left">${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
-              '</tr>';
+
+          if (type == "OrderType.sale") {
+            return '<tr>'
+                '<td class="left">${orderItem.product?.name}</td>'
+                '<td class="left">${orderItem.quantity}</td>'
+                '<td class="left">₹ ${orderItem.product?.sellingPrice ?? 0}</td>'
+                '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
+                '</tr>';
+          } else {
+            return '<tr>'
+                '<td class="left">${orderItem.product?.name}</td>'
+                '<td class="left">${orderItem.quantity}</td>'
+                '<td class="left">₹ ${orderItem.product?.purchasePrice ?? 0}</td>'
+                '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)}</td>'
+                '</tr>';
+          }
         },
       ).join(' ');
 
@@ -89,7 +99,7 @@ String invoiceTemplate({
                     <strong>Total</strong>
                   </td>
                   <td class="right">
-                    <strong>$total</strong>
+                    <strong>₹ $total</strong>
                   </td>
                 </tr>
               </tbody>
