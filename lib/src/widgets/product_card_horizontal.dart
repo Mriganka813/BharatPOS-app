@@ -54,11 +54,19 @@ class ProductCardHorizontal extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(
-                      product.name ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.headline6,
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2.25,
+                      alignment: Alignment.center,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Text(
+                          product.name ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                      ),
                     ),
                     Divider(color: Colors.black54),
                     const SizedBox(height: 5),
@@ -232,9 +240,12 @@ class ProductCardPurchase extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child: product.image != null
-                        ? CachedNetworkImage(
-                            imageUrl: product.image!,
-                            fit: BoxFit.cover,
+                        ? Container(
+                            height: 120,
+                            child: CachedNetworkImage(
+                              imageUrl: product.image!,
+                              fit: BoxFit.cover,
+                            ),
                           )
                         : Image.asset('assets/images/image_placeholder.png'),
                   ),
@@ -276,11 +287,19 @@ class ProductCardPurchase extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          product.name ?? "",
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.headline6,
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2.25,
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            child: Text(
+                              product.name ?? "",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ),
                         ),
                       ],
                     ),

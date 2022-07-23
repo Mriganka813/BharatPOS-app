@@ -1,14 +1,17 @@
+import 'package:image_picker/image_picker.dart';
+
 class SignUpInput {
-  SignUpInput({
-    this.email,
-    this.password,
-    this.businessName,
-    this.businessType,
-    this.address,
-    this.verificationCode,
-    this.phoneNumber,
-    this.confirmPassword,
-  });
+  SignUpInput(
+      {this.email,
+      this.password,
+      this.businessName,
+      this.businessType,
+      this.address,
+      this.verificationCode,
+      this.phoneNumber,
+      this.confirmPassword,
+      this.referral,
+      this.imageFile});
 
   String? email;
   String? password;
@@ -18,6 +21,8 @@ class SignUpInput {
   String? address;
   String? phoneNumber;
   String? verificationCode;
+  String? referral;
+  XFile? imageFile;
 
   Map<String, dynamic> toMap() => {
         "email": email,
@@ -26,6 +31,7 @@ class SignUpInput {
         "businessType": businessType,
         "address": address,
         "phoneNumber": phoneNumber,
-        "verificationcode": verificationCode
+        "verificationcode": verificationCode,
+        "referredBy": referral
       };
 }

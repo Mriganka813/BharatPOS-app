@@ -13,7 +13,7 @@ class ApiV1Service {
       contentType: 'application/json',
       baseUrl: Const.apiV1Url,
       connectTimeout: 5000,
-      receiveTimeout: 3000,
+      receiveTimeout: 10000,
     ),
   );
   const ApiV1Service();

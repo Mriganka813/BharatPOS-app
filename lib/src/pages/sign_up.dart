@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
@@ -25,11 +28,17 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _hasAgreed = false;
   final _formKey = GlobalKey<FormState>();
   final SignUpInput _signUpInput = SignUpInput();
+  late final ImagePicker _picker;
+  String locality = "";
+  String city = "";
+  String statee = "";
+  String country = "";
 
   @override
   void initState() {
     super.initState();
     _authCubit = AuthCubit();
+    _picker = ImagePicker();
   }
 
   @override
@@ -88,7 +97,43 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: GestureDetector(
+                        onTap: () {
+                          _showImagePickerOptions();
+                        },
+                        child: Container(
+                          height: 160,
+                          // color: Colors.amber,
+                          child: _signUpInput.imageFile == null
+                              ? Column(
+                                  children: [
+                                    Icon(
+                                      Icons.add_a_photo,
+                                      size: 100,
+                                    ),
+                                    Text(
+                                      "Add Image",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                )
+                              // Image.asset(
+                              //     'assets/images/image_placeholder.png',
+                              //     height: 80,
+                              //     width: 80,
+                              //   )
+                              : Image.file(
+                                  File(_signUpInput.imageFile!.path),
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
                     CustomTextField(
                       label: "Business Name",
                       onSave: (e) {
@@ -113,9 +158,30 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
-                      label: "Address",
-                      onSave: (e) {
-                        _signUpInput.address = e;
+                      label: "Locality",
+                      onChanged: (e) {
+                        locality = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "City",
+                      onChanged: (e) {
+                        city = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "State",
+                      onChanged: (e) {
+                        statee = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Country",
+                      onChanged: (e) {
+                        country = e;
                       },
                     ),
                     const Divider(color: Colors.transparent),
@@ -156,6 +222,16 @@ class _SignUpPageState extends State<SignUpPage> {
                         if (_signUpInput.password!.length < 8) {
                           return "Password contain minimum 8 character";
                         }
+                        return null;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Referral (If any)",
+                      onChanged: (e) {
+                        _signUpInput.referral = e;
+                      },
+                      validator: (e) {
                         return null;
                       },
                     ),
@@ -298,6 +374,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     CustomButton(
                       isDisabled: isLoading,
                       onTap: () {
+                        _signUpInput.address = locality +
+                            ", " +
+                            city +
+                            ", " +
+                            statee +
+                            ", " +
+                            country;
                         _formKey.currentState?.save();
                         final isValid =
                             _formKey.currentState?.validate() ?? false;
@@ -316,6 +399,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           );
                           return;
                         }
+                        if (_signUpInput.imageFile == null) {
+                          locator<GlobalServices>().errorSnackBar("Add Image");
+                          return;
+                        }
                         _authCubit.signUp(_signUpInput);
                       },
                       title: 'Create Account',
@@ -330,5 +417,82 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  void _showImagePickerOptions() async {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      builder: (cntxt) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(cntxt);
+                        _pickImage(ImageSource.camera);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Center(
+                            child: Icon(
+                              Icons.camera,
+                              size: 60,
+                            ),
+                          ),
+                          Divider(color: Colors.transparent),
+                          Text('Camera')
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(cntxt);
+                        _pickImage(ImageSource.gallery);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Center(
+                            child: Icon(
+                              Icons.photo_rounded,
+                              size: 60,
+                            ),
+                          ),
+                          Divider(color: Colors.transparent),
+                          Text('Album')
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(color: Colors.transparent),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _pickImage(ImageSource source) async {
+    final XFile? image =
+        await _picker.pickImage(source: source, imageQuality: 20);
+    if (image == null) {
+      return;
+    }
+    setState(() {
+      _signUpInput.imageFile = image;
+    });
   }
 }

@@ -146,7 +146,8 @@ class _CreateProductState extends State<CreateProduct> {
   }
 
   void _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source);
+    final XFile? image =
+        await _picker.pickImage(source: source, imageQuality: 20);
     if (image == null) {
       return;
     }
@@ -175,7 +176,7 @@ class _CreateProductState extends State<CreateProduct> {
                 Navigator.pop(context);
               }
               if (state is ProductCreated) {
-                return Navigator.pop(context);
+                Navigator.pop(context);
               }
               if (state is ProductLoading) {
                 if (!_showLoader) {

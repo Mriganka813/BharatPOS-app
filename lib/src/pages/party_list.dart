@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
@@ -8,6 +9,7 @@ import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/party.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class PartyListPage extends StatefulWidget {
@@ -22,6 +24,7 @@ class _PartyListPageState extends State<PartyListPage>
     with SingleTickerProviderStateMixin {
   late final PartyCubit _partyCubit;
   late final TabController _tabController;
+  late final TextEditingController _typeAheadController;
 
   ///
   @override
@@ -29,6 +32,7 @@ class _PartyListPageState extends State<PartyListPage>
     super.initState();
     _partyCubit = PartyCubit()..getInitialCreditParties();
     _tabController = TabController(length: 2, vsync: this);
+    _typeAheadController = TextEditingController();
   }
 
   @override
@@ -81,16 +85,54 @@ class _PartyListPageState extends State<PartyListPage>
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              const CustomTextField(
-                prefixIcon: Icon(Icons.search),
-                hintText: "Search",
+              // const CustomTextField(
+              //   prefixIcon: Icon(Icons.search),
+              //   hintText: "Search",
+              // ),
+              TypeAheadFormField<Party>(
+                debounceDuration: const Duration(milliseconds: 500),
+                textFieldConfiguration: TextFieldConfiguration(
+                  controller: _typeAheadController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "Search",
+                    prefixIcon: const Icon(Icons.search),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                suggestionsCallback: (String pattern) {
+                  if (int.tryParse(pattern.trim()) != null) {
+                    return Future.value([]);
+                  }
+                  return _searchParties(pattern);
+                },
+                itemBuilder: (context, party) {
+                  return ListTile(
+                    leading: const Icon(Icons.person),
+                    title: Text(party.name ?? ""),
+                    onTap: () {
+                      Navigator.pushNamed(context, PartyCreditPage.routeName,
+                          arguments: ScreenArguments(party.id!, party.name!,
+                              party.phoneNumber!, _tabController.index));
+                    },
+                  );
+                },
+                onSuggestionSelected: (Party party) {
+                  _typeAheadController.text = party.name ?? "";
+                },
               ),
               const SizedBox(height: 10),
               Expanded(
                 child: BlocBuilder<PartyCubit, PartyState>(
                   bloc: _partyCubit,
                   builder: (context, state) {
-                    print(state.toString());
+                    // print(state.toString());
                     if (state is CreditPartiesListRender) {
                       final salesParties = state.saleParties;
                       final purchaseParties = state.purchaseParties;
@@ -147,6 +189,24 @@ class _PartyListPageState extends State<PartyListPage>
         ),
       ),
     );
+  }
+
+  Future<Iterable<Party>> _searchParties(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+
+    final type = _tabController.index == 0 ? 'customer' : 'supplier';
+
+    try {
+      final response =
+          await const PartyService().getSearch(pattern, type: type);
+      final data = response.data['allParty'] as List<dynamic>;
+      return data.map((e) => Party.fromMap(e));
+    } catch (err) {
+      // print(err.toString());
+      return [];
+    }
   }
 }
 

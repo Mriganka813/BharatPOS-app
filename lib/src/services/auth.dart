@@ -23,9 +23,15 @@ class AuthService {
   ///
   /// Send login request
   Future<User?> signUpRequest(SignUpInput input) async {
+    final inputMap = FormData.fromMap(input.toMap());
+    final filePath = input.imageFile?.path ?? "";
+    if (filePath.isNotEmpty) {
+      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
+      inputMap.files.add(image);
+    }
     final response = await ApiV1Service.postRequest(
       '/registration',
-      data: input.toMap(),
+      formData: inputMap,
     );
     if ((response.statusCode ?? 400) > 300) {
       return null;

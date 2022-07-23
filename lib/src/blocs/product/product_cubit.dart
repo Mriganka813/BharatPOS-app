@@ -50,6 +50,7 @@ class ProductCubit extends Cubit<ProductState> {
       final response = product.id == null
           ? await _productService.createProduct(product)
           : await _productService.updateProduct(product);
+      print(response);
       if ((response.statusCode ?? 400) > 300) {
         emit(ProductsError(response.data['message']));
         return;
