@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fb;
+//import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/models/user.dart';
@@ -42,10 +42,10 @@ class AuthService {
   }
 
   ///
-  Future<void> signOut() async {
-    await clearCookies();
-    await fb.FirebaseAuth.instance.signOut();
-  }
+  // Future<void> signOut() async {
+  //   await clearCookies();
+  //   await fb.FirebaseAuth.instance.signOut();
+  // }
 
   /// Clear cookies before log out
   Future<void> clearCookies() async {

@@ -81,9 +81,12 @@ class _PartyListPageState extends State<PartyListPage>
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              const CustomTextField(
-                prefixIcon: Icon(Icons.search),
-                hintText: "Search",
+              Container(
+                width: 300,
+                child: CustomTextField(
+                  prefixIcon: const Icon(Icons.search),
+                  hintText: 'Search',
+                ),
               ),
               const SizedBox(height: 10),
               Expanded(
@@ -94,43 +97,62 @@ class _PartyListPageState extends State<PartyListPage>
                     if (state is CreditPartiesListRender) {
                       final salesParties = state.saleParties;
                       final purchaseParties = state.purchaseParties;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          TabBar(
-                            controller: _tabController,
-                            indicatorColor: ColorsConst.primaryColor,
-                            labelColor: Colors.black,
-                            labelStyle: Theme.of(context).textTheme.bodyLarge,
-                            // <-- Your TabBar
-                            tabs: const [
-                              Tab(
-                                text: "Customer",
+                      return Center(
+                        child: Container(
+                          width: 1000,
+                          decoration: BoxDecoration(
+                              //color: Color.fromARGB(93, 197, 197, 197),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 10,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(20.0), //<-- SEE HERE
                               ),
-                              Tab(
-                                text: "Supplier",
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TabBar(
+                                    controller: _tabController,
+                                    indicatorColor: ColorsConst.primaryColor,
+                                    labelColor: Colors.black,
+                                    labelStyle:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                    // <-- Your TabBar
+                                    tabs: const [
+                                      Tab(
+                                        text: "Customer",
+                                      ),
+                                      Tab(
+                                        text: "Supplier",
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  Expanded(
+                                    child: TabBarView(
+                                      controller: _tabController,
+                                      children: [
+                                        PartiesListView(
+                                          parties: salesParties,
+                                          tabno: 0,
+                                          partyCubit: _partyCubit,
+                                        ),
+                                        PartiesListView(
+                                          parties: purchaseParties,
+                                          tabno: 1,
+                                          partyCubit: _partyCubit,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          const Divider(),
-                          Expanded(
-                            child: TabBarView(
-                              controller: _tabController,
-                              children: [
-                                PartiesListView(
-                                  parties: salesParties,
-                                  tabno: 0,
-                                  partyCubit: _partyCubit,
-                                ),
-                                PartiesListView(
-                                  parties: purchaseParties,
-                                  tabno: 1,
-                                  partyCubit: _partyCubit,
-                                ),
-                              ],
                             ),
                           ),
-                        ],
+                        ),
                       );
                     }
                     return const Center(

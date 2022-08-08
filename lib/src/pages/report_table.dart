@@ -308,25 +308,29 @@ class _ReportTableState extends State<ReportTable> {
         child: SingleChildScrollView(
           child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: InteractiveViewer(
-                  child: Screenshot(
-                    controller: screenshotController,
-                    child: DataTable(
-                        columnSpacing: 5,
-                        horizontalMargin: 5,
-                        dataRowHeight: 10,
-                        headingRowHeight: 20,
-                        border: TableBorder.all(),
-                        columns: headerRows(),
-                        rows: widget.args.type == "ReportType.sale"
-                            ? showSProw()
-                            : widget.args.type == "ReportType.purchase"
-                                ? showSProw()
-                                : widget.args.type == "ReportType.expense"
-                                    ? showExpenseRow()
-                                    : showStockRow()),
+              child: SizedBox(
+                height: 1000,
+                width: 1000,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: InteractiveViewer(
+                    child: Screenshot(
+                      controller: screenshotController,
+                      child: DataTable(
+                          columnSpacing: 5,
+                          horizontalMargin: 5,
+                          dataRowHeight: 10,
+                          headingRowHeight: 20,
+                          border: TableBorder.all(),
+                          columns: headerRows(),
+                          rows: widget.args.type == "ReportType.sale"
+                              ? showSProw()
+                              : widget.args.type == "ReportType.purchase"
+                                  ? showSProw()
+                                  : widget.args.type == "ReportType.expense"
+                                      ? showExpenseRow()
+                                      : showStockRow()),
+                    ),
                   ),
                 ),
               )),

@@ -65,112 +65,135 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
       appBar: AppBar(
         title: const Text("Create Expense"),
       ),
-      body: Form(
-          key: _formKey,
-          child: BlocListener<ExpenseCubit, ExpenseState>(
-            bloc: _expenseCubit,
-            listener: (context, state) {
-              if (state is ExpenseCreated) {
-                return Navigator.pop(context, true);
-              }
-              if (state is ExpenseError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text(
-                      state.message,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              }
-            },
-            child: BlocBuilder<ExpenseCubit, ExpenseState>(
-              bloc: _expenseCubit,
-              builder: (context, state) {
-                bool isLoading = false;
-                if (state is ProductLoading) {
-                  isLoading = true;
-                }
-                return Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 20),
-                          CustomTextField(
-                            label: 'Header',
-                            value: _formInput.header,
-                            onSave: (e) {
-                              _formInput.header = e;
-                            },
-                          ),
-                          const Divider(color: Colors.transparent),
-                          CustomTextField(
-                            label: 'Amount',
-                            value: _formInput.amount,
-                            inputType: TextInputType.phone,
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(10),
-                            ],
-                            onSave: (e) {
-                              _formInput.amount = e;
-                              _formInput.createdAt = DateTime.now();
-                            },
-                          ),
-                          const Divider(color: Colors.transparent),
-                          CustomTextField(
-                            label: 'Description',
-                            hintText: "Optional",
-                            value: _formInput.description,
-                            validator: (e) => null,
-                            onSave: (e) {
-                              _formInput.description = e;
-                            },
-                          ),
-                          const Divider(color: Colors.transparent, height: 20),
-                          CustomDropDownField(
-                            items: const ['Cash', 'Bank Transfer'],
-                            onSelected: (e) {
-                              _formInput.modeOfPayment = e;
-                            },
-                            initialValue: _formInput.modeOfPayment,
-                            hintText: 'Mode of Payment',
-                          ),
-                          const Spacer(),
-                          CustomButton(
-                            title: 'Save',
-                            onTap: () {
-                              _formKey.currentState?.save();
-                              if (_formKey.currentState?.validate() ?? false) {
-                                _expenseCubit.createExpense(_formInput);
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                    if (isLoading)
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          color: Colors.black.withOpacity(0.6),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
+      body: Center(
+        child: SizedBox(
+          width: 600,
+          height: 500,
+          child: Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Form(
+                key: _formKey,
+                child: BlocListener<ExpenseCubit, ExpenseState>(
+                  bloc: _expenseCubit,
+                  listener: (context, state) {
+                    if (state is ExpenseCreated) {
+                      return Navigator.pop(context, true);
+                    }
+                    if (state is ExpenseError) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            state.message,
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          )),
+                      );
+                    }
+                  },
+                  child: BlocBuilder<ExpenseCubit, ExpenseState>(
+                    bloc: _expenseCubit,
+                    builder: (context, state) {
+                      bool isLoading = false;
+                      if (state is ProductLoading) {
+                        isLoading = true;
+                      }
+                      return Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 20),
+                                CustomTextField(
+                                  label: 'Header',
+                                  value: _formInput.header,
+                                  onSave: (e) {
+                                    _formInput.header = e;
+                                  },
+                                ),
+                                const Divider(color: Colors.transparent),
+                                CustomTextField(
+                                  label: 'Amount',
+                                  value: _formInput.amount,
+                                  inputType: TextInputType.phone,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(10),
+                                  ],
+                                  onSave: (e) {
+                                    _formInput.amount = e;
+                                    _formInput.createdAt = DateTime.now();
+                                  },
+                                ),
+                                const Divider(color: Colors.transparent),
+                                CustomTextField(
+                                  label: 'Description',
+                                  hintText: "Optional",
+                                  value: _formInput.description,
+                                  validator: (e) => null,
+                                  onSave: (e) {
+                                    _formInput.description = e;
+                                  },
+                                ),
+                                const Divider(
+                                    color: Colors.transparent, height: 20),
+                                CustomDropDownField(
+                                  items: const ['Cash', 'Bank Transfer'],
+                                  onSelected: (e) {
+                                    _formInput.modeOfPayment = e;
+                                  },
+                                  initialValue: _formInput.modeOfPayment,
+                                  hintText: 'Mode of Payment',
+                                ),
+                                const Spacer(),
+                                Container(
+                                  width: 70,
+                                  height: 40,
+                                  child: CustomButton(
+                                    title: 'Save',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        ?.copyWith(
+                                            color: Colors.white, fontSize: 18),
+                                    onTap: () {
+                                      _formKey.currentState?.save();
+                                      if (_formKey.currentState?.validate() ??
+                                          false) {
+                                        _expenseCubit.createExpense(_formInput);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
+                            ),
+                          ),
+                          if (isLoading)
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                color: Colors.black.withOpacity(0.6),
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                )),
+          ),
+        ),
+      ),
     );
   }
 }

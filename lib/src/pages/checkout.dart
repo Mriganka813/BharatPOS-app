@@ -332,193 +332,201 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               );
             }
-            return Padding(
-              padding: const EdgeInsets.only(
-                top: 10.0,
-                bottom: 20,
-                left: 20,
-                right: 30,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // const Divider(color: Colors.transparent),
-                    // const Divider(color: Colors.transparent, height: 30),
-                    Card(
-                      elevation: 0,
-                      color: Theme.of(context).scaffoldBackgroundColor,
+            return Center(
+              child: SizedBox(
+                width: 600,
+                height: 450,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 10,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 10.0,
+                      bottom: 20,
+                      left: 20,
+                      right: 30,
+                    ),
+                    child: Form(
+                      key: _formKey,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Divider(color: Colors.black54),
-                          // Text(
-                          //   "INVOICE",
-                          //   style: TextStyle(
-                          //       fontSize: 30, fontWeight: FontWeight.w500),
-                          // ),
-                          // Divider(color: Colors.black54),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Sub Total'),
-                              Text('₹ ${totalbasePrice()}'),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Tax GST'),
-                              Text('₹ ${totalgstPrice()}'),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Discount'),
-                              Text('₹ 0'),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          Divider(color: Colors.black54),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Grand Total'),
-                              Text(
-                                '₹ ${totalPrice()}',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-                          // Divider(color: Colors.black54),
                           // const Divider(color: Colors.transparent),
+                          // const Divider(color: Colors.transparent, height: 30),
+                          Card(
+                            elevation: 0,
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            child: Column(
+                              children: [
+                                // Divider(color: Colors.black54),
+                                // Text(
+                                //   "INVOICE",
+                                //   style: TextStyle(
+                                //       fontSize: 30, fontWeight: FontWeight.w500),
+                                // ),
+                                // Divider(color: Colors.black54),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Sub Total'),
+                                    Text('₹ ${totalbasePrice()}'),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Tax GST'),
+                                    Text('₹ ${totalgstPrice()}'),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Discount'),
+                                    Text('₹ 0'),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Divider(color: Colors.black54),
+                                const SizedBox(height: 5),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Grand Total'),
+                                    Text(
+                                      '₹ ${totalPrice()}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                // Divider(color: Colors.black54),
+                                // const Divider(color: Colors.transparent),
+                              ],
+                            ),
+                          ),
+                          const Divider(color: Colors.transparent),
+                          const Divider(color: Colors.transparent),
+                          TypeAheadFormField<Party>(
+                            validator: (value) {
+                              final isEmpty = (value == null || value.isEmpty);
+                              final isCredit =
+                                  widget.args.orderInput.modeOfPayment ==
+                                      "Credit";
+                              if (isEmpty && isCredit) {
+                                return "Please select a party for credit order";
+                              }
+                              return null;
+                            },
+                            debounceDuration: const Duration(milliseconds: 500),
+                            textFieldConfiguration: TextFieldConfiguration(
+                              controller: _typeAheadController,
+                              autofocus: true,
+                              decoration: InputDecoration(
+                                hintText: "Party",
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, CreatePartyPage.routeName,
+                                        arguments: CreatePartyArguments(
+                                          "",
+                                          "",
+                                          "",
+                                          "",
+                                          widget.args.invoiceType ==
+                                                  OrderType.purchase
+                                              ? 'supplier'
+                                              : 'customer',
+                                        ));
+                                  },
+                                  child: const Icon(
+                                      Icons.add_circle_outline_rounded),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                  horizontal: 10,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            suggestionsCallback: (String pattern) {
+                              if (int.tryParse(pattern.trim()) != null) {
+                                return Future.value([]);
+                              }
+                              return _searchParties(pattern);
+                            },
+                            itemBuilder: (context, party) {
+                              return ListTile(
+                                leading: const Icon(Icons.person),
+                                title: Text(party.name ?? ""),
+                              );
+                            },
+                            onSuggestionSelected: (Party party) {
+                              setState(() {
+                                widget.args.orderInput.party = party;
+                              });
+                              _typeAheadController.text = party.name ?? "";
+                            },
+                          ),
+                          const Divider(color: Colors.transparent, height: 5),
+                          const Divider(color: Colors.transparent, height: 20),
+                          CustomDropDownField(
+                            items: const <String>[
+                              "Cash",
+                              "Credit",
+                              "Bank Transfer",
+                            ],
+                            onSelected: (e) {
+                              setState(() {
+                                widget.args.orderInput.modeOfPayment = e;
+                              });
+                            },
+                            validator: (e) {
+                              if ((e ?? "").isEmpty) {
+                                return 'Please select a mode of payment';
+                              }
+                              return null;
+                            },
+                            hintText: "Mode of payment",
+                          ),
+                          const Spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  _onTapSubmit();
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: ColorsConst.primaryColor,
+                                  shape: const CircleBorder(),
+                                ),
+                                child: const Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          )
                         ],
                       ),
                     ),
-                    const Divider(color: Colors.transparent),
-                    const Divider(color: Colors.transparent),
-                    TypeAheadFormField<Party>(
-                      validator: (value) {
-                        final isEmpty = (value == null || value.isEmpty);
-                        final isCredit =
-                            widget.args.orderInput.modeOfPayment == "Credit";
-                        if (isEmpty && isCredit) {
-                          return "Please select a party for credit order";
-                        }
-                        return null;
-                      },
-                      debounceDuration: const Duration(milliseconds: 500),
-                      textFieldConfiguration: TextFieldConfiguration(
-                        controller: _typeAheadController,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: "Party",
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, CreatePartyPage.routeName,
-                                  arguments: CreatePartyArguments(
-                                    "",
-                                    "",
-                                    "",
-                                    "",
-                                    widget.args.invoiceType ==
-                                            OrderType.purchase
-                                        ? 'supplier'
-                                        : 'customer',
-                                  ));
-                            },
-                            child: const Icon(Icons.add_circle_outline_rounded),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 2,
-                            horizontal: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                      suggestionsCallback: (String pattern) {
-                        if (int.tryParse(pattern.trim()) != null) {
-                          return Future.value([]);
-                        }
-                        return _searchParties(pattern);
-                      },
-                      itemBuilder: (context, party) {
-                        return ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(party.name ?? ""),
-                        );
-                      },
-                      onSuggestionSelected: (Party party) {
-                        setState(() {
-                          widget.args.orderInput.party = party;
-                        });
-                        _typeAheadController.text = party.name ?? "";
-                      },
-                    ),
-                    const Divider(color: Colors.transparent, height: 5),
-                    const Divider(color: Colors.transparent, height: 20),
-                    CustomDropDownField(
-                      items: const <String>[
-                        "Cash",
-                        "Credit",
-                        "Bank Transfer",
-                      ],
-                      onSelected: (e) {
-                        setState(() {
-                          widget.args.orderInput.modeOfPayment = e;
-                        });
-                      },
-                      validator: (e) {
-                        if ((e ?? "").isEmpty) {
-                          return 'Please select a mode of payment';
-                        }
-                        return null;
-                      },
-                      hintText: "Mode of payment",
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        CustomButton(
-                          title: "Share",
-                          onTap: () {
-                            openShareModal(context);
-                          },
-                          type: ButtonType.outlined,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 10,
-                          ),
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () {
-                            _onTapSubmit();
-                          },
-                          style: TextButton.styleFrom(
-                            backgroundColor: ColorsConst.primaryColor,
-                            shape: const CircleBorder(),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        )
-                      ],
-                    )
-                  ],
+                  ),
                 ),
               ),
             );
