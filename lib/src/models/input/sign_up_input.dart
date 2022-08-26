@@ -11,7 +11,10 @@ class SignUpInput {
       this.phoneNumber,
       this.confirmPassword,
       this.referral,
-      this.imageFile});
+      this.imageFile,
+      this.isGstApprove = false,
+      this.type,
+      this.gstIN});
 
   String? email;
   String? password;
@@ -23,6 +26,9 @@ class SignUpInput {
   String? verificationCode;
   String? referral;
   XFile? imageFile;
+  bool isGstApprove;
+  String? gstIN;
+  String? type;
 
   Map<String, dynamic> toMap() => {
         "email": email,
@@ -32,6 +38,9 @@ class SignUpInput {
         "address": address,
         "phoneNumber": phoneNumber,
         "verificationcode": verificationCode,
-        "referredBy": referral
+        "referredBy": referral,
+        if (isGstApprove) "GstIN": gstIN,
+        if (isGstApprove) "taxFile": type,
+        if (type == null || !isGstApprove) "taxfile": "monthly"
       };
 }

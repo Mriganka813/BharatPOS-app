@@ -13,6 +13,9 @@ import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:slidable_button/slidable_button.dart';
+import 'package:switcher/core/switcher_size.dart';
+import 'package:switcher/switcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -33,6 +36,8 @@ class _SignUpPageState extends State<SignUpPage> {
   String city = "";
   String statee = "";
   String country = "";
+  String type = "monthly";
+  bool gstApprov = false;
 
   @override
   void initState() {
@@ -57,6 +62,19 @@ class _SignUpPageState extends State<SignUpPage> {
           if (state is AuthError) {
             locator<GlobalServices>().errorSnackBar(state.message);
           }
+          if (state is GstApprov) {
+            if (gstApprov) {
+              setState(() {
+                gstApprov = false;
+                // _signUpInput.isGstApprove = false;
+              });
+            } else {
+              setState(() {
+                gstApprov = true;
+                // _signUpInput.isGstApprove = true;
+              });
+            }
+          }
           if (state is SignInSucces) {
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -71,9 +89,18 @@ class _SignUpPageState extends State<SignUpPage> {
             bloc: _authCubit,
             builder: (context, state) {
               bool isLoading = false;
+              // _signUpInput.isGstApprove = false;
               if (state is AuthLoading) {
                 isLoading = true;
               }
+
+              if (state is GstApprov) {
+                if (gstApprov)
+                  _signUpInput.isGstApprove = false;
+                else
+                  _signUpInput.isGstApprove = true;
+              }
+
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -183,6 +210,107 @@ class _SignUpPageState extends State<SignUpPage> {
                       onChanged: (e) {
                         country = e;
                       },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    Row(
+                      children: [
+                        Switcher(
+                          value: gstApprov,
+                          size: SwitcherSize.small,
+                          switcherButtonRadius: 50,
+                          enabledSwitcherButtonRotate: true,
+                          colorOff: Colors.black12,
+                          colorOn: Colors.blue,
+                          onChanged: (bool gststate) {
+                            _authCubit.gst();
+                          },
+                        ),
+                        VerticalDivider(),
+                        Text(
+                          "Have GSTIN ?",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6
+                              ?.copyWith(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.normal),
+                        )
+                      ],
+                    ),
+                    const Divider(color: Colors.transparent),
+                    Visibility(
+                      visible: !gstApprov,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            label: "GSTIN",
+                            inputType: TextInputType.emailAddress,
+                            onSave: (e) {
+                              _signUpInput.gstIN = e;
+                            },
+                            onChanged: (e) {
+                              _signUpInput.gstIN = e;
+                            },
+                          ),
+                          const Divider(color: Colors.transparent),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Type",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    ?.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal),
+                              ),
+                              SizedBox(height: 5),
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: Colors.black38)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Radio(
+                                            value: "monthly",
+                                            groupValue: type,
+                                            onChanged: (e) {
+                                              setState(() {
+                                                type = e.toString();
+                                                _signUpInput.type =
+                                                    e.toString();
+                                              });
+                                            }),
+                                        Text("Monthly")
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Radio(
+                                            value: "quarterly",
+                                            groupValue: type,
+                                            onChanged: (e) {
+                                              setState(() {
+                                                type = e.toString();
+                                                _signUpInput.type =
+                                                    e.toString();
+                                              });
+                                            }),
+                                        Text("Quarterly")
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(

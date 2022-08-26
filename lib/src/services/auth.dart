@@ -36,6 +36,7 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
+    print(response);
     await saveCookie(response);
     return User.fromMap(response.data['user']);
   }

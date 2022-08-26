@@ -30,7 +30,7 @@ class Order {
         modeOfPayment: json["modeOfPayment"],
         id: json["_id"],
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
-        user: json["user"] is Map ? User.fromMap(json["user"]) : null,
+        user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"],
         total: json['total'] ?? 0,
       );

@@ -92,4 +92,8 @@ class AuthCubit extends Cubit<AuthState> {
       return null;
     }
   }
+
+  void gst() {
+    emit(GstApprov());
+  }
 }

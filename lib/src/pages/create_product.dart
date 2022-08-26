@@ -347,6 +347,15 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Expiry Date",
+                      value: _formInput.expirydate,
+                      onChanged: (e) {
+                        _formInput.expirydate = e;
+                      },
+                      validator: (e) => null,
+                    ),
+                    const Divider(color: Colors.transparent),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [

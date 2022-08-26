@@ -1,26 +1,26 @@
 import 'package:image_picker/image_picker.dart';
 
 class ProductFormInput {
-  ProductFormInput({
-    this.name,
-    this.sellingPrice,
-    this.barCode,
-    this.id,
-    this.purchasePrice,
-    this.quantity,
-    this.image,
-    this.gst = false,
-    this.salecgst,
-    this.saleigst,
-    this.salesgst,
-    this.purchasecgst,
-    this.purchaseigst,
-    this.purchasesgst,
-    this.gstRate,
-    this.baseSellingPriceGst,
-    this.basePurchasePriceGst,
-    this.imageFile,
-  });
+  ProductFormInput(
+      {this.name,
+      this.sellingPrice,
+      this.barCode,
+      this.id,
+      this.purchasePrice,
+      this.quantity,
+      this.image,
+      this.gst = false,
+      this.salecgst,
+      this.saleigst,
+      this.salesgst,
+      this.purchasecgst,
+      this.purchaseigst,
+      this.purchasesgst,
+      this.gstRate,
+      this.baseSellingPriceGst,
+      this.basePurchasePriceGst,
+      this.imageFile,
+      this.expirydate = ""});
 
   String? name;
   String? id;
@@ -38,6 +38,7 @@ class ProductFormInput {
   String? barCode;
   String? quantity;
   String? image;
+  String? expirydate;
   bool gst;
   XFile? imageFile;
 
@@ -48,6 +49,7 @@ class ProductFormInput {
         if (barCode != "") "barCode": barCode,
         "quantity": quantity,
         "id": id,
+        if (expirydate != "") "expiryDate": expirydate,
         if (gst) "GSTRate": gstRate,
         if (gst) "saleSGST": salesgst,
         if (gst) "saleCGST": salecgst,

@@ -5,7 +5,7 @@ import 'package:shopos/src/services/locator.dart';
 class CustomInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
-    // print(err.message);
+    print(err.message);
     final errorMessage = err.response?.data is List
         ? err.response?.data['message']
         : err.message;

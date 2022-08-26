@@ -52,6 +52,7 @@ class _ReportTableState extends State<ReportTable> {
   List<String> moplist = [];
   List<String> totallist = [];
   List<String> mrplist = [];
+  String taxfileType = "initailized";
 
   ScreenshotController screenshotController = ScreenshotController();
   late Uint8List _imageFile;
@@ -92,6 +93,16 @@ class _ReportTableState extends State<ReportTable> {
       'MRP/Unit',
       'Total',
     ];
+
+    final headersQuaterly = [
+      'Date',
+      'Time',
+      'Party',
+      'M.O.P.',
+      'Product',
+      'MRP/Unit',
+      'Total',
+    ];
     final headersExpense = [
       'Date',
       'Time',
@@ -106,8 +117,29 @@ class _ReportTableState extends State<ReportTable> {
       'Stock Value',
     ];
 
-    if (widget.args.type == "ReportType.sale" ||
-        widget.args.type == "ReportType.purchase") {
+    if (widget.args.type == "ReportType.sale") {
+      if (taxfileType == "quarterly") {
+        return List.generate(
+          headersQuaterly.length,
+          (int index) => DataColumn(
+            label: Container(
+              child: Text(headersQuaterly[index],
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        );
+      } else {
+        return List.generate(
+          headersSP.length,
+          (int index) => DataColumn(
+            label: Container(
+              child: Text(headersSP[index],
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        );
+      }
+    } else if (widget.args.type == "ReportType.purchase") {
       return List.generate(
         headersSP.length,
         (int index) => DataColumn(
@@ -140,7 +172,48 @@ class _ReportTableState extends State<ReportTable> {
     }
   }
 
-  showSProw() {
+  showSaleRow() {
+    if (taxfileType == "quarterly") {
+      return List.generate(
+          datelist.length,
+          (int index) => DataRow(cells: [
+                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(productnamelist[index],
+                    style: TextStyle(fontSize: 6))),
+                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+              ]));
+    } else {
+      return List.generate(
+          datelist.length,
+          (int index) => DataRow(cells: [
+                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(productnamelist[index],
+                    style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(basesplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(gstratelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(cgstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(sgstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(igstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+              ]));
+    }
+  }
+
+  showPurchaseRow() {
     return List.generate(
         datelist.length,
         (int index) => DataRow(cells: [
@@ -201,6 +274,8 @@ class _ReportTableState extends State<ReportTable> {
   itemSPRows() {
     return widget.args.orders!.map((Order e) {
       return e.orderItems!.map((OrderItem item) {
+        // print(e.user!.type);
+        taxfileType = e.user!.type ?? "notdone";
         if (breakruler !=
             DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!)) {
           datelist.add("");
@@ -346,9 +421,9 @@ class _ReportTableState extends State<ReportTable> {
                   border: TableBorder.all(),
                   columns: headerRows(),
                   rows: widget.args.type == "ReportType.sale"
-                      ? showSProw()
+                      ? showSaleRow()
                       : widget.args.type == "ReportType.purchase"
-                          ? showSProw()
+                          ? showPurchaseRow()
                           : widget.args.type == "ReportType.expense"
                               ? showExpenseRow()
                               : showStockRow()),
