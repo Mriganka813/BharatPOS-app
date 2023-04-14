@@ -46,9 +46,9 @@ class _CreateProductState extends State<CreateProduct> {
     _formInput = ProductFormInput();
     _productCubit = ProductCubit();
     _picker = ImagePicker();
-    _audioCache = AudioCache(
-      fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
-    );
+    // _audioCache = AudioCache(
+    //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
+    // );
     _fetchProductData();
   }
 
@@ -512,6 +512,7 @@ class _CreateProductState extends State<CreateProduct> {
                       title: "Save",
                       onTap: () {
                         _formKey.currentState?.save();
+                        print(_formInput.purchasePrice);
                         if (_formKey.currentState?.validate() ?? false) {
                           _productCubit.createProduct(_formInput);
                         }
@@ -539,7 +540,7 @@ class _CreateProductState extends State<CreateProduct> {
     }
     const _type = FeedbackType.success;
     Vibrate.feedback(_type);
-    await _audioCache.play('audio/beep.mp3');
+    // await _audioCache.play('audio/beep.mp3');
     setState(() {
       _formInput.barCode = res;
     });

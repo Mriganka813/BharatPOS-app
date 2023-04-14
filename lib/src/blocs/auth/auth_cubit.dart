@@ -35,18 +35,19 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     final user = await _verifyOtp(signUpInput.verificationCode!);
     if (user == null) {
-      emit(AuthError("Please verify phone number first"));
+      emit(AuthError("OTP verification failed"));
       return;
     }
     try {
       final user = await _authService.signUpRequest(signUpInput);
       if (user == null) {
-        emit(AuthError('Invalid email or password'));
+        emit(AuthError('Try again later'));
         return;
       }
       emit(SignInSucces());
     } catch (err) {
-      emit(AuthError('Invalid email or password'));
+      print(err.toString());
+      emit(AuthError('Email already exists'));
     }
   }
 

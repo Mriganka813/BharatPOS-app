@@ -1,4 +1,4 @@
-package com.shopos.magicstep
+package com.cube.magicstep
 
 import android.content.ComponentName
 import android.content.Intent

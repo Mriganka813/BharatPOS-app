@@ -1,4 +1,4 @@
-import 'dart:io';
+6import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -36,7 +36,6 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    print(response);
     await saveCookie(response);
     return User.fromMap(response.data['user']);
   }

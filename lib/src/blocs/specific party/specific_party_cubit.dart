@@ -119,7 +119,7 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
         return;
       }
     } on DioError catch (err) {
-      emit(SpecificPartyError(err.message));
+      emit(SpecificPartyError(err.message.toString()));
     }
     final sales = await _partyService.getSalesCreditHistory(partyId);
     final _partyDetail = await _partyService.getCreditSaleParty(partyId);
@@ -137,7 +137,7 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
         return;
       }
     } on DioError catch (err) {
-      emit(SpecificPartyError(err.message));
+      emit(SpecificPartyError(err.message.toString()));
     }
     final purchase = await _partyService.getpurchaseCreditHistory(partyId);
     final _partyDetail = await _partyService.getCreditPurchaseParty(partyId);

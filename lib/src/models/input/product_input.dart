@@ -44,12 +44,13 @@ class ProductFormInput {
 
   Map<String, dynamic> toMap() => {
         "name": name,
-        if (purchasePrice != "") 'purchasePrice': purchasePrice,
+        if (purchasePrice != "" && purchasePrice != 'null')
+          'purchasePrice': purchasePrice,
         "sellingPrice": sellingPrice,
-        if (barCode != "") "barCode": barCode,
+        if (barCode != "" && barCode != 'null') "barCode": barCode,
         "quantity": quantity,
         "id": id,
-        if (expirydate != "") "expiryDate": expirydate,
+        if (expirydate != "" && expirydate != 'null') "expiryDate": expirydate,
         if (gst) "GSTRate": gstRate,
         if (gst) "saleSGST": salesgst,
         if (gst) "saleCGST": salecgst,

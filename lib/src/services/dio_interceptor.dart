@@ -10,7 +10,7 @@ class CustomInterceptor extends Interceptor {
         ? err.response?.data['message']
         : err.message;
     const message = "Something went wrong";
-    // locator<GlobalServices>().errorSnackBar(errorMessage ?? message);
+    locator<GlobalServices>().errorSnackBar(errorMessage ?? message);
     return super.onError(err, handler);
   }
 }
