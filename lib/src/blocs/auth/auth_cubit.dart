@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart' as fb;
+//import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:meta/meta.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/services/auth.dart';
@@ -11,7 +11,7 @@ part 'auth_state.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   final _authService = const AuthService();
-  final _authInstace = fb.FirebaseAuth.instance;
+  //final _authInstace = fb.FirebaseAuth.instance;
   String? _verificationId;
 
   ///
@@ -52,32 +52,32 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   ///
-  verifyPhoneNumber(String phoneNumber) async {
-    locator<GlobalServices>().infoSnackBar("Sending Code");
-    await _authInstace.verifyPhoneNumber(
-      phoneNumber: '+91$phoneNumber',
-      verificationCompleted: (fb.PhoneAuthCredential credential) async {
-        _onVerificationCompleted(credential);
-      },
-      verificationFailed: (fb.FirebaseAuthException e) {
-        emit(AuthError("Could not verify phone number"));
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        locator<GlobalServices>().successSnackBar("Code sent");
-        _verificationId = verificationId;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-  }
+  // verifyPhoneNumber(String phoneNumber) async {
+  //   locator<GlobalServices>().infoSnackBar("Sending Code");
+  //   await _authInstace.verifyPhoneNumber(
+  //     phoneNumber: '+91$phoneNumber',
+  //     verificationCompleted: (fb.PhoneAuthCredential credential) async {
+  //       _onVerificationCompleted(credential);
+  //     },
+  //     verificationFailed: (fb.FirebaseAuthException e) {
+  //       emit(AuthError("Could not verify phone number"));
+  //     },
+  //     codeSent: (String verificationId, int? resendToken) {
+  //       locator<GlobalServices>().successSnackBar("Code sent");
+  //       _verificationId = verificationId;
+  //     },
+  //     codeAutoRetrievalTimeout: (String verificationId) {},
+  //   );
+  // }
 
-  ///
-  _onVerificationCompleted(fb.PhoneAuthCredential credential) {
-    final smsCode = credential.smsCode;
-    if (smsCode == null) {
-      return;
-    }
-    emit(OtpRetrieved(smsCode));
-  }
+  // ///
+  // _onVerificationCompleted(fb.PhoneAuthCredential credential) {
+  //   final smsCode = credential.smsCode;
+  //   if (smsCode == null) {
+  //     return;
+  //   }
+  //   emit(OtpRetrieved(smsCode));
+  // }
 
   ///
   Future<fb.UserCredential?> _verifyOtp(String otp) async {

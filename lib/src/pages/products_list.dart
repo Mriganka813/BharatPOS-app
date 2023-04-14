@@ -11,6 +11,8 @@ import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:shopos/src/widgets/product_card_horizontal.dart';
 
+import '../widgets/custom_icons.dart';
+
 class ProductListPageArgs {
   final bool isSelecting;
   final OrderType orderType;
@@ -76,7 +78,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Products List')),
+        appBar: AppBar(title: const Text('Shopos')),
         floatingActionButton: Container(
           margin: const EdgeInsets.only(
             right: 10,
@@ -87,7 +89,8 @@ class _ProductsListPageState extends State<ProductsListPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (widget.args?.isSelecting ?? false)
-                Expanded(
+                Container(
+                  width: 200,
                   child: CustomButton(
                       title: "Continue",
                       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -139,13 +142,18 @@ class _ProductsListPageState extends State<ProductsListPage> {
                     bloc: _productCubit,
                     builder: (context, state) {
                       if (state is ProductsListRender) {
-                        return ListView.separated(
+                        return GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 20,
+                                  crossAxisCount: 4,
+                                  childAspectRatio: 0.75),
                           physics: const ClampingScrollPhysics(),
                           itemCount: state.products.length,
                           shrinkWrap: true,
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(height: 5);
-                          },
+                          // separatorBuilder: (context, index) {
+                          //   return const SizedBox(height: 5);
+                          // },
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
@@ -200,15 +208,52 @@ class _ProductsListPageState extends State<ProductsListPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: CustomTextField(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search',
-                onChanged: (String e) {
-                  if (e.isNotEmpty) {
-                    _productCubit.searchProducts(e);
-                  }
-                },
+              padding: const EdgeInsets.only(left: 20.0, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 220,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Color.fromARGB(255, 236, 236, 236),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: const Icon(
+                            CustomIcons.product,
+                            size: 25,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            "Product List",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 25),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 300,
+                    child: CustomTextField(
+                      prefixIcon: const Icon(Icons.search),
+                      hintText: 'Search',
+                      onChanged: (String e) {
+                        if (e.isNotEmpty) {
+                          _productCubit.searchProducts(e);
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_version/new_version.dart';
@@ -57,6 +56,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, state) {
           if (state is HomeRender) {
             return Scaffold(
+              backgroundColor: Color.fromARGB(96, 168, 199, 223),
               appBar: AppBar(
                 title: Text(state.user.businessName ?? ""),
               ),
@@ -132,11 +132,10 @@ class _HomePageState extends State<HomePage> {
                         title:
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
-                          await const AuthService().signOut();
-                          Navigator.pushNamedAndRemoveUntil(
+                          Navigator.push(
                             context,
-                            SignInPage.routeName,
-                            (route) => false,
+                            MaterialPageRoute(
+                                builder: (context) => const SignInPage()),
                           );
                         },
                       ),
@@ -147,34 +146,37 @@ class _HomePageState extends State<HomePage> {
               body: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GridView(
                       shrinkWrap: true,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1,
+                        crossAxisCount: 4,
+                        childAspectRatio: 2,
                       ),
                       padding: const EdgeInsets.all(10),
                       children: [
-                        HomeCard(
-                          icon: const Icon(
-                            CustomIcons.product,
-                            size: 50,
-                            color: ColorsConst.primaryColor,
+                        SizedBox(
+                          child: HomeCard(
+                            icon: const Icon(
+                              CustomIcons.product,
+                              size: 80,
+                              color: ColorsConst.primaryColor,
+                            ),
+                            title: "Products",
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                ProductsListPage.routeName,
+                              );
+                            },
                           ),
-                          title: "Products",
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              ProductsListPage.routeName,
-                            );
-                          },
                         ),
                         HomeCard(
                           icon: const Icon(
                             CustomIcons.person,
-                            size: 50,
+                            size: 80,
                             color: ColorsConst.primaryColor,
                           ),
                           title: "Party",
@@ -189,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                           icon: const Icon(
                             CustomIcons.report_svg,
                             color: ColorsConst.primaryColor,
-                            size: 50,
+                            size: 80,
                           ),
                           title: "Expense",
                           onTap: () {
@@ -203,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                           icon: const Icon(
                             CustomIcons.growth_graph,
                             color: ColorsConst.primaryColor,
-                            size: 50,
+                            size: 80,
                           ),
                           title: "Reports",
                           onTap: () {
@@ -212,80 +214,114 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    const Spacer(),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Create Invoice",
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.headline6,
+                    SizedBox(
+                      height: 200,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Create Invoice",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ),
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
+                        Container(
+                          height: 80.0,
+                          width: 400,
+                          child: RaisedButton(
+                            onPressed: () {
                               Navigator.pushNamed(
                                 context,
                                 CreatePurchase.routeName,
                               );
                             },
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  children: [
-                                    const Icon(
-                                      CustomIcons.arrow_down,
-                                      color: Colors.red,
-                                      size: 40,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "Purchase",
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            padding: EdgeInsets.all(0.0),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Container(
+                                // constraints: BoxConstraints(
+                                //     maxWidth: 300.0, minHeight: 50.0),
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15.0, right: 15, top: 8, bottom: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Purchase",
+                                        style: TextStyle(fontSize: 30),
+                                        // Theme.of(context)
+                                        //   .textTheme
+                                        //   .headline6,
+
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Icon(
+                                        CustomIcons.arrow_down,
+                                        color: Colors.red,
+                                        size: 60,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
+                        Container(
+                          height: 80.0,
+                          width: 400,
+                          child: RaisedButton(
+                            onPressed: () {
                               Navigator.pushNamed(
                                   context, CreateSale.routeName);
                             },
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  children: [
-                                    const Icon(
-                                      CustomIcons.arrow_up,
-                                      color: ColorsConst.primaryColor,
-                                      size: 40,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "Sale",
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            padding: EdgeInsets.all(0.0),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(30.0)),
+                              child: Container(
+                                // constraints: BoxConstraints(
+                                //     maxWidth: 300.0, minHeight: 50.0),
+                                alignment: Alignment.center,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 15.0, right: 15, top: 8, bottom: 8),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Sales",
+                                        style: TextStyle(fontSize: 30),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Icon(
+                                        CustomIcons.arrow_up,
+                                        color: ColorsConst.primaryColor,
+                                        size: 60,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

@@ -18,13 +18,13 @@ import 'package:switcher/core/switcher_size.dart';
 import 'package:switcher/switcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
-  static const routeName = '/sign-up';
+// class SignUpPage extends StatefulWidget {
+//   const SignUpPage({Key? key}) : super(key: key);
+//   static const routeName = '/sign-up';
 
-  @override
-  State<SignUpPage> createState() => _SignUpPageState();
-}
+//   @override
+//   State<SignUpPage> createState() => _SignUpPageState();
+// }
 
 class _SignUpPageState extends State<SignUpPage> {
   late final AuthCubit _authCubit;
@@ -46,11 +46,11 @@ class _SignUpPageState extends State<SignUpPage> {
     _picker = ImagePicker();
   }
 
-  @override
-  void dispose() {
-    _authCubit.close();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     _authCubit.close();
+//     super.dispose();
+//   }
 
   @override
   Widget build(BuildContext context) {

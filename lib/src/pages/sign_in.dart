@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:new_version/new_version.dart';
 import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
@@ -7,6 +8,7 @@ import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -29,14 +31,14 @@ class _SignInPageState extends State<SignInPage> {
     _authCubit = AuthCubit();
   }
 
-  Future<void> _checkUpdate() async {
-    final newVersion = NewVersion(androidId: "com.shopos.magicstep");
-    final status = await newVersion.getVersionStatus();
-    if (status!.canUpdate) {
-      newVersion.showUpdateDialog(
-          context: context, versionStatus: status, allowDismissal: false);
-    }
-  }
+  // Future<void> _checkUpdate() async {
+  //   final newVersion = NewVersion(androidId: "com.shopos.magicstep");
+  //   final status = await newVersion.getVersionStatus();
+  //   if (status!.canUpdate) {
+  //     newVersion.showUpdateDialog(
+  //         context: context, versionStatus: status, allowDismissal: false);
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -47,10 +49,10 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   elevation: 0,
+      // ),
       body: BlocListener<AuthCubit, AuthState>(
         bloc: _authCubit,
         listener: (context, state) {
@@ -83,141 +85,184 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               );
             }
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Form(
+            return Scaffold(
+              backgroundColor: Color.fromARGB(255, 194, 213, 225),
+              body: Form(
                 key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Log in",
-                        style: Theme.of(context).textTheme.headline3?.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                            ),
-                      ),
-                    ),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Enter your credentials to access your account",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
-                    CustomTextField(
-                      label: "Email ID",
-                      hintText: 'name@company.com',
-                      onSave: (e) {
-                        _email = e!;
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    Row(
-                      children: [
-                        Text(
-                          "Password",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/forgotPassword',
-                            );
-                          },
-                          child: Text(
-                            "Forgot Password?",
-                            style:
-                                Theme.of(context).textTheme.headline6?.copyWith(
-                                      color: ColorsConst.primaryColor,
-                                      fontWeight: FontWeight.normal,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        height: 600,
+                        width: 500,
+                        child: Card(
+                          color: Colors.transparent,
+                          elevation: 15,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Column(
+                                children: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(35.0),
+                                      child: Text(
+                                        "Shoppo",
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color.fromARGB(
+                                                255, 50, 75, 239)),
+                                      ),
                                     ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    CustomTextField(
-                      onSave: (e) {
-                        _password = e!;
-                      },
-                      obsecureText: true,
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          side: const BorderSide(
-                            width: 1,
-                          ),
-                          fillColor: MaterialStateProperty.all(
-                            ColorsConst.primaryColor,
-                          ),
-                          onChanged: (val) {
-                            if (val == null) {
-                              return;
-                            }
-                            setState(() {
-                              _rememberMe = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Remember me",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
                                   ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 70, right: 70, top: 25),
+                                    child: CustomTextField(
+                                      label: "Email ID",
+                                      hintText: 'name@company.com',
+                                      onSave: (e) {
+                                        _email = e!;
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 70, right: 70, top: 10),
+                                    child: CustomTextField(
+                                      label: "Password",
+                                      onSave: (e) {
+                                        _password = e!;
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 65.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Transform.scale(
+                                          scale: 0.8,
+                                          child: Checkbox(
+                                            value: _rememberMe,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(2),
+                                            ),
+                                            side: const BorderSide(
+                                              color: ColorsConst.primaryColor,
+                                              width: 1,
+                                            ),
+                                            fillColor:
+                                                MaterialStateProperty.all(
+                                              ColorsConst.primaryColor,
+                                            ),
+                                            onChanged: (val) {
+                                              if (val == null) {
+                                                return;
+                                              }
+                                              setState(() {
+                                                _rememberMe = val;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Text(
+                                          "Remember me",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              ?.copyWith(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Container(
+                                      height: 40,
+                                      width: 328,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color:
+                                              Color.fromARGB(255, 39, 82, 252)),
+                                      child: FlatButton(
+                                          onPressed: () {
+                                            _formKey.currentState?.save();
+                                            final isValid = _formKey
+                                                    .currentState
+                                                    ?.validate() ??
+                                                false;
+                                            if (!isValid) {
+                                              return;
+                                            }
+                                            _authCubit.signIn(
+                                                _email, _password, _rememberMe);
+                                          },
+                                          child: Text("Log In",
+                                              style: GoogleFonts.roboto(
+                                                  color: Colors.white,
+                                                  fontSize: 15)))),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 25.0),
+                                    child: Container(
+                                        height: 60,
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.transparent),
+                                        child: InkWell(
+                                            onTap: () {
+                                              launch(
+                                                  "https://play.google.com/store/apps/details?id=com.shopos.magicstep");
+                                            },
+                                            child: Image.asset(
+                                                "assets/icon/playstore.png"))),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    CustomButton(
-                      onTap: () {
-                        _formKey.currentState?.save();
-                        final isValid =
-                            _formKey.currentState?.validate() ?? false;
-                        if (!isValid) {
-                          return;
-                        }
-                        _authCubit.signIn(_email, _password, _rememberMe);
-                      },
-                      title: 'Login',
-                    ),
-                    const SizedBox(height: 15),
-                    const Divider(
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 15),
-                    const Center(
-                      child: Text(
-                        "Don't have an account?",
-                        style: TextStyle(color: Colors.grey),
                       ),
-                    ),
-                    const SizedBox(height: 15),
-                    CustomButton(
-                      onTap: () {
-                        Navigator.pushNamed(context, SignUpPage.routeName);
-                      },
-                      title: 'Sign Up',
-                    ),
-                  ],
+                      Stack(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 100.0, top: 25),
+                            child: SizedBox(
+                              height: 550,
+                              // width: 500,
+                              child: Card(
+                                color: Colors.transparent,
+                                elevation: 20,
+                                child: Image.asset("assets/icon/pic2.png"),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 600,
+                            //width: 500,
+                            child: Card(
+                              color: Colors.transparent,
+                              elevation: 0,
+                              child: Image.asset("assets/icon/pic1.png"),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
