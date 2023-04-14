@@ -47,9 +47,11 @@ class ProductCubit extends Cubit<ProductState> {
   void createProduct(ProductFormInput product) async {
     emit(ProductLoading());
     try {
+      // print(product.id);
       final response = product.id == null
           ? await _productService.createProduct(product)
           : await _productService.updateProduct(product);
+      print(response);
       if ((response.statusCode ?? 400) > 300) {
         emit(ProductsError(response.data['message']));
         return;
@@ -69,7 +71,7 @@ class ProductCubit extends Cubit<ProductState> {
         return;
       }
     } on DioError catch (err) {
-      emit(ProductsError(err.message));
+      emit(ProductsError(err.message.toString()));
     }
     getProducts();
   }

@@ -31,24 +31,25 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   ///
-  // signUp(SignUpInput signUpInput) async {
-  //   emit(AuthLoading());
-  //   final user = await _verifyOtp(signUpInput.verificationCode!);
-  //   if (user == null) {
-  //     emit(AuthError("Please verify phone number first"));
-  //     return;
-  //   }
-  //   try {
-  //     final user = await _authService.signUpRequest(signUpInput);
-  //     if (user == null) {
-  //       emit(AuthError('Invalid email or password'));
-  //       return;
-  //     }
-  //     emit(SignInSucces());
-  //   } catch (err) {
-  //     emit(AuthError('Invalid email or password'));
-  //   }
-  // }
+  signUp(SignUpInput signUpInput) async {
+    emit(AuthLoading());
+    final user = await _verifyOtp(signUpInput.verificationCode!);
+    if (user == null) {
+      emit(AuthError("OTP verification failed"));
+      return;
+    }
+    try {
+      final user = await _authService.signUpRequest(signUpInput);
+      if (user == null) {
+        emit(AuthError('Try again later'));
+        return;
+      }
+      emit(SignInSucces());
+    } catch (err) {
+      print(err.toString());
+      emit(AuthError('Email already exists'));
+    }
+  }
 
   ///
   // verifyPhoneNumber(String phoneNumber) async {
@@ -78,18 +79,22 @@ class AuthCubit extends Cubit<AuthState> {
   //   emit(OtpRetrieved(smsCode));
   // }
 
-  // ///
-  // Future<fb.UserCredential?> _verifyOtp(String otp) async {
-  //   if (_verificationId == null) {
-  //     return null;
-  //   }
-  //   final creds = fb.PhoneAuthProvider.credential(
-  //       verificationId: _verificationId!, smsCode: otp);
-  //   try {
-  //     final user = await _authInstace.signInWithCredential(creds);
-  //     return user;
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
+  ///
+  Future<fb.UserCredential?> _verifyOtp(String otp) async {
+    if (_verificationId == null) {
+      return null;
+    }
+    final creds = fb.PhoneAuthProvider.credential(
+        verificationId: _verificationId!, smsCode: otp);
+    try {
+      final user = await _authInstace.signInWithCredential(creds);
+      return user;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void gst() {
+    emit(GstApprov());
+  }
 }

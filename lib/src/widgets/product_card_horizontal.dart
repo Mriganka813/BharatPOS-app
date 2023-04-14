@@ -31,26 +31,34 @@ class ProductCardHorizontal extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Stack(
-                children: [
-                  Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 200,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: product.image != null
-                              ? CachedNetworkImage(
-                                  imageUrl: product.image!,
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset(
-                                  'assets/images/image_placeholder.png'),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2.25,
+                      alignment: Alignment.center,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Text(
+                          product.name ?? "",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
+                    ),
+                    Divider(color: Colors.black54),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Available'),
+                        Text('${product.quantity}'),
+                      ],
                     ),
                     Container(
                       child: Column(children: [
@@ -201,21 +209,65 @@ class ProductCardPurchase extends StatelessWidget {
       }
       PurchasePrice = product.purchasePrice * productQuantity;
     }
-
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: 300,
-        child: Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 2,
+    return SizedBox(
+      height: 200,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: product.image != null
+                        ? Container(
+                            height: 120,
+                            child: CachedNetworkImage(
+                              imageUrl: product.image!,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Image.asset('assets/images/image_placeholder.png'),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          onAdd();
+                        },
+                        icon: const Icon(Icons.add_circle_outline_rounded),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(3.0),
+                        child: Text(
+                          "$productQuantity",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          onDelete();
+                        },
+                        icon: const Icon(Icons.remove_circle_outline_rounded),
+                      ),
+                    ],
+                  ),
+                  // Text('Available : ${product.quantity ?? 0}'),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -235,24 +287,19 @@ class ProductCardPurchase extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          onPressed: () {
-                            onAdd();
-                          },
-                          icon: const Icon(Icons.add_circle_outline_rounded),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: Text(
-                            "$productQuantity",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 2.25,
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            physics: BouncingScrollPhysics(),
+                            child: Text(
+                              product.name ?? "",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            onDelete();
-                          },
-                          icon: const Icon(Icons.remove_circle_outline_rounded),
                         ),
                       ],
                     ),

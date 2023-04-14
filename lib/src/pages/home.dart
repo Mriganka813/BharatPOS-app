@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   ///
   @override
   void initState() {
-    //_checkUpdate();
+    // _checkUpdate();
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
   }
@@ -101,8 +101,8 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           await launchUrl(
                             Uri.parse(
-                                'https://api.getshopos.com/privacy-policy'),
-                            mode: LaunchMode.inAppWebView,
+                                'http://64.227.172.99:5000/privacy-policy'),
+                            mode: LaunchMode.externalApplication,
                           );
                           Navigator.pop(context);
                         },
@@ -118,8 +118,8 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           await launchUrl(
                             Uri.parse(
-                                'https://api.getshopos.com/terms-and-condition'),
-                            mode: LaunchMode.inAppWebView,
+                                'http://64.227.172.99:5000/terms-and-condition'),
+                            mode: LaunchMode.externalApplication,
                           );
                           Navigator.pop(context);
                         },

@@ -56,7 +56,7 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         return;
       }
     } on DioError catch (err) {
-      emit(ExpenseError(err.message));
+      emit(ExpenseError(err.message.toString()));
     }
     getExpense();
   }

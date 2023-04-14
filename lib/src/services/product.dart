@@ -22,6 +22,8 @@ class ProductService {
   ///
   Future<Response> updateProduct(ProductFormInput input) async {
     final inputMap = FormData.fromMap(input.toMap());
+    print("last sec");
+    print(input.toMap());
     final filePath = input.imageFile?.path ?? "";
     if (filePath.isNotEmpty) {
       final image = MapEntry("image", await MultipartFile.fromFile(filePath));
@@ -31,6 +33,7 @@ class ProductService {
       '/update/inventory/${input.id}',
       formData: inputMap,
     );
+    print(response);
     return response;
   }
 

@@ -51,6 +51,8 @@ class _ReportTableState extends State<ReportTable> {
   List<String> totalsplist = [];
   List<String> moplist = [];
   List<String> totallist = [];
+  List<String> mrplist = [];
+  String taxfileType = "initailized";
 
   ScreenshotController screenshotController = ScreenshotController();
   late Uint8List _imageFile;
@@ -69,7 +71,8 @@ class _ReportTableState extends State<ReportTable> {
       gstratelist.add("");
       cgstlist.add("");
       sgstlist.add("");
-      igstlist.add("Total");
+      mrplist.add("Total");
+      igstlist.add("");
       totalsplist.add(total());
       moplist.add("");
     }
@@ -87,6 +90,17 @@ class _ReportTableState extends State<ReportTable> {
       'CGST/Unit',
       'SGST/Unit',
       'GST/Unit',
+      'MRP/Unit',
+      'Total',
+    ];
+
+    final headersQuaterly = [
+      'Date',
+      'Time',
+      'Party',
+      'M.O.P.',
+      'Product',
+      'MRP/Unit',
       'Total',
     ];
     final headersExpense = [
@@ -103,8 +117,29 @@ class _ReportTableState extends State<ReportTable> {
       'Stock Value',
     ];
 
-    if (widget.args.type == "ReportType.sale" ||
-        widget.args.type == "ReportType.purchase") {
+    if (widget.args.type == "ReportType.sale") {
+      if (taxfileType == "quarterly") {
+        return List.generate(
+          headersQuaterly.length,
+          (int index) => DataColumn(
+            label: Container(
+              child: Text(headersQuaterly[index],
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        );
+      } else {
+        return List.generate(
+          headersSP.length,
+          (int index) => DataColumn(
+            label: Container(
+              child: Text(headersSP[index],
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            ),
+          ),
+        );
+      }
+    } else if (widget.args.type == "ReportType.purchase") {
       return List.generate(
         headersSP.length,
         (int index) => DataColumn(
@@ -137,7 +172,48 @@ class _ReportTableState extends State<ReportTable> {
     }
   }
 
-  showSProw() {
+  showSaleRow() {
+    if (taxfileType == "quarterly") {
+      return List.generate(
+          datelist.length,
+          (int index) => DataRow(cells: [
+                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(productnamelist[index],
+                    style: TextStyle(fontSize: 6))),
+                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+              ]));
+    } else {
+      return List.generate(
+          datelist.length,
+          (int index) => DataRow(cells: [
+                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(productnamelist[index],
+                    style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(basesplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(gstratelist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(cgstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(sgstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(igstlist[index], style: TextStyle(fontSize: 6))),
+                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
+                DataCell(
+                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+              ]));
+    }
+  }
+
+  showPurchaseRow() {
     return List.generate(
         datelist.length,
         (int index) => DataRow(cells: [
@@ -153,6 +229,7 @@ class _ReportTableState extends State<ReportTable> {
               DataCell(Text(cgstlist[index], style: TextStyle(fontSize: 6))),
               DataCell(Text(sgstlist[index], style: TextStyle(fontSize: 6))),
               DataCell(Text(igstlist[index], style: TextStyle(fontSize: 6))),
+              DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
               DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
             ]));
   }
@@ -193,9 +270,27 @@ class _ReportTableState extends State<ReportTable> {
     ).toList();
   }
 
+  String breakruler = "";
   itemSPRows() {
     return widget.args.orders!.map((Order e) {
       return e.orderItems!.map((OrderItem item) {
+        // print(e.user!.type);
+        taxfileType = e.user!.type ?? "notdone";
+        if (breakruler !=
+            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!)) {
+          datelist.add("");
+          timelist.add("");
+          partynamelist.add("");
+          productnamelist.add("");
+          basesplist.add("");
+          gstratelist.add("");
+          cgstlist.add("");
+          sgstlist.add("");
+          igstlist.add("");
+          totalsplist.add("");
+          mrplist.add("");
+          moplist.add("");
+        }
         datelist.add(
             DateFormat('dd MMM, yyyy').format(DateTime.tryParse(e.createdAt)!));
         timelist
@@ -225,18 +320,25 @@ class _ReportTableState extends State<ReportTable> {
             : igstlist.add(
                 "${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale"
+            ? mrplist.add(
+                "${item.product?.sellingPrice == "null" ? "N/A" : item.product?.sellingPrice}")
+            : mrplist.add(
+                "${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
+        widget.args.type == "ReportType.sale"
             ? totalsplist
                 .add("${(item.quantity) * (item.product?.sellingPrice ?? 0)}")
             : totalsplist
                 .add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
         moplist.add("${e.modeOfPayment ?? "N/A"}");
+        breakruler =
+            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!);
       }).toList();
     }).toList();
   }
 
   String total() {
     return widget.args.orders!
-        .fold<int>(0, (acc, e) => acc += e.total ?? 0)
+        .fold<int>(0, (acc, e) => acc += e.total!)
         .toString();
   }
 
@@ -305,35 +407,28 @@ class _ReportTableState extends State<ReportTable> {
       ),
       body: Align(
         alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
-          child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                height: 1000,
-                width: 1000,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: InteractiveViewer(
-                    child: Screenshot(
-                      controller: screenshotController,
-                      child: DataTable(
-                          columnSpacing: 5,
-                          horizontalMargin: 5,
-                          dataRowHeight: 10,
-                          headingRowHeight: 20,
-                          border: TableBorder.all(),
-                          columns: headerRows(),
-                          rows: widget.args.type == "ReportType.sale"
-                              ? showSProw()
-                              : widget.args.type == "ReportType.purchase"
-                                  ? showSProw()
-                                  : widget.args.type == "ReportType.expense"
-                                      ? showExpenseRow()
-                                      : showStockRow()),
-                    ),
-                  ),
-                ),
-              )),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: InteractiveViewer(
+            constrained: false,
+            child: Screenshot(
+              controller: screenshotController,
+              child: DataTable(
+                  columnSpacing: 5,
+                  horizontalMargin: 5,
+                  dataRowHeight: 10,
+                  headingRowHeight: 20,
+                  border: TableBorder.all(),
+                  columns: headerRows(),
+                  rows: widget.args.type == "ReportType.sale"
+                      ? showSaleRow()
+                      : widget.args.type == "ReportType.purchase"
+                          ? showPurchaseRow()
+                          : widget.args.type == "ReportType.expense"
+                              ? showExpenseRow()
+                              : showStockRow()),
+            ),
+          ),
         ),
       ),
     );

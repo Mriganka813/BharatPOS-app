@@ -1,12 +1,7 @@
 import 'package:shopos/src/models/product.dart';
 
 class OrderItem {
-  OrderItem({
-    this.price = 0,
-    this.quantity = 0,
-    this.image,
-    this.product,
-  });
+  OrderItem({this.price = 0, this.quantity = 0, this.image, this.product});
 
   int price;
   int quantity;

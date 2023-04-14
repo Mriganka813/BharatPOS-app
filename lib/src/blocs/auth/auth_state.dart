@@ -26,3 +26,5 @@ class AuthError extends AuthState {
 }
 
 class CodeVerified extends AuthState {}
+
+class GstApprov extends AuthState {}

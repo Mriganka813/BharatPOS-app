@@ -29,9 +29,9 @@ class _CreateSaleState extends State<CreateSale> {
   @override
   void initState() {
     super.initState();
-    _audioCache = AudioCache(
-      fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
-    );
+    // _audioCache = AudioCache(
+    //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
+    // );
     _orderInput = OrderInput(
       orderItems: [],
     );
@@ -291,7 +291,7 @@ class _CreateSaleState extends State<CreateSale> {
     );
     const _type = FeedbackType.success;
     Vibrate.feedback(_type);
-    await _audioCache.play('audio/beep.mp3');
+    // await _audioCache.play('audio/beep.mp3');
     try {
       /// Fetch product by barcode
       final res = await const ProductService().getProductByBarcode(barcode);

@@ -15,16 +15,16 @@ class Utils {
   }
 
   /// Check for app updates
-  Future<void> checkUpdates() async {
-    final update = await InAppUpdate.checkForUpdate();
-    if (update.updateAvailability < 0) {
-      return;
-    }
-    if (update.immediateUpdateAllowed) {
-      await InAppUpdate.startFlexibleUpdate();
-      await InAppUpdate.completeFlexibleUpdate();
-      return;
-    }
-    await InAppUpdate.performImmediateUpdate();
-  }
+  // Future<void> checkUpdates() async {
+  //   final update = await InAppUpdate.checkForUpdate();
+  //   if (update.updateAvailability < 0) {
+  //     return;
+  //   }
+  //   if (update.immediateUpdateAllowed) {
+  //     await InAppUpdate.startFlexibleUpdate();
+  //     await InAppUpdate.completeFlexibleUpdate();
+  //     return;
+  //   }
+  //   await InAppUpdate.performImmediateUpdate();
+  // }
 }
