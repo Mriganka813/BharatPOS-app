@@ -18,6 +18,8 @@ import 'package:shopos/src/widgets/custom_icons.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:switcher/core/switcher_size.dart';
 import 'package:switcher/switcher.dart';
+import 'package:shopos/src/widgets/custom_date_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/product/product_cubit.dart';
 
@@ -347,13 +349,24 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      label: "Expiry Date",
-                      value: _formInput.expirydate,
-                      onChanged: (e) {
-                        _formInput.expirydate = e;
+                    CustomDatePicker(
+                      label: 'Expiry Date',
+                      hintText: 'Select expiry date',
+                      onChanged: (DateTime value) {
+                        setState(() {
+                          _formInput.expirydate =
+                              DateFormat('dd/MM/yyyy').format(value);
+                        });
                       },
-                      validator: (e) => null,
+                      onSave: (DateTime? value) {},
+                      value: _formInput.expirydate != null &&
+                              _formInput.expirydate!.isNotEmpty
+                          ? DateFormat('dd/MM/yyyy')
+                              .parse(_formInput.expirydate!)
+                          : null,
+                      validator: (DateTime? value) => null,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(Duration(days: 365 * 3)),
                     ),
                     const Divider(color: Colors.transparent),
                     Row(

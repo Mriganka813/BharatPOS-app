@@ -9,6 +9,9 @@ class CustomDatePicker extends StatelessWidget {
   final String? Function(DateTime?) validator;
   final DateTime? value;
   final String? hintText;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
+
   const CustomDatePicker({
     required this.label,
     required this.onChanged,
@@ -16,6 +19,8 @@ class CustomDatePicker extends StatelessWidget {
     required this.value,
     required this.validator,
     this.hintText,
+    this.firstDate,
+    this.lastDate,
     Key? key,
   }) : super(key: key);
 
@@ -24,20 +29,21 @@ class CustomDatePicker extends StatelessWidget {
     return Theme(
       data: ThemeData(
         primaryColor: ColorsConst.primaryColor,
-        colorScheme: ColorScheme.fromSwatch()
-            .copyWith(secondary: ColorsConst.primaryColor),
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: ColorsConst.primaryColor,
+        ),
       ),
       child: GestureDetector(
         onTap: () async {
           final date = await showDatePicker(
             context: context,
             initialDate: value ?? DateTime.now(),
-            firstDate: DateTime.now().subtract(const Duration(days: 365)),
-            lastDate: DateTime.now(),
+            firstDate:
+                firstDate ?? DateTime.now().subtract(const Duration(days: 365)),
+            lastDate: lastDate ?? DateTime.now(),
           );
           if (date != null) {
             onChanged(date);
-            return;
           }
         },
         child: Container(
