@@ -36,6 +36,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String city = "";
   String statee = "";
   String country = "";
+  String upiId = "";
   String type = "monthly";
   bool gstApprov = false;
 
@@ -177,7 +178,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const SizedBox(height: 5),
                     CustomDropDownField(
-                      items: const ["Food", "Grocery", "Medical", "Fashion"],
+                      items: const [
+                        "Food",
+                        "Grocery",
+                        "Medical",
+                        "Fashion",
+                        "Staionery",
+                        "Electrical"
+                      ],
                       onSelected: (e) {
                         _signUpInput.businessType = e;
                       },
@@ -210,6 +218,14 @@ class _SignUpPageState extends State<SignUpPage> {
                       onChanged: (e) {
                         country = e;
                       },
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "UPI ID (Optional)",
+                      onChanged: (e) {
+                        upiId = e;
+                      },
+                      bypassValidator: true, // new optional parameter
                     ),
                     const Divider(color: Colors.transparent),
                     Row(
