@@ -213,7 +213,7 @@ class _SignInPageState extends State<SignInPage> {
                     const SizedBox(height: 15),
                     CustomButton(
                       onTap: () {
-                        Navigator.pushNamed(context, SignUpPage.routeName);
+                       // Navigator.pushNamed(context, SignUpPage.routeName);
                       },
                       title: 'Sign Up',
                     ),

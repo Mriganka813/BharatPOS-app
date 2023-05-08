@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                         title:
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
-                          await const AuthService().signOut();
+                          //await const AuthService().signOut();
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             SignInPage.routeName,

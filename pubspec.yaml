@@ -12,10 +12,10 @@ environment:
 dependencies:
   audioplayers: ^3.0.1
   cached_network_image: ^3.2.1
-  cookie_jar: ^4.0.1
+  cookie_jar: any
   date_time_picker: ^2.1.0
   dio: ^5.1.1
-  dio_cookie_manager: ^3.0.0
+  dio_cookie_manager: any
   firebase_auth: ^4.4.0
   firebase_core: ^2.9.0
   flutter:

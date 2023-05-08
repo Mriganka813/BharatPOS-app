@@ -65,8 +65,8 @@ class MyApp extends StatelessWidget {
             switch (settings.name) {
               case SignInPage.routeName:
                 return const SignInPage();
-              case SignUpPage.routeName:
-                return const SignUpPage();
+              //case SignUpPage.routeName:
+                //return const SignUpPage();
               case HomePage.routeName:
                 return const HomePage();
               case ProductsListPage.routeName:
@@ -104,8 +104,8 @@ class MyApp extends StatelessWidget {
                 );
               case ChangePassword.routeName:
                 return ChangePassword(user: settings.arguments as User?);
-              case Forgotpassword.routeName:
-                return Forgotpassword();
+              //case Forgotpassword.routeName:
+                //return Forgotpassword();
               case ReportTable.routeName:
                 return ReportTable(
                   args: settings.arguments as tableArg,
