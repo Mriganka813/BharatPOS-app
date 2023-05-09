@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<HomeCubit, HomeState>(
@@ -152,8 +153,8 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1,
+                        crossAxisCount: 4,
+                        childAspectRatio: 2,
                       ),
                       padding: const EdgeInsets.all(10),
                       children: [
@@ -218,12 +219,13 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         "Create Invoice",
                         textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                     Row(
                       children: [
-                        Expanded(
+                        Container(
+                          width: media.size.width * 0.15,
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
@@ -258,7 +260,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                        Expanded(
+                        Container(
+                          width: media.size.width * 0.15,
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
