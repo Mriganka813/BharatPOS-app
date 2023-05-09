@@ -24,42 +24,46 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      style: type == ButtonType.outlined
-          ? OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: isDisabled ? Colors.grey : ColorsConst.primaryColor,
-                width: 2,
+    final media = MediaQuery.of(context);
+    return Container(
+      width: media.size.width * 0.35,
+      child: TextButton(
+        style: type == ButtonType.outlined
+            ? OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: isDisabled ? Colors.grey : ColorsConst.primaryColor,
+                  width: 200, //media.size.width * 0.3,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: padding,
+              )
+            : TextButton.styleFrom(
+                backgroundColor:
+                    isDisabled ? Colors.grey : ColorsConst.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: padding,
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        onPressed: () {
+          if (isDisabled) return;
+          onTap();
+        },
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : Text(
+                title,
+                style: style ??
+                    Theme.of(context).textTheme.headline6?.copyWith(
+                          color: type == ButtonType.normal
+                              ? Colors.white
+                              : ColorsConst.primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
               ),
-              padding: padding,
-            )
-          : TextButton.styleFrom(
-              backgroundColor:
-                  isDisabled ? Colors.grey : ColorsConst.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: padding,
-            ),
-      onPressed: () {
-        if (isDisabled) return;
-        onTap();
-      },
-      child: isLoading
-          ? const CircularProgressIndicator()
-          : Text(
-              title,
-              style: style ??
-                  Theme.of(context).textTheme.headline6?.copyWith(
-                        color: type == ButtonType.normal
-                            ? Colors.white
-                            : ColorsConst.primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-            ),
+      ),
     );
   }
 }
