@@ -46,11 +46,13 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    final media = MediaQuery.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   automaticallyImplyLeading: false,
+      //   elevation: 0,
+      // ),
       body: BlocListener<AuthCubit, AuthState>(
         bloc: _authCubit,
         listener: (context, state) {
@@ -83,140 +85,167 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               );
             }
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+            return Container(
+              width: media.size.width * 1,
+              height: media.size.height * 1,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Log in",
-                        style: Theme.of(context).textTheme.headline3?.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                            ),
-                      ),
-                    ),
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Enter your credentials to access your account",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    const SizedBox(height: 60),
-                    CustomTextField(
-                      label: "Email ID",
-                      hintText: 'name@company.com',
-                      onSave: (e) {
-                        _email = e!;
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    Row(
-                      children: [
-                        Text(
-                          "Password",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/forgotPassword',
-                            );
-                          },
-                          child: Text(
-                            "Forgot Password?",
-                            style:
-                                Theme.of(context).textTheme.headline6?.copyWith(
-                                      color: ColorsConst.primaryColor,
+                    Form(
+                      key: _formKey,
+                      child: Container(
+                        width: media.size.width * 0.25,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 5),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Log in",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline3
+                                    ?.copyWith(
+                                      color: Colors.black,
                                       fontWeight: FontWeight.normal,
                                     ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    CustomTextField(
-                      onSave: (e) {
-                        _password = e!;
-                      },
-                      obsecureText: true,
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: _rememberMe,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          side: const BorderSide(
-                            width: 1,
-                          ),
-                          fillColor: MaterialStateProperty.all(
-                            ColorsConst.primaryColor,
-                          ),
-                          onChanged: (val) {
-                            if (val == null) {
-                              return;
-                            }
-                            setState(() {
-                              _rememberMe = val;
-                            });
-                          },
-                        ),
-                        Text(
-                          "Remember me",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Enter your credentials to access your account",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 25),
+                              ),
+                            ),
+                            const SizedBox(height: 40),
+                            CustomTextField(
+                              label: "Email ID",
+                              hintText: 'name@company.com',
+                              onSave: (e) {
+                                _email = e!;
+                              },
+                            ),
+                            const Divider(color: Colors.transparent),
+                            Row(
+                              children: [
+                                Text(
+                                  "Password",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      ?.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/forgotPassword',
+                                    );
+                                  },
+                                  child: Text(
+                                    "Forgot Password?",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        ?.copyWith(
+                                          color: ColorsConst.primaryColor,
+                                          fontWeight: FontWeight.normal,
+                                        ),
                                   ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            CustomTextField(
+                              onSave: (e) {
+                                _password = e!;
+                              },
+                              obsecureText: true,
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _rememberMe,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  side: const BorderSide(
+                                    width: 1,
+                                  ),
+                                  fillColor: MaterialStateProperty.all(
+                                    ColorsConst.primaryColor,
+                                  ),
+                                  onChanged: (val) {
+                                    if (val == null) {
+                                      return;
+                                    }
+                                    setState(() {
+                                      _rememberMe = val;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  "Remember me",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      ?.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            CustomButton(
+                              onTap: () {
+                                _formKey.currentState?.save();
+                                final isValid =
+                                    _formKey.currentState?.validate() ?? false;
+                                if (!isValid) {
+                                  return;
+                                }
+                                _authCubit.signIn(
+                                    _email, _password, _rememberMe);
+                              },
+                              title: 'Login',
+                            ),
+                            const SizedBox(height: 15),
+                            const Divider(
+                              color: Colors.black,
+                            ),
+                            const SizedBox(height: 15),
+                            const Center(
+                              child: Text(
+                                "Don't have an account?",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            CustomButton(
+                              onTap: () {
+                                // Navigator.pushNamed(context, SignUpPage.routeName);
+                              },
+                              title: 'Sign Up',
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    CustomButton(
-                      onTap: () {
-                        _formKey.currentState?.save();
-                        final isValid =
-                            _formKey.currentState?.validate() ?? false;
-                        if (!isValid) {
-                          return;
-                        }
-                        _authCubit.signIn(_email, _password, _rememberMe);
-                      },
-                      title: 'Login',
-                    ),
-                    const SizedBox(height: 15),
-                    const Divider(
-                      color: Colors.black,
-                    ),
-                    const SizedBox(height: 15),
-                    const Center(
-                      child: Text(
-                        "Don't have an account?",
-                        style: TextStyle(color: Colors.grey),
                       ),
                     ),
-                    const SizedBox(height: 15),
-                    CustomButton(
-                      onTap: () {
-                       // Navigator.pushNamed(context, SignUpPage.routeName);
-                      },
-                      title: 'Sign Up',
-                    ),
+                    Container(
+                        width: media.size.width * 0.6,
+                        child:
+                            Image.asset('assets/images/signin_desktop.jpg')),
                   ],
                 ),
               ),
