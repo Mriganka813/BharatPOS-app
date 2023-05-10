@@ -542,7 +542,7 @@ class _CreateProductState extends State<CreateProduct> {
   }
 
   Future<void> _scanBarode() async {
-    final res = await FlutterBarcodeScanner.scanBarcode(
+    /*final res = await FlutterBarcodeScanner.scanBarcode(
       "#000000",
       "#000000",
       false,
@@ -557,5 +557,5 @@ class _CreateProductState extends State<CreateProduct> {
     setState(() {
       _formInput.barCode = res;
     });
-  }
+ */ }
 }
