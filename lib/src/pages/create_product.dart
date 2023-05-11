@@ -208,7 +208,7 @@ class _CreateProductState extends State<CreateProduct> {
                 if (_formInput.gstRate != null && _formInput.gst) {
                   int rate = int.parse(_formInput.gstRate!);
 
-// salling price
+// selling price
                   if (_formInput.sellingPrice != null) {
                     int oldsp = int.parse(_formInput.sellingPrice!);
                     double basesp = (oldsp * 100 / (100 + rate));
@@ -349,25 +349,33 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
-                    CustomDatePicker(
-                      label: 'Expiry Date',
-                      hintText: 'Select expiry date',
-                      onChanged: (DateTime value) {
-                        setState(() {
-                          _formInput.expirydate =
-                              DateFormat('dd/MM/yyyy').format(value);
-                        });
-                      },
-                      onSave: (DateTime? value) {},
-                      value: _formInput.expirydate != null &&
-                              _formInput.expirydate!.isNotEmpty
-                          ? DateFormat('dd/MM/yyyy')
-                              .parse(_formInput.expirydate!)
-                          : null,
-                      validator: (DateTime? value) => null,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(Duration(days: 365 * 3)),
-                    ),
+                   CustomDatePicker(
+  label: 'Expiry Date',
+  hintText: 'Select expiry date',
+  onChanged: (DateTime value) {
+    setState(() {
+      _formInput.expirydate =
+          DateFormat('dd/MM/yyyy').format(value);
+    });
+  },
+  onSave: (DateTime? value) {
+    if (value != null) {
+      setState(() {
+        _formInput.expirydate =
+            DateFormat('dd/MM/yyyy').format(value);
+      });
+    }
+  },
+  value: _formInput.expirydate != null &&
+          _formInput.expirydate!.isNotEmpty
+      ? DateFormat('dd/MM/yyyy')
+          .parse(_formInput.expirydate!)
+      : null,
+  validator: (DateTime? value) => null,
+  firstDate: DateTime.now(),
+  lastDate: DateTime.now().add(Duration(days: 365 * 3)),
+),
+
                     const Divider(color: Colors.transparent),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,

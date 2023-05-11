@@ -20,7 +20,8 @@ class ProductFormInput {
       this.baseSellingPriceGst,
       this.basePurchasePriceGst,
       this.imageFile,
-      this.expirydate = ""});
+      this.expirydate,
+      });
 
   String? name;
   String? id;
