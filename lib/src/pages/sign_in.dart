@@ -88,7 +88,8 @@ class _SignInPageState extends State<SignInPage> {
             return Container(
               width: media.size.width * 1,
               height: media.size.height * 1,
-              child: SingleChildScrollView(
+              child: Container(
+                height: media.size.height * 1,
                 padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -97,8 +98,10 @@ class _SignInPageState extends State<SignInPage> {
                       key: _formKey,
                       child: Container(
                         width: media.size.width * 0.25,
+                        height: media.size.height * 0.8,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const SizedBox(height: 5),
                             Align(
@@ -221,31 +224,31 @@ class _SignInPageState extends State<SignInPage> {
                               title: 'Login',
                             ),
                             const SizedBox(height: 15),
-                            const Divider(
-                              color: Colors.black,
-                            ),
-                            const SizedBox(height: 15),
-                            const Center(
-                              child: Text(
-                                "Don't have an account?",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            CustomButton(
-                              onTap: () {
-                                // Navigator.pushNamed(context, SignUpPage.routeName);
-                              },
-                              title: 'Sign Up',
-                            ),
+                            // const Divider(
+                            //   color: Colors.black,
+                            // ),
+                            // const SizedBox(height: 15),
+                            // const Center(
+                            //   child: Text(
+                            //     "Don't have an account?",
+                            //     style: TextStyle(color: Colors.grey),
+                            //   ),
+                            // ),
+                            // const SizedBox(height: 15),
+                            // CustomButton(
+                            //   onTap: () {
+                            //     // Navigator.pushNamed(context, SignUpPage.routeName);
+                            //   },
+                            //   title: 'Sign Up',
+                            // ),
                           ],
                         ),
                       ),
                     ),
                     Container(
+                        height: media.size.height * 0.8,
                         width: media.size.width * 0.6,
-                        child:
-                            Image.asset('assets/images/signin_desktop.jpg')),
+                        child: Image.asset('assets/images/signin_desktop.jpg')),
                   ],
                 ),
               ),
