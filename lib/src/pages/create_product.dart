@@ -495,13 +495,14 @@ class _CreateProductState extends State<CreateProduct> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
-                      label: "Quantity",
-                      value: _formInput.quantity,
-                      inputType: TextInputType.number,
-                      onChanged: (e) {
-                        _formInput.quantity = e;
-                      },
-                    ),
+    label: "Quantity",
+    value: _formInput.quantity != null ? _formInput.quantity : "",
+    inputType: TextInputType.number,
+    onChanged: (e) {
+        _formInput.quantity = e;
+    },
+    validator: (e) => null,
+),
                     const Divider(color: Colors.transparent),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

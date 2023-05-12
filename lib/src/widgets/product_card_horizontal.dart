@@ -69,14 +69,17 @@ class ProductCardHorizontal extends StatelessWidget {
                       ),
                     ),
                     Divider(color: Colors.black54),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Available'),
-                        Text('${product.quantity}'),
-                      ],
-                    ),
+                  const SizedBox(height: 5),
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    Text('Available'),
+    Text(
+      product.quantity! > 9999 ? 'Unlimited' : '${product.quantity}',
+    ),
+  ],
+),
+
                     Visibility(
                       visible: product.gstRate != "null",
                       child: Column(
