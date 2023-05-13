@@ -79,7 +79,18 @@ class _HomePageState extends State<HomePage> {
                         ),
                         subtitle: Text(state.user.address ?? ""),
                       ),
+                      
                       Divider(),
+                      ListTile(
+  leading: Icon(Icons.upload_file),
+  title: Title(
+      color: Colors.black,
+      child: Text("Bulk Product Upload")),
+  onTap: () {
+    // leave the function blank for now
+  },
+),
+
                       ListTile(
                         leading: Icon(Icons.security_outlined),
                         title: Title(
@@ -91,9 +102,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                      Divider(
-                        color: Colors.transparent,
-                      ),
+                     
                       ListTile(
                         leading: Icon(Icons.policy_outlined),
                         title: Title(
@@ -107,9 +116,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                      Divider(
-                        color: Colors.transparent,
-                      ),
+                    
                       ListTile(
                         leading: Icon(Icons.control_point),
                         title: Title(
@@ -124,9 +131,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                      Divider(
-                        color: Colors.transparent,
-                      ),
+                    
                       ListTile(
                         leading: Icon(Icons.logout),
                         title:
