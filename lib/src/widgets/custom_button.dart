@@ -16,7 +16,7 @@ class CustomButton extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.isDisabled = false,
-    this.isLoading = false,
+    this.isLoading = false,    
     this.style,
     this.padding = const EdgeInsets.all(10),
     this.type = ButtonType.normal,

@@ -46,6 +46,7 @@ dependencies:
   new_version: ^0.3.1
   switcher: ^1.0.0
   screenshot: ^1.2.3
+  file_picker: ^5.2.10
 
 dev_dependencies:
   flutter_test:

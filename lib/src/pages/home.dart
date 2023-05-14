@@ -12,6 +12,7 @@ import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/widgets/bulk_upload.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -81,15 +82,27 @@ class _HomePageState extends State<HomePage> {
                       ),
                       
                       Divider(),
-                      ListTile(
+                     ListTile(
   leading: Icon(Icons.upload_file),
-  title: Title(
-      color: Colors.black,
-      child: Text("Bulk Product Upload")),
+  title: Text("Bulk Product Upload", style: TextStyle(color: Colors.black)),
   onTap: () {
-    // leave the function blank for now
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BulkUpload(
+          onSubmit: () {
+            // handle submit button tap
+            Navigator.pop(context); // close the popup after submission
+          },
+          onClose: () {
+            Navigator.pop(context); // close the popup without submission
+          },
+        );
+      },
+    );
   },
 ),
+
 
                       ListTile(
                         leading: Icon(Icons.security_outlined),
