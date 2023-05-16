@@ -373,7 +373,7 @@ class _CreateProductState extends State<CreateProduct> {
       : null,
   validator: (DateTime? value) => null,
   firstDate: DateTime.now(),
-  lastDate: DateTime.now().add(Duration(days: 365 * 3)),
+  lastDate: DateTime.now().add(Duration(days: 365 * 5)),
 ),
 
                     const Divider(color: Colors.transparent),
