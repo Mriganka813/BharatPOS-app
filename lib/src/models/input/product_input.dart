@@ -20,7 +20,7 @@ class ProductFormInput {
       this.baseSellingPriceGst,
       this.basePurchasePriceGst,
       this.imageFile,
-      this.expirydate,
+  
       });
 
   String? name;
@@ -39,7 +39,7 @@ class ProductFormInput {
   String? barCode;
   String? quantity;
   String? image;
-  String? expirydate;
+
   bool gst;
   XFile? imageFile;
 
@@ -51,7 +51,7 @@ class ProductFormInput {
         if (barCode != "" && barCode != 'null') "barCode": barCode,
         "quantity": quantity,
         "id": id,
-        if (expirydate != "" && expirydate != 'null') "expiryDate": expirydate,
+      
         if (gst) "GSTRate": gstRate,
         if (gst) "saleSGST": salesgst,
         if (gst) "saleCGST": salecgst,

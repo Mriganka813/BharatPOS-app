@@ -19,6 +19,7 @@ class Product {
     this.gstRate,
     this.baseSellingPriceGst,
     this.basePurchasePriceGst,
+   
   });
 
   String? name;
@@ -40,6 +41,7 @@ class Product {
   String? purchasecgst;
   String? purchaseigst;
   String? basePurchasePriceGst;
+ 
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
@@ -61,6 +63,7 @@ class Product {
         purchaseigst: json['purchaseIGST'].toString(),
         purchasesgst: json['purchaseSGST'].toString(),
         basePurchasePriceGst: json['basePurchasePrice'].toString(),
+        
       );
 
   Map<String, dynamic> toMap() => {
@@ -82,6 +85,7 @@ class Product {
         "purchaseSGST": purchasesgst,
         "purchaseCGST": purchasecgst,
         "purchaseIGST": purchaseigst,
-        "basePurchasePrice": basePurchasePriceGst
+        "basePurchasePrice": basePurchasePriceGst,
+      
       };
 }

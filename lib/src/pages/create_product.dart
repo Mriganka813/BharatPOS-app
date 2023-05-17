@@ -349,34 +349,7 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
-                   CustomDatePicker(
-  label: 'Expiry Date',
-  hintText: 'Select expiry date',
-  onChanged: (DateTime value) {
-    setState(() {
-      _formInput.expirydate =
-          DateFormat('dd/MM/yyyy').format(value);
-    });
-  },
-  onSave: (DateTime? value) {
-    if (value != null) {
-      setState(() {
-        _formInput.expirydate =
-            DateFormat('dd/MM/yyyy').format(value);
-      });
-    }
-  },
-  value: _formInput.expirydate != null &&
-          _formInput.expirydate!.isNotEmpty
-      ? DateFormat('dd/MM/yyyy')
-          .parse(_formInput.expirydate!)
-      : null,
-  validator: (DateTime? value) => null,
-  firstDate: DateTime.now(),
-  lastDate: DateTime.now().add(Duration(days: 365 * 5)),
-),
-
-                    const Divider(color: Colors.transparent),
+   
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
