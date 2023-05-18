@@ -76,44 +76,47 @@ class _ProductsListPageState extends State<ProductsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Products List')),
-        floatingActionButton: Container(
-          margin: const EdgeInsets.only(
-            right: 10,
-            left: 30,
-            bottom: 20,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              if (widget.args?.isSelecting ?? false)
-                Expanded(
-                  child: CustomButton(
-                      title: "Continue",
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      onTap: () {
-                        if (_products.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                "Please select products before continuing",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                          return;
-                        }
-                        Navigator.pop(
-                          context,
-                          _products,
-                        );
-                      }),
+      appBar: AppBar(title: const Text('Products List')),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(
+          right: 10,
+          left: 30,
+          bottom: 20,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if (widget.args?.isSelecting ?? false)
+              Expanded(
+                child: CustomButton(
+                  title: "Continue",
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  onTap: () {
+                    if (_products.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            "Please select products before continuing",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.pop(
+                      context,
+                      _products,
+                    );
+                  },
                 ),
-              if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
+              ),
+            if (widget.args?.isSelecting ?? false) const SizedBox(width:
+ 20),
               FloatingActionButton(
                 onPressed: () async {
                   await Navigator.pushNamed(context, '/create-product');
+
                   _productCubit.getProducts();
                 },
                 backgroundColor: ColorsConst.primaryColor,

@@ -147,7 +147,24 @@ class _SignInPageState extends State<SignInPage> {
                                       ),
                                 ),
                                 const Spacer(),
-                                
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/forgotPassword',
+                                    );
+                                  },
+                                  child: Text(
+                                    "Forgot Password?",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        ?.copyWith(
+                                          color: ColorsConst.primaryColor,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 5),
