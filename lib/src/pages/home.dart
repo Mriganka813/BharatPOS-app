@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkUpdate() async {
-    final newVersion = NewVersion(androidId: "com.shopos.magicstep");
+    final newVersion = NewVersion(androidId: "com.cube.magicstep");
     final status = await newVersion.getVersionStatus();
     if (status!.canUpdate) {
       newVersion.showUpdateDialog(
@@ -80,30 +80,30 @@ class _HomePageState extends State<HomePage> {
                         ),
                         subtitle: Text(state.user.address ?? ""),
                       ),
-                      
                       Divider(),
-                     ListTile(
-  leading: Icon(Icons.upload_file),
-  title: Text("Bulk Product Upload", style: TextStyle(color: Colors.black)),
-  onTap: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return BulkUpload(
-          onSubmit: () {
-            // handle submit button tap
-            Navigator.pop(context); // close the popup after submission
-          },
-          onClose: () {
-            Navigator.pop(context); // close the popup without submission
-          },
-        );
-      },
-    );
-  },
-),
-
-
+                      ListTile(
+                        leading: Icon(Icons.upload_file),
+                        title: Text("Bulk Product Upload",
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return BulkUpload(
+                                onSubmit: () {
+                                  // handle submit button tap
+                                  Navigator.pop(
+                                      context); // close the popup after submission
+                                },
+                                onClose: () {
+                                  Navigator.pop(
+                                      context); // close the popup without submission
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
                       ListTile(
                         leading: Icon(Icons.security_outlined),
                         title: Title(
@@ -115,7 +115,6 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                     
                       ListTile(
                         leading: Icon(Icons.policy_outlined),
                         title: Title(
@@ -129,7 +128,6 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                    
                       ListTile(
                         leading: Icon(Icons.control_point),
                         title: Title(
@@ -144,7 +142,6 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                    
                       ListTile(
                         leading: Icon(Icons.logout),
                         title:
@@ -229,6 +226,10 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       ],
+                    ),
+                    OnlineStoreWidget(
+                      activeOrders: 5,
+                      onTap: () {},
                     ),
                     const Spacer(),
                     Align(
@@ -361,6 +362,50 @@ class HomeCard extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.headline6,
                 textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OnlineStoreWidget extends StatelessWidget {
+  final int activeOrders;
+  final VoidCallback onTap;
+
+  const OnlineStoreWidget({
+    Key? key,
+    this.activeOrders = 0,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 30.0), // Add vertical padding
+          child: Row(
+            children: [
+              SizedBox(width: 20.0),
+              Icon(
+                Icons.storefront_rounded,
+                size: 50.0,
+                color: ColorsConst.primaryColor,
+              ),
+              SizedBox(width: 35.0),
+              Text(
+                activeOrders == 0
+                    ? 'No active orders'
+                    : 'Active orders $activeOrders',
+                style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
