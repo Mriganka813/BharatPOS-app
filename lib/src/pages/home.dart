@@ -229,7 +229,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                     OnlineStoreWidget(
                       activeOrders: 5,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, ReportsPage.routeName);
+                      },
                     ),
                     const Spacer(),
                     Align(

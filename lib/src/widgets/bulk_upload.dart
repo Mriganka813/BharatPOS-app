@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shopos/src/config/colors.dart';
+import '../services/bulk_upload.dart';
 import 'custom_button.dart';
-
 
 class BulkUpload extends StatefulWidget {
   final VoidCallback onSubmit;
@@ -19,12 +21,14 @@ class BulkUpload extends StatefulWidget {
 
 class _BulkUploadState extends State<BulkUpload> {
   String? _filePath;
+  File? _file;
 
   Future<void> _selectFile() async {
     final result = await FilePicker.platform.pickFiles();
     if (result != null) {
       setState(() {
         _filePath = result.files.single.path;
+        _file = File(result.files.single.path!);
       });
     }
   }
@@ -37,20 +41,22 @@ class _BulkUploadState extends State<BulkUpload> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-             SizedBox(
+            SizedBox(
               height: 20,
             ),
             CustomButton(
               title: _filePath != null ? _filePath! : 'Upload Excel File Here',
               onTap: _selectFile,
-              type: ButtonType.outlined,            ),
+              type: ButtonType.outlined,
+            ),
             SizedBox(
               height: 30,
             ),
             CustomButton(
-              title: 'Submit',
-              onTap: widget.onSubmit,
-            ),
+                title: 'Submit',
+                onTap: () {
+                  BulkUploadService().uploadFile('123', _file!);
+                }),
           ],
         ),
       ),

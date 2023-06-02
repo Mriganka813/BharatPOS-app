@@ -110,6 +110,7 @@ class MyApp extends StatelessWidget {
                 return ReportTable(
                   args: settings.arguments as tableArg,
                 );
+
               default:
                 return const SplashScreen();
             }

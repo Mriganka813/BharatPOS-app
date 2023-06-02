@@ -1,73 +1,34 @@
 {
   "project_info": {
-    "project_number": "716795950025",
-    "project_id": "magicstep-ca8f1",
-    "storage_bucket": "magicstep-ca8f1.appspot.com"
+    "project_number": "1025146175164",
+    "project_id": "cute-f8bbc",
+    "storage_bucket": "cute-f8bbc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:716795950025:android:2aa0ef6b9432305696ee18",
+        "mobilesdk_app_id": "1:1025146175164:android:ef58c6d31e15999ee99ab9",
         "android_client_info": {
           "package_name": "com.cube.magicstep"
         }
       },
       "oauth_client": [
         {
-          "client_id": "716795950025-3vno4cl94p6cs3q6e0nrfkmpjrvp7pqk.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cube.magicstep",
-            "certificate_hash": "ef5e43581b8a03d4ad643db851ba5a9cfcb4cfcf"
-          }
-        },
-        {
-          "client_id": "716795950025-96oqa34bklfqps8r96esnuojpqhotivg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cube.magicstep",
-            "certificate_hash": "5bae223bdbe9facbbcb3f27cca26931399ff4b46"
-          }
-        },
-        {
-          "client_id": "716795950025-a194cntd5u18teauqp6vnjdprap1ufpc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cube.magicstep",
-            "certificate_hash": "87dd8af92e7aa09a41ca2ac7c31375ef4b19ca06"
-          }
-        },
-        {
-          "client_id": "716795950025-qe51pgefvfjre6fl3oqh3peo5is03qfr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cube.magicstep",
-            "certificate_hash": "1ac4a13469f5f8238325249743fd926b99233ad3"
-          }
-        },
-        {
-          "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+          "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCQGX2lwqSIcFhCpqO3E4Vot4Ic8ZS78G8"
+          "current_key": "AIzaSyCGcuHC2xtofijOCzDQmSKRHAfghK9H0xQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+              "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.magicstep"
-              }
             }
           ]
         }
@@ -75,43 +36,36 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:716795950025:android:9ce341f85e8aaadb96ee18",
+        "mobilesdk_app_id": "1:1025146175164:android:34c2353a22ea2715e99ab9",
         "android_client_info": {
-          "package_name": "com.magicstep.fynd"
+          "package_name": "com.magicstep.cute.delivery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "716795950025-1hu6bm3ouqd866kiru926hpmtsfefo3d.apps.googleusercontent.com",
+          "client_id": "1025146175164-4girian6a33q5j3e19iqgvt4pgknnmju.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.magicstep.fynd",
+            "package_name": "com.magicstep.cute.delivery",
             "certificate_hash": "5bae223bdbe9facbbcb3f27cca26931399ff4b46"
           }
         },
         {
-          "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+          "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCQGX2lwqSIcFhCpqO3E4Vot4Ic8ZS78G8"
+          "current_key": "AIzaSyCGcuHC2xtofijOCzDQmSKRHAfghK9H0xQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+              "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.magicstep"
-              }
             }
           ]
         }
@@ -119,67 +73,28 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:716795950025:android:fdc6444f1f4932d496ee18",
+        "mobilesdk_app_id": "1:1025146175164:android:40e861ccae0ade47e99ab9",
         "android_client_info": {
-          "package_name": "com.shopos.magicstep"
+          "package_name": "com.magicstep.cute.user"
         }
       },
       "oauth_client": [
         {
-          "client_id": "716795950025-f29419bcsru3pfvjn0c2i3ivrh7ea309.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.shopos.magicstep",
-            "certificate_hash": "ef5e43581b8a03d4ad643db851ba5a9cfcb4cfcf"
-          }
-        },
-        {
-          "client_id": "716795950025-kih5fib1cql6f93vgo3cn8a0ial0imgg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.shopos.magicstep",
-            "certificate_hash": "1ac4a13469f5f8238325249743fd926b99233ad3"
-          }
-        },
-        {
-          "client_id": "716795950025-lukk65tfg5p1ns82oc9o9qh0p03b3cqv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.shopos.magicstep",
-            "certificate_hash": "5bae223bdbe9facbbcb3f27cca26931399ff4b46"
-          }
-        },
-        {
-          "client_id": "716795950025-vja9d6nn5vnoa0g1bd7pbi3g9v96gfb7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.shopos.magicstep",
-            "certificate_hash": "87dd8af92e7aa09a41ca2ac7c31375ef4b19ca06"
-          }
-        },
-        {
-          "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+          "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCQGX2lwqSIcFhCpqO3E4Vot4Ic8ZS78G8"
+          "current_key": "AIzaSyCGcuHC2xtofijOCzDQmSKRHAfghK9H0xQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "716795950025-hr7jeea2f60trik9tdfmb08qlugk9uct.apps.googleusercontent.com",
+              "client_id": "1025146175164-brk58nnm7fv2g290ikfun4jpdc1ssocs.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "716795950025-a7h7rgc6nrtn3tq9c7ps8g79j79q0h80.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.magicstep"
-              }
             }
           ]
         }
