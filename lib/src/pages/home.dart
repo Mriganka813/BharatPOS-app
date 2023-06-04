@@ -8,9 +8,11 @@ import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/sign_in.dart';
+import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/widgets/bulk_upload.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
@@ -80,30 +82,30 @@ class _HomePageState extends State<HomePage> {
                         ),
                         subtitle: Text(state.user.address ?? ""),
                       ),
-                      
                       Divider(),
-                     ListTile(
-  leading: Icon(Icons.upload_file),
-  title: Text("Bulk Product Upload", style: TextStyle(color: Colors.black)),
-  onTap: () {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return BulkUpload(
-          onSubmit: () {
-            // handle submit button tap
-            Navigator.pop(context); // close the popup after submission
-          },
-          onClose: () {
-            Navigator.pop(context); // close the popup without submission
-          },
-        );
-      },
-    );
-  },
-),
-
-
+                      ListTile(
+                        leading: Icon(Icons.upload_file),
+                        title: Text("Bulk Product Upload",
+                            style: TextStyle(color: Colors.black)),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return BulkUpload(
+                                onSubmit: () {
+                                  // handle submit button tap
+                                  Navigator.pop(
+                                      context); // close the popup after submission
+                                },
+                                onClose: () {
+                                  Navigator.pop(
+                                      context); // close the popup without submission
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
                       ListTile(
                         leading: Icon(Icons.security_outlined),
                         title: Title(
@@ -115,36 +117,29 @@ class _HomePageState extends State<HomePage> {
                           Navigator.pop(context);
                         },
                       ),
-                     
                       ListTile(
                         leading: Icon(Icons.policy_outlined),
                         title: Title(
                             color: Colors.black, child: Text("Privacy Policy")),
-                        onTap: () async {
-                          await launchUrl(
-                            Uri.parse(
-                                'http://64.227.172.99:5000/privacy-policy'),
-                            mode: LaunchMode.externalApplication,
-                          );
-                          Navigator.pop(context);
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context,
+                              PrivacyPolicyPage
+                                  .routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
-                    
                       ListTile(
                         leading: Icon(Icons.control_point),
                         title: Title(
                             color: Colors.black,
                             child: Text("Terms and Conditions")),
-                        onTap: () async {
-                          await launchUrl(
-                            Uri.parse(
-                                'http://64.227.172.99:5000/terms-and-condition'),
-                            mode: LaunchMode.externalApplication,
-                          );
-                          Navigator.pop(context);
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context,
+                              TermsAndConditionsPage
+                                  .routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
-                    
                       ListTile(
                         leading: Icon(Icons.logout),
                         title:

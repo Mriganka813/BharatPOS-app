@@ -15,12 +15,14 @@ import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
+import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/pages/splash.dart';
+import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 
@@ -106,6 +108,10 @@ class MyApp extends StatelessWidget {
                 return ChangePassword(user: settings.arguments as User?);
               case Forgotpassword.routeName:
                 return Forgotpassword();
+              case PrivacyPolicyPage.routeName:
+                return PrivacyPolicyPage();
+              case TermsAndConditionsPage.routeName:
+                return TermsAndConditionsPage();
               case ReportTable.routeName:
                 return ReportTable(
                   args: settings.arguments as tableArg,
