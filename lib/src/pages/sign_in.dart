@@ -7,6 +7,7 @@ import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -212,8 +213,13 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     const SizedBox(height: 15),
                     CustomButton(
-                      onTap: () {
-                        Navigator.pushNamed(context, SignUpPage.routeName);
+                      onTap: () async {
+                        await launchUrl(
+                          Uri.parse(
+                              'http://167.71.224.59:8001/api/v1/registerpage'),
+                          mode: LaunchMode.externalApplication,
+                        );
+                        Navigator.pop(context);
                       },
                       title: 'Sign Up',
                     ),

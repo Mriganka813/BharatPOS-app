@@ -10,6 +10,7 @@ environment:
   sdk: ">=2.16.2 <3.0.0"
 
 dependencies:
+  flutter_html: any
   audioplayers: ^3.0.1
   cached_network_image: ^3.2.1
   cookie_jar: ^4.0.1
