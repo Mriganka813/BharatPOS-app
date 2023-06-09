@@ -1,25 +1,23 @@
-// To parse this JSON data, do
-//
-//     final user = userFromMap(jsonString);
-
 class User {
-  User(
-      {this.email,
-      this.password,
-      this.address,
-      this.role,
-      this.businessName,
-      this.businessType,
-      this.phoneNumber,
-      this.id,
-      this.createdAt,
-      this.updatedAt,
-      this.v,
-      this.type});
+  User({
+    this.email,
+    this.password,
+    this.address,
+    this.role,
+    this.businessName,
+    this.businessType,
+    this.phoneNumber,
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.type,
+    this.upi_id,
+  });
 
   String? email;
   String? password;
-  String? address;
+  Object? address;
   String? role;
   String? businessName;
   String? businessType;
@@ -29,22 +27,25 @@ class User {
   DateTime? updatedAt;
   int? v;
   String? type;
+  String? upi_id;
 
   factory User.fromMap(Map<String, dynamic> json) => User(
-      email: json["email"],
-      password: json["password"],
-      address: json["address"],
-      role: json["role"],
-      businessName: json["businessName"],
-      businessType: json["businessType"],
-      phoneNumber: json["phoneNumber"],
-      id: json["_id"],
-      createdAt: DateTime.parse(json["createdAt"]),
-      updatedAt: DateTime.parse(json["updatedAt"]),
-      v: json["__v"],
-      type: json["taxFile"]);
+        email: json["email"],
+        password: json["password"],
+        address: json["address"],
+        role: json["role"],
+        businessName: json["businessName"],
+        businessType: json["businessType"],
+        phoneNumber: json["phoneNumber"],
+        id: json["_id"],
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
+        v: json["__v"],
+        type: json["taxFile"],
+        upi_id: json["upi_id"],
+      );
 
-//extracting taxfile detail from json
+  // extracting taxfile detail from json
   factory User.fromMMap(Map<String, dynamic> json) =>
       User(id: json["_id"], type: json["taxFile"]);
 
@@ -60,5 +61,6 @@ class User {
         "createdAt": createdAt?.toIso8601String(),
         "updatedAt": updatedAt?.toIso8601String(),
         "__v": v,
+        "upi_id": upi_id,
       };
 }
