@@ -1,27 +1,27 @@
 import 'package:image_picker/image_picker.dart';
 
 class ProductFormInput {
-  ProductFormInput(
-      {this.name,
-      this.sellingPrice,
-      this.barCode,
-      this.id,
-      this.purchasePrice,
-      this.quantity,
-      this.image,
-      this.gst = false,
-      this.salecgst,
-      this.saleigst,
-      this.salesgst,
-      this.purchasecgst,
-      this.purchaseigst,
-      this.purchasesgst,
-      this.gstRate,
-      this.baseSellingPriceGst,
-      this.basePurchasePriceGst,
-      this.imageFile,
-  
-      });
+  ProductFormInput({
+    this.name,
+    this.sellingPrice,
+    this.barCode,
+    this.id,
+    this.purchasePrice,
+    this.quantity,
+    this.image,
+    this.gst = false,
+    this.salecgst,
+    this.saleigst,
+    this.salesgst,
+    this.purchasecgst,
+    this.purchaseigst,
+    this.purchasesgst,
+    this.gstRate,
+    this.baseSellingPriceGst,
+    this.basePurchasePriceGst,
+    this.imageFile,
+    this.sellerName,
+  });
 
   String? name;
   String? id;
@@ -39,6 +39,7 @@ class ProductFormInput {
   String? barCode;
   String? quantity;
   String? image;
+  String? sellerName;
 
   bool gst;
   XFile? imageFile;
@@ -51,7 +52,6 @@ class ProductFormInput {
         if (barCode != "" && barCode != 'null') "barCode": barCode,
         "quantity": quantity,
         "id": id,
-      
         if (gst) "GSTRate": gstRate,
         if (gst) "saleSGST": salesgst,
         if (gst) "saleCGST": salecgst,
@@ -61,8 +61,10 @@ class ProductFormInput {
         if (gst) "purchaseIGST": purchaseigst,
         if (gst) "condition": gst,
         if (gst) "baseSellingPrice": baseSellingPriceGst,
-        if (gst) "basePurchasePrice": basePurchasePriceGst
+        if (gst) "basePurchasePrice": basePurchasePriceGst,
+        "sellerName": sellerName,
       };
+
   factory ProductFormInput.fromMap(map) => ProductFormInput(
         name: map['name'],
         purchasePrice: map['purchasePrice'].toString(),
@@ -80,5 +82,6 @@ class ProductFormInput {
         purchasesgst: map['purchaseSGST'].toString(),
         baseSellingPriceGst: map['baseSellingPrice'].toString(),
         basePurchasePriceGst: map['basePurchasePrice'].toString(),
+        sellerName: map['sellerName'].toString(),
       );
 }

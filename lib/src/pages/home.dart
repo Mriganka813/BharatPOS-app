@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkUpdate() async {
-    final newVersion = NewVersion(androidId: "com.shopos.magicstep");
+    final newVersion = NewVersion(androidId: "com.cube.magicstep");
     final status = await newVersion.getVersionStatus();
     if (status!.canUpdate) {
       newVersion.showUpdateDialog(
@@ -90,23 +90,13 @@ class _HomePageState extends State<HomePage> {
                         leading: Icon(Icons.upload_file),
                         title: Text("Bulk Product Upload",
                             style: TextStyle(color: Colors.black)),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return BulkUpload(
-                                onSubmit: () {
-                                  // handle submit button tap
-                                  Navigator.pop(
-                                      context); // close the popup after submission
-                                },
-                                onClose: () {
-                                  Navigator.pop(
-                                      context); // close the popup without submission
-                                },
-                              );
-                            },
+                        onTap: () async {
+                          await launchUrl(
+                            Uri.parse(
+                                'http://167.71.224.59:8001/api/v1/renderweblogin'),
+                            mode: LaunchMode.externalApplication,
                           );
+                          Navigator.pop(context);
                         },
                       ),
                       ListTile(
