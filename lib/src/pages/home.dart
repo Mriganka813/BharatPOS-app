@@ -7,6 +7,7 @@ import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/online_store.dart';
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
@@ -218,6 +219,12 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    OnlineStoreWidget(
+                      activeOrders: 5,
+                      onTap: () {
+                        Navigator.pushNamed(context, ReportsPage.routeName);
+                      },
+                    ),
                     const Spacer(),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -349,6 +356,52 @@ class HomeCard extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.headline6,
                 textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class OnlineStoreWidget extends StatelessWidget {
+  final int activeOrders;
+  final VoidCallback onTap;
+
+  const OnlineStoreWidget({
+    Key? key,
+    this.activeOrders = 0,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, OnlineStorePage.routeName);
+      },
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 30.0), // Add vertical padding
+          child: Row(
+            children: [
+              SizedBox(width: 20.0),
+              Icon(
+                Icons.storefront_rounded,
+                size: 50.0,
+                color: ColorsConst.primaryColor,
+              ),
+              SizedBox(width: 35.0),
+              Text(
+                activeOrders == 0
+                    ? 'No active orders'
+                    : 'Active orders $activeOrders',
+                style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),

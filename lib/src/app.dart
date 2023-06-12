@@ -12,6 +12,7 @@ import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/forgot_password.dart';
 import 'package:shopos/src/pages/home.dart';
+import 'package:shopos/src/pages/online_store.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
@@ -112,6 +113,8 @@ class MyApp extends StatelessWidget {
                 return PrivacyPolicyPage();
               case TermsAndConditionsPage.routeName:
                 return TermsAndConditionsPage();
+              case OnlineStorePage.routeName:
+                return OnlineStorePage();
               case ReportTable.routeName:
                 return ReportTable(
                   args: settings.arguments as tableArg,
