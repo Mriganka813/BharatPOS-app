@@ -13,6 +13,6 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   /// TODO uncomment this line
-  // await const Utils().checkUpdates();
+//await const Utils().checkUpdates();
   runApp(const MyApp());
 }

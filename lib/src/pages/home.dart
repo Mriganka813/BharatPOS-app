@@ -7,7 +7,7 @@ import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
-import 'package:shopos/src/pages/online_store.dart';
+
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                         onTap: () async {
                           await launchUrl(
                             Uri.parse(
-                                'http://167.71.224.59:8001/api/v1/renderweblogin'),
+                                'http://65.0.7.20:8001/api/v1/renderweblogin'),
                             mode: LaunchMode.externalApplication,
                           );
                           Navigator.pop(context);
@@ -378,9 +378,7 @@ class OnlineStoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, OnlineStorePage.routeName);
-      },
+      onTap: () {},
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -398,10 +396,7 @@ class OnlineStoreWidget extends StatelessWidget {
               ),
               SizedBox(width: 35.0),
               Text(
-                activeOrders == 0
-                    ? 'No active orders'
-                    : 'Active orders $activeOrders',
-                style: Theme.of(context).textTheme.headline6,
+                "Coming Soon",
               ),
             ],
           ),

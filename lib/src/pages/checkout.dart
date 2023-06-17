@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share_plus/share_plus.dart';
@@ -22,6 +23,7 @@ import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
 import 'package:shopos/src/widgets/invoice_template_withGST.dart';
 import 'package:shopos/src/widgets/invoice_template_withoutGST.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_share2/whatsapp_share2.dart';
 
 import '../models/party.dart';
@@ -70,7 +72,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  openShareModal(context) {
+  openShareModal(context, user) {
     Alert(
         style: const AlertStyle(
           animationType: AnimationType.grow,
@@ -95,6 +97,60 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 _onTapShare(1);
               },
             ),
+            ListTile(
+                title: const Text("Whatsapp Message"),
+                onTap: () {
+                  TextEditingController t = TextEditingController();
+                  showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            backgroundColor: Colors.white,
+                            title: Column(children: [
+                              Text(
+                                "Enter Whatsapp numer\n(10-digit number only)",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins-Regular",
+                                    color: Colors.black),
+                              )
+                            ]),
+                            content: TextField(
+                              autofocus: true,
+                              controller: t,
+                              decoration: InputDecoration(
+                                hintText: "Enter 10-digit number",
+                                enabledBorder: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                    if (int.tryParse(t.text.trim()) != null &&
+                                        t.text.length == 10)
+                                      _launchUrl(
+                                          t.text.trim(),
+                                          user,
+                                          widget.args.orderInput.modeOfPayment,
+                                          totalbasePrice(),
+                                          totalgstPrice(),
+                                          "0.00",
+                                          widget.args.orderInput.orderItems);
+                                  },
+                                  child: Text("Yes")),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Cancel"))
+                            ],
+                          ));
+                })
           ],
         )).show();
   }
@@ -250,7 +306,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           return (curr.quantity * sum) + acc;
         }
       },
-    ).toString();
+    ).toStringAsFixed(2);
   }
 
   ///
@@ -279,7 +335,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
         }
       },
-    ).toString();
+    ).toStringAsFixed(2);
   }
 
   @override
@@ -492,8 +548,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       children: [
                         CustomButton(
                           title: "Share",
-                          onTap: () {
-                            openShareModal(context);
+                          onTap: () async {
+                            try {
+                              final res = await UserService.me();
+                              if ((res.statusCode ?? 400) < 300) {
+                                final user = User.fromMap(res.data['user']);
+
+                                openShareModal(context, user);
+                              }
+                            } catch (_) {}
                           },
                           type: ButtonType.outlined,
                           padding: const EdgeInsets.symmetric(
@@ -547,5 +610,60 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput)
           : _checkoutCubit.createSalesOrder(widget.args.orderInput);
     }
+  }
+}
+
+Future<void> _launchUrl(mobNum, user, paymethod, sub, tax, dis, items) async {
+  //916000637319
+  final String mobile = "91${mobNum}";
+  final String invoiceHeader =
+      "%0A%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%0A";
+  final String invoiceText =
+      "%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20INVOICE";
+  final String email = "%0AEmail%3A%20${user.email}";
+  final String cusName = "%0ACustomer%20Name%3A%20${user.businessName}";
+  // final String Date = "%0ADate%3A%20%5BDate%5D";
+  final String Date =
+      "Date%3A%20${DateFormat('dd LLLL yyyy').format(DateTime.now())}";
+  final String invoiceNumber = "%0AMobile%20Number%3A%20${user.phoneNumber}";
+  final String dash1 = "%0A------------------------------------";
+  final String tableHead =
+      "%0A%20%20%20%20%20ITEM%20%20%20%20%20QTY%20%20%20%20%20PRICE%20%20%20%20%20TOTAL";
+  String x = "";
+  for (int i = 0; i < items.length; i++) {
+    if (items[i].product.name.length <= 4) {
+      x = x +
+          "%0A%09%09%09${items[i].product.name}%09%09%20%09%09%09${items[i].quantity}%09%09%09%09%09%09${items[i].product.sellingPrice}%09%09%09%09%09%09%09${items[i].product.sellingPrice * items[i].quantity}";
+    } else {
+      x = x +
+          "%0A%09%09%09${items[i].product.name.substring(0, 4)}%09%09%20%09%09%09${items[i].quantity}%09%09%09%09%09%09${items[i].product.sellingPrice}%09%09%09%09%09%09%09${items[i].product.sellingPrice * items[i].quantity}";
+      x = x + "%0A%09%09%09${items[i].product.name.substring(4)}";
+    }
+  }
+  /* final String tableData1 =
+        "%0A%5BItem%201%5D%20%20%20%20${items[0]["qty"]}%20%20%5BPrice%201%5D%20%20%5BTotal%201%5D";
+    final String tableData2 =
+        "%0A%5BItem%202%5D%20%20%20%5BQty%202%5D%20%20%5BPrice%202%5D%20%20%5BTotal%202%5D";
+    final String tableData3 = "%0A%5BItem%203%5D%20%20%20%5BQty%203%5D%20%20";*/
+  final String subTotal = "%0ASubtotal%3A%20₹%20${sub}";
+  final String delivery = "%0AGST%20Charges%3A%20₹%20${tax}";
+  final String discount = "%0ADiscount%3A%20₹%20${dis}";
+  final String grandTotal =
+      "%0AGrand%20Total%3A%20₹%20${num.parse(sub) + num.parse(tax) - num.parse(dis)}";
+  final String detailsText =
+      "%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20PAYMENT%20DETAILS";
+
+  final String method = "%0APayment%20Method%3A%20${paymethod}";
+  final String dueDate =
+      "%0ADue%20Date%3A%20${DateFormat('dd LLLL yyyy').format(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1))}";
+  final String thanks = "%0AThank%20you%20for%20your%20business%21%0A";
+
+  final Uri _url = Uri.parse(
+      'https://wa.me/${mobile}?text=${invoiceHeader}${invoiceText}${invoiceHeader}${Date}${cusName}${email}${invoiceNumber}${dash1}${tableHead}${dash1}${x}${dash1}${subTotal}${delivery}${discount}${grandTotal}${dash1}${detailsText}${dash1}${method}${dash1}${thanks}');
+
+  if (await canLaunchUrl(_url)) {
+    await launchUrl(_url, mode: LaunchMode.externalApplication);
+  } else {
+    throw Exception('Could not launch $_url');
   }
 }

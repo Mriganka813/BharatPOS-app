@@ -15,7 +15,7 @@ class Utils {
   }
 
   /// Check for app updates
-  // Future<void> checkUpdates() async {
+  // Future<void> () async {
   //   final update = await InAppUpdate.checkForUpdate();
   //   if (update.updateAvailability < 0) {
   //     return;

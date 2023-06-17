@@ -216,7 +216,7 @@ class _SignInPageState extends State<SignInPage> {
                       onTap: () async {
                         await launchUrl(
                           Uri.parse(
-                              'http://167.71.224.59:8001/api/v1/registerpage'),
+                              'http://65.0.7.20:8001/api/v1/registerpage'),
                           mode: LaunchMode.externalApplication,
                         );
                         Navigator.pop(context);
