@@ -38,8 +38,16 @@ class ProductService {
   }
 
   ///
-  Future<Response> getProducts() async {
-    final response = await ApiV1Service.getRequest('/inventory/me');
+  /* Future<Response> getProducts() async {
+    //final response = await ApiV1Service.getRequest('/inventory/me/items?page=1&limit=10');
+    final response = await ApiV1Service.getRequest('/inventory/me?page=${page}&limit=${limit}');
+    return response;
+  }
+*/
+  Future<Response> getProducts(int page, int limit) async {
+    print("" + page.toString() + " " + limit.toString());
+    final response =
+        await ApiV1Service.getRequest('/inventory/me?page=$page&limit=$limit');
     return response;
   }
 
@@ -56,7 +64,10 @@ class ProductService {
 
   ///
   Future<Response> searchProducts(String keyword) async {
-    return await ApiV1Service.getRequest('/inventory/me?keyword=$keyword');
+    var response =
+        await ApiV1Service.getRequest('/inventory/me?keyword=$keyword');
+    print(response.data);
+    return response;
   }
 
   ///

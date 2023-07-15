@@ -271,13 +271,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   String? totalPrice() {
-    return widget.args.orderInput.orderItems?.fold<int>(
+    return widget.args.orderInput.orderItems?.fold<double>(
       0,
       (acc, curr) {
         if (widget.args.invoiceType == OrderType.purchase) {
           return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
         }
-        return (curr.quantity * (curr.product?.sellingPrice ?? 1)) + acc;
+        return (double.parse(curr.quantity.toString()) *
+                (curr.product?.sellingPrice ?? 1.0)) +
+            acc;
       },
     ).toString();
   }
@@ -621,7 +623,7 @@ Future<void> _launchUrl(mobNum, user, paymethod, sub, tax, dis, items) async {
   final String invoiceText =
       "%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20INVOICE";
   final String email = "%0AEmail%3A%20${user.email}";
-  final String cusName = "%0ACustomer%20Name%3A%20${user.businessName}";
+  final String cusName = "%0ABusiness%20Name%3A%20${user.businessName}";
   // final String Date = "%0ADate%3A%20%5BDate%5D";
   final String Date =
       "Date%3A%20${DateFormat('dd LLLL yyyy').format(DateTime.now())}";

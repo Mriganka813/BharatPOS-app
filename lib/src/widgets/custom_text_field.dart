@@ -16,26 +16,27 @@ class CustomTextField extends StatefulWidget {
   final Widget? suffixIcon;
   final bool obsecureText;
   final bool readonly;
-  final bool bypassValidator; // new parameter
-
-  const CustomTextField({
-    Key? key,
-    this.onChanged,
-    this.initialValue,
-    this.onSave,
-    this.value,
-    this.validator,
-    this.hintText,
-    this.label,
-    this.isLoading = false,
-    this.inputType,
-    this.suffixIcon,
-    this.prefixIcon,
-    this.inputFormatters,
-    this.obsecureText = false,
-    this.readonly = false,
-    this.bypassValidator = false, // default value
-  }) : super(key: key);
+  final bool bypassValidator;
+  final Function(String?)? onsubmitted;
+  const CustomTextField(
+      {Key? key,
+      this.onChanged,
+      this.initialValue,
+      this.onSave,
+      this.value,
+      this.validator,
+      this.hintText,
+      this.label,
+      this.isLoading = false,
+      this.inputType,
+      this.suffixIcon,
+      this.prefixIcon,
+      this.inputFormatters,
+      this.obsecureText = false,
+      this.readonly = false,
+      this.bypassValidator = false,
+      this.onsubmitted})
+      : super(key: key);
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -78,6 +79,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             widget.onChanged!(e);
           },
+          onFieldSubmitted: widget.onsubmitted,
           onSaved: (e) {
             if (widget.onSave == null) {
               return;

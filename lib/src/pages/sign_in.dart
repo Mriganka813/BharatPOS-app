@@ -215,8 +215,7 @@ class _SignInPageState extends State<SignInPage> {
                     CustomButton(
                       onTap: () async {
                         await launchUrl(
-                          Uri.parse(
-                              'http://65.0.7.20:8001/api/v1/registerpage'),
+                          Uri.parse('https://getcube.shop/signup'),
                           mode: LaunchMode.externalApplication,
                         );
                         Navigator.pop(context);

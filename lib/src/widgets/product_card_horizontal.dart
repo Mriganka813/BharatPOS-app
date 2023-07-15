@@ -63,22 +63,25 @@ class ProductCardHorizontal extends StatelessWidget {
                         child: Text(
                           product.name ?? "",
                           maxLines: 1,
+                          softWrap: false,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                     ),
                     Divider(color: Colors.black54),
-                  const SizedBox(height: 5),
-Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    Text('Available'),
-    Text(
-      product.quantity! > 9999 ? 'Unlimited' : '${product.quantity}',
-    ),
-  ],
-),
+                    const SizedBox(height: 5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Available'),
+                        Text(
+                          product.quantity! > 9999
+                              ? 'Unlimited'
+                              : '${product.quantity}',
+                        ),
+                      ],
+                    ),
 
                     Visibility(
                       visible: product.gstRate != "null",
@@ -108,7 +111,11 @@ Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Net Sell Price'),
-                        Text('₹ ${product.sellingPrice}'),
+                        Expanded(
+                            child: Text(
+                          ' ₹ ${product.sellingPrice.toStringAsFixed(2)}',
+                          maxLines: 1,
+                        )),
                       ],
                     ),
 
@@ -186,7 +193,7 @@ class ProductCardPurchase extends StatelessWidget {
   Widget build(BuildContext context) {
     double baseSellingPrice = 0;
     double Sellinggstvalue = 0;
-    int SellingPrice = 0;
+    double SellingPrice = 0;
 
     double basePurchasePrice = 0;
     double Purchasegstvalue = 0;
@@ -206,7 +213,7 @@ class ProductCardPurchase extends StatelessWidget {
             .toDouble()
             .toStringAsFixed(2));
       }
-      SellingPrice = product.sellingPrice * productQuantity;
+      SellingPrice = (product.sellingPrice * productQuantity);
     }
 
     if (type == "purchase") {

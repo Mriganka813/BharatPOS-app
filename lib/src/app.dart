@@ -19,6 +19,7 @@ import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/report_table.dart';
+import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/pages/splash.dart';
@@ -71,8 +72,8 @@ class MyApp extends StatelessWidget {
                 return const SignUpPage();
               case HomePage.routeName:
                 return const HomePage();
-              case ProductsListPage.routeName:
-                return ProductsListPage(
+              case SearchProductListScreen.routeName:
+                return SearchProductListScreen(
                   args: settings.arguments as ProductListPageArgs?,
                 );
               case CreateProduct.routeName:

@@ -12,19 +12,38 @@ class ProductCubit extends Cubit<ProductState> {
   ProductCubit() : super(ProductInitial());
 
   ///
-  void getProducts() async {
+/*  void getProducts(int i) async {
     emit(ProductLoading());
     final response = await _productService.getProducts();
     if ((response.statusCode ?? 400) > 300) {
       emit(ProductsError('Failed to get products'));
       return;
     }
+
     final products = List.generate(
+
       response.data['inventories'].length,
-      (int index) => Product.fromMap(
+          (int index) => Product.fromMap(
+
         response.data['inventories'][index],
       ),
     );
+
+    emit(ProductsListRender(products));
+  }*/
+  getProducts(int page, int limit) async {
+    emit(ProductLoading());
+    final response = await _productService.getProducts(page, limit);
+    if ((response.statusCode ?? 400) > 300) {
+      emit(ProductsError('Failed to get products'));
+      return;
+    }
+
+    final products = List.generate(
+      response.data['inventories'].length,
+      (int index) => Product.fromMap(response.data['inventories'][index]),
+    );
+
     emit(ProductsListRender(products));
   }
 
@@ -63,7 +82,7 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   ///
-  void deleteProduct(Product product) async {
+  void deleteProduct(Product product, int page, int limit) async {
     try {
       final response = await _productService.deleteProduct(product);
       if ((response.statusCode ?? 400) > 300) {
@@ -73,7 +92,7 @@ class ProductCubit extends Cubit<ProductState> {
     } on DioError catch (err) {
       emit(ProductsError(err.message.toString()));
     }
-    getProducts();
+    getProducts(page, limit);
   }
 
   ///

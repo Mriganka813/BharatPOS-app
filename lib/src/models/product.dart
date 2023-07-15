@@ -23,7 +23,7 @@ class Product {
   });
 
   String? name;
-  int sellingPrice;
+  double sellingPrice;
   String? barCode;
   int? quantity;
   String? user;
@@ -45,7 +45,7 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
         name: json["name"],
-        sellingPrice: json["sellingPrice"] ?? 0,
+        sellingPrice: double.parse(json["sellingPrice"].toString()) ?? 0.0,
         barCode: json["barCode"],
         quantity: json["quantity"],
         purchasePrice: json['purchasePrice'] ?? 0,

@@ -12,6 +12,7 @@ import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
+import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/auth.dart';
@@ -174,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.pushNamed(
                               context,
-                              ProductsListPage.routeName,
+                              SearchProductListScreen.routeName,
                             );
                           },
                         ),

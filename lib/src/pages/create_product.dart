@@ -36,7 +36,7 @@ class _CreateProductState extends State<CreateProduct> {
   late final ProductCubit _productCubit;
   final _formKey = GlobalKey<FormState>();
   late ProductFormInput _formInput;
-  late final AudioCache _audioCache;
+  final AudioCache _audioCache = AudioCache();
   late final ImagePicker _picker;
   bool _showLoader = false;
   bool gstSwitch = false;
@@ -349,7 +349,6 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent),
-   
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -468,14 +467,16 @@ class _CreateProductState extends State<CreateProduct> {
                     ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
-    label: "Quantity",
-    value: _formInput.quantity != null ? _formInput.quantity : "",
-    inputType: TextInputType.number,
-    onChanged: (e) {
-        _formInput.quantity = e;
-    },
-    validator: (e) => null,
-),
+                      label: "Quantity",
+                      value: _formInput.quantity != null
+                          ? _formInput.quantity
+                          : "",
+                      inputType: TextInputType.number,
+                      onChanged: (e) {
+                        _formInput.quantity = e;
+                      },
+                      validator: (e) => null,
+                    ),
                     const Divider(color: Colors.transparent),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

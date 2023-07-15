@@ -6,6 +6,7 @@ import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/products_list.dart';
+import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -108,7 +109,7 @@ class _CreateSaleState extends State<CreateSale> {
                   onTap: () async {
                     final result = await Navigator.pushNamed(
                       context,
-                      ProductsListPage.routeName,
+                      SearchProductListScreen.routeName,
                       arguments: const ProductListPageArgs(
                         isSelecting: true,
                         orderType: OrderType.sale,
@@ -211,7 +212,7 @@ class _CreateSaleState extends State<CreateSale> {
     );
     const _type = FeedbackType.success;
     Vibrate.feedback(_type);
-    // await _audioCache.play('audio/beep.mp3');
+    //await _audioCache.play('audio/beep.mp3');
     try {
       /// Fetch product by barcode
       final res = await const ProductService().getProductByBarcode(barcode);
