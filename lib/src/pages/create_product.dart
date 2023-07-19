@@ -328,7 +328,15 @@ class _CreateProductState extends State<CreateProduct> {
                             value: _formInput.sellingPrice,
                             inputType: TextInputType.number,
                             onChanged: (e) {
-                              _formInput.sellingPrice = e;
+                              if (e.isNotEmpty) {
+                                _formInput.sellingPrice = e;
+                              }
+                            },
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return "Please enter selling price";
+                              }
+                              return null;
                             },
                           ),
                         ),
@@ -508,7 +516,9 @@ class _CreateProductState extends State<CreateProduct> {
                       title: "Save",
                       onTap: () {
                         _formKey.currentState?.save();
+
                         print(_formInput.purchasePrice);
+
                         if (_formKey.currentState?.validate() ?? false) {
                           _productCubit.createProduct(_formInput);
                         }

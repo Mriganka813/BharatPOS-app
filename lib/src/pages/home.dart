@@ -7,6 +7,7 @@ import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/online_order_list.dart';
 
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
@@ -16,6 +17,7 @@ import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/auth.dart';
+import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/widgets/bulk_upload.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,6 +38,7 @@ class _HomePageState extends State<HomePage> {
     // _checkUpdate();
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
+    initializeService();
   }
 
   Future<void> _checkUpdate() async {
@@ -379,7 +382,9 @@ class OnlineStoreWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(context, OnlineOrderList.routeName);
+      },
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -397,7 +402,7 @@ class OnlineStoreWidget extends StatelessWidget {
               ),
               SizedBox(width: 35.0),
               Text(
-                "Coming Soon",
+                "Online Store",
               ),
             ],
           ),

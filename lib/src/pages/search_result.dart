@@ -150,7 +150,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
               FloatingActionButton(
                 onPressed: () async {
                   _productCubit.getProducts(_currentPage, _limit);
-                  await Navigator.pushNamed(context, '/create-product');
+
+                  // await Navigator.pushNamed(context, '/create-product');
                   _productCubit.getProducts(_currentPage, _limit);
                 },
                 backgroundColor: ColorsConst.primaryColor,

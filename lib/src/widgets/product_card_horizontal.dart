@@ -76,7 +76,7 @@ class ProductCardHorizontal extends StatelessWidget {
                       children: [
                         Text('Available'),
                         Text(
-                          product.quantity! > 9999
+                          product.quantity == null || product.quantity! > 9999
                               ? 'Unlimited'
                               : '${product.quantity}',
                         ),

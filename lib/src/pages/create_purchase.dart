@@ -105,7 +105,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                           .map((e) => OrderItemInput(
                                 product: e,
                                 quantity: 1,
-                                price: 0,
+                                price: e.purchasePrice,
                               ))
                           .toList();
                       setState(() {
