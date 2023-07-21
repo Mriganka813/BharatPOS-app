@@ -59,7 +59,13 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   //}
 
   Future<void> fetchSearchedProducts() async {
-    prodList = prodList + await searchProductServices.allproduct(page, _limit);
+    var newProducts =
+        await searchProductServices.allproduct(_currentPage, _limit);
+    for (var product in newProducts) {
+      if (!prodList.contains(product)) {
+        prodList.add(product);
+      }
+    }
     print("searched products: $prodList");
     setState(() {});
   }
@@ -68,7 +74,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     if (isLoadingMore) return;
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-      page++;
+      _currentPage++;
       setState(() {
         isLoadingMore = true;
       });
@@ -151,7 +157,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                 onPressed: () async {
                   _productCubit.getProducts(_currentPage, _limit);
 
-                  // await Navigator.pushNamed(context, '/create-product');
+                  await Navigator.pushNamed(context, '/create-product');
                   _productCubit.getProducts(_currentPage, _limit);
                 },
                 backgroundColor: ColorsConst.primaryColor,
@@ -206,6 +212,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                                 prodList[index],
                                                 _currentPage,
                                                 _limit);
+                                            prodList.removeAt(index);
                                           },
                                           onEdit: () async {
                                             await Navigator.pushNamed(

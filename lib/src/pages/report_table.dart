@@ -337,9 +337,25 @@ class _ReportTableState extends State<ReportTable> {
   }
 
   String total() {
-    return widget.args.orders!
-        .fold<int>(0, (acc, e) => acc += e.total!)
-        .toString();
+    for (int i = 0; i < totalsplist.length; i++) {
+      print(totalsplist[i]);
+    }
+    int sum = 0;
+
+    totalsplist.forEach(
+      (element) {
+        var sum_int = 0;
+        if (element == "") {
+          sum_int = 0;
+        } else {
+          var sum1 = double.parse(element);
+          sum_int = sum1.toInt();
+        }
+        sum += sum_int;
+      },
+    );
+    print(sum);
+    return sum.toString();
   }
 
   Future<void> sharePDF() async {

@@ -395,12 +395,22 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          CustomButton(
-                              title: 'Accept',
-                              onTap: () => orderAccept(orderId!, index)),
-                          CustomButton(
-                              title: 'Reject',
-                              onTap: () => orderReject(orderId!, index)),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.green),
+                            ),
+                            onPressed: () => orderAccept(orderId!, index),
+                            child: Text('Accept'),
+                          ),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(Colors.red),
+                            ),
+                            onPressed: () => orderReject(orderId!, index),
+                            child: Text('Reject'),
+                          )
                         ],
                       )
                   ],
