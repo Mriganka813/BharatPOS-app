@@ -212,7 +212,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                                 prodList[index],
                                                 _currentPage,
                                                 _limit);
-                                            prodList.removeAt(index);
+                                            setState(() {
+                                              prodList.removeAt(index);
+                                            });
                                           },
                                           onEdit: () async {
                                             await Navigator.pushNamed(
@@ -220,6 +222,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                               CreateProduct.routeName,
                                               arguments: prodList[index].id,
                                             );
+
                                             _productCubit.getProducts(
                                                 _currentPage, _limit);
                                           },

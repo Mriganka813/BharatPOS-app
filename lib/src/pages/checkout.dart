@@ -303,7 +303,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if (curr.product!.baseSellingPriceGst! != "null")
             sum = double.parse(curr.product!.baseSellingPriceGst!);
           else {
-            sum = curr.product!.sellingPrice.toDouble();
+            sum = curr.product!.sellingPrice!.toDouble();
           }
           return (curr.quantity * sum) + acc;
         }

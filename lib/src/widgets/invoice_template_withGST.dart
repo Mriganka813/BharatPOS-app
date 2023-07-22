@@ -38,7 +38,7 @@ String invoiceTemplatewithGST(
 
           if (type == "OrderType.sale") {
             if (orderItem.product!.gstRate == "null") {
-              baseprice = orderItem.product!.sellingPrice.toDouble();
+              baseprice = orderItem.product!.sellingPrice!.toDouble();
               gstrate = "NA";
             } else {
               baseprice = double.parse(orderItem.product!.baseSellingPriceGst!);

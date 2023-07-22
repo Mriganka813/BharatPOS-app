@@ -263,7 +263,7 @@ class _ReportTableState extends State<ReportTable> {
         return DataRow(cells: [
           DataCell(Text("${product!.name}", style: TextStyle(fontSize: 6))),
           DataCell(Text("${product.quantity}", style: TextStyle(fontSize: 6))),
-          DataCell(Text("${product.quantity! * product.sellingPrice}",
+          DataCell(Text("${product.quantity! * product.sellingPrice!}",
               style: TextStyle(fontSize: 6))),
         ]);
       },

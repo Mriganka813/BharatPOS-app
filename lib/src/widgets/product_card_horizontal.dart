@@ -113,7 +113,7 @@ class ProductCardHorizontal extends StatelessWidget {
                         Text('Net Sell Price'),
                         Expanded(
                             child: Text(
-                          ' ₹ ${product.sellingPrice.toStringAsFixed(2)}',
+                          ' ₹ ${product.sellingPrice!.toStringAsFixed(2) ?? 0.0}',
                           maxLines: 1,
                         )),
                       ],
@@ -209,11 +209,12 @@ class ProductCardPurchase extends StatelessWidget {
                 .toStringAsFixed(2));
       }
       if (product.gstRate == "null") {
-        baseSellingPrice = double.parse((product.sellingPrice * productQuantity)
-            .toDouble()
-            .toStringAsFixed(2));
+        baseSellingPrice = double.parse(
+            (product.sellingPrice! * productQuantity)
+                .toDouble()
+                .toStringAsFixed(2));
       }
-      SellingPrice = (product.sellingPrice * productQuantity);
+      SellingPrice = (product.sellingPrice! * productQuantity);
     }
 
     if (type == "purchase") {

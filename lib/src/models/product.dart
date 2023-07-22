@@ -23,7 +23,7 @@ class Product {
   });
 
   String? name;
-  double sellingPrice;
+  double? sellingPrice;
   String? barCode;
   int? quantity;
   String? user;
