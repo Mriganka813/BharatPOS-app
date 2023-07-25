@@ -1,0 +1,79 @@
+name: shopos
+description: POS and accounts ledger.
+
+# Prevent accidental publishing to pub.dev.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+  flutter_html: 
+  audioplayers: 
+  cached_network_image: 
+  cookie_jar: 
+  # date_time_picker: 
+  dio: 
+  dio_cookie_manager: 
+  firebase_auth: 
+  firebase_core: 
+  flutter:
+    sdk: flutter
+  flutter_barcode_scanner: 
+  flutter_bloc: 
+  flutter_html_to_pdf: 
+  flutter_localization: 
+  # flutter_secure_storage: ^5.0.2
+  flutter_typeahead: 
+  flutter_vibrate: 
+  get_it: 
+  image_picker: 
+  in_app_update: 
+  intl: 
+  path_provider: 
+  pdf: 
+  permission_handler: 
+  pin_code_fields: 
+  share_plus: 
+  slidable_button: ^3.0.0+1
+  whatsapp_share2: 
+  rflutter_alert: 
+  flutter_svg:
+  flutter_pdfview: 
+  url_launcher: 
+  new_version: 
+  flutter_background_service: 
+  flutter_background_service_android: 
+  flutter_local_notifications:
+  switcher: 
+  screenshot: 
+  file_picker: 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.0
+  change_app_package_name: ^1.1.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/CUBE.png"
+
+flutter:
+  uses-material-design: true
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
+
+  assets:
+    # Add assets from the images directory to the application.
+    - assets/images/
+    - assets/audio/
+    - assets/icon/
+  fonts:
+    - family: CustomIcons
+      fonts:
+        - asset: assets/CustomIcons.ttf
