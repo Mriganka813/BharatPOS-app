@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -7,16 +6,12 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/api_v1.dart';
-import 'package:shopos/src/services/auth.dart';
 
-import '../blocs/home/home_cubit.dart';
 import '../config/const.dart';
 
 import '../models/online_order.dart';
 import 'order_services.dart';
-import 'order_status.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -53,6 +48,12 @@ Future<void> onStart(ServiceInstance service) async {
   final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
   final isAuthenticated = cookies.isNotEmpty;
   Timer.periodic(Duration(seconds: 10), (timer) async {
+    if (service is AndroidServiceInstance) {
+      if (await service.isForegroundService()) {
+        service.setForegroundNotificationInfo(
+            title: 'CUBE', content: 'Tap to view more');
+      }
+    }
     WidgetsFlutterBinding.ensureInitialized();
     try {
       final cj = await const ApiV1Service().initCookiesManager();

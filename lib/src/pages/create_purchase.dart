@@ -128,7 +128,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               ),
             ),
             const Divider(color: Colors.transparent),
-            SlidableButton(
+            HorizontalSlidableButton(
               width: double.maxFinite,
               buttonWidth: 100.0,
               color: Colors.green,
@@ -155,7 +155,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               ),
               height: 50,
               onChanged: (position) {
-                if (position == SlidableButtonPosition.right) {
+                if (position == SlidableButtonPosition.end) {
                   if (_orderItems.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(

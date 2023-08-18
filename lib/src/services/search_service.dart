@@ -7,7 +7,7 @@ class SearchProductServices {
   Future<List<Product>> searchproduct(String catagory) async {
     final response =
         await ApiV1Service.getRequest('/inventory/me?keyword=$catagory');
-    print(response.data);
+    print('search=${response.data}');
     return (response.data["inventories"] as List)
         .map((e) => Product.fromMap(e as Map<String, dynamic>))
         .toList();

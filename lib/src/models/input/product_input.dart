@@ -21,6 +21,7 @@ class ProductFormInput {
     this.basePurchasePriceGst,
     this.imageFile,
     this.sellerName,
+    this.available = true,
   });
 
   String? name;
@@ -40,6 +41,7 @@ class ProductFormInput {
   String? quantity;
   String? image;
   String? sellerName;
+  bool? available;
 
   bool gst;
   XFile? imageFile;
@@ -63,6 +65,7 @@ class ProductFormInput {
         if (gst) "baseSellingPrice": baseSellingPriceGst,
         if (gst) "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
+        "available": available ?? true,
       };
 
   factory ProductFormInput.fromMap(map) => ProductFormInput(
@@ -83,5 +86,6 @@ class ProductFormInput {
         baseSellingPriceGst: map['baseSellingPrice'].toString(),
         basePurchasePriceGst: map['basePurchasePrice'].toString(),
         sellerName: map['sellerName'].toString(),
+        available: map['available'] ?? true,
       );
 }

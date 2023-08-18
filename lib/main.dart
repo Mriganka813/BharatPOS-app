@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -6,14 +7,14 @@ import 'package:shopos/firebase_options.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
-import 'package:shopos/src/utils.dart';
 
 import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   locator.registerLazySingleton(() => GlobalServices());
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+      name: 'CUBE', options: DefaultFirebaseOptions.currentPlatform);
   await Permission.notification.isDenied.then((value) => {
         if (value) {Permission.notification.request()}
       });

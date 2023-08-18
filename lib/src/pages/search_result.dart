@@ -43,6 +43,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   int page = 0;
   int _currentPage = 1;
   int _limit = 20;
+  bool isAvailable = true;
 
   @override
   void initState() {
@@ -106,7 +107,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    // final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
         appBar: AppBar(
@@ -170,17 +171,21 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
             ],
           ),
         ),
-        body: prodList.length == 0
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Stack(children: [
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 60,
-                    ),
-                    Expanded(
+        body: Stack(children: [
+          Column(
+            children: [
+              SizedBox(
+                height: 60,
+              ),
+              prodList.length == 0
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 15),
+                        child: Text('No products found!'),
+                      ),
+                    )
+                  : Expanded(
                       child: ListView.separated(
                           separatorBuilder: (context, index) {
                             return const SizedBox(height: 5);
@@ -207,6 +212,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                       children: [
                                         ProductCardHorizontal(
                                           product: prodList[index],
+                                          isAvailable: isAvailable,
                                           onDelete: () {
                                             _productCubit.deleteProduct(
                                                 prodList[index],
@@ -257,30 +263,30 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                             }
                           }),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
 //               child: CustomTextField(
-                  child: CustomTextField(
-                    prefixIcon: const Icon(Icons.search),
-                    hintText: 'Search',
-                    onChanged: (String e) async {
-                      if (e.isNotEmpty) {
-                        prodList = await searchProductServices.searchproduct(e);
-                        print("searchbar running");
-                        setState(() {});
-                      }
-                    },
-                    // onsubmitted: (value) {
-                    //   Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         SearchProductListScreen(title: value!),
-                    //   ));
-                    // },
-                  ),
-                ),
-              ]));
+            child: CustomTextField(
+              prefixIcon: const Icon(Icons.search),
+              hintText: 'Search',
+              onChanged: (String e) async {
+                if (e.isNotEmpty) {
+                  prodList = await searchProductServices.searchproduct(e);
+
+                  print("searchbar running");
+                  setState(() {});
+                }
+              },
+              // onsubmitted: (value) {
+              //   Navigator.of(context).push(MaterialPageRoute(
+              //     builder: (context) =>
+              //         SearchProductListScreen(title: value!),
+              //   ));
+              // },
+            ),
+          ),
+        ]));
   }
 }

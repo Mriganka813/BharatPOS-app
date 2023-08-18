@@ -13,7 +13,6 @@ import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
-import 'package:slidable_button/slidable_button.dart';
 import 'package:switcher/core/switcher_size.dart';
 import 'package:switcher/switcher.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -635,6 +634,7 @@ class _SignUpPageState extends State<SignUpPage> {
     if (image == null) {
       return;
     }
+
     setState(() {
       _signUpInput.imageFile = image;
     });

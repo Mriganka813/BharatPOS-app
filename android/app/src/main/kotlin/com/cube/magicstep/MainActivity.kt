@@ -1,10 +1,16 @@
 package com.cube.magicstep
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
 import android.net.Uri
+import android.os.Build
 import android.telephony.PhoneNumberUtils
 import androidx.annotation.NonNull
+import com.cube.magicstep.R
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -12,7 +18,6 @@ import java.io.File
 
 class MainActivity : FlutterActivity() {
     private val channel = "native.magicstep.dev/share"
-
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -35,6 +40,18 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val soundUri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_ring)
+            val audioAttributes = AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .build()
+            val notificationChannel = NotificationChannel("your_channel_id", "your_channel_name", NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.setSound(soundUri, audioAttributes)
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
     }
 
     private fun sharePdfToWhatsapp(
@@ -55,19 +72,5 @@ class MainActivity : FlutterActivity() {
         )
         sendIntent.putExtra(Intent.EXTRA_TEXT, "Sample text")
         startActivity(sendIntent)
-//        if (file.exists()) {
-//            val uri =
-//                if (Build.VERSION.SDK_INT < 24) Uri.fromFile(file) else Uri.parse(file.path)
-//            val shareIntent = Intent().apply {
-//                action = Intent.ACTION_SEND
-//                type = "application/pdf"
-//                putExtra(Intent.EXTRA_STREAM, uri)
-//                putExtra(Intent.EXTRA_SUBJECT, subject)
-//                putExtra(Intent.EXTRA_TEXT, text)
-//
-//            }
-//            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//            startActivity(Intent.createChooser(shareIntent, shareText))
-//        }
     }
 }

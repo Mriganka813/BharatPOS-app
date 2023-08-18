@@ -520,6 +520,7 @@ class _CreateProductState extends State<CreateProduct> {
                         print(_formInput.purchasePrice);
 
                         if (_formKey.currentState?.validate() ?? false) {
+                          print(_formInput.available);
                           _productCubit.createProduct(_formInput);
                         }
                       },

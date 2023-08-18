@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:shopos/src/models/consumer_adrress.dart';
 
 class OnlineOrder {

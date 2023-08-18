@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/services/product_availability_service.dart';
 
-class ProductCardHorizontal extends StatelessWidget {
+class ProductCardHorizontal extends StatefulWidget {
   final Product product;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
@@ -10,7 +11,8 @@ class ProductCardHorizontal extends StatelessWidget {
   final VoidCallback? addQuantity;
   final int selectQuantity;
   final bool? isSelecting;
-  const ProductCardHorizontal({
+  bool isAvailable;
+  ProductCardHorizontal({
     Key? key,
     required this.product,
     required this.onDelete,
@@ -19,8 +21,15 @@ class ProductCardHorizontal extends StatelessWidget {
     this.addQuantity,
     this.reduceQuantity,
     this.selectQuantity = 0,
+    this.isAvailable = true,
   }) : super(key: key);
 
+  @override
+  State<ProductCardHorizontal> createState() => _ProductCardHorizontalState();
+}
+
+class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
+  ProductAvailabilityService productAvailability = ProductAvailabilityService();
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -39,9 +48,9 @@ class ProductCardHorizontal extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                  child: product.image != null
+                  child: widget.product.image != null
                       ? CachedNetworkImage(
-                          imageUrl: product.image!,
+                          imageUrl: widget.product.image!,
                           fit: BoxFit.cover,
                         )
                       : Image.asset('assets/images/image_placeholder.png'),
@@ -61,7 +70,7 @@ class ProductCardHorizontal extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         physics: BouncingScrollPhysics(),
                         child: Text(
-                          product.name ?? "",
+                          widget.product.name ?? "",
                           maxLines: 1,
                           softWrap: false,
                           overflow: TextOverflow.ellipsis,
@@ -76,15 +85,16 @@ class ProductCardHorizontal extends StatelessWidget {
                       children: [
                         Text('Available'),
                         Text(
-                          product.quantity == null || product.quantity! > 9999
+                          widget.product.quantity == null ||
+                                  widget.product.quantity! > 9999
                               ? 'Unlimited'
-                              : '${product.quantity}',
+                              : '${widget.product.quantity}',
                         ),
                       ],
                     ),
 
                     Visibility(
-                      visible: product.gstRate != "null",
+                      visible: widget.product.gstRate != "null",
                       child: Column(
                         children: [
                           const SizedBox(height: 10),
@@ -92,15 +102,15 @@ class ProductCardHorizontal extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text('Price'),
-                              Text('₹ ${product.baseSellingPriceGst}'),
+                              Text('₹ ${widget.product.baseSellingPriceGst}'),
                             ],
                           ),
                           const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('GST @${product.gstRate}%'),
-                              Text('₹ ${product.saleigst}'),
+                              Text('GST @${widget.product.gstRate}%'),
+                              Text('₹ ${widget.product.saleigst}'),
                             ],
                           ),
                         ],
@@ -113,9 +123,29 @@ class ProductCardHorizontal extends StatelessWidget {
                         Text('Net Sell Price'),
                         Expanded(
                             child: Text(
-                          ' ₹ ${product.sellingPrice!.toStringAsFixed(2) ?? 0.0}',
+                          ' ₹ ${widget.product.sellingPrice!.toStringAsFixed(2) ?? 0.0}',
                           maxLines: 1,
                         )),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Switch(
+                            value: widget.isAvailable,
+                            onChanged: (val) async {
+                              widget.isAvailable = val;
+                              if (widget.isAvailable == true) {
+                                await productAvailability.isProductAvailable(
+                                    widget.product.id!, 'active');
+                              } else {
+                                await productAvailability.isProductAvailable(
+                                    widget.product.id!, 'disable');
+                              }
+                              setState(() {});
+                            }),
                       ],
                     ),
 
@@ -143,9 +173,9 @@ class ProductCardHorizontal extends StatelessWidget {
                     child: const Icon(Icons.more_vert_rounded),
                     onSelected: (int e) {
                       if (e == 0) {
-                        onEdit();
+                        widget.onEdit();
                       } else if (e == 1) {
-                        onDelete();
+                        widget.onDelete();
                       }
                     },
                     itemBuilder: (BuildContext context) {

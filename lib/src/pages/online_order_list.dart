@@ -1,12 +1,7 @@
-import 'dart:async';
-
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-
-import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/online_order.dart';
 import '../services/order_services.dart';
@@ -44,7 +39,7 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
     orderHistory = await OrderServices.orderHistory();
     orderHistory = orderHistory.reversed.toList();
     orderLength = orderHistory.length;
-    print("histroy" + orderHistory.length.toString());
+    print("history" + orderHistory.length.toString());
 
     pendingData = orderHistory;
     allData = orderHistory;
@@ -119,8 +114,13 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
     pendingData = dateFilter.where((item) {
       DateTime createdAt =
           DateTime.parse(item.createdAt.toString().substring(0, 10));
-      return createdAt.isAfter(DateTime.parse(startDate)) &&
-          createdAt.isBefore(DateTime.parse(endDate));
+      return createdAt
+              .isAfter(DateTime.parse(startDate).subtract(Duration(days: 1))) &&
+          createdAt.isBefore(
+            DateTime.parse(endDate).add(
+              Duration(days: 1),
+            ),
+          );
     }).toList();
   }
 
@@ -154,7 +154,10 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+              color: Colors.blue,
+            ))
           : Column(
               children: [
                 SizedBox(
@@ -219,10 +222,9 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                                     lastDate: DateTime(2101));
 
                                 if (pickedDate != null) {
-                                  DateTime date =
-                                      pickedDate.subtract(Duration(days: 1));
                                   String formattedDate =
-                                      DateFormat('yyyy-MM-dd').format(date);
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate);
 
                                   setState(() {
                                     startDate = formattedDate;
@@ -239,29 +241,28 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                             width: width / 20,
                           ),
                           GestureDetector(
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2101));
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2101));
 
-                                if (pickedDate != null) {
-                                  DateTime date =
-                                      pickedDate.add(Duration(days: 1));
-                                  var formattedDate =
-                                      DateFormat('yyyy-MM-dd').format(date);
+                              if (pickedDate != null) {
+                                var formattedDate =
+                                    DateFormat('yyyy-MM-dd').format(pickedDate);
 
-                                  setState(() {
-                                    endDate = formattedDate;
-                                    if (startDate != 'Start date' &&
-                                        endDate != 'End date') {
-                                      dateFilterData();
-                                    }
-                                  });
-                                }
-                              },
-                              child: _datepickerWidget(endDate, height, width)),
+                                setState(() {
+                                  endDate = formattedDate;
+                                  if (startDate != 'Start date' &&
+                                      endDate != 'End date') {
+                                    dateFilterData();
+                                  }
+                                });
+                              }
+                            },
+                            child: _datepickerWidget(endDate, height, width),
+                          ),
                         ],
                       ),
                       visible: checkVisible,
@@ -332,7 +333,6 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.black,
-                              fontFamily: 'GilroyBold',
                               fontSize: height / 55,
                             ),
                           ),
@@ -344,7 +344,6 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                           date,
                           style: TextStyle(
                             color: Colors.grey,
-                            fontFamily: 'GilroyMedium',
                             fontSize: height / 55,
                           ),
                         ),
@@ -383,7 +382,6 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: height / 60,
-                            fontFamily: 'GilroyBold',
                           ),
                         ),
                       ],
@@ -412,7 +410,39 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                             child: Text('Reject'),
                           )
                         ],
-                      )
+                      ),
+                    Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Customer name :',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: height / 55,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            Text(
+                              '${pendingData[index].addresses!.name}',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: height / 55,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        ElevatedButton.icon(
+                            icon: Icon(Icons.phone),
+                            onPressed: () {
+                              int phoneNo =
+                                  pendingData[index].addresses!.phoneNumber!;
+                              _launchDialer(phoneNo);
+                            },
+                            label: Text('Call Customer')),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -421,6 +451,18 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
         },
       ),
     );
+  }
+
+  void _launchDialer(int phoneNo) async {
+    var phoneNumber = '+91$phoneNo'; // Replace with your desired phone number
+
+    final uri = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Could not launch $uri';
+    }
   }
 
   Widget _filterBox(Widget child, var height, var width) {

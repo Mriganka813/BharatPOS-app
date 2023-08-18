@@ -13,8 +13,11 @@ class ProductService {
       final image = MapEntry("image", await MultipartFile.fromFile(filePath));
       inputMap.files.add(image);
     }
+    print(inputMap);
+    print(input.available);
     final response =
         await ApiV1Service.postRequest('/inventory/new', formData: inputMap);
+    print(response.data);
     print(response.toString());
     return response;
   }

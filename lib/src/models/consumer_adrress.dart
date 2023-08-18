@@ -6,7 +6,7 @@ class ConsumerAddress {
   String? state;
   String? city;
   String? country;
-  String? phoneNumber;
+  int? phoneNumber;
   String? pinCode;
   String? streetAddress;
   String? additionalInfo;
@@ -31,7 +31,7 @@ class ConsumerAddress {
     name = json['name'];
     state = json['state'];
     city = json['city'];
-    phoneNumber = json['phoneNumber'].toString();
+    phoneNumber = json['phoneNumber'];
     pinCode = json['pinCode'];
     streetAddress = json['streetAddress'];
     additionalInfo = json['additionalInfo'];
