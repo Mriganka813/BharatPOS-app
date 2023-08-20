@@ -50,6 +50,7 @@ dependencies:
   switcher: 
   screenshot: 
   file_picker: 
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:
