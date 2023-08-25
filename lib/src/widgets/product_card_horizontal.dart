@@ -33,7 +33,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 200,
+      height: 220,
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -127,6 +127,42 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                           maxLines: 1,
                         )),
                       ],
+                    ),
+
+                    Visibility(
+                      visible: widget.product.batchNumber != null,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Batch no '),
+                              Expanded(
+                                  child: Text(
+                                '${widget.product.batchNumber}',
+                                maxLines: 1,
+                              )),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    Visibility(
+                      visible: widget.product.expiryDate != null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Expiry date '),
+                          Expanded(
+                              child: Text(
+                            '${widget.product.expiryDate}',
+                            maxLines: 1,
+                          )),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 10),
 

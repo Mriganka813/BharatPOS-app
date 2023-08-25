@@ -26,4 +26,13 @@ class UserService {
     }
     await AuthService().saveCookie(response);
   }
+
+  /// shop open or close
+  static shopStatus() async {
+    final response = await ApiV1Service.getRequest('/change/shop-status');
+    if ((response.statusCode ?? 400) > 300) {
+      return null;
+    }
+    print(response.data);
+  }
 }

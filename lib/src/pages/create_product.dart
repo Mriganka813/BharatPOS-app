@@ -320,6 +320,14 @@ class _CreateProductState extends State<CreateProduct> {
                       },
                     ),
                     const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Batch number",
+                      value: _formInput.batchNumber,
+                      onChanged: (e) {
+                        _formInput.batchNumber = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
                     Row(
                       children: [
                         Expanded(
@@ -474,6 +482,25 @@ class _CreateProductState extends State<CreateProduct> {
                       ),
                     ),
                     const Divider(color: Colors.transparent),
+                    CustomDatePicker(
+                      label: 'Expiry Date',
+                      hintText: 'Select expiry date',
+                      onChanged: (DateTime value) {
+                        setState(() {
+                          _formInput.expiryDate = value;
+                          print(value);
+                          ;
+                        });
+                      },
+                      onSave: (DateTime? value) {},
+                      value: _formInput.expiryDate != null
+                          ? _formInput.expiryDate
+                          : null,
+                      validator: (DateTime? value) => null,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(Duration(days: 365 * 3)),
+                    ),
+                    const Divider(color: Colors.transparent),
                     CustomTextField(
                       label: "Quantity",
                       value: _formInput.quantity != null
@@ -521,6 +548,8 @@ class _CreateProductState extends State<CreateProduct> {
 
                         if (_formKey.currentState?.validate() ?? false) {
                           print(_formInput.available);
+                          print(_formInput.expiryDate);
+                          print(_formInput.batchNumber);
                           _productCubit.createProduct(_formInput);
                         }
                       },

@@ -7,6 +7,7 @@ class ProductService {
   const ProductService();
 
   Future<Response> createProduct(ProductFormInput input) async {
+    // print('exp=${input.expiryDate}');
     final inputMap = FormData.fromMap(input.toMap());
     final filePath = input.imageFile?.path ?? "";
     if (filePath.isNotEmpty) {

@@ -18,8 +18,10 @@ import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/background_service.dart';
+import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/widgets/bulk_upload.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
+import 'package:switcher/switcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
@@ -31,6 +33,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final HomeCubit _homeCubit;
+
+  bool shopOpen = true;
 
   ///
   @override
@@ -67,6 +71,24 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               appBar: AppBar(
                 title: Text(state.user.businessName ?? ""),
+                actions: [
+                  Switch(
+                      value: shopOpen,
+                      onChanged: (bool online) async {
+                        await UserService.shopStatus();
+                        shopOpen = online;
+                        setState(() {});
+                      }),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                    ).copyWith(right: 10),
+                    child: Text(
+                      shopOpen ? 'Online' : 'Offline',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
               ),
               drawer: Drawer(
                 child: SafeArea(

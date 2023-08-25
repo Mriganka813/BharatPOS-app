@@ -20,6 +20,8 @@ class Product {
     this.baseSellingPriceGst,
     this.basePurchasePriceGst,
     this.sellerName,
+    this.batchNumber,
+    this.expiryDate,
   });
 
   String? name;
@@ -42,29 +44,34 @@ class Product {
   String? purchaseigst;
   String? basePurchasePriceGst;
   String? sellerName;
+  String? batchNumber;
+  DateTime? expiryDate;
 
   factory Product.fromMap(Map<String, dynamic> json) => Product(
-        name: json["name"],
-        sellingPrice: double.parse(json["sellingPrice"].toString()) ?? 0.0,
-        barCode: json["barCode"],
-        quantity: json["quantity"],
-        purchasePrice: json['purchasePrice'] ?? 0,
-        user: json["user"],
-        image: json['image'],
-        id: json["_id"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        v: json["__v"],
-        gstRate: json['GSTRate'].toString(),
-        salecgst: json['saleCGST'].toString(),
-        saleigst: json['saleIGST'].toString(),
-        salesgst: json['saleSGST'].toString(),
-        baseSellingPriceGst: json['baseSellingPrice'].toString(),
-        purchasecgst: json['purchaseCGST'].toString(),
-        purchaseigst: json['purchaseIGST'].toString(),
-        purchasesgst: json['purchaseSGST'].toString(),
-        basePurchasePriceGst: json['basePurchasePrice'].toString(),
-        sellerName: json['sellerName'].toString(),
-      );
+      name: json["name"],
+      sellingPrice: double.parse(json["sellingPrice"].toString()) ?? 0.0,
+      barCode: json["barCode"],
+      quantity: json["quantity"],
+      purchasePrice: json['purchasePrice'] ?? 0,
+      user: json["user"],
+      image: json['image'],
+      id: json["_id"],
+      createdAt: DateTime.parse(json["createdAt"]),
+      v: json["__v"],
+      gstRate: json['GSTRate'].toString(),
+      salecgst: json['saleCGST'].toString(),
+      saleigst: json['saleIGST'].toString(),
+      salesgst: json['saleSGST'].toString(),
+      baseSellingPriceGst: json['baseSellingPrice'].toString(),
+      purchasecgst: json['purchaseCGST'].toString(),
+      purchaseigst: json['purchaseIGST'].toString(),
+      purchasesgst: json['purchaseSGST'].toString(),
+      basePurchasePriceGst: json['basePurchasePrice'].toString(),
+      sellerName: json['sellerName'].toString(),
+      batchNumber: json['batchNumber'] ?? null,
+      expiryDate: json['expiryDate'] != null
+          ? DateTime.parse((json['expiryDate']).toString().substring(0, 10))
+          : null);
 
   Map<String, dynamic> toMap() => {
         "name": name,
@@ -87,5 +94,7 @@ class Product {
         "purchaseIGST": purchaseigst,
         "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
+        "batchNumber": batchNumber,
+        "expiryDate": expiryDate,
       };
 }
