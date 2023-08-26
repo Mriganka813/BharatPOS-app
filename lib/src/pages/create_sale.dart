@@ -2,11 +2,14 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:provider/provider.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/search_result.dart';
+import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -53,6 +56,7 @@ class _CreateSaleState extends State<CreateSale> {
   @override
   Widget build(BuildContext context) {
     final _orderItems = _orderInput.orderItems ?? [];
+    final provider = Provider.of<Billing>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sales'),
@@ -82,15 +86,13 @@ class _CreateSaleState extends State<CreateSale> {
                             _onAdd(_orderItem);
                           },
                           onDelete: () {
-                            if (_orderItem.quantity == 1) {
-                              setState(() {
-                                _orderInput.orderItems?.removeAt(index);
-                              });
-                              return;
-                            }
-                            setState(() {
-                              _orderItem.quantity -= 1;
-                            });
+                            setState(
+                              () {
+                                _orderItem.quantity == 1
+                                    ? _orderInput.orderItems?.removeAt(index)
+                                    : _orderItem.quantity -= 1;
+                              },
+                            );
                           },
                           productQuantity: _orderItem.quantity,
                         );
@@ -184,14 +186,22 @@ class _CreateSaleState extends State<CreateSale> {
                     );
                     return;
                   }
+
+                  provider.addOrderInputItem(_orderInput, OrderType.sale);
+
                   Navigator.pushNamed(
                     context,
-                    CheckoutPage.routeName,
-                    arguments: CheckoutPageArgs(
-                      invoiceType: OrderType.sale,
-                      orderInput: _orderInput,
-                    ),
-                  );
+                    BillingListScreen.routeName,
+                  ).then((value) => _orderInput.orderItems?.clear());
+
+                  // Navigator.pushNamed(
+                  //   context,
+                  //   CheckoutPage.routeName,
+                  //   arguments: CheckoutPageArgs(
+                  //     invoiceType: OrderType.sale,
+                  //     orderInput: _orderInput,
+                  //   ),
+                  // );
                 }
               },
             ),

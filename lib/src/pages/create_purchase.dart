@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_product.dart';
 import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/search_result.dart';
+import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/product_card_horizontal.dart';
 import 'package:slidable_button/slidable_button.dart';
@@ -168,14 +171,22 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                     );
                     return;
                   }
+
+                  Provider.of<Billing>(context, listen: false)
+                      .addOrderInputItem(_orderInput, OrderType.purchase);
+
                   Navigator.pushNamed(
                     context,
-                    CheckoutPage.routeName,
-                    arguments: CheckoutPageArgs(
-                      invoiceType: OrderType.purchase,
-                      orderInput: _orderInput,
-                    ),
+                    BillingListScreen.routeName,
                   );
+                  // Navigator.pushNamed(
+                  //   context,
+                  //   CheckoutPage.routeName,
+                  //   arguments: CheckoutPageArgs(
+                  //     invoiceType: OrderType.purchase,
+                  //     orderInput: _orderInput,
+                  //   ),
+                  // );
                 }
               },
             ),

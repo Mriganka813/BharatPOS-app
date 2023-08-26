@@ -1006,7 +1006,7 @@ packages:
     source: hosted
     version: "3.7.3"
   provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: provider
       sha256: cdbe7530b12ecd9eb455bdaa2fcb8d4dad22e80b8afb4798b41479d5ce26847f
@@ -1021,6 +1021,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  qr_flutter:
+    dependency: transitive
+    description:
+      name: qr_flutter
+      sha256: "5095f0fc6e3f71d08adef8feccc8cea4f12eec18a2e31c2e8d82cb6019f4b097"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   rflutter_alert:
     dependency: "direct main"
     description:
@@ -1234,6 +1242,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.2"
+  upi_payment_qrcode_generator:
+    dependency: "direct main"
+    description:
+      name: upi_payment_qrcode_generator
+      sha256: cf6e53d71c57f18acb53e1c4a39331db21ee3c27388b7c1bc2f3260a8f471944
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   url_launcher:
     dependency: "direct main"
     description:

@@ -10,6 +10,7 @@ class UserService {
     var response;
     try {
       response = await ApiV1Service.getRequest('/me');
+      print(response);
     } catch (e) {
       print('cube token expired');
       await getNewToken();

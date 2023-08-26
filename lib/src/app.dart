@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_expense.dart';
@@ -116,6 +117,8 @@ class MyApp extends StatelessWidget {
                 return TermsAndConditionsPage();
               case OnlineOrderList.routeName:
                 return OnlineOrderList();
+              case BillingListScreen.routeName:
+                return BillingListScreen();
 
               case ReportTable.routeName:
                 return ReportTable(
