@@ -70,24 +70,32 @@ class _HomePageState extends State<HomePage> {
           if (state is HomeRender) {
             return Scaffold(
               appBar: AppBar(
+                // toolbarHeight: MediaQuery.of(context).size.height * 0.07,
                 title: Text(state.user.businessName ?? ""),
                 actions: [
-                  Switch(
-                      value: shopOpen,
-                      onChanged: (bool online) async {
-                        await UserService.shopStatus();
-                        shopOpen = online;
-                        setState(() {});
-                      }),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                    ).copyWith(right: 10),
-                    child: Text(
-                      shopOpen ? 'Online' : 'Offline',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 30,
+                        child: Switch(
+                            activeColor: Colors.green,
+                            value: shopOpen,
+                            onChanged: (bool status) async {
+                              await UserService.shopStatus();
+                              shopOpen = status;
+                              setState(() {});
+                            }),
+                      ),
+                      Text(
+                        shopOpen ? 'Online' : 'Offline',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  )
                 ],
               ),
               drawer: Drawer(

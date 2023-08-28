@@ -159,21 +159,22 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               height: 50,
               onChanged: (position) {
                 if (position == SlidableButtonPosition.end) {
-                  if (_orderItems.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          "Please select products before continuing",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                    return;
+                  // if (_orderItems.isEmpty) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(
+                  //       backgroundColor: Colors.red,
+                  //       content: Text(
+                  //         "Please select products before continuing",
+                  //         style: TextStyle(color: Colors.white),
+                  //       ),
+                  //     ),
+                  //   );
+                  //   return;
+                  // }
+                  if (_orderItems.isNotEmpty) {
+                    Provider.of<Billing>(context, listen: false)
+                        .addOrderInputItem(_orderInput, OrderType.purchase);
                   }
-
-                  Provider.of<Billing>(context, listen: false)
-                      .addOrderInputItem(_orderInput, OrderType.purchase);
 
                   Navigator.pushNamed(
                     context,

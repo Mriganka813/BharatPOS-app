@@ -174,20 +174,22 @@ class _CreateSaleState extends State<CreateSale> {
               height: 50,
               onChanged: (position) {
                 if (position == SlidableButtonPosition.end) {
-                  if (_orderItems.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          "Please select products before continuing",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                    return;
-                  }
+                  // if (_orderItems.isEmpty) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(
+                  //       backgroundColor: Colors.red,
+                  //       content: Text(
+                  //         "Please select products before continuing",
+                  //         style: TextStyle(color: Colors.white),
+                  //       ),
+                  //     ),
+                  //   );
+                  //   return;
+                  // }
 
-                  provider.addOrderInputItem(_orderInput, OrderType.sale);
+                  if (_orderItems.isNotEmpty) {
+                    provider.addOrderInputItem(_orderInput, OrderType.sale);
+                  }
 
                   Navigator.pushNamed(
                     context,

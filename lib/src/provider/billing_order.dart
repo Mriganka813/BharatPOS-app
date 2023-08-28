@@ -12,11 +12,19 @@ class Billing with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeBill(OrderInput input, OrderType orderType) {
+    int inputIdx = _orderInput.indexWhere((element) => element == input);
+
+    _orderInput.removeAt(inputIdx);
+    _ordertype.removeAt(inputIdx);
+    notifyListeners();
+  }
+
   List<OrderInput> getAllOrderInput() {
-    return _orderInput;
+    return _orderInput.reversed.toList();
   }
 
   List<OrderType> getAllOrderType() {
-    return _ordertype;
+    return _ordertype.reversed.toList();
   }
 }

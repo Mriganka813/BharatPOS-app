@@ -628,7 +628,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
                                 // to copy upi id
                                 SelectableText(
-                                  '6388415501@ybl',
+                                  _myUpiId!.upiID,
                                 )
                               ],
                             ),
