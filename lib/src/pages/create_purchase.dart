@@ -14,7 +14,9 @@ import 'package:slidable_button/slidable_button.dart';
 
 class CreatePurchase extends StatefulWidget {
   static const routeName = '/create_purchase';
-  const CreatePurchase({Key? key}) : super(key: key);
+  const CreatePurchase({Key? key, this.editOrderId}) : super(key: key);
+
+  final String? editOrderId;
 
   @override
   State<CreatePurchase> createState() => _CreatePurchaseState();
@@ -171,15 +173,17 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   //   );
                   //   return;
                   // }
+                  final provider = Provider.of<Billing>(context, listen: false);
                   if (_orderItems.isNotEmpty) {
-                    Provider.of<Billing>(context, listen: false)
-                        .addOrderInputItem(_orderInput, OrderType.purchase);
+                    provider.addPurchaseBill(
+                        _orderInput,
+                        widget.editOrderId == null
+                            ? DateTime.now().toString()
+                            : widget.editOrderId!);
                   }
 
-                  Navigator.pushNamed(
-                    context,
-                    BillingListScreen.routeName,
-                  );
+                  Navigator.pushNamed(context, BillingListScreen.routeName,
+                      arguments: OrderType.purchase);
                   // Navigator.pushNamed(
                   //   context,
                   //   CheckoutPage.routeName,

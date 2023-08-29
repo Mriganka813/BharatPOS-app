@@ -3,109 +3,191 @@ import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_purchase.dart';
+import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 
 class BillingListScreen extends StatefulWidget {
   static const routeName = '/billing-list';
-  const BillingListScreen({Key? key}) : super(key: key);
+  const BillingListScreen({Key? key, required this.orderType})
+      : super(key: key);
+
+  final OrderType orderType;
 
   @override
   State<BillingListScreen> createState() => _BillingListScreenState();
 }
 
 class _BillingListScreenState extends State<BillingListScreen> {
-  List<OrderInput> _orderInput = [];
-  List<OrderType> _orderType = [];
+  // List<OrderInput> _orderInput = [];
+  // List<OrderType> _orderType = [];
 
   // bool _isEdit = false;
 
-  getAllOrderInputList() async {
-    final provider = Provider.of<Billing>(context, listen: false);
-    _orderInput = provider.getAllOrderInput();
-    _orderType = provider.getAllOrderType();
-  }
+  // getAllOrderInputList() async {
+  //   final provider = Provider.of<Billing>(context, listen: false);
+  //   _orderInput = provider.getAllOrderInput();
+  //   _orderType = provider.getAllOrderType();
+  // }
 
   @override
   void initState() {
-    getAllOrderInputList();
+    // getAllOrderInputList();
     super.initState();
   }
 
   ///
-  String? totalPrice(int index) {
-    return _orderInput[index].orderItems?.fold<double>(
-      0,
-      (acc, curr) {
-        if (_orderType[index] == OrderType.purchase) {
-          return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
-        }
-        return (double.parse(curr.quantity.toString()) *
-                (curr.product?.sellingPrice ?? 1.0)) +
-            acc;
-      },
-    ).toString();
+  String? totalPrice(int index, Billing provider) {
+    return widget.orderType == OrderType.sale
+        ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (widget.orderType == OrderType.purchase) {
+              //   return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+              // }
+              return (double.parse(curr.quantity.toString()) *
+                      (curr.product?.sellingPrice ?? 1.0)) +
+                  acc;
+            },
+          ).toString()
+        : provider.purchaseBilling.values
+            .toList()[index]
+            .orderItems
+            ?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (widget.orderType == OrderType.purchase) {
+              return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+              // }
+              // return (double.parse(curr.quantity.toString()) *
+              //         (curr.product?.sellingPrice ?? 1.0)) +
+              //     acc;
+            },
+          ).toString();
   }
 
   ///
-  String? totalbasePrice(int index) {
-    return _orderInput[index].orderItems?.fold<double>(
-      0,
-      (acc, curr) {
-        if (_orderType[index] == OrderType.purchase) {
-          // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
-          double sum = 0;
-          if (curr.product!.basePurchasePriceGst! != "null")
-            sum = double.parse(curr.product!.basePurchasePriceGst!);
-          else {
-            sum = curr.product!.purchasePrice.toDouble();
-          }
-          return (curr.quantity * sum) + acc;
-        } else {
-          double sum = 0;
-          if (curr.product!.baseSellingPriceGst! != "null")
-            sum = double.parse(curr.product!.baseSellingPriceGst!);
-          else {
-            sum = curr.product!.sellingPrice!.toDouble();
-          }
-          return (curr.quantity * sum) + acc;
-        }
-      },
-    ).toStringAsFixed(2);
+  String? totalbasePrice(int index, Billing provider) {
+    return widget.orderType == OrderType.sale
+        ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (_orderType[index] == OrderType.purchase) {
+              //   // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+              //   double sum = 0;
+              //   if (curr.product!.basePurchasePriceGst! != "null")
+              //     sum = double.parse(curr.product!.basePurchasePriceGst!);
+              //   else {
+              //     sum = curr.product!.purchasePrice.toDouble();
+              //   }
+              //   return (curr.quantity * sum) + acc;
+              // }
+              // else {
+              double sum = 0;
+              if (curr.product!.baseSellingPriceGst! != "null")
+                sum = double.parse(curr.product!.baseSellingPriceGst!);
+              else {
+                sum = curr.product!.sellingPrice!.toDouble();
+              }
+              return (curr.quantity * sum) + acc;
+              // }
+            },
+          ).toStringAsFixed(2)
+        : provider.purchaseBilling.values
+            .toList()[index]
+            .orderItems
+            ?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (_orderType[index] == OrderType.purchase) {
+              // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) +
+              //     acc;
+              double sum = 0;
+              if (curr.product!.basePurchasePriceGst! != "null")
+                sum = double.parse(curr.product!.basePurchasePriceGst!);
+              else {
+                sum = curr.product!.purchasePrice.toDouble();
+              }
+              return (curr.quantity * sum) + acc;
+              // }
+              // }
+              // else {
+              // double sum = 0;
+              // if (curr.product!.baseSellingPriceGst! != "null")
+              //   sum = double.parse(curr.product!.baseSellingPriceGst!);
+              // else {
+              //   sum = curr.product!.sellingPrice!.toDouble();
+              // }
+              // return (curr.quantity * sum) + acc;
+              // }
+            },
+          ).toStringAsFixed(2);
   }
 
   ///
-  String? totalgstPrice(int index) {
-    return _orderInput[index].orderItems?.fold<double>(
-      0,
-      (acc, curr) {
-        if (_orderType[index] == OrderType.purchase) {
-          // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
-          double gstsum = 0;
-          if (curr.product!.purchaseigst! != "null")
-            gstsum = double.parse(curr.product!.purchaseigst!);
-          // else {
-          //   gstsum = curr.product!.sellingPrice;
-          // }
-          return double.parse(
-              ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
-        } else {
-          double gstsum = 0;
-          if (curr.product!.saleigst! != "null")
-            gstsum = double.parse(curr.product!.saleigst!);
-          // else {
-          //   gstsum = curr.product!.sellingPrice;
-          // }
-          return double.parse(
-              ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
-        }
-      },
-    ).toStringAsFixed(2);
+  String? totalgstPrice(int index, Billing provider) {
+    return widget.orderType == OrderType.sale
+        ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (_orderType[index] == OrderType.purchase) {
+              //   // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+              //   double gstsum = 0;
+              //   if (curr.product!.purchaseigst! != "null")
+              //     gstsum = double.parse(curr.product!.purchaseigst!);
+              //   // else {
+              //   //   gstsum = curr.product!.sellingPrice;
+              //   // }
+              //   return double.parse(
+              //       ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+              // } else {
+              double gstsum = 0;
+              if (curr.product!.saleigst! != "null")
+                gstsum = double.parse(curr.product!.saleigst!);
+              // else {
+              //   gstsum = curr.product!.sellingPrice;
+              // }
+              return double.parse(
+                  ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+              // }
+            },
+          ).toStringAsFixed(2)
+        : provider.purchaseBilling.values
+            .toList()[index]
+            .orderItems
+            ?.fold<double>(
+            0,
+            (acc, curr) {
+              // if (_orderType[index] == OrderType.purchase) {
+              // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
+              double gstsum = 0;
+              if (curr.product!.purchaseigst! != "null")
+                gstsum = double.parse(curr.product!.purchaseigst!);
+              // else {
+              //   gstsum = curr.product!.sellingPrice;
+              // }
+              return double.parse(
+                  ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+              // } else {
+              //   double gstsum = 0;
+              //   if (curr.product!.saleigst! != "null")
+              //     gstsum = double.parse(curr.product!.saleigst!);
+              //   // else {
+              //   //   gstsum = curr.product!.sellingPrice;
+              //   // }
+              //   return double.parse(
+              //       ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
+              // }
+            },
+          ).toStringAsFixed(2);
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<Billing>(context);
+    final provider = Provider.of<Billing>(
+      context,
+    );
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context)
@@ -117,7 +199,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
         appBar: AppBar(
           title: Text('Billing orders'),
         ),
-        body: _orderInput.length == 0
+        body: (widget.orderType == OrderType.sale &&
+                    provider.salesBilling.length == 0) ||
+                (widget.orderType == OrderType.purchase &&
+                    provider.purchaseBilling.length == 0)
             ? Center(
                 child: Text(
                 'No bills are pending',
@@ -125,28 +210,41 @@ class _BillingListScreenState extends State<BillingListScreen> {
               ))
             : ListView.builder(
                 shrinkWrap: true,
-                itemCount: _orderInput.length,
+                itemCount: widget.orderType == OrderType.sale
+                    ? provider.salesBilling.length
+                    : provider.purchaseBilling.length,
                 itemBuilder: (context, index) => GestureDetector(
-                  // onLongPress: () {
-                  //   showDialog(
-                  //       context: context,
-                  //       builder: (ctx) {
-                  //         return AlertDialog(
-                  //           title: InkWell(
-                  //               onTap: () {
-                  //                 Navigator.of(context).pop();
-                  //               },
-                  //               child: Text('Edit')),
-                  //         );
-                  //       });
-                  // },
+                  onLongPress: () {
+                    showDialog(
+                        context: context,
+                        builder: (ctx) {
+                          return AlertDialog(
+                            title: InkWell(
+                                onTap: () {
+                                  widget.orderType == OrderType.sale
+                                      ? Navigator.pushNamed(
+                                          context, CreateSale.routeName,
+                                          arguments: provider.salesBilling.keys
+                                              .toList()[index])
+                                      : Navigator.pushNamed(
+                                          context, CreatePurchase.routeName,
+                                          arguments: provider
+                                              .purchaseBilling.keys
+                                              .toList()[index]);
+                                },
+                                child: Text('Edit')),
+                          );
+                        });
+                  },
                   onTap: () {
                     Navigator.pushNamed(
                       context,
                       CheckoutPage.routeName,
                       arguments: CheckoutPageArgs(
-                        invoiceType: _orderType[index],
-                        orderInput: _orderInput[index],
+                        invoiceType: widget.orderType,
+                        orderInput: widget.orderType == OrderType.sale
+                            ? provider.salesBilling.values.toList()[index]
+                            : provider.purchaseBilling.values.toList()[index],
                       ),
                     );
                   },
@@ -178,10 +276,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
                       return _showDialog();
                     },
                     onDismissed: (direction) async {
-                      provider.removeBill(
-                          _orderInput[index], _orderType[index]);
-                      _orderInput.removeAt(index);
-                      _orderType.removeAt(index);
+                      widget.orderType == OrderType.sale
+                          ? provider.removeSalesBillItems(
+                              provider.salesBilling.keys.toList()[index])
+                          : provider.removePurchaseBillItems(
+                              provider.purchaseBilling.keys.toList()[index]);
+
                       setState(() {});
                     },
                     child: Card(
@@ -203,7 +303,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Sub Total'),
-                                Text('₹ ${totalbasePrice(index)}'),
+                                Text('₹ ${totalbasePrice(index, provider)}'),
                               ],
                             ),
                             const SizedBox(height: 5),
@@ -212,7 +312,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Tax GST'),
-                                Text('₹ ${totalgstPrice(index)}'),
+                                Text('₹ ${totalgstPrice(index, provider)}'),
                               ],
                             ),
                             const SizedBox(height: 5),
@@ -232,7 +332,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 Text('Grand Total'),
                                 Text(
-                                  '₹ ${totalPrice(index)}',
+                                  '₹ ${totalPrice(index, provider)}',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ],

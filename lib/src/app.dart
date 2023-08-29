@@ -92,9 +92,13 @@ class MyApp extends StatelessWidget {
                 return CreatePartyPage(
                     args: settings.arguments as CreatePartyArguments);
               case CreateSale.routeName:
-                return const CreateSale();
+                return CreateSale(
+                  editOrderId: settings.arguments as String?,
+                );
               case CreatePurchase.routeName:
-                return const CreatePurchase();
+                return CreatePurchase(
+                  editOrderId: settings.arguments as String?,
+                );
               case CheckoutPage.routeName:
                 return CheckoutPage(
                   args: settings.arguments as CheckoutPageArgs,
@@ -118,7 +122,9 @@ class MyApp extends StatelessWidget {
               case OnlineOrderList.routeName:
                 return OnlineOrderList();
               case BillingListScreen.routeName:
-                return BillingListScreen();
+                return BillingListScreen(
+                  orderType: settings.arguments as OrderType,
+                );
 
               case ReportTable.routeName:
                 return ReportTable(

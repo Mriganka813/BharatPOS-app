@@ -20,7 +20,9 @@ import '../services/product.dart';
 
 class CreateSale extends StatefulWidget {
   static const routeName = '/create_sale';
-  const CreateSale({Key? key}) : super(key: key);
+  const CreateSale({Key? key, this.editOrderId}) : super(key: key);
+
+  final String? editOrderId;
 
   @override
   State<CreateSale> createState() => _CreateSaleState();
@@ -188,13 +190,16 @@ class _CreateSaleState extends State<CreateSale> {
                   // }
 
                   if (_orderItems.isNotEmpty) {
-                    provider.addOrderInputItem(_orderInput, OrderType.sale);
+                    print('orderid: ${widget.editOrderId}');
+                    provider.addSalesBill(
+                        _orderInput,
+                        widget.editOrderId == null
+                            ? DateTime.now().toString()
+                            : widget.editOrderId!);
                   }
 
-                  Navigator.pushNamed(
-                    context,
-                    BillingListScreen.routeName,
-                  ).then((value) => _orderInput.orderItems?.clear());
+                  Navigator.pushNamed(context, BillingListScreen.routeName,
+                      arguments: OrderType.sale);
 
                   // Navigator.pushNamed(
                   //   context,
