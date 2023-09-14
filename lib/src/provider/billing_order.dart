@@ -24,7 +24,7 @@ class Billing with ChangeNotifier {
       _salesBilling.update(
           orderId,
           (existingOrder) => OrderInput(
-              orderItems: existingOrder.orderItems! + input.orderItems!,
+              orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
               party: existingOrder.party,
               user: existingOrder.user));
@@ -47,7 +47,7 @@ class Billing with ChangeNotifier {
       _purchaseBilling.update(
           orderId,
           (existingOrder) => OrderInput(
-              orderItems: existingOrder.orderItems! + input.orderItems!,
+              orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
               party: existingOrder.party,
               user: existingOrder.user));

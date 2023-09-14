@@ -5,7 +5,8 @@ import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_product.dart';
-import 'package:shopos/src/pages/products_list.dart';
+import 'package:shopos/src/pages/create_sale.dart';
+// import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -14,9 +15,9 @@ import 'package:slidable_button/slidable_button.dart';
 
 class CreatePurchase extends StatefulWidget {
   static const routeName = '/create_purchase';
-  const CreatePurchase({Key? key, this.editOrderId}) : super(key: key);
+  CreatePurchase({Key? key, this.args}) : super(key: key);
 
-  final String? editOrderId;
+  BillingPageArgs? args;
 
   @override
   State<CreatePurchase> createState() => _CreatePurchaseState();
@@ -29,7 +30,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
   void initState() {
     super.initState();
     _orderInput = OrderInput(
-      orderItems: [],
+      orderItems: widget.args == null ? [] : widget.args!.editOrders,
     );
   }
 
@@ -177,9 +178,9 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   if (_orderItems.isNotEmpty) {
                     provider.addPurchaseBill(
                         _orderInput,
-                        widget.editOrderId == null
+                        widget.args?.orderId == null
                             ? DateTime.now().toString()
-                            : widget.editOrderId!);
+                            : widget.args!.orderId!);
                   }
 
                   Navigator.pushNamed(context, BillingListScreen.routeName,

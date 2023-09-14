@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/auth.dart';
 
@@ -11,6 +11,7 @@ class UserService {
     try {
       response = await ApiV1Service.getRequest('/me');
       print(response);
+      getNewToken();
     } catch (e) {
       print('cube token expired');
       await getNewToken();

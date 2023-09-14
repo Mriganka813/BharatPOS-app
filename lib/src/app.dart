@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shopos/src/models/order.dart';
+import 'package:in_app_update/in_app_update.dart';
+// import 'package:shopos/src/models/input/order_input.dart';
+// import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
@@ -18,7 +20,7 @@ import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
-import 'package:shopos/src/pages/products_list.dart';
+// import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/pages/search_result.dart';
@@ -28,12 +30,42 @@ import 'package:shopos/src/pages/splash.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:upgrader/upgrader.dart';
 
 /// The Widget that configures your application.
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isUpdateAvailable = false;
+  late AppUpdateInfo update;
+
+  @override
+  void initState() {
+    super.initState();
+    checkForUpdate();
+  }
+
+  checkForUpdate() async {
+    update = await InAppUpdate.checkForUpdate();
+    if (update.updateAvailability == UpdateAvailability.updateAvailable) {
+      isUpdateAvailable = true;
+    }
+    // // if (update.immediateUpdateAllowed) {
+    // //   await InAppUpdate.startFlexibleUpdate();
+    // //   await InAppUpdate.completeFlexibleUpdate();
+    // //   return;
+    // // }
+    // await InAppUpdate.performImmediateUpdate();
+
+    // showUpdateRequiredDialog();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +105,20 @@ class MyApp extends StatelessWidget {
               case SignUpPage.routeName:
                 return const SignUpPage();
               case HomePage.routeName:
-                return const HomePage();
+                return isUpdateAvailable
+                    ? UpgradeAlert(
+                        upgrader: Upgrader(
+                          showIgnore: false,
+                          canDismissDialog: false,
+                          showLater: false,
+                          debugDisplayOnce: true,
+                          // debugDisplayAlways: true,
+                          showReleaseNotes: false,
+                          durationUntilAlertAgain: Duration(seconds: 2),
+                          //willDisplayUpgrade: ({appStoreVersion, required display, installedVersion, minAppVersion}) => ,
+                        ),
+                        child: const HomePage())
+                    : HomePage();
               case SearchProductListScreen.routeName:
                 return SearchProductListScreen(
                   args: settings.arguments as ProductListPageArgs?,
@@ -93,12 +138,11 @@ class MyApp extends StatelessWidget {
                     args: settings.arguments as CreatePartyArguments);
               case CreateSale.routeName:
                 return CreateSale(
-                  editOrderId: settings.arguments as String?,
+                  args: settings.arguments as BillingPageArgs?,
                 );
               case CreatePurchase.routeName:
                 return CreatePurchase(
-                  editOrderId: settings.arguments as String?,
-                );
+                    args: settings.arguments as BillingPageArgs?);
               case CheckoutPage.routeName:
                 return CheckoutPage(
                   args: settings.arguments as CheckoutPageArgs,

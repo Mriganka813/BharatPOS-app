@@ -224,13 +224,23 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                   widget.orderType == OrderType.sale
                                       ? Navigator.pushNamed(
                                           context, CreateSale.routeName,
-                                          arguments: provider.salesBilling.keys
-                                              .toList()[index])
+                                          arguments: BillingPageArgs(
+                                              orderId: provider.salesBilling.keys
+                                                  .toList()[index],
+                                              editOrders: provider
+                                                  .salesBilling.values
+                                                  .toList()[index]
+                                                  .orderItems))
                                       : Navigator.pushNamed(
                                           context, CreatePurchase.routeName,
-                                          arguments: provider
-                                              .purchaseBilling.keys
-                                              .toList()[index]);
+                                          arguments: BillingPageArgs(
+                                              orderId: provider
+                                                  .purchaseBilling.keys
+                                                  .toList()[index],
+                                              editOrders: provider
+                                                  .purchaseBilling.values
+                                                  .toList()[index]
+                                                  .orderItems));
                                 },
                                 child: Text('Edit')),
                           );
@@ -242,6 +252,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
                       CheckoutPage.routeName,
                       arguments: CheckoutPageArgs(
                         invoiceType: widget.orderType,
+                        orderId: widget.orderType == OrderType.sale
+                            ? provider.salesBilling.keys.toList()[index]
+                            : provider.purchaseBilling.keys.toList()[index],
                         orderInput: widget.orderType == OrderType.sale
                             ? provider.salesBilling.values.toList()[index]
                             : provider.purchaseBilling.values.toList()[index],

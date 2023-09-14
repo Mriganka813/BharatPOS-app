@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/online_order.dart';
@@ -398,7 +399,9 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
                               backgroundColor: MaterialStateProperty.all<Color>(
                                   Colors.green),
                             ),
-                            onPressed: () => orderAccept(orderId!, index),
+                            onPressed: () async {
+                              await _showDialog(orderId!, index);
+                            },
                             child: Text('Accept'),
                           ),
                           ElevatedButton(
@@ -463,6 +466,46 @@ class _OnlineOrderListState extends State<OnlineOrderList> {
     } else {
       throw 'Could not launch $uri';
     }
+  }
+
+  _showDialog(String orderId, int index) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      useSafeArea: true,
+      builder: (context) => AlertDialog(
+        title: Text('Paid status'),
+        content: Text('Please confirm that payment is done?'),
+        actions: [
+          DialogButton(
+              child: Text(
+                'Paid',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18),
+              ),
+              onPressed: () async {
+                await orderStatus.isPaid(orderId, "paid");
+                orderAccept(orderId, index);
+                Navigator.of(context).pop();
+              }),
+          DialogButton(
+              child: Text(
+                'Not paid',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18),
+              ),
+              onPressed: () async {
+                await orderStatus.isPaid(orderId, "unpaid");
+                orderAccept(orderId, index);
+                Navigator.of(context).pop();
+              }),
+        ],
+      ),
+    );
   }
 
   Widget _filterBox(Widget child, var height, var width) {

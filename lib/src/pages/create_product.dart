@@ -19,7 +19,7 @@ import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:switcher/core/switcher_size.dart';
 import 'package:switcher/switcher.dart';
 import 'package:shopos/src/widgets/custom_date_picker.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 import '../blocs/product/product_cubit.dart';
 
@@ -489,7 +489,6 @@ class _CreateProductState extends State<CreateProduct> {
                         setState(() {
                           _formInput.expiryDate = value;
                           print(value);
-                          ;
                         });
                       },
                       onSave: (DateTime? value) {},

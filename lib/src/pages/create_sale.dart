@@ -7,7 +7,7 @@ import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
-import 'package:shopos/src/pages/products_list.dart';
+// import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/global.dart';
@@ -18,11 +18,18 @@ import 'package:slidable_button/slidable_button.dart';
 
 import '../services/product.dart';
 
+class BillingPageArgs {
+  final String? orderId;
+  final List<OrderItemInput>? editOrders;
+
+  BillingPageArgs({this.orderId, this.editOrders});
+}
+
 class CreateSale extends StatefulWidget {
   static const routeName = '/create_sale';
-  const CreateSale({Key? key, this.editOrderId}) : super(key: key);
+  CreateSale({Key? key, this.args}) : super(key: key);
 
-  final String? editOrderId;
+  BillingPageArgs? args;
 
   @override
   State<CreateSale> createState() => _CreateSaleState();
@@ -39,7 +46,7 @@ class _CreateSaleState extends State<CreateSale> {
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
     _orderInput = OrderInput(
-      orderItems: [],
+      orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
   }
 
@@ -190,12 +197,12 @@ class _CreateSaleState extends State<CreateSale> {
                   // }
 
                   if (_orderItems.isNotEmpty) {
-                    print('orderid: ${widget.editOrderId}');
+                    print('orderid: ${widget.args?.orderId}');
                     provider.addSalesBill(
                         _orderInput,
-                        widget.editOrderId == null
+                        widget.args?.orderId == null
                             ? DateTime.now().toString()
-                            : widget.editOrderId!);
+                            : widget.args!.orderId!);
                   }
 
                   Navigator.pushNamed(context, BillingListScreen.routeName,

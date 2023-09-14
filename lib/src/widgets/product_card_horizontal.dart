@@ -33,7 +33,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 220,
+      height: MediaQuery.of(context).size.height * 0.31,
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(

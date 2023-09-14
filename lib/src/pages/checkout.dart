@@ -6,7 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
@@ -14,6 +17,7 @@ import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
@@ -34,9 +38,11 @@ enum OrderType { purchase, sale }
 class CheckoutPageArgs {
   final OrderType invoiceType;
   final OrderInput orderInput;
+  final String orderId;
   const CheckoutPageArgs({
     required this.invoiceType,
     required this.orderInput,
+    required this.orderId,
   });
 }
 
@@ -61,6 +67,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   UPIDetails? _myUpiId;
   bool _isLoading = false;
   bool _isUPI = false;
+  String date = '';
 
   ///
   @override
@@ -72,6 +79,60 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
     _checkoutCubit = CheckoutCubit();
     _typeAheadController = TextEditingController();
+    fetchNTPTime();
+  }
+
+  Future<void> fetchNTPTime() async {
+    DateTime currentTime;
+
+    try {
+      currentTime = await NTP.now();
+    } catch (e) {
+      currentTime = DateTime.now();
+    }
+
+    String day;
+    String month;
+    String hour;
+    String minute;
+    String second;
+
+    // for day 0-9
+    if (currentTime.day < 10) {
+      day = '0${currentTime.day}';
+    } else {
+      day = '${currentTime.day}';
+    }
+
+    // for month 0-9
+    if (currentTime.month < 10) {
+      month = '0${currentTime.month}';
+    } else {
+      month = '${currentTime.month}';
+    }
+
+    // for hour 0-9
+    if (currentTime.hour < 10) {
+      hour = '0${currentTime.hour}';
+    } else {
+      hour = '${currentTime.hour}';
+    }
+
+    // for minute
+    if (currentTime.minute < 10) {
+      minute = '0${currentTime.minute}';
+    } else {
+      minute = '${currentTime.minute}';
+    }
+
+    // for seconds 0-9
+    if (currentTime.second < 10) {
+      second = '0${currentTime.second}';
+    } else {
+      second = '${currentTime.second}';
+    }
+
+    date = '${day}${month}${currentTime.year}${hour}${minute}${second}';
   }
 
   getUserData() async {
@@ -117,6 +178,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
           children: [
             SizedBox(
               height: 10,
+            ),
+            ListTile(
+              title: const Text("Open pdf"),
+              onTap: () {
+                _onTapShare(2);
+              },
             ),
             ListTile(
               title: const Text("With GST"),
@@ -189,6 +256,36 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
+  void _viewPdf(User user) async {
+    final targetPath = await getExternalCacheDirectories();
+    const targetFileName = "Invoice";
+    final htmlContent = invoiceTemplatewithGST(
+      type: widget.args.invoiceType.toString(),
+      date: DateTime.now(),
+      companyName: user.businessName ?? "",
+      order: widget.args.orderInput,
+      user: user,
+      headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
+      total: totalPrice() ?? "",
+      subtotal: totalbasePrice() ?? "",
+      gsttotal: totalgstPrice() ?? "",
+      invoiceNum: date,
+    );
+    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+      htmlContent,
+      targetPath!.first.path,
+      targetFileName,
+    );
+
+    // for open pdf
+    try {
+      OpenFile.open(generatedPdfFile.path);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  ///
   void _viewPdfwithgst(User user) async {
     final targetPath = await getExternalCacheDirectories();
     const targetFileName = "Invoice";
@@ -202,12 +299,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
       total: totalPrice() ?? "",
       subtotal: totalbasePrice() ?? "",
       gsttotal: totalgstPrice() ?? "",
+      invoiceNum: date,
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
       htmlContent,
       targetPath!.first.path,
       targetFileName,
     );
+
+    // for open pdf
+    // OpenFile.open(generatedPdfFile.path);
+
     final input = _typeAheadController.value.text.trim();
     if (input.length == 10 && int.tryParse(input) != null) {
       await WhatsappShare.shareFile(
@@ -249,6 +351,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       user: user,
       headers: ["Name", "Qty", "Rate/Unit", "Amount"],
       total: totalPrice() ?? "",
+      invoiceNum: date,
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
       htmlContent,
@@ -687,7 +790,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
       final res = await UserService.me();
       if ((res.statusCode ?? 400) < 300) {
         final user = User.fromMap(res.data['user']);
-        type == 0 ? _viewPdfwithgst(user) : _viewPdfwithoutgst(user);
+        if (type == 0) _viewPdfwithgst(user);
+        if (type == 1) _viewPdfwithoutgst(user);
+        if (type == 2) _viewPdf(user);
       }
     } catch (_) {}
     Navigator.pop(context);
@@ -697,9 +802,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
       widget.args.invoiceType == OrderType.purchase
-          ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput)
-          : _checkoutCubit.createSalesOrder(widget.args.orderInput);
+          ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput, date)
+          : _checkoutCubit.createSalesOrder(widget.args.orderInput, date);
     }
+    final provider = Provider.of<Billing>(context, listen: false);
+    widget.args.invoiceType == OrderType.purchase
+        ? provider.removePurchaseBillItems(widget.args.orderId)
+        : provider.removeSalesBillItems(widget.args.orderId);
   }
 }
 

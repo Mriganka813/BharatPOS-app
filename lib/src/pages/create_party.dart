@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/party/party_cubit.dart';
 import 'package:shopos/src/models/input/party_input.dart';
-import 'package:shopos/src/models/party.dart';
+// import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';

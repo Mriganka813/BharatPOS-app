@@ -10,7 +10,7 @@ import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
-import 'package:shopos/src/widgets/custom_text_field.dart';
+// import 'package:shopos/src/widgets/custom_text_field.dart';
 
 class PartyListPage extends StatefulWidget {
   static const routeName = '/party_list';

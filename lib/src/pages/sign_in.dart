@@ -4,7 +4,7 @@ import 'package:new_version/new_version.dart';
 import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/home.dart';
-import 'package:shopos/src/pages/sign_up.dart';
+// import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';

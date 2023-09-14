@@ -16,4 +16,11 @@ class OrderStatus {
         await ApiV1Service.getRequest('/myorders/rejectall/$orderId');
     print(response.data);
   }
+
+  // change isPaid status
+  isPaid(String orderId, String status) async {
+    final response =
+        await ApiV1Service.getRequest('/payment-status/$orderId/$status');
+    print(response.data);
+  }
 }

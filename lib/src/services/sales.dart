@@ -8,6 +8,7 @@ class SalesService {
   ///
   static Future<Response> createSalesOrder(
     OrderInput orderItemInput,
+    String invoiceNum,
   ) async {
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
@@ -16,6 +17,7 @@ class SalesService {
             orderItemInput.orderItems?.map((e) => e.toSaleMap()).toList(),
         'modeOfPayment': orderItemInput.modeOfPayment,
         'party': orderItemInput.party?.id,
+        'invoiceNum': invoiceNum
       },
     );
     return response;

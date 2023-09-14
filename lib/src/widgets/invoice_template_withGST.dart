@@ -1,16 +1,18 @@
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/user.dart';
 
-String invoiceTemplatewithGST(
-    {required String companyName,
-    required OrderInput order,
-    required User user,
-    required List<String> headers,
-    required String total,
-    String? subtotal,
-    String? gsttotal,
-    required DateTime date,
-    required String type}) {
+String invoiceTemplatewithGST({
+  required String companyName,
+  required OrderInput order,
+  required User user,
+  required List<String> headers,
+  required String total,
+  String? subtotal,
+  String? gsttotal,
+  required DateTime date,
+  required String type,
+  required String invoiceNum,
+}) {
   ///
   String dateFormat() => '${date.day}/${date.month}/${date.year}';
 
@@ -18,7 +20,7 @@ String invoiceTemplatewithGST(
   String? addressRows() => user.address
       ?.toString()
       .split(',')
-      .map((e) => '<div>$e</div>')
+      .map((e) => '<div>${e.replaceAll('{', '').replaceAll('}', '')}</div>')
       .toList()
       .join(" ");
 
@@ -124,7 +126,7 @@ String invoiceTemplatewithGST(
     <div class="container">
       <div class="card">
         <div class="card-header">
-          Invoice
+          Invoice $invoiceNum
           <span class="float-right"> <strong>Date:</strong>${dateFormat()}</span>
         </div>
         <div class="card-body">

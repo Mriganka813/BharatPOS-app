@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,6 +9,7 @@ import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/utils.dart';
 
 import 'src/app.dart';
 
@@ -32,7 +33,7 @@ void main() async {
   );
 
   /// TODO uncomment this line
-//await const Utils().checkUpdates();
+  await Utils().checkForUpdate();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => Billing(),

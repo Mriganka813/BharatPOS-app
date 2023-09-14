@@ -14,17 +14,21 @@ class Utils {
     return true;
   }
 
-  /// Check for app updates
-  // Future<void> () async {
-  //   final update = await InAppUpdate.checkForUpdate();
-  //   if (update.updateAvailability < 0) {
-  //     return;
-  //   }
-  //   if (update.immediateUpdateAllowed) {
-  //     await InAppUpdate.startFlexibleUpdate();
-  //     await InAppUpdate.completeFlexibleUpdate();
-  //     return;
-  //   }
-  //   await InAppUpdate.performImmediateUpdate();
-  // }
+  // / Check for app updates
+  Future<void> checkForUpdate() async {
+    Future<void> checkForUpdate() async {
+      final update = await InAppUpdate.checkForUpdate();
+      if (update.updateAvailability == UpdateAvailability.updateNotAvailable) {
+        return;
+      }
+      // if (update.immediateUpdateAllowed) {
+      //   await InAppUpdate.startFlexibleUpdate();
+      //   await InAppUpdate.completeFlexibleUpdate();
+      //   return;
+      // }
+      await InAppUpdate.performImmediateUpdate();
+
+      // showUpdateRequiredDialog();
+    }
+  }
 }

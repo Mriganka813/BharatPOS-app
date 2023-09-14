@@ -10,10 +10,10 @@ part 'checkout_state.dart';
 class CheckoutCubit extends Cubit<CheckoutState> {
   CheckoutCubit() : super(CheckoutInitial());
 
-  Future<void> createSalesOrder(OrderInput input) async {
+  Future<void> createSalesOrder(OrderInput input, String invoiceNum) async {
     emit(CheckoutLoading());
     try {
-      await SalesService.createSalesOrder(input);
+      await SalesService.createSalesOrder(input, invoiceNum);
       emit(CheckoutSuccess());
     } on DioError catch (_) {
       emit(CheckoutError("Something went wrong"));
@@ -21,10 +21,10 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     }
   }
 
-  Future<void> createPurchaseOrder(OrderInput input) async {
+  Future<void> createPurchaseOrder(OrderInput input, String invoiceNum) async {
     emit(CheckoutLoading());
     try {
-      await PurchaseService.createPurchaseOrder(input);
+      await PurchaseService.createPurchaseOrder(input, invoiceNum);
       emit(CheckoutSuccess());
     } on DioError catch (_) {
       emit(CheckoutError("Purchase order creation failed"));
