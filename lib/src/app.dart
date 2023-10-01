@@ -5,6 +5,7 @@ import 'package:in_app_update/in_app_update.dart';
 // import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/billing_list.dart';
+import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_expense.dart';
@@ -24,13 +25,13 @@ import 'package:shopos/src/pages/privacy_policy.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/pages/search_result.dart';
+import 'package:shopos/src/pages/set_pin.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/pages/splash.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
-import 'package:upgrader/upgrader.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatefulWidget {
@@ -43,28 +44,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isUpdateAvailable = false;
-  late AppUpdateInfo update;
-
   @override
   void initState() {
     super.initState();
-    checkForUpdate();
-  }
-
-  checkForUpdate() async {
-    update = await InAppUpdate.checkForUpdate();
-    if (update.updateAvailability == UpdateAvailability.updateAvailable) {
-      isUpdateAvailable = true;
-    }
-    // // if (update.immediateUpdateAllowed) {
-    // //   await InAppUpdate.startFlexibleUpdate();
-    // //   await InAppUpdate.completeFlexibleUpdate();
-    // //   return;
-    // // }
-    // await InAppUpdate.performImmediateUpdate();
-
-    // showUpdateRequiredDialog();
   }
 
   @override
@@ -105,20 +87,7 @@ class _MyAppState extends State<MyApp> {
               case SignUpPage.routeName:
                 return const SignUpPage();
               case HomePage.routeName:
-                return isUpdateAvailable
-                    ? UpgradeAlert(
-                        upgrader: Upgrader(
-                          showIgnore: false,
-                          canDismissDialog: false,
-                          showLater: false,
-                          debugDisplayOnce: true,
-                          // debugDisplayAlways: true,
-                          showReleaseNotes: false,
-                          durationUntilAlertAgain: Duration(seconds: 2),
-                          //willDisplayUpgrade: ({appStoreVersion, required display, installedVersion, minAppVersion}) => ,
-                        ),
-                        child: const HomePage())
-                    : HomePage();
+                return HomePage();
               case SearchProductListScreen.routeName:
                 return SearchProductListScreen(
                   args: settings.arguments as ProductListPageArgs?,
@@ -169,10 +138,20 @@ class _MyAppState extends State<MyApp> {
                 return BillingListScreen(
                   orderType: settings.arguments as OrderType,
                 );
+              case SetPinPage.routeName:
+                bool status = settings.arguments as bool;
+                return SetPinPage(
+                  isPinSet: status,
+                );
 
               case ReportTable.routeName:
                 return ReportTable(
                   args: settings.arguments as tableArg,
+                );
+
+              case BluetoothPrinterList.routeName:
+                return BluetoothPrinterList(
+                  bluetoothArgs: settings.arguments as BluetoothArgs,
                 );
               default:
                 return const SplashScreen();

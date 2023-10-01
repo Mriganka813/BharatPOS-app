@@ -1,12 +1,34 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/user.dart';
+import 'package:shopos/src/widgets/pdf_kot_template.dart';
+
+class BluetoothArgs {
+  // final User user;
+  // final OrderInput order;
+  // final List<String> headers;
+  // final DateTime date;
+  // final String invoiceNum;
+  // final String total;
+  // final String subtotal;
+  // final String gst;
+
+  final OrderInput orderInput;
+  final DateTime dateTime;
+
+  BluetoothArgs({required this.orderInput, required this.dateTime});
+}
 
 class BillingListScreen extends StatefulWidget {
   static const routeName = '/billing-list';
@@ -31,10 +53,64 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   _orderType = provider.getAllOrderType();
   // }
 
+  String date = '';
+  bool showOption = false;
+
   @override
   void initState() {
     // getAllOrderInputList();
     super.initState();
+    fetchNTPTime();
+  }
+
+  Future<void> fetchNTPTime() async {
+    DateTime currentTime;
+
+    currentTime = DateTime.now();
+
+    String day;
+    String month;
+    String hour;
+    String minute;
+    String second;
+
+    // for day 0-9
+    if (currentTime.day < 10) {
+      day = '0${currentTime.day}';
+    } else {
+      day = '${currentTime.day}';
+    }
+
+    // for month 0-9
+    if (currentTime.month < 10) {
+      month = '0${currentTime.month}';
+    } else {
+      month = '${currentTime.month}';
+    }
+
+    // for hour 0-9
+    if (currentTime.hour < 10) {
+      hour = '0${currentTime.hour}';
+    } else {
+      hour = '${currentTime.hour}';
+    }
+
+    // for minute
+    if (currentTime.minute < 10) {
+      minute = '0${currentTime.minute}';
+    } else {
+      minute = '${currentTime.minute}';
+    }
+
+    // for seconds 0-9
+    if (currentTime.second < 10) {
+      second = '0${currentTime.second}';
+    } else {
+      second = '${currentTime.second}';
+    }
+
+    date = '${day}${month}${currentTime.year}${hour}${minute}${second}';
+    print('date1=$date');
   }
 
   ///
@@ -183,6 +259,163 @@ class _BillingListScreenState extends State<BillingListScreen> {
           ).toStringAsFixed(2);
   }
 
+  void _view57mmPdf(OrderInput orderInput) async {
+    User user = User();
+    try {
+      final res = await UserService.me();
+      if ((res.statusCode ?? 400) < 300) {
+        user = User.fromMap(res.data['user']);
+      }
+    } catch (_) {
+      Navigator.pop(context);
+    }
+    await PdfKotUI.generate57mmKot(
+        user: user,
+        order: orderInput,
+        headers: ["Item", "Qty"],
+        date: DateTime.now(),
+        invoiceNum: date);
+
+    // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+    //     arguments:
+    //         BluetoothArgs(orderInput: orderInput, dateTime: DateTime.now()));
+  }
+
+  void _view80mmPdf(OrderInput orderInput) async {
+    User user = User();
+    try {
+      final res = await UserService.me();
+      if ((res.statusCode ?? 400) < 300) {
+        user = User.fromMap(res.data['user']);
+      }
+    } catch (_) {
+      Navigator.pop(context);
+    }
+    await PdfKotUI.generate80mmKot(
+        user: user,
+        order: orderInput,
+        headers: ["Item", "Qty"],
+        date: DateTime.now(),
+        invoiceNum: date);
+
+    // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+    //     arguments: BluetoothArgs(pdfData: pdfData));
+  }
+
+  // void _viewSmallKot(OrderInput orderInput, int index, Billing provider) async {
+  //   User user = User();
+  //   final targetPath = await getExternalCacheDirectories();
+  //   const targetFileName = "Invoice";
+  //   try {
+  //     final res = await UserService.me();
+  //     if ((res.statusCode ?? 400) < 300) {
+  //       user = User.fromMap(res.data['user']);
+  //       // if (type == 0) _viewPdfwithgst(user);
+  //       // if (type == 1) _viewPdfwithoutgst(user);
+  //     }
+  //   } catch (_) {
+  //     Navigator.pop(context);
+  //   }
+  //   // final htmlContent = smallKotTemplate(
+  //   //     invoiceNum: date,
+  //   //     user: user,
+  //   //     date: DateTime.now(),
+  //   //     order: orderInput,
+  //   //     headers: [
+  //   //       "Invoice 0000000",
+  //   //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+  //   //     ],
+  //   //     subtotal: totalbasePrice(index, provider)!,
+  //   //     gstTotal: totalgstPrice(index, provider)!,
+  //   //     totalPrice: totalPrice(index, provider)!);
+  //   // final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+  //   //   htmlContent,
+  //   //   targetPath!.first.path,
+  //   //   targetFileName,
+  //   // );
+
+  //   PdfUI.generate80mmPdf(
+  //     user: user,
+  //     order: orderInput,
+  //     headers: [
+  //       "Invoice 0000000",
+  //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+  //     ],
+  //     date: DateTime.now(),
+  //     invoiceNum: date,
+  //     totalPrice: totalPrice(index, provider)!,
+  //     subtotal: totalbasePrice(index, provider)!,
+  //     gstTotal: totalgstPrice(index, provider)!,
+  //   );
+
+  //   // for open pdf
+  //   // try {
+  //   //   OpenFile.open(generatedPdfFile.path);
+  //   // } catch (e) {
+  //   //   print(e);
+  //   // }
+  // }
+
+  _chekBluetoothPrinterDevices() async {
+    // User user = User();
+    // try {
+    //   final res = await UserService.me();
+    //   if ((res.statusCode ?? 400) < 300) {
+    //     user = User.fromMap(res.data['user']);
+    //     // if (type == 0) _viewPdfwithgst(user);
+    //     // if (type == 1) _viewPdfwithoutgst(user);
+    //   }
+    // } catch (_) {
+    //   Navigator.pop(context);
+    // }
+    // final htmlContent = smallKotTemplate(
+    //     invoiceNum: date,
+    //     user: user,
+    //     date: DateTime.now(),
+    //     order: order,
+    //     headers: [
+    //       "Invoice 0000000",
+    //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+    //     ],
+    //     subtotal: totalbasePrice(index, provider)!,
+    //     gstTotal: totalgstPrice(index, provider)!,
+    //     totalPrice: totalPrice(index, provider)!);
+    Navigator.of(context).pushNamed(
+      BluetoothPrinterList.routeName,
+    );
+  }
+
+  _showNewDialog(OrderInput order) async {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('default', '57mm');
+                _view57mmPdf(order);
+                Navigator.of(ctx).pop();
+              },
+              title: Text('57mm'),
+            ),
+            ListTile(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('default', '80mm');
+                _view80mmPdf(order);
+                Navigator.of(ctx).pop();
+              },
+              title: Text('80mm'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<Billing>(
@@ -219,30 +452,101 @@ class _BillingListScreenState extends State<BillingListScreen> {
                         context: context,
                         builder: (ctx) {
                           return AlertDialog(
-                            title: InkWell(
-                                onTap: () {
-                                  widget.orderType == OrderType.sale
-                                      ? Navigator.pushNamed(
-                                          context, CreateSale.routeName,
-                                          arguments: BillingPageArgs(
-                                              orderId: provider.salesBilling.keys
-                                                  .toList()[index],
-                                              editOrders: provider
-                                                  .salesBilling.values
-                                                  .toList()[index]
-                                                  .orderItems))
-                                      : Navigator.pushNamed(
-                                          context, CreatePurchase.routeName,
-                                          arguments: BillingPageArgs(
-                                              orderId: provider
-                                                  .purchaseBilling.keys
-                                                  .toList()[index],
-                                              editOrders: provider
-                                                  .purchaseBilling.values
-                                                  .toList()[index]
-                                                  .orderItems));
-                                },
-                                child: Text('Edit')),
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  onTap: () {
+                                    widget.orderType == OrderType.sale
+                                        ? Navigator.pushNamed(
+                                            context, CreateSale.routeName,
+                                            arguments: BillingPageArgs(
+                                                orderId: provider.salesBilling.keys
+                                                    .toList()[index],
+                                                editOrders: provider
+                                                    .salesBilling.values
+                                                    .toList()[index]
+                                                    .orderItems))
+                                        : Navigator.pushNamed(
+                                            context, CreatePurchase.routeName,
+                                            arguments: BillingPageArgs(
+                                                orderId: provider.purchaseBilling.keys
+                                                    .toList()[index],
+                                                editOrders: provider
+                                                    .purchaseBilling.values
+                                                    .toList()[index]
+                                                    .orderItems));
+                                  },
+                                  title: Text('Edit',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 19)),
+                                ),
+
+                                // InkWell(
+                                //     onTap: () {
+                                //       _viewPdf(provider.salesBilling.values
+                                //           .toList()[index]);
+
+                                //       print(showOption);
+                                //     },
+                                //     child: Text(
+                                //       'Print KOT',
+                                //       style: TextStyle(
+                                //           fontWeight: FontWeight.w600,
+                                //           fontSize: 19),
+                                //     )),
+
+                                ListTile(
+                                    onTap: () async {
+                                      // _viewSmallKot(
+                                      //     provider.salesBilling.values
+                                      //         .toList()[index],
+                                      //     index,
+                                      //     provider);
+                                      // _chekBluetoothPrinterDevices(
+                                      //     provider.salesBilling.values
+                                      //         .toList()[index],
+                                      //     index,
+                                      //     provider);
+
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+
+                                      String? defaultFormat =
+                                          prefs.getString('default');
+
+                                      if (defaultFormat == null) {
+                                        _showNewDialog(
+                                          provider.salesBilling.values
+                                              .toList()[index],
+                                        );
+                                      } else if (defaultFormat == "57mm") {
+                                        _view57mmPdf(
+                                          provider.salesBilling.values
+                                              .toList()[index],
+                                        );
+                                      } else if (defaultFormat == "80mm") {
+                                        _view80mmPdf(
+                                          provider.salesBilling.values
+                                              .toList()[index],
+                                        );
+                                      }
+                                    },
+                                    title: Text(
+                                      'KOT',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 19),
+                                    )),
+                                // showOption
+                                //     ? Row(
+                                //         children: [Text('58mm'), Text('80mm')],
+                                //       )
+                                //     : Container()
+                              ],
+                            ),
                           );
                         });
                   },

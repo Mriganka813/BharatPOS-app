@@ -56,11 +56,20 @@ dependencies:
   open_file:
   ntp: ^2.0.0
   upgrader: 
+  pinput: ^3.0.1
+  # esc_pos_bluetooth: 
+  # flutter_bluetooth_basic: 
+  # flutter_esc_pos_utils: 
+  bluetooth_print: 
+  open_file_plus: ^3.4.1
+  bluetooth_thermal_printer: ^0.0.6
+  # flutter_blue: ^0.8.0
+ 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.0
+  flutter_launcher_icons: 
   change_app_package_name: ^1.1.0
 
 flutter_icons:
@@ -83,3 +92,6 @@ flutter:
     - family: CustomIcons
       fonts:
         - asset: assets/CustomIcons.ttf
+    - family: Montserrat
+      fonts:
+        - asset: assets/OpenSans-Regular.ttf 

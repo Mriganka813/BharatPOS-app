@@ -33,7 +33,7 @@ class ReportCubit extends Cubit<ReportState> {
 
   ///
   void getReport(ReportInput input) async {
-    emit(ReportLoading());
+    // emit(ReportLoading());
 
     if (input.type == ReportType.sale) {
       final res = await _reportService.getAllReport(input);

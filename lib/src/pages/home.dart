@@ -1,7 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:new_version/new_version.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
@@ -14,15 +14,17 @@ import 'package:shopos/src/pages/privacy_policy.dart';
 // import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/search_result.dart';
+import 'package:shopos/src/pages/set_pin.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/background_service.dart';
+import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/services/user.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
 // import 'package:shopos/src/widgets/bulk_upload.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
 // import 'package:switcher/switcher.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -36,6 +38,9 @@ class _HomePageState extends State<HomePage> {
 
   bool shopOpen = true;
 
+  final PinService _pinService = PinService();
+  final TextEditingController pinController = TextEditingController();
+
   ///
   @override
   void initState() {
@@ -43,15 +48,6 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
-  }
-
-  Future<void> _checkUpdate() async {
-    final newVersion = NewVersion(androidId: "com.cube.magicstep");
-    final status = await newVersion.getVersionStatus();
-    if (status!.canUpdate) {
-      newVersion.showUpdateDialog(
-          context: context, versionStatus: status, allowDismissal: false);
-    }
   }
 
   @override
@@ -121,17 +117,28 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Divider(),
+                      // ListTile(
+                      //   leading: Icon(Icons.upload_file),
+                      //   title: Text("Bulk Product Upload",
+                      //       style: TextStyle(color: Colors.black)),
+                      //   onTap: () async {
+                      //     await launchUrl(
+                      //       Uri.parse(
+                      //           'http://65.0.7.20:8001/api/v1/renderweblogin'),
+                      //       mode: LaunchMode.externalApplication,
+                      //     );
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
                       ListTile(
-                        leading: Icon(Icons.upload_file),
-                        title: Text("Bulk Product Upload",
-                            style: TextStyle(color: Colors.black)),
+                        leading: Icon(Icons.lock),
+                        title: Title(
+                            color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
-                          await launchUrl(
-                            Uri.parse(
-                                'http://65.0.7.20:8001/api/v1/renderweblogin'),
-                            mode: LaunchMode.externalApplication,
-                          );
-                          Navigator.pop(context);
+                          bool status = await _pinService.pinStatus();
+                          print(status);
+                          Navigator.of(context).pushNamed(SetPinPage.routeName,
+                              arguments: status);
                         },
                       ),
                       ListTile(

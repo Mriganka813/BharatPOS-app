@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shopos/src/models/input/order_input.dart';
-import 'package:shopos/src/pages/checkout.dart';
 
 class Billing with ChangeNotifier {
   // List<OrderInput> _orderInput = [];

@@ -53,11 +53,11 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.cube.magicstep"
-        minSdkVersion 20
+        minSdkVersion 21
         // minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 23
-        versionName flutterVersionName
+        versionCode 29
+        versionName '1.0.6'
         multiDexEnabled true
     }
 

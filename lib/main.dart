@@ -9,12 +9,12 @@ import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
-import 'package:shopos/src/utils.dart';
 
 import 'src/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   locator.registerLazySingleton(() => GlobalServices());
   await Firebase.initializeApp(
       name: 'CUBE', options: DefaultFirebaseOptions.currentPlatform);
@@ -33,7 +33,7 @@ void main() async {
   );
 
   /// TODO uncomment this line
-  await Utils().checkForUpdate();
+  // await Utils().checkForUpdate();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => Billing(),

@@ -11,25 +11,24 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/create_party.dart';
+import 'package:shopos/src/pdf_templates/58mm_kot_template.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
 import 'package:shopos/src/services/user.dart';
-import 'package:shopos/src/utils.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
 import 'package:shopos/src/widgets/invoice_template_withGST.dart';
-import 'package:shopos/src/widgets/invoice_template_withoutGST.dart';
+import 'package:shopos/src/widgets/pdf_bill_template.dart';
 import 'package:upi_payment_qrcode_generator/upi_payment_qrcode_generator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:whatsapp_share2/whatsapp_share2.dart';
 
 import '../models/party.dart';
 
@@ -181,22 +180,34 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             ListTile(
               title: const Text("Open pdf"),
-              onTap: () {
-                _onTapShare(2);
+              onTap: () async {
+                // _onTapShare(2);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? defaultBill = prefs.getString('defaultBill');
+
+                if (defaultBill == null) {
+                  _showNewDialog(widget.args.orderInput);
+                } else if (defaultBill == '57mm') {
+                  _view57mmBill(widget.args.orderInput);
+                } else if (defaultBill == '80mm') {
+                  _view80mmBill(widget.args.orderInput);
+                } else if (defaultBill == 'A4') {
+                  _viewPdf();
+                }
               },
             ),
-            ListTile(
-              title: const Text("With GST"),
-              onTap: () {
-                _onTapShare(0);
-              },
-            ),
-            ListTile(
-              title: const Text("Without GST"),
-              onTap: () {
-                _onTapShare(1);
-              },
-            ),
+            // ListTile(
+            //   title: const Text("With GST"),
+            //   onTap: () {
+            //     _onTapShare(0);
+            //   },
+            // ),
+            // ListTile(
+            //   title: const Text("Without GST"),
+            //   onTap: () {
+            //     _onTapShare(1);
+            //   },
+            // ),
             ListTile(
                 title: const Text("Whatsapp Message"),
                 onTap: () {
@@ -256,15 +267,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  void _viewPdf(User user) async {
+  void _viewPdf() async {
     final targetPath = await getExternalCacheDirectories();
     const targetFileName = "Invoice";
     final htmlContent = invoiceTemplatewithGST(
       type: widget.args.invoiceType.toString(),
       date: DateTime.now(),
-      companyName: user.businessName ?? "",
+      companyName: userData.businessName ?? "",
       order: widget.args.orderInput,
-      user: user,
+      user: userData,
       headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
       total: totalPrice() ?? "",
       subtotal: totalbasePrice() ?? "",
@@ -286,106 +297,108 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  void _viewPdfwithgst(User user) async {
-    final targetPath = await getExternalCacheDirectories();
-    const targetFileName = "Invoice";
-    final htmlContent = invoiceTemplatewithGST(
-      type: widget.args.invoiceType.toString(),
-      date: DateTime.now(),
-      companyName: user.businessName ?? "",
-      order: widget.args.orderInput,
-      user: user,
-      headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
-      total: totalPrice() ?? "",
-      subtotal: totalbasePrice() ?? "",
-      gsttotal: totalgstPrice() ?? "",
-      invoiceNum: date,
-    );
-    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      targetPath!.first.path,
-      targetFileName,
-    );
+  // void _viewPdfwithgst(User user) async {
+  //   final targetPath = await getExternalCacheDirectories();
+  //   const targetFileName = "Invoice";
+  //   final htmlContent = invoiceTemplatewithGST(
+  //     type: widget.args.invoiceType.toString(),
+  //     date: DateTime.now(),
+  //     companyName: user.businessName ?? "",
+  //     order: widget.args.orderInput,
+  //     user: user,
+  //     headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
+  //     total: totalPrice() ?? "",
+  //     subtotal: totalbasePrice() ?? "",
+  //     gsttotal: totalgstPrice() ?? "",
+  //     invoiceNum: date,
+  //   );
+  //   final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+  //     htmlContent,
+  //     targetPath!.first.path,
+  //     targetFileName,
+  //   );
+  //   // for open pdf
+  //   try {
+  //     await OpenFile.open(generatedPdfFile.path);
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
 
-    // for open pdf
-    // OpenFile.open(generatedPdfFile.path);
-
-    final input = _typeAheadController.value.text.trim();
-    if (input.length == 10 && int.tryParse(input) != null) {
-      await WhatsappShare.shareFile(
-        text: 'Invoice',
-        phone: '91$input',
-        filePath: [generatedPdfFile.path],
-      );
-      return;
-    }
-
-    final party = widget.args.orderInput.party;
-    if (party == null) {
-      final path = generatedPdfFile.path;
-      await Share.shareFiles([path], mimeTypes: ['application/pdf']);
-      return;
-    }
-    final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
-    if (!isValidPhoneNumber) {
-      locator<GlobalServices>()
-          .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
-      return;
-    }
-    await WhatsappShare.shareFile(
-      text: 'Invoice',
-      phone: '91${party.phoneNumber ?? ""}',
-      filePath: [generatedPdfFile.path],
-    );
-  }
+  // final input = _typeAheadController.value.text.trim();
+  // if (input.length == 10 && int.tryParse(input) != null) {
+  //   await WhatsappShare.shareFile(
+  //     text: 'Invoice',
+  //     phone: '91$input',
+  //     filePath: [generatedPdfFile.path],
+  //   );
+  //   return;
+  // }
+  // final party = widget.args.orderInput.party;
+  // if (party == null) {
+  //   final path = generatedPdfFile.path;
+  //   await Share.shareFiles([path], mimeTypes: ['application/pdf']);
+  //   return;
+  // }
+  // final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
+  // if (!isValidPhoneNumber) {
+  //   locator<GlobalServices>()
+  //       .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
+  //   return;
+  // }
+  // await WhatsappShare.shareFile(
+  //   text: 'Invoice',
+  //   phone: '91${party.phoneNumber ?? ""}',
+  //   filePath: [generatedPdfFile.path],
+  // );
+  // }
 
   ///
-  void _viewPdfwithoutgst(User user) async {
-    final targetPath = await getExternalCacheDirectories();
-    const targetFileName = "Invoice";
-    final htmlContent = invoiceTemplatewithouGST(
-      type: widget.args.invoiceType.toString(),
-      date: DateTime.now(),
-      companyName: user.businessName ?? "",
-      order: widget.args.orderInput,
-      user: user,
-      headers: ["Name", "Qty", "Rate/Unit", "Amount"],
-      total: totalPrice() ?? "",
-      invoiceNum: date,
-    );
-    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-      htmlContent,
-      targetPath!.first.path,
-      targetFileName,
-    );
-    final input = _typeAheadController.value.text.trim();
-    if (input.length == 10 && int.tryParse(input) != null) {
-      await WhatsappShare.shareFile(
-        text: 'Invoice',
-        phone: '91$input',
-        filePath: [generatedPdfFile.path],
-      );
-      return;
-    }
+  // void _viewPdfwithoutgst(User user) async {
+  //   final targetPath = await getExternalCacheDirectories();
+  //   const targetFileName = "Invoice";
+  //   final htmlContent = invoiceTemplatewithouGST(
+  //     type: widget.args.invoiceType.toString(),
+  //     date: DateTime.now(),
+  //     companyName: user.businessName ?? "",
+  //     order: widget.args.orderInput,
+  //     user: user,
+  //     headers: ["Name", "Qty", "Rate/Unit", "Amount"],
+  //     total: totalPrice() ?? "",
+  //     invoiceNum: date,
+  //   );
+  //   final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+  //     htmlContent,
+  //     targetPath!.first.path,
+  //     targetFileName,
+  //   );
+  //   final input = _typeAheadController.value.text.trim();
+  //   if (input.length == 10 && int.tryParse(input) != null) {
+  //     await WhatsappShare.shareFile(
+  //       text: 'Invoice',
+  //       phone: '91$input',
+  //       filePath: [generatedPdfFile.path],
+  //     );
+  //     return;
+  //   }
 
-    final party = widget.args.orderInput.party;
-    if (party == null) {
-      final path = generatedPdfFile.path;
-      await Share.shareFiles([path], mimeTypes: ['application/pdf']);
-      return;
-    }
-    final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
-    if (!isValidPhoneNumber) {
-      locator<GlobalServices>()
-          .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
-      return;
-    }
-    await WhatsappShare.shareFile(
-      text: 'Invoice',
-      phone: '91${party.phoneNumber ?? ""}',
-      filePath: [generatedPdfFile.path],
-    );
-  }
+  //   final party = widget.args.orderInput.party;
+  //   if (party == null) {
+  //     final path = generatedPdfFile.path;
+  //     await Share.shareFiles([path], mimeTypes: ['application/pdf']);
+  //     return;
+  //   }
+  //   final isValidPhoneNumber = Utils.isValidPhoneNumber(party.phoneNumber);
+  //   if (!isValidPhoneNumber) {
+  //     locator<GlobalServices>()
+  //         .infoSnackBar("Invalid phone number: ${party.phoneNumber ?? ""}");
+  //     return;
+  //   }
+  //   await WhatsappShare.shareFile(
+  //     text: 'Invoice',
+  //     phone: '91${party.phoneNumber ?? ""}',
+  //     filePath: [generatedPdfFile.path],
+  //   );
+  // }
 
   Future<Iterable<Party>> _searchParties(String pattern) async {
     if (pattern.isEmpty) {
@@ -474,6 +487,87 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
       },
     ).toStringAsFixed(2);
+  }
+
+  void _view80mmBill(OrderInput orderInput) async {
+    PdfUI.generate80mmPdf(
+      user: userData,
+      order: orderInput,
+      headers: [
+        "Invoice 0000000",
+        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+      ],
+      date: DateTime.now(),
+      invoiceNum: date,
+      totalPrice: totalPrice() ?? '',
+      subtotal: totalbasePrice() ?? '',
+      gstTotal: totalgstPrice() ?? '',
+    );
+
+    // for open pdf
+    // try {
+    //   OpenFile.open(generatedPdfFile.path);
+    // } catch (e) {
+    //   print(e);
+    // }
+  }
+
+  void _view57mmBill(OrderInput orderInput) async {
+    PdfUI.generate57mmPdf(
+      user: userData,
+      order: orderInput,
+      headers: [
+        "Invoice 0000000",
+        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+      ],
+      date: DateTime.now(),
+      invoiceNum: date,
+      totalPrice: totalPrice() ?? '',
+      subtotal: totalbasePrice() ?? '',
+      gstTotal: totalgstPrice() ?? '',
+    );
+  }
+
+  _showNewDialog(
+    OrderInput order,
+  ) async {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('defaultBill', '57mm');
+                _view57mmBill(order);
+                Navigator.of(ctx).pop();
+              },
+              title: Text('57mm'),
+            ),
+            ListTile(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('defaultBill', '80mm');
+                _view80mmBill(order);
+                Navigator.of(ctx).pop();
+              },
+              title: Text('80mm'),
+            ),
+            ListTile(
+              onTap: () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('defaultBill', 'A4');
+                _viewPdf();
+                Navigator.of(ctx).pop();
+              },
+              title: Text('A4'),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -786,15 +880,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   void _onTapShare(int type) async {
     locator<GlobalServices>().showBottomSheetLoader();
-    try {
-      final res = await UserService.me();
-      if ((res.statusCode ?? 400) < 300) {
-        final user = User.fromMap(res.data['user']);
-        if (type == 0) _viewPdfwithgst(user);
-        if (type == 1) _viewPdfwithoutgst(user);
-        if (type == 2) _viewPdf(user);
-      }
-    } catch (_) {}
+    // try {
+    //   // final res = await UserService.me();
+    //   // if ((res.statusCode ?? 400) < 300) {
+    //     // final user = User.fromMap(res.data['user']);
+    //     // if (type == 0) _viewPdfwithgst(user);
+    //     // if (type == 1) _viewPdfwithoutgst(user);
+
+    //   }
+    // } catch (_) {}
+    if (type == 2) _viewPdf();
     Navigator.pop(context);
   }
 
