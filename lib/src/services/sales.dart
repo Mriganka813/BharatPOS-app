@@ -10,6 +10,9 @@ class SalesService {
     OrderInput orderItemInput,
     String invoiceNum,
   ) async {
+    print('${orderItemInput.orderItems![0].product!.sellingPrice}');
+    print('${orderItemInput.orderItems![0].product!.baseSellingPriceGst}');
+    print('${orderItemInput.orderItems![0].product!.saleigst}');
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
       data: {
@@ -17,7 +20,11 @@ class SalesService {
             orderItemInput.orderItems?.map((e) => e.toSaleMap()).toList(),
         'modeOfPayment': orderItemInput.modeOfPayment,
         'party': orderItemInput.party?.id,
-        'invoiceNum': invoiceNum
+        'invoiceNum': invoiceNum,
+        'reciverName': orderItemInput.reciverName,
+        'businessName': orderItemInput.businessName,
+        'businessAddress': orderItemInput.businessAddress,
+        'gst': orderItemInput.gst,
       },
     );
     return response;

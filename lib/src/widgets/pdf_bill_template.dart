@@ -78,6 +78,12 @@ class PdfUI {
                       font: ttf, fontSize: 16, fontWeight: pw.FontWeight.bold),
                 ),
 
+                if (user.GstIN != null && user.GstIN!.isNotEmpty)
+                  pw.Text(
+                    'GSTIN ${user.GstIN}'.toUpperCase(),
+                    style: pw.TextStyle(font: ttf, fontSize: 9),
+                  ),
+
                 // Address lines
                 for (var i = 0; i < 4; i++)
                   pw.Text(
@@ -90,6 +96,79 @@ class PdfUI {
                   '${user.phoneNumber}',
                   style: pw.TextStyle(fontSize: 10, font: ttf),
                 ),
+
+                pw.SizedBox(height: 10),
+
+                // bill to:
+                if ((order.reciverName != null &&
+                        order.reciverName!.isNotEmpty) ||
+                    (order.businessName != null &&
+                        order.businessName!.isNotEmpty) ||
+                    (order.businessAddress != null &&
+                        order.businessAddress!.isNotEmpty) ||
+                    (order.gst != null && order.gst!.isNotEmpty))
+                  pw.Row(children: [
+                    pw.Text(
+                      'Billed to: ',
+                      style: pw.TextStyle(
+                          fontSize: 9,
+                          font: ttf,
+                          fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.Text(''),
+                  ]),
+
+                if (order.reciverName != null && order.reciverName!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Receiver name: ',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    ),
+                    Text(
+                      '${order.reciverName}',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    )
+                  ]),
+
+                if (order.businessName != null &&
+                    order.businessName!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Business name: ',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    ),
+                    Text(
+                      '${order.businessName}',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    )
+                  ]),
+
+                if (order.businessAddress != null &&
+                    order.businessAddress!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Address: ',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    ),
+                    Text(
+                      '${order.businessAddress}',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    )
+                  ]),
+
+                if (order.gst != null && order.gst!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'GSTIN: ',
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    ),
+                    Text(
+                      '${order.gst}'.toUpperCase(),
+                      style: pw.TextStyle(fontSize: 9, font: ttf),
+                    )
+                  ]),
+
+                pw.SizedBox(height: 10),
 
                 // Invoice details table
 
@@ -188,6 +267,9 @@ class PdfUI {
     // Write the PDF to a file
     await file.writeAsBytes(await pdf.save());
 
+    // await Printing.layoutPdf(
+    //     onLayout: (PdfPageFormat format) async => pdf.save());
+
     try {
       print('run');
       print(file.path);
@@ -269,6 +351,12 @@ class PdfUI {
                       font: ttf, fontSize: 13, fontWeight: pw.FontWeight.bold),
                 ),
 
+                if (user.GstIN != null && user.GstIN!.isNotEmpty)
+                  pw.Text(
+                    'GSTIN ${user.GstIN}'.toUpperCase(),
+                    style: pw.TextStyle(font: ttf, fontSize: 7),
+                  ),
+
                 // Address lines
                 for (var i = 0; i < 4; i++)
                   pw.Text(
@@ -281,6 +369,77 @@ class PdfUI {
                   '${user.phoneNumber}',
                   style: pw.TextStyle(fontSize: 8, font: ttf),
                 ),
+
+                pw.SizedBox(height: 10),
+
+                // bill to:
+
+                if ((order.reciverName != null &&
+                        order.reciverName!.isNotEmpty) ||
+                    (order.businessName != null &&
+                        order.businessName!.isNotEmpty) ||
+                    (order.businessAddress != null &&
+                        order.businessAddress!.isNotEmpty) ||
+                    (order.gst != null && order.gst!.isNotEmpty))
+                  pw.Row(children: [
+                    pw.Text(
+                      'Billed to: ',
+                      style: pw.TextStyle(
+                          fontSize: 8,
+                          font: ttf,
+                          fontWeight: pw.FontWeight.bold),
+                    ),
+                  ]),
+
+                if (order.reciverName != null && order.reciverName!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Receiver name: ',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    ),
+                    Text(
+                      '${order.reciverName}',
+                      style: pw.TextStyle(fontSize: 7.5, font: ttf),
+                    )
+                  ]),
+
+                if (order.businessName != null &&
+                    order.businessName!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Business name: ',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    ),
+                    Text(
+                      '${order.businessName}',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    )
+                  ]),
+
+                if (order.businessAddress != null &&
+                    order.businessAddress!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'Address: ',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    ),
+                    Text(
+                      '${order.businessAddress}',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    )
+                  ]),
+
+                if (order.gst != null && order.gst!.isNotEmpty)
+                  Row(children: [
+                    Text(
+                      'GSTIN: ',
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    ),
+                    Text(
+                      '${order.gst}'.toUpperCase(),
+                      style: pw.TextStyle(fontSize: 7, font: ttf),
+                    )
+                  ]),
 
                 pw.SizedBox(height: 10),
 
@@ -375,6 +534,9 @@ class PdfUI {
 
     // Write the PDF to a file
     await file.writeAsBytes(await pdf.save());
+
+    // await Printing.layoutPdf(
+    //     onLayout: (PdfPageFormat format) async => pdf.save());
 
     try {
       print('run');

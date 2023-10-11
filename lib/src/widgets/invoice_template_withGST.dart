@@ -31,6 +31,52 @@ String invoiceTemplatewithGST({
       ).join(' ');
 
   ///
+  String billedTo() {
+    if ((order.reciverName != null && order.reciverName!.isNotEmpty) ||
+        (order.businessName != null && order.businessName!.isNotEmpty) ||
+        (order.businessAddress != null && order.businessAddress!.isNotEmpty) ||
+        (order.gst != null && order.gst!.isNotEmpty)) {
+      return '<strong>Billed to: </strong>';
+    }
+    return '';
+  }
+
+  String receiverName() {
+    if (order.reciverName != null && order.reciverName!.isNotEmpty) {
+      return '<div><strong>Receiver name: </strong>${order.reciverName}</div>';
+    }
+    return '';
+  }
+
+  String businessName() {
+    if (order.businessName != null && order.businessName!.isNotEmpty) {
+      return ' <div><strong>Business name: </strong>${order.businessName}</div>';
+    }
+    return '';
+  }
+
+  String businessAddress() {
+    if (order.businessAddress != null && order.businessAddress!.isNotEmpty) {
+      return '<div><strong>Address: </strong>${order.businessAddress}</div>';
+    }
+    return '';
+  }
+
+  String usergstin() {
+    if (order.gst != null && order.gst!.isNotEmpty) {
+      return '<div><strong>GSTIN: </strong>${order.gst!.toUpperCase()}</div>';
+    }
+    return '';
+  }
+
+  String shopkeepergstin() {
+    if (user.GstIN != null && user.GstIN!.isNotEmpty) {
+      return '<div> GSTIN ${user.GstIN!.toUpperCase()} </div>';
+    }
+    return '';
+  }
+
+  ///
   String itemRows() => List.generate(
         (order.orderItems ?? []).length,
         (index) {
@@ -117,6 +163,16 @@ String invoiceTemplatewithGST({
   <head>
     <meta charset="UTF-8" />
     <title>Shopos - Invoice</title>
+    <style>
+    .receiver {
+              width: 200px;
+              height: 100px;
+              position: absolute;
+              top: 100px;
+              right: 0;
+              margin: 20px;
+            }
+    </style>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.css"
@@ -135,10 +191,21 @@ String invoiceTemplatewithGST({
               <h6 class="mb-3">From:</h6>
               <div>
                 <strong>$companyName</strong>
+                ${shopkeepergstin()}
               </div>
               ${addressRows()}
               <div>Email: ${user.email ?? ""}</div>
               <div>Phone: ${user.phoneNumber}</div>
+            </div>
+            <div class="receiver">
+             ${billedTo()}
+              ${receiverName()}
+              ${businessName()}
+              ${businessAddress()}
+              ${usergstin()}
+              
+             
+              
             </div>
             <br />
             <br />

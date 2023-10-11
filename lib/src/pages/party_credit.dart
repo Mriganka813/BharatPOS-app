@@ -90,7 +90,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       Center(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 15, bottom: 15),
-                          child: currentdate(order.createdAt),
+                          child: currentdate(order.createdAt!),
                         ),
                       ),
                       Align(
@@ -106,7 +106,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                               await openEditModal(
                                   order.id!,
                                   order.total!,
-                                  order.createdAt,
+                                  order.createdAt!,
                                   order.modeOfPayment!,
                                   context);
                             },

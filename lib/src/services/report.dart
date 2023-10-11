@@ -7,11 +7,13 @@ class ReportService {
 
   ///
   Future<Response> getAllReport(ReportInput input) async {
+    print(input.type);
+    print('ok');
     final response = await ApiV1Service.getRequest(
       '/report',
       queryParameters: input.toMap(),
     );
-    // print(response.data);
+    print(response.data);
     return response;
   }
 

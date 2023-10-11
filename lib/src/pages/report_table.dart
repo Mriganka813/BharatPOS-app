@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -277,7 +278,7 @@ class _ReportTableState extends State<ReportTable> {
         // print(e.user!.type);
         taxfileType = e.user!.type ?? "notdone";
         if (breakruler !=
-            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!)) {
+            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!)) {
           datelist.add("");
           timelist.add("");
           partynamelist.add("");
@@ -291,17 +292,17 @@ class _ReportTableState extends State<ReportTable> {
           mrplist.add("");
           moplist.add("");
         }
-        datelist.add(
-            DateFormat('dd MMM, yyyy').format(DateTime.tryParse(e.createdAt)!));
-        timelist
-            .add(DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!));
+        datelist.add(DateFormat('dd MMM, yyyy')
+            .format(DateTime.tryParse(e.createdAt!)!));
+        timelist.add(
+            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!));
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
         gstratelist.add(
             "${item.product?.gstRate == "null" ? "N/A" : item.product?.gstRate}%");
         widget.args.type == "ReportType.sale"
             ? basesplist.add(
-                "${item.product?.baseSellingPriceGst == "null" ? "N/A" : item.product?.baseSellingPriceGst}")
+                "${item.product?.baseSellingPriceGst == "null" ? item.product?.sellingPrice : item.product?.baseSellingPriceGst}")
             : basesplist.add(
                 "${item.product?.basePurchasePriceGst == "null" ? "N/A" : item.product?.basePurchasePriceGst}");
         widget.args.type == "ReportType.sale"
@@ -320,18 +321,16 @@ class _ReportTableState extends State<ReportTable> {
             : igstlist.add(
                 "${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale"
-            ? mrplist.add(
-                "${item.product?.sellingPrice == "null" ? "N/A" : item.product?.sellingPrice}")
+            ? mrplist.add("${item.price}")
             : mrplist.add(
                 "${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
         widget.args.type == "ReportType.sale"
-            ? totalsplist
-                .add("${(item.quantity) * (item.product?.sellingPrice ?? 0)}")
+            ? totalsplist.add("${(item.quantity) * (item.price ?? 0)}")
             : totalsplist
                 .add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
         moplist.add("${e.modeOfPayment ?? "N/A"}");
         breakruler =
-            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt)!);
+            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!);
       }).toList();
     }).toList();
   }
@@ -401,6 +400,48 @@ class _ReportTableState extends State<ReportTable> {
     );
   }
 
+  Future<void> _convertImageToExcel() async {
+    var excel = Excel.createExcel();
+    var sheet = excel['Sheet1'];
+
+    var headers = headerRows();
+    for (var i = 0; i < headers.length; i++) {
+      sheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
+          .value = headers[i].label;
+    }
+
+    var rows = widget.args.type == "ReportType.sale"
+        ? showSaleRow()
+        : widget.args.type == "ReportType.purchase"
+            ? showPurchaseRow()
+            : widget.args.type == "ReportType.expense"
+                ? showExpenseRow()
+                : showStockRow();
+
+    for (var i = 0; i < rows.length; i++) {
+      for (var j = 0; j < rows[i].cells.length; j++) {
+        sheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1))
+            .value = rows[i].cells[j].child.toString();
+      }
+    }
+
+    var excelFile = excel.encode();
+    Uint8List excelBytes = Uint8List.fromList(excelFile!);
+
+    final directory = await getApplicationDocumentsDirectory();
+    File excelFileLocal = File('${directory.path}/report.xlsx');
+    await excelFileLocal.writeAsBytes(excelBytes);
+
+    Share.shareFiles(
+      [excelFileLocal.path],
+      mimeTypes: [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -416,6 +457,7 @@ class _ReportTableState extends State<ReportTable> {
           IconButton(
             onPressed: () async {
               sharePDF();
+              // _convertImageToExcel();
             },
             icon: Icon(Icons.share),
           ),

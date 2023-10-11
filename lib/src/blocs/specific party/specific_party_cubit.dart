@@ -18,8 +18,10 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   void getInitialCreditHistory(String id) async {
     emit(SpecificPartyLoading());
     try {
+      print('oo');
       final sales = await _partyService.getSalesCreditHistory(id);
       _partyDetails = await _partyService.getCreditSaleParty(id);
+      print('okk');
       _specificsaleParties.clear();
       _specificpurchaseParties.clear();
       _specificsaleParties.addAll(sales);

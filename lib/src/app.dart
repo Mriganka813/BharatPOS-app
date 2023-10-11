@@ -151,7 +151,7 @@ class _MyAppState extends State<MyApp> {
 
               case BluetoothPrinterList.routeName:
                 return BluetoothPrinterList(
-                  bluetoothArgs: settings.arguments as BluetoothArgs,
+                  args: settings.arguments as CombineArgs,
                 );
               default:
                 return const SplashScreen();

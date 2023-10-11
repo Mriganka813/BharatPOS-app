@@ -19,11 +19,11 @@ class Order {
   User? user;
   int? total;
   String? id;
-  String createdAt;
+  String? createdAt;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
         orderItems: List<OrderItem>.from(
-          json["orderItems"].map(
+          json["orderItems"]?.map(
             (x) => OrderItem.fromMap(x),
           ),
         ),
@@ -31,7 +31,7 @@ class Order {
         id: json["_id"],
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
-        createdAt: json["createdAt"],
+        createdAt: json["createdAt"] ?? json['date'],
         total: json['total'] ?? 0,
       );
 
@@ -41,6 +41,6 @@ class Order {
         "party": party,
         "user": user,
         "_id": id,
-        "createdAt": createdAt,
+        "createdAt": createdAt ?? DateTime.now().toIso8601String(),
       };
 }

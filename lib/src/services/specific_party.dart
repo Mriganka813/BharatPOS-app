@@ -8,6 +8,7 @@ class SpecificPartyService {
 
   Future<List<Order>> getSalesCreditHistory(String id) async {
     final response = await ApiV1Service.getRequest('/sales/credit-history/$id');
+    print(response.data);
     return (response.data['data'] as List)
         .map((e) => Order.fromMap(e as Map<String, dynamic>))
         .toList();

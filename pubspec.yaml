@@ -57,13 +57,10 @@ dependencies:
   ntp: ^2.0.0
   upgrader: 
   pinput: ^3.0.1
-  # esc_pos_bluetooth: 
-  # flutter_bluetooth_basic: 
-  # flutter_esc_pos_utils: 
-  bluetooth_print: 
   open_file_plus: ^3.4.1
-  bluetooth_thermal_printer: ^0.0.6
-  # flutter_blue: ^0.8.0
+  print_bluetooth_thermal: ^1.0.9
+  esc_pos_utils_plus: ^2.0.2
+  excel: ^2.1.0
  
 
 dev_dependencies:
@@ -73,7 +70,7 @@ dev_dependencies:
   change_app_package_name: ^1.1.0
 
 flutter_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
   image_path: "assets/icon/CUBE.png"
 

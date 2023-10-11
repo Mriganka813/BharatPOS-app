@@ -14,6 +14,16 @@ import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/widgets/pdf_kot_template.dart';
 
+enum kotType {
+  is57mm,
+  is80mm,
+}
+
+enum billType {
+  is57mm,
+  is80mm,
+}
+
 class BluetoothArgs {
   // final User user;
   // final OrderInput order;
@@ -26,8 +36,10 @@ class BluetoothArgs {
 
   final OrderInput orderInput;
   final DateTime dateTime;
+  kotType type;
 
-  BluetoothArgs({required this.orderInput, required this.dateTime});
+  BluetoothArgs(
+      {required this.orderInput, required this.dateTime, required this.type});
 }
 
 class BillingListScreen extends StatefulWidget {
@@ -259,47 +271,56 @@ class _BillingListScreenState extends State<BillingListScreen> {
           ).toStringAsFixed(2);
   }
 
-  void _view57mmPdf(OrderInput orderInput) async {
-    User user = User();
-    try {
-      final res = await UserService.me();
-      if ((res.statusCode ?? 400) < 300) {
-        user = User.fromMap(res.data['user']);
-      }
-    } catch (_) {
-      Navigator.pop(context);
-    }
-    await PdfKotUI.generate57mmKot(
-        user: user,
-        order: orderInput,
-        headers: ["Item", "Qty"],
-        date: DateTime.now(),
-        invoiceNum: date);
+  void _view57mmPdf(OrderInput orderInput) {
+    // User user = User();
+    // try {
+    //   final res = await UserService.me();
+    //   if ((res.statusCode ?? 400) < 300) {
+    //     user = User.fromMap(res.data['user']);
+    //   }
+    // } catch (_) {
+    //   Navigator.pop(context);
+    // }
+    // await PdfKotUI.generate57mmKot(
+    //     user: user,
+    //     order: orderInput,
+    //     headers: ["Item", "Qty"],
+    //     date: DateTime.now(),
+    //     invoiceNum: date);
 
-    // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-    //     arguments:
-    //         BluetoothArgs(orderInput: orderInput, dateTime: DateTime.now()));
+    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+        arguments: CombineArgs(
+            billArgs: null,
+            bluetoothArgs: BluetoothArgs(
+                orderInput: orderInput,
+                dateTime: DateTime.now(),
+                type: kotType.is57mm)));
   }
 
-  void _view80mmPdf(OrderInput orderInput) async {
-    User user = User();
-    try {
-      final res = await UserService.me();
-      if ((res.statusCode ?? 400) < 300) {
-        user = User.fromMap(res.data['user']);
-      }
-    } catch (_) {
-      Navigator.pop(context);
-    }
-    await PdfKotUI.generate80mmKot(
-        user: user,
-        order: orderInput,
-        headers: ["Item", "Qty"],
-        date: DateTime.now(),
-        invoiceNum: date);
+  void _view80mmPdf(OrderInput orderInput) {
+    // User user = User();
+    // try {
+    //   final res = await UserService.me();
+    //   if ((res.statusCode ?? 400) < 300) {
+    //     user = User.fromMap(res.data['user']);
+    //   }
+    // } catch (_) {
+    //   Navigator.pop(context);
+    // }
+    // await PdfKotUI.generate80mmKot(
+    //     user: user,
+    //     order: orderInput,
+    //     headers: ["Item", "Qty"],
+    //     date: DateTime.now(),
+    //     invoiceNum: date);
 
-    // Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-    //     arguments: BluetoothArgs(pdfData: pdfData));
+    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+        arguments: CombineArgs(
+            billArgs: null,
+            bluetoothArgs: BluetoothArgs(
+                orderInput: orderInput,
+                dateTime: DateTime.now(),
+                type: kotType.is80mm)));
   }
 
   // void _viewSmallKot(OrderInput orderInput, int index, Billing provider) async {
@@ -356,38 +377,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   // }
   // }
 
-  _chekBluetoothPrinterDevices() async {
-    // User user = User();
-    // try {
-    //   final res = await UserService.me();
-    //   if ((res.statusCode ?? 400) < 300) {
-    //     user = User.fromMap(res.data['user']);
-    //     // if (type == 0) _viewPdfwithgst(user);
-    //     // if (type == 1) _viewPdfwithoutgst(user);
-    //   }
-    // } catch (_) {
-    //   Navigator.pop(context);
-    // }
-    // final htmlContent = smallKotTemplate(
-    //     invoiceNum: date,
-    //     user: user,
-    //     date: DateTime.now(),
-    //     order: order,
-    //     headers: [
-    //       "Invoice 0000000",
-    //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-    //     ],
-    //     subtotal: totalbasePrice(index, provider)!,
-    //     gstTotal: totalgstPrice(index, provider)!,
-    //     totalPrice: totalPrice(index, provider)!);
-    Navigator.of(context).pushNamed(
-      BluetoothPrinterList.routeName,
-    );
-  }
-
   _showNewDialog(OrderInput order) async {
     return showDialog(
       context: context,
+      useRootNavigator: true,
       builder: (ctx) => AlertDialog(
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -395,16 +388,16 @@ class _BillingListScreenState extends State<BillingListScreen> {
             ListTile(
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('default', '57mm');
+                prefs.setString('default', '57mm');
                 _view57mmPdf(order);
                 Navigator.of(ctx).pop();
               },
-              title: Text('57mm'),
+              title: Text('58mm'),
             ),
             ListTile(
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('default', '80mm');
+                prefs.setString('default', '80mm');
                 _view80mmPdf(order);
                 Navigator.of(ctx).pop();
               },

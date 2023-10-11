@@ -34,9 +34,9 @@ String reportsOrderTemplate({
           return (e.orderItems ?? [])
               .map((OrderItem item) {
                 final date = DateFormat('dd MMM, yyyy')
-                    .format(DateTime.tryParse(e.createdAt)!);
+                    .format(DateTime.tryParse(e.createdAt!)!);
                 final time = DateFormat('hh:mm a')
-                    .format(DateTime.tryParse(e.createdAt)!);
+                    .format(DateTime.tryParse(e.createdAt!)!);
                 return '<tr>'
                     '<td class="left">$date</td>'
                     '<td class="left">$time</td>'

@@ -87,6 +87,9 @@ class PdfKotUI {
 
     // return bytes;
 
+    // await Printing.layoutPdf(
+    //     onLayout: (PdfPageFormat format) async => pdf.save());
+
     try {
       print('run');
       print(file.path);
@@ -172,6 +175,9 @@ class PdfKotUI {
     // final bytes = File(file.path).readAsBytesSync();
 
     // return bytes;
+
+    // await Printing.layoutPdf(
+    //     onLayout: (PdfPageFormat format) async => pdf.save());
 
     try {
       print('run');

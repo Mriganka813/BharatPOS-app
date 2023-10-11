@@ -16,6 +16,8 @@ import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pages/billing_list.dart';
+import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pdf_templates/58mm_kot_template.dart';
 import 'package:shopos/src/provider/billing_order.dart';
@@ -25,6 +27,7 @@ import 'package:shopos/src/services/party.dart';
 import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_drop_down.dart';
+import 'package:shopos/src/widgets/custom_text_field.dart';
 import 'package:shopos/src/widgets/invoice_template_withGST.dart';
 import 'package:shopos/src/widgets/pdf_bill_template.dart';
 import 'package:upi_payment_qrcode_generator/upi_payment_qrcode_generator.dart';
@@ -33,6 +36,30 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/party.dart';
 
 enum OrderType { purchase, sale }
+
+class PrintBillArgs {
+  final billType type;
+  final OrderInput order;
+  final User user;
+  final List<String> headers;
+  final DateTime dateTime;
+  final String invoiceNum;
+  final String totalPrice;
+  final String subtotalPrice;
+  final String gsttotalPrice;
+
+  PrintBillArgs({
+    required this.type,
+    required this.order,
+    required this.user,
+    required this.headers,
+    required this.dateTime,
+    required this.invoiceNum,
+    required this.totalPrice,
+    required this.subtotalPrice,
+    required this.gsttotalPrice,
+  });
+}
 
 class CheckoutPageArgs {
   final OrderType invoiceType;
@@ -67,6 +94,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   bool _isLoading = false;
   bool _isUPI = false;
   String date = '';
+
+  bool isBillTo = false;
 
   ///
   @override
@@ -189,6 +218,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   _showNewDialog(widget.args.orderInput);
                 } else if (defaultBill == '57mm') {
                   _view57mmBill(widget.args.orderInput);
+                  // _viewPdf();
                 } else if (defaultBill == '80mm') {
                   _view80mmBill(widget.args.orderInput);
                 } else if (defaultBill == 'A4') {
@@ -489,20 +519,52 @@ class _CheckoutPageState extends State<CheckoutPage> {
     ).toStringAsFixed(2);
   }
 
-  void _view80mmBill(OrderInput orderInput) async {
-    PdfUI.generate80mmPdf(
-      user: userData,
-      order: orderInput,
-      headers: [
-        "Invoice 0000000",
-        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-      ],
-      date: DateTime.now(),
-      invoiceNum: date,
-      totalPrice: totalPrice() ?? '',
-      subtotal: totalbasePrice() ?? '',
-      gstTotal: totalgstPrice() ?? '',
-    );
+  void _view80mmBill(OrderInput orderInput) {
+    // PdfUI.generate80mmPdf(
+    //   user: userData,
+    //   order: orderInput,
+    //   headers: [
+    //     "Invoice 0000000",
+    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+    //   ],
+    //   date: DateTime.now(),
+    //   invoiceNum: date,
+    //   totalPrice: totalPrice() ?? '',
+    //   subtotal: totalbasePrice() ?? '',
+    //   gstTotal: totalgstPrice() ?? '',
+    // );
+
+    // PrintBillArgs(
+    //   user: userData,
+    //   order: orderInput,
+    //   headers: [
+    //     "Invoice 0000000",
+    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+    //   ],
+    //   dateTime: DateTime.now(),
+    //   invoiceNum: date,
+    //   totalPrice: totalPrice() ?? '',
+    //   subtotalPrice: totalbasePrice() ?? '',
+    //   gsttotalPrice: totalgstPrice() ?? '',
+    // );
+
+    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+        arguments: CombineArgs(
+            bluetoothArgs: null,
+            billArgs: PrintBillArgs(
+              type: billType.is80mm,
+              user: userData,
+              order: orderInput,
+              headers: [
+                "Invoice 0000000",
+                "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+              ],
+              dateTime: DateTime.now(),
+              invoiceNum: date,
+              totalPrice: totalPrice() ?? '',
+              subtotalPrice: totalbasePrice() ?? '',
+              gsttotalPrice: totalgstPrice() ?? '',
+            )));
 
     // for open pdf
     // try {
@@ -512,20 +574,42 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // }
   }
 
-  void _view57mmBill(OrderInput orderInput) async {
-    PdfUI.generate57mmPdf(
-      user: userData,
-      order: orderInput,
-      headers: [
-        "Invoice 0000000",
-        "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-      ],
-      date: DateTime.now(),
-      invoiceNum: date,
-      totalPrice: totalPrice() ?? '',
-      subtotal: totalbasePrice() ?? '',
-      gstTotal: totalgstPrice() ?? '',
-    );
+  void _view57mmBill(OrderInput orderInput) {
+    // PdfUI.generate57mmPdf(
+    //   user: userData,
+    //   order: orderInput,
+    //   headers: [
+    //     "Invoice 0000000",
+    //     "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+    //   ],
+    //   date: DateTime.now(),
+    //   invoiceNum: date,
+    //   totalPrice: totalPrice() ?? '',
+    //   subtotal: totalbasePrice() ?? '',
+    //   gstTotal: totalgstPrice() ?? '',
+    // );
+
+    print(widget.args.orderInput.orderItems![0].product!.baseSellingPriceGst ==
+            'null'
+        ? widget.args.orderInput.orderItems![0].product!.sellingPrice
+        : 0);
+    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
+        arguments: CombineArgs(
+            bluetoothArgs: null,
+            billArgs: PrintBillArgs(
+              type: billType.is57mm,
+              user: userData,
+              order: orderInput,
+              headers: [
+                "Invoice 0000000",
+                "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+              ],
+              dateTime: DateTime.now(),
+              invoiceNum: date,
+              totalPrice: totalPrice() ?? '',
+              subtotalPrice: totalbasePrice() ?? '',
+              gsttotalPrice: totalgstPrice() ?? '',
+            )));
   }
 
   _showNewDialog(
@@ -544,7 +628,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 _view57mmBill(order);
                 Navigator.of(ctx).pop();
               },
-              title: Text('57mm'),
+              title: Text('58mm'),
             ),
             ListTile(
               onTap: () async {
@@ -594,287 +678,352 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ? Center(
               child: CircularProgressIndicator(color: Colors.blue),
             )
-          : BlocListener<CheckoutCubit, CheckoutState>(
-              bloc: _checkoutCubit,
-              listener: (context, state) {
-                if (state is CheckoutSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      backgroundColor: Colors.green,
-                      content: Text(
-                        'Order was created successfully',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  );
-                  Future.delayed(const Duration(milliseconds: 400), () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  });
-                }
-              },
-              child: BlocBuilder<CheckoutCubit, CheckoutState>(
+          : SingleChildScrollView(
+              child: BlocListener<CheckoutCubit, CheckoutState>(
                 bloc: _checkoutCubit,
-                builder: (context, state) {
-                  if (state is CheckoutLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          ColorsConst.primaryColor,
+                listener: (context, state) {
+                  if (state is CheckoutSuccess) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.green,
+                        content: Text(
+                          'Order was created successfully',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     );
+                    Future.delayed(const Duration(milliseconds: 400), () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    });
                   }
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      top: 10.0,
-                      bottom: 20,
-                      left: 20,
-                      right: 30,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // const Divider(color: Colors.transparent),
-                          // const Divider(color: Colors.transparent, height: 30),
-                          Card(
-                            elevation: 0,
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            child: Column(
-                              children: [
-                                // Divider(color: Colors.black54),
-                                // Text(
-                                //   "INVOICE",
-                                //   style: TextStyle(
-                                //       fontSize: 30, fontWeight: FontWeight.w500),
-                                // ),
-                                // Divider(color: Colors.black54),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Sub Total'),
-                                    Text('₹ ${totalbasePrice()}'),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Tax GST'),
-                                    Text('₹ ${totalgstPrice()}'),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Discount'),
-                                    Text('₹ 0'),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                Divider(color: Colors.black54),
-                                const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Grand Total'),
-                                    Text(
-                                      '₹ ${totalPrice()}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                // Divider(color: Colors.black54),
-                                // const Divider(color: Colors.transparent),
-                              ],
-                            ),
-                          ),
-                          const Divider(color: Colors.transparent),
-                          const Divider(color: Colors.transparent),
-                          TypeAheadFormField<Party>(
-                            validator: (value) {
-                              final isEmpty = (value == null || value.isEmpty);
-                              final isCredit =
-                                  widget.args.orderInput.modeOfPayment ==
-                                      "Credit";
-                              if (isEmpty && isCredit) {
-                                return "Please select a party for credit order";
-                              }
-                              return null;
-                            },
-                            debounceDuration: const Duration(milliseconds: 500),
-                            textFieldConfiguration: TextFieldConfiguration(
-                              controller: _typeAheadController,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                hintText: "Party",
-                                suffixIcon: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, CreatePartyPage.routeName,
-                                        arguments: CreatePartyArguments(
-                                          "",
-                                          "",
-                                          "",
-                                          "",
-                                          widget.args.invoiceType ==
-                                                  OrderType.purchase
-                                              ? 'supplier'
-                                              : 'customer',
-                                        ));
-                                  },
-                                  child: const Icon(
-                                      Icons.add_circle_outline_rounded),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 2,
-                                  horizontal: 10,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            suggestionsCallback: (String pattern) {
-                              if (int.tryParse(pattern.trim()) != null) {
-                                return Future.value([]);
-                              }
-                              return _searchParties(pattern);
-                            },
-                            itemBuilder: (context, party) {
-                              return ListTile(
-                                leading: const Icon(Icons.person),
-                                title: Text(party.name ?? ""),
-                              );
-                            },
-                            onSuggestionSelected: (Party party) {
-                              setState(() {
-                                widget.args.orderInput.party = party;
-                              });
-                              _typeAheadController.text = party.name ?? "";
-                            },
-                          ),
-                          const Divider(color: Colors.transparent, height: 5),
-                          const Divider(color: Colors.transparent, height: 20),
-                          CustomDropDownField(
-                            items: const <String>[
-                              "Cash",
-                              "Credit",
-                              "Bank Transfer",
-                              "UPI"
-                            ],
-                            onSelected: (e) {
-                              widget.args.orderInput.modeOfPayment = e;
-
-                              if (widget.args.orderInput.modeOfPayment ==
-                                  'UPI') {
-                                _isUPI = true;
-                                getUPIDetails();
-                              } else {
-                                _isUPI = false;
-                              }
-
-                              setState(() {});
-                            },
-                            validator: (e) {
-                              if ((e ?? "").isEmpty) {
-                                return 'Please select a mode of payment';
-                              }
-                              return null;
-                            },
-                            hintText: "Mode of payment",
-                          ),
-                          SizedBox(
-                            height: 40,
-                          ),
-                          // qr code image
-                          if (_isUPI)
-                            Center(
-                              child: UPIPaymentQRCode(
-                                upiDetails: _myUpiId!,
-                                size: 200,
-                                embeddedImagePath: 'assets/icon/CUBE.png',
-                                embeddedImageSize: const Size(40, 40),
-                                upiQRErrorCorrectLevel:
-                                    UPIQRErrorCorrectLevel.high,
-                                qrCodeLoader:
-                                    Center(child: CircularProgressIndicator()),
-                              ),
-                            ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          if (_isUPI)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Upi id: ',
-                                ),
-
-                                // to copy upi id
-                                SelectableText(
-                                  _myUpiId!.upiID,
-                                )
-                              ],
-                            ),
-                          const Spacer(),
-                          Row(
-                            children: [
-                              CustomButton(
-                                title: "Share",
-                                onTap: () async {
-                                  try {
-                                    final res = await UserService.me();
-                                    if ((res.statusCode ?? 400) < 300) {
-                                      final user =
-                                          User.fromMap(res.data['user']);
-
-                                      openShareModal(context, user);
-                                    }
-                                  } catch (_) {}
-                                },
-                                type: ButtonType.outlined,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 10,
-                                ),
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                onPressed: () {
-                                  _onTapSubmit();
-                                },
-                                style: TextButton.styleFrom(
-                                  backgroundColor: ColorsConst.primaryColor,
-                                  shape: const CircleBorder(),
-                                ),
-                                child: const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: 40,
-                                  color: Colors.white,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  );
                 },
+                child: BlocBuilder<CheckoutCubit, CheckoutState>(
+                  bloc: _checkoutCubit,
+                  builder: (context, state) {
+                    if (state is CheckoutLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            ColorsConst.primaryColor,
+                          ),
+                        ),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 10.0,
+                        bottom: 20,
+                        left: 20,
+                        right: 30,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // const Divider(color: Colors.transparent),
+                            // const Divider(color: Colors.transparent, height: 30),
+                            Card(
+                              elevation: 0,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              child: Column(
+                                children: [
+                                  // Divider(color: Colors.black54),
+                                  // Text(
+                                  //   "INVOICE",
+                                  //   style: TextStyle(
+                                  //       fontSize: 30, fontWeight: FontWeight.w500),
+                                  // ),
+                                  // Divider(color: Colors.black54),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Sub Total'),
+                                      Text('₹ ${totalbasePrice()}'),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Tax GST'),
+                                      Text('₹ ${totalgstPrice()}'),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Discount'),
+                                      Text('₹ 0'),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Divider(color: Colors.black54),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Grand Total'),
+                                      Text(
+                                        '₹ ${totalPrice()}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  // Divider(color: Colors.black54),
+                                  // const Divider(color: Colors.transparent),
+                                ],
+                              ),
+                            ),
+                            const Divider(color: Colors.transparent),
+                            const Divider(color: Colors.transparent),
+                            TypeAheadFormField<Party>(
+                              validator: (value) {
+                                final isEmpty =
+                                    (value == null || value.isEmpty);
+                                final isCredit =
+                                    widget.args.orderInput.modeOfPayment ==
+                                        "Credit";
+                                if (isEmpty && isCredit) {
+                                  return "Please select a party for credit order";
+                                }
+                                return null;
+                              },
+                              debounceDuration:
+                                  const Duration(milliseconds: 500),
+                              textFieldConfiguration: TextFieldConfiguration(
+                                controller: _typeAheadController,
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                  hintText: "Party",
+                                  suffixIcon: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, CreatePartyPage.routeName,
+                                          arguments: CreatePartyArguments(
+                                            "",
+                                            "",
+                                            "",
+                                            "",
+                                            widget.args.invoiceType ==
+                                                    OrderType.purchase
+                                                ? 'supplier'
+                                                : 'customer',
+                                          ));
+                                    },
+                                    child: const Icon(
+                                        Icons.add_circle_outline_rounded),
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 2,
+                                    horizontal: 10,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              suggestionsCallback: (String pattern) {
+                                if (int.tryParse(pattern.trim()) != null) {
+                                  return Future.value([]);
+                                }
+                                return _searchParties(pattern);
+                              },
+                              itemBuilder: (context, party) {
+                                return ListTile(
+                                  leading: const Icon(Icons.person),
+                                  title: Text(party.name ?? ""),
+                                );
+                              },
+                              onSuggestionSelected: (Party party) {
+                                setState(() {
+                                  widget.args.orderInput.party = party;
+                                });
+                                _typeAheadController.text = party.name ?? "";
+                              },
+                            ),
+                            const Divider(color: Colors.transparent, height: 5),
+                            const Divider(
+                                color: Colors.transparent, height: 20),
+                            CustomDropDownField(
+                              items: const <String>[
+                                "Cash",
+                                "Credit",
+                                "Bank Transfer",
+                                "UPI"
+                              ],
+                              onSelected: (e) {
+                                widget.args.orderInput.modeOfPayment = e;
+
+                                if (widget.args.orderInput.modeOfPayment ==
+                                    'UPI') {
+                                  _isUPI = true;
+                                  getUPIDetails();
+                                } else {
+                                  _isUPI = false;
+                                }
+
+                                setState(() {});
+                              },
+                              validator: (e) {
+                                if ((e ?? "").isEmpty) {
+                                  return 'Please select a mode of payment';
+                                }
+                                return null;
+                              },
+                              hintText: "Mode of payment",
+                            ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                            // qr code image
+                            if (_isUPI)
+                              Center(
+                                child: UPIPaymentQRCode(
+                                  upiDetails: _myUpiId!,
+                                  size: 200,
+                                  embeddedImagePath: 'assets/icon/CUBE.png',
+                                  embeddedImageSize: const Size(40, 40),
+                                  upiQRErrorCorrectLevel:
+                                      UPIQRErrorCorrectLevel.high,
+                                  qrCodeLoader: Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                              ),
+                            if (_isUPI)
+                              SizedBox(
+                                height: 20,
+                              ),
+                            if (_isUPI)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upi id: ',
+                                  ),
+
+                                  // to copy upi id
+                                  SelectableText(
+                                    _myUpiId!.upiID,
+                                  )
+                                ],
+                              ),
+                            SwitchListTile(
+                                title: Text('Bill to: '),
+                                value: isBillTo,
+                                onChanged: (val) {
+                                  isBillTo = val;
+                                  setState(() {});
+                                }),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Visibility(
+                              visible: isBillTo,
+                              child: Column(
+                                children: [
+                                  CustomTextField(
+                                    hintText: 'Receiver name',
+                                    onChanged: (val) {
+                                      widget.args.orderInput.reciverName = val;
+                                      setState(() {});
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  CustomTextField(
+                                    hintText: 'Business name',
+                                    onChanged: (val) {
+                                      widget.args.orderInput.businessName = val;
+                                      setState(() {});
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  CustomTextField(
+                                    hintText: 'Business address',
+                                    onChanged: (val) {
+                                      widget.args.orderInput.businessAddress =
+                                          val;
+                                      setState(() {});
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  CustomTextField(
+                                    hintText: 'GSTIN',
+                                    onChanged: (val) {
+                                      widget.args.orderInput.gst = val;
+                                      setState(() {});
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 300,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          children: [
+            CustomButton(
+              title: "Share",
+              onTap: () async {
+                try {
+                  final res = await UserService.me();
+                  if ((res.statusCode ?? 400) < 300) {
+                    final user = User.fromMap(res.data['user']);
+
+                    openShareModal(context, user);
+                  }
+                } catch (_) {}
+              },
+              type: ButtonType.outlined,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 30,
+                vertical: 10,
+              ),
+            ),
+            const Spacer(),
+            TextButton(
+              onPressed: () {
+                _onTapSubmit();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: ColorsConst.primaryColor,
+                shape: const CircleBorder(),
+              ),
+              child: const Icon(
+                Icons.arrow_forward_rounded,
+                size: 40,
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
