@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
@@ -17,6 +18,7 @@ import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/pages/set_pin.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
+import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
@@ -181,6 +183,9 @@ class _HomePageState extends State<HomePage> {
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
                           await const AuthService().signOut();
+                          final provider =
+                              Provider.of<Billing>(context, listen: false);
+                          provider.removeAll();
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             SignInPage.routeName,

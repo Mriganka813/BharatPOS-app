@@ -73,6 +73,11 @@ class Billing with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeAll() {
+    _salesBilling.clear();
+    _purchaseBilling.clear();
+    notifyListeners();
+  }
   // void addOrderInputItem(OrderInput input, OrderType orderType) {
   //   _orderInput.add(input);
   //   _ordertype.add(orderType);

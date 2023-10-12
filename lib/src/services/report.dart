@@ -8,6 +8,8 @@ class ReportService {
   ///
   Future<Response> getAllReport(ReportInput input) async {
     print(input.type);
+    print(input.startDate);
+    print(input.endDate);
     print('ok');
     final response = await ApiV1Service.getRequest(
       '/report',

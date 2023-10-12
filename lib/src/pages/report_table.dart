@@ -302,22 +302,22 @@ class _ReportTableState extends State<ReportTable> {
             "${item.product?.gstRate == "null" ? "N/A" : item.product?.gstRate}%");
         widget.args.type == "ReportType.sale"
             ? basesplist.add(
-                "${item.product?.baseSellingPriceGst == "null" ? item.product?.sellingPrice : item.product?.baseSellingPriceGst}")
+                "${item.baseSellingPrice != "null" ? double.parse(item.baseSellingPrice!).toStringAsFixed(2) : item.product?.baseSellingPriceGst}")
             : basesplist.add(
                 "${item.product?.basePurchasePriceGst == "null" ? "N/A" : item.product?.basePurchasePriceGst}");
         widget.args.type == "ReportType.sale"
             ? cgstlist.add(
-                "${item.product?.salecgst == "null" ? "N/A" : item.product?.salecgst}")
+                "${item.saleCGST != "null" ? double.parse(item.saleCGST!).toStringAsFixed(2) : item.product?.salecgst}")
             : cgstlist.add(
                 "${item.product?.purchasecgst == "null" ? "N/A" : item.product?.purchasecgst}");
         widget.args.type == "ReportType.sale"
             ? sgstlist.add(
-                "${item.product?.salesgst == "null" ? "N/A" : item.product?.salesgst}")
+                "${item.saleSGST != "null" ? double.parse(item.saleSGST!).toStringAsFixed(2) : item.product?.salesgst}")
             : sgstlist.add(
                 "${item.product?.purchasesgst == "null" ? "N/A" : item.product?.purchasesgst}");
         widget.args.type == "ReportType.sale"
             ? igstlist.add(
-                "${item.product?.saleigst == "null" ? "N/A" : item.product?.saleigst}")
+                "${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : item.product?.saleigst}")
             : igstlist.add(
                 "${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale"

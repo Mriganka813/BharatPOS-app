@@ -168,7 +168,7 @@ String invoiceTemplatewithGST({
               width: 200px;
               height: 100px;
               position: absolute;
-              top: 100px;
+              top: 50px;
               right: 0;
               margin: 20px;
             }

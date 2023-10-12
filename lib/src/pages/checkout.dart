@@ -1048,11 +1048,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
       widget.args.invoiceType == OrderType.purchase
           ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput, date)
           : _checkoutCubit.createSalesOrder(widget.args.orderInput, date);
+
+      final provider = Provider.of<Billing>(context, listen: false);
+      widget.args.invoiceType == OrderType.purchase
+          ? provider.removePurchaseBillItems(widget.args.orderId)
+          : provider.removeSalesBillItems(widget.args.orderId);
     }
-    final provider = Provider.of<Billing>(context, listen: false);
-    widget.args.invoiceType == OrderType.purchase
-        ? provider.removePurchaseBillItems(widget.args.orderId)
-        : provider.removeSalesBillItems(widget.args.orderId);
   }
 }
 
