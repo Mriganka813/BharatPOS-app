@@ -60,7 +60,8 @@ dependencies:
   open_file_plus: ^3.4.1
   print_bluetooth_thermal: ^1.0.9
   esc_pos_utils_plus: ^2.0.2
-  excel: ^2.1.0
+  # excel: ^2.1.0
+  syncfusion_flutter_xlsio: ^23.1.40
  
 
 dev_dependencies:

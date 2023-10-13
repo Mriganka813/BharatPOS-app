@@ -183,9 +183,9 @@ class _HomePageState extends State<HomePage> {
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
                           await const AuthService().signOut();
-                          final provider =
-                              Provider.of<Billing>(context, listen: false);
-                          provider.removeAll();
+                          // final provider =
+                          //     Provider.of<Billing>(context, listen: false);
+                          // provider.removeAll();
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             SignInPage.routeName,

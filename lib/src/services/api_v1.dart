@@ -31,6 +31,7 @@ class ApiV1Service {
   static Future<PersistCookieJar> getCookieJar() async {
     Directory tempDir = await getTemporaryDirectory();
     final tempPath = tempDir.path;
+    print(tempPath);
     return PersistCookieJar(
       ignoreExpires: true,
       storage: FileStorage(tempPath),

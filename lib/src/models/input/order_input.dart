@@ -92,10 +92,12 @@ class OrderItemInput {
         "price": (product?.sellingPrice ?? 1),
         "quantity": quantity,
         "product": product?.id,
-        "saleCGST": product!.salecgst,
-        "saleSGST": product!.salesgst,
-        "baseSellingPrice": product!.baseSellingPriceGst,
-        "saleIGST": product!.saleigst,
+        "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
+        "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
+        "baseSellingPrice": product?.baseSellingPriceGst == 'null'
+            ? '0'
+            : product!.baseSellingPriceGst,
+        "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
       };
   Map<String, dynamic> toPurchaseMap() => {
         "price": (product?.purchasePrice ?? 1),

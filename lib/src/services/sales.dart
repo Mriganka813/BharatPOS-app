@@ -10,9 +10,9 @@ class SalesService {
     OrderInput orderItemInput,
     String invoiceNum,
   ) async {
-    print('${orderItemInput.orderItems![0].product!.sellingPrice}');
-    print('${orderItemInput.orderItems![0].product!.baseSellingPriceGst}');
-    print('${orderItemInput.orderItems![0].product!.saleigst}');
+    print('${orderItemInput.orderItems![0].product?.sellingPrice}');
+    print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
+    print('${orderItemInput.orderItems![0].product?.saleigst}');
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
       data: {
@@ -27,6 +27,7 @@ class SalesService {
         'gst': orderItemInput.gst,
       },
     );
+    print(response.data);
     return response;
   }
 

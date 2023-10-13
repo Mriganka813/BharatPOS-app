@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-
-import 'package:excel/excel.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +16,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 class tableArg {
   final List<Order>? orders;
@@ -299,25 +299,25 @@ class _ReportTableState extends State<ReportTable> {
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
         gstratelist.add(
-            "${item.product?.gstRate == "null" ? "N/A" : item.product?.gstRate}%");
+            "${item.product?.gstRate == "null" ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");
         widget.args.type == "ReportType.sale"
             ? basesplist.add(
-                "${item.baseSellingPrice != "null" ? double.parse(item.baseSellingPrice!).toStringAsFixed(2) : item.product?.baseSellingPriceGst}")
+                "${item.baseSellingPrice != "null" ? double.parse(item.baseSellingPrice!).toStringAsFixed(2) : (item.product?.baseSellingPriceGst != "null" ? item.product?.baseSellingPriceGst : "N/A")}")
             : basesplist.add(
                 "${item.product?.basePurchasePriceGst == "null" ? "N/A" : item.product?.basePurchasePriceGst}");
         widget.args.type == "ReportType.sale"
             ? cgstlist.add(
-                "${item.saleCGST != "null" ? double.parse(item.saleCGST!).toStringAsFixed(2) : item.product?.salecgst}")
+                "${item.saleCGST != "null" ? double.parse(item.saleCGST!).toStringAsFixed(2) : (item.product?.salecgst != "null" ? item.product?.salecgst : "N/A")}")
             : cgstlist.add(
                 "${item.product?.purchasecgst == "null" ? "N/A" : item.product?.purchasecgst}");
         widget.args.type == "ReportType.sale"
             ? sgstlist.add(
-                "${item.saleSGST != "null" ? double.parse(item.saleSGST!).toStringAsFixed(2) : item.product?.salesgst}")
+                "${item.saleSGST != "null" ? double.parse(item.saleSGST!).toStringAsFixed(2) : (item.product?.salesgst != "null" ? item.product?.salesgst : "N/A")}")
             : sgstlist.add(
                 "${item.product?.purchasesgst == "null" ? "N/A" : item.product?.purchasesgst}");
         widget.args.type == "ReportType.sale"
             ? igstlist.add(
-                "${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : item.product?.saleigst}")
+                "${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : (item.product?.saleigst != "null" ? item.product?.saleigst : "N/A")}")
             : igstlist.add(
                 "${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale"
@@ -400,39 +400,101 @@ class _ReportTableState extends State<ReportTable> {
     );
   }
 
-  Future<void> _convertImageToExcel() async {
-    var excel = Excel.createExcel();
-    var sheet = excel['Sheet1'];
+  // Future<void> _convertImageToExcel() async {
+  //   var excel = Excel.createExcel();
+  //   var sheet = excel['Sheet1'];
 
-    var headers = headerRows();
-    for (var i = 0; i < headers.length; i++) {
-      sheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
-          .value = headers[i].label;
+  //   var headers = headerRows();
+  //   for (var i = 0; i < headers.length; i++) {
+  //     sheet
+  //         .cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0))
+  //         .value = headers[i].label;
+  //   }
+
+  //   var rows = widget.args.type == "ReportType.sale"
+  //       ? showSaleRow()
+  //       : widget.args.type == "ReportType.purchase"
+  //           ? showPurchaseRow()
+  //           : widget.args.type == "ReportType.expense"
+  //               ? showExpenseRow()
+  //               : showStockRow();
+
+  //   for (var i = 0; i < rows.length; i++) {
+  //     for (var j = 0; j < rows[i].cells.length; j++) {
+  //       sheet
+  //           .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1))
+  //           .value = rows[i].cells[j].child.toString();
+  //     }
+  //   }
+
+  //   var excelFile = excel.encode();
+  //   Uint8List excelBytes = Uint8List.fromList(excelFile!);
+
+  //   final directory = await getApplicationDocumentsDirectory();
+  //   File excelFileLocal = File('${directory.path}/report.xlsx');
+  //   await excelFileLocal.writeAsBytes(excelBytes);
+
+  //   Share.shareFiles(
+  //     [excelFileLocal.path],
+  //     mimeTypes: [
+  //       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  //     ],
+  //   );
+  // }
+
+  saleExcelReport() async {
+    final headersSP = [
+      'Date',
+      'Time',
+      'Party',
+      'M.O.P.',
+      'Product',
+      'Amount/Unit',
+      'GST Rate/Unit',
+      'CGST/Unit',
+      'SGST/Unit',
+      'GST/Unit',
+      'MRP/Unit',
+      'Total',
+    ];
+
+    final xcel.Workbook workbook = xcel.Workbook();
+    final xcel.Worksheet sheet = workbook.worksheets[0];
+
+    for (int i = 1; i <= headersSP.length; i++) {
+      sheet.getRangeByIndex(1, i).setText(headersSP[i - 1]);
     }
 
-    var rows = widget.args.type == "ReportType.sale"
-        ? showSaleRow()
-        : widget.args.type == "ReportType.purchase"
-            ? showPurchaseRow()
-            : widget.args.type == "ReportType.expense"
-                ? showExpenseRow()
-                : showStockRow();
-
-    for (var i = 0; i < rows.length; i++) {
-      for (var j = 0; j < rows[i].cells.length; j++) {
-        sheet
-            .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1))
-            .value = rows[i].cells[j].child.toString();
+    for (int i = 0; i < datelist.length; i++) {
+      print(datelist.length);
+      if (taxfileType == "quarterly") {
+        sheet.getRangeByIndex(i + 2, 1).setText(datelist[i]);
+        sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
+        sheet.getRangeByIndex(i + 2, 3).setText(partynamelist[i]);
+        sheet.getRangeByIndex(i + 2, 4).setText(moplist[i]);
+        sheet.getRangeByIndex(i + 2, 5).setText(productnamelist[i]);
+        sheet.getRangeByIndex(i + 2, 6).setText(mrplist[i]);
+        sheet.getRangeByIndex(i + 2, 7).setText(totalsplist[i]);
+      } else {
+        sheet.getRangeByIndex(i + 2, 1).setText(datelist[i] ?? '');
+        sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
+        sheet.getRangeByIndex(i + 2, 3).setText(partynamelist[i]);
+        sheet.getRangeByIndex(i + 2, 4).setText(moplist[i]);
+        sheet.getRangeByIndex(i + 2, 5).setText(productnamelist[i]);
+        sheet.getRangeByIndex(i + 2, 6).setText(basesplist[i]);
+        sheet.getRangeByIndex(i + 2, 7).setText(gstratelist[i]);
+        sheet.getRangeByIndex(i + 2, 8).setText(cgstlist[i]);
+        sheet.getRangeByIndex(i + 2, 9).setText(sgstlist[i]);
+        sheet.getRangeByIndex(i + 2, 10).setText(igstlist[i]);
+        sheet.getRangeByIndex(i + 2, 11).setText(mrplist[i]);
+        sheet.getRangeByIndex(i + 2, 12).setText(totalsplist[i]);
       }
     }
 
-    var excelFile = excel.encode();
-    Uint8List excelBytes = Uint8List.fromList(excelFile!);
-
+    final List<int> bytes = workbook.saveAsStream();
     final directory = await getApplicationDocumentsDirectory();
-    File excelFileLocal = File('${directory.path}/report.xlsx');
-    await excelFileLocal.writeAsBytes(excelBytes);
+    File excelFileLocal = File('${directory.path}/sale.xlsx');
+    await excelFileLocal.writeAsBytes(bytes);
 
     Share.shareFiles(
       [excelFileLocal.path],
@@ -440,6 +502,8 @@ class _ReportTableState extends State<ReportTable> {
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       ],
     );
+
+    workbook.dispose();
   }
 
   @override
@@ -456,8 +520,13 @@ class _ReportTableState extends State<ReportTable> {
         actions: [
           IconButton(
             onPressed: () async {
-              sharePDF();
+              // sharePDF();
               // _convertImageToExcel();
+              widget.args.type == "ReportType.sale"
+                  ? saleExcelReport()
+                  : sharePDF();
+
+              // saleExcelReport();
             },
             icon: Icon(Icons.share),
           ),

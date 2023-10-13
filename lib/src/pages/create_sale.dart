@@ -70,7 +70,7 @@ class _CreateSaleState extends State<CreateSale> {
   _onSubtotalChange(Product product, String? localSellingPrice) async {
     product.baseSellingPriceGst = localSellingPrice;
     double newGStRate = (double.parse(product.baseSellingPriceGst!) *
-        double.parse(product.gstRate!) /
+        double.parse(product.gstRate == 'null' ? '0' : product.gstRate!) /
         100);
     product.saleigst = newGStRate.toStringAsFixed(2);
 
@@ -81,7 +81,8 @@ class _CreateSaleState extends State<CreateSale> {
     print(product.salesgst);
 
     product.sellingPrice =
-        double.parse(product.baseSellingPriceGst!) + newGStRate;
+        double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
+    print(product.sellingPrice);
   }
 
   _onTotalChange(Product product, String? discountedPrice) {
