@@ -6,6 +6,7 @@ import '../user.dart';
 
 class OrderInput {
   OrderInput({
+    this.id=-1,
     this.orderItems,
     this.modeOfPayment,
     this.party,
@@ -17,6 +18,7 @@ class OrderInput {
     this.gst,
   });
 
+  int ?id;
   List<OrderItemInput>? orderItems;
   String? modeOfPayment;
   Party? party;
@@ -28,6 +30,7 @@ class OrderInput {
   String? gst;
 
   factory OrderInput.fromMap(Map<String, dynamic> json) => OrderInput(
+        id:json["id"],
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
             (x) => OrderItemInput.fromMap(x),
@@ -44,6 +47,7 @@ class OrderInput {
       );
 
   Map<String, dynamic> toMap(OrderType type) => {
+        "id":id,
         "orderItems": orderItems
             ?.map((e) =>
                 type == OrderType.sale ? e.toSaleMap() : e.toPurchaseMap())

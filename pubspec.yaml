@@ -62,6 +62,9 @@ dependencies:
   esc_pos_utils_plus: ^2.0.2
   # excel: ^2.1.0
   syncfusion_flutter_xlsio: ^23.1.40
+  sqflite:
+  
+  path:
  
 
 dev_dependencies:

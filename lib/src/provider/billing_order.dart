@@ -21,8 +21,10 @@ class Billing with ChangeNotifier {
     if (_salesBilling.containsKey(orderId)) {
       //.... change quantity
       _salesBilling.update(
+
           orderId,
           (existingOrder) => OrderInput(
+            id:input.id,
               orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
               party: existingOrder.party,
@@ -31,6 +33,7 @@ class Billing with ChangeNotifier {
       _salesBilling.putIfAbsent(
           orderId,
           () => OrderInput(
+            id:input.id,
                 orderItems: input.orderItems,
                 modeOfPayment: input.modeOfPayment,
                 party: input.party,
@@ -72,6 +75,8 @@ class Billing with ChangeNotifier {
     _purchaseBilling.remove(prodId);
     notifyListeners();
   }
+
+
 
   void removeAll() {
     _salesBilling.clear();

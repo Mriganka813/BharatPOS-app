@@ -321,7 +321,11 @@ class _HomePageState extends State<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, CreateSale.routeName);
+                                  context, CreateSale.routeName,  arguments: BillingPageArgs(
+                                                id:-1,
+                                                orderId:"",
+                                                editOrders:[]
+                                                   ));
                             },
                             child: Card(
                               elevation: 5,

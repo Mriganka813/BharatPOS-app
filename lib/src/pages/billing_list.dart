@@ -1,18 +1,18 @@
-import 'dart:typed_data';
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/models/input/order_input.dart';
-import 'package:shopos/src/models/user.dart';
+
 import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/provider/billing_order.dart';
-import 'package:shopos/src/services/user.dart';
-import 'package:shopos/src/widgets/pdf_kot_template.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
+
 
 enum kotType {
   is57mm,
@@ -44,7 +44,8 @@ class BluetoothArgs {
 
 class BillingListScreen extends StatefulWidget {
   static const routeName = '/billing-list';
-  const BillingListScreen({Key? key, required this.orderType})
+  BuildContext context;
+BillingListScreen(this.context,{Key? key, required this.orderType})
       : super(key: key);
 
   final OrderType orderType;
@@ -70,10 +71,14 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   @override
   void initState() {
-    // getAllOrderInputList();
+
     super.initState();
     fetchNTPTime();
+ 
   }
+
+
+ 
 
   Future<void> fetchNTPTime() async {
     DateTime currentTime;
@@ -409,11 +414,20 @@ class _BillingListScreenState extends State<BillingListScreen> {
     );
   }
 
+
+
+ 
+
   @override
   Widget build(BuildContext context) {
+
     final provider = Provider.of<Billing>(
       context,
     );
+
+    
+
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context)
@@ -451,16 +465,18 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 ListTile(
                                   onTap: () {
+                                
                                     widget.orderType == OrderType.sale
                                         ? Navigator.pushNamed(
                                             context, CreateSale.routeName,
                                             arguments: BillingPageArgs(
+                                           
                                                 orderId: provider.salesBilling.keys
                                                     .toList()[index],
                                                 editOrders: provider
                                                     .salesBilling.values
                                                     .toList()[index]
-                                                    .orderItems))
+                                                    .orderItems,id: provider.salesBilling.values.toList()[index].id))
                                         : Navigator.pushNamed(
                                             context, CreatePurchase.routeName,
                                             arguments: BillingPageArgs(
@@ -586,11 +602,15 @@ class _BillingListScreenState extends State<BillingListScreen> {
                       return _showDialog();
                     },
                     onDismissed: (direction) async {
+                       DatabaseHelper().deleteOrderItemInput(
+                              provider.salesBilling.values.toList()[index]);
                       widget.orderType == OrderType.sale
                           ? provider.removeSalesBillItems(
                               provider.salesBilling.keys.toList()[index])
                           : provider.removePurchaseBillItems(
                               provider.purchaseBilling.keys.toList()[index]);
+
+                             
 
                       setState(() {});
                     },

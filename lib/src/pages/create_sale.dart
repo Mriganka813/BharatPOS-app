@@ -4,13 +4,14 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 import 'package:shopos/src/models/input/order_input.dart';
-import 'package:shopos/src/models/order_item.dart';
+
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 // import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -23,8 +24,9 @@ import '../services/product.dart';
 class BillingPageArgs {
   final String? orderId;
   final List<OrderItemInput>? editOrders;
+  final id;
 
-  BillingPageArgs({this.orderId, this.editOrders});
+  BillingPageArgs({this.orderId, this.editOrders,this.id});
 }
 
 class CreateSale extends StatefulWidget {
@@ -40,6 +42,7 @@ class CreateSale extends StatefulWidget {
 class _CreateSaleState extends State<CreateSale> {
   late OrderInput _orderInput;
   late final AudioCache _audioCache;
+ List<OrderItemInput> ?newAddedItems=[];
 
   bool isLoading = false;
 
@@ -50,9 +53,13 @@ class _CreateSaleState extends State<CreateSale> {
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
 
+ 
+
     _orderInput = OrderInput(
+      id:widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
+    
   }
 
   void _onAdd(OrderItemInput orderItem) {
@@ -109,6 +116,13 @@ class _CreateSaleState extends State<CreateSale> {
     product.salesgst = (newGst / 2).toStringAsFixed(2);
     print(product.salesgst);
   }
+
+   void insertToDatabase(Billing provider)
+  {
+    DatabaseHelper().InsertOrderInput(_orderInput, provider,newAddedItems!);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -293,6 +307,7 @@ class _CreateSaleState extends State<CreateSale> {
                               .toList();
                           setState(() {
                             _orderInput.orderItems?.addAll(orderItems);
+                            newAddedItems!.addAll(orderItems);
                           });
                         },
                       ),
@@ -353,11 +368,9 @@ class _CreateSaleState extends State<CreateSale> {
 
                         if (_orderItems.isNotEmpty) {
                           print('orderid: ${widget.args?.orderId}');
-                          provider.addSalesBill(
-                              _orderInput,
-                              widget.args?.orderId == null
-                                  ? DateTime.now().toString()
-                                  : widget.args!.orderId!);
+                          
+
+                                  insertToDatabase(provider);
                         }
 
                         Navigator.pushNamed(

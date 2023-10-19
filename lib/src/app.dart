@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:provider/provider.dart';
 // import 'package:shopos/src/models/input/order_input.dart';
 // import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
@@ -30,6 +31,8 @@ import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/pages/splash.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
+import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 
@@ -49,6 +52,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+   
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -76,7 +80,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: const SplashScreen(),
+      home:  SplashScreen(context),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
           settings: settings,
@@ -135,7 +139,7 @@ class _MyAppState extends State<MyApp> {
               case OnlineOrderList.routeName:
                 return OnlineOrderList();
               case BillingListScreen.routeName:
-                return BillingListScreen(
+                return BillingListScreen(context,
                   orderType: settings.arguments as OrderType,
                 );
               case SetPinPage.routeName:
@@ -154,7 +158,7 @@ class _MyAppState extends State<MyApp> {
                   args: settings.arguments as CombineArgs,
                 );
               default:
-                return const SplashScreen();
+                return  SplashScreen(context);
             }
           },
         );
