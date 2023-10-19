@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -13,9 +14,13 @@ import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/order_item.dart';
 
 import 'package:pdf/widgets.dart' as pw;
+import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/product.dart';
+import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/party.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 class tableArg {
@@ -55,9 +60,13 @@ class _ReportTableState extends State<ReportTable> {
   List<String> mrplist = [];
   String taxfileType = "initailized";
 
+  String partynametoFilter = "";
+  TextEditingController FilterTextEditorController = TextEditingController();
+
   ScreenshotController screenshotController = ScreenshotController();
   late Uint8List _imageFile;
-
+  late final TextEditingController _typeAheadController =
+      TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -175,42 +184,93 @@ class _ReportTableState extends State<ReportTable> {
 
   showSaleRow() {
     if (taxfileType == "quarterly") {
-      return List.generate(
-          datelist.length,
-          (int index) => DataRow(cells: [
-                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(productnamelist[index],
-                    style: TextStyle(fontSize: 6))),
-                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
-              ]));
+      List<DataRow> list = [];
+      var total = 0;
+      for (int i = 0; i < datelist.length; i++) {
+        if (partynamelist[i] == partynametoFilter || partynametoFilter == "") {
+          list.add(DataRow(cells: [
+            DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(moplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(mrplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
+          ]));
+          if (i != datelist.length - 1) total += int.parse(totalsplist[i]);
+        }
+      }
+
+      if (partynametoFilter != "")
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(mrplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+        ]));
+
+      return list;
     } else {
-      return List.generate(
-          datelist.length,
-          (int index) => DataRow(cells: [
-                DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(partynamelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(productnamelist[index],
-                    style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(basesplist[index], style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(gstratelist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(cgstlist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(sgstlist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(igstlist[index], style: TextStyle(fontSize: 6))),
-                DataCell(Text(mrplist[index], style: TextStyle(fontSize: 6))),
-                DataCell(
-                    Text(totalsplist[index], style: TextStyle(fontSize: 6))),
-              ]));
+      List<DataRow> list = [];
+
+      var total = 0;
+
+      for (int i = 0; i < datelist.length; i++) {
+        if (partynamelist[i] == partynametoFilter || partynametoFilter == "") {
+          list.add(DataRow(cells: [
+            DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(moplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(basesplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(gstratelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(cgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(sgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(igstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(mrplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
+          ]));
+
+          if (i != datelist.length - 1&&totalsplist[i].length!=0) total += int.parse(totalsplist[i]);
+        }
+      }
+      if (partynametoFilter != "")
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(basesplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(cgstlist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(sgstlist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(igstlist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(mrplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+        ]));
+      return list;
     }
   }
 
@@ -506,6 +566,24 @@ class _ReportTableState extends State<ReportTable> {
     workbook.dispose();
   }
 
+  Future<Iterable<Party>> _searchParties(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+    // final type =
+    //   widget.args.invoiceType == OrderType.sale ? "customer" : "supplier";
+
+    try {
+      final response =
+          await const PartyService().getSearch(pattern, type: "customer");
+      final data = response.data['allParty'] as List<dynamic>;
+      return data.map((e) => Party.fromMap(e));
+    } catch (err) {
+      // log(err.toString());
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -518,6 +596,11 @@ class _ReportTableState extends State<ReportTable> {
                     ? Text("Expense Report")
                     : Text("Stock Report"),
         actions: [
+          IconButton(
+              onPressed: () {
+                _showDialog();
+              },
+              icon: Icon(Icons.filter_alt)),
           IconButton(
             onPressed: () async {
               // sharePDF();
@@ -558,6 +641,94 @@ class _ReportTableState extends State<ReportTable> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showDialog() {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Text('Enter party name to Filter'),
+            ],
+          ),
+          content: TypeAheadFormField<Party>(
+            validator: (value) {
+              return null;
+            },
+            debounceDuration: const Duration(milliseconds: 500),
+            textFieldConfiguration: TextFieldConfiguration(
+              controller: _typeAheadController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: "Party",
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, CreatePartyPage.routeName,
+                        arguments: CreatePartyArguments(
+                            "",
+                            "",
+                            "",
+                            "",
+                            /* widget.args.invoiceType ==
+                                                    OrderType.purchase
+                                                ? 'supplier'
+                                                : 'customer',*/
+                            "supplier"));
+                  },
+                  child: const Icon(Icons.add_circle_outline_rounded),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 2,
+                  horizontal: 10,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            suggestionsCallback: (String pattern) {
+              if (int.tryParse(pattern.trim()) != null) {
+                return Future.value([]);
+              }
+
+              return _searchParties(pattern);
+            },
+            itemBuilder: (context, party) {
+              return ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(party.name ?? ""),
+              );
+            },
+            onSuggestionSelected: (Party party) {
+              setState(() {
+                partynametoFilter = party.name!;
+              });
+              _typeAheadController.text = party.name ?? "";
+              Navigator.pop(ctx, false);
+            },
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx, false);
+                },
+                child: Text('Cancel')),
+            TextButton(
+                onPressed: () {
+                  setState(() {
+                    partynametoFilter = "";
+                  });
+
+                  Navigator.pop(ctx, false);
+                },
+                child: Text('clear')),
+          ],
+        );
+      },
     );
   }
 }

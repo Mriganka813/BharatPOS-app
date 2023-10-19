@@ -21,6 +21,7 @@ import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pdf_templates/58mm_kot_template.dart';
 import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
@@ -1043,6 +1044,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _onTapSubmit() async {
+      
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
       widget.args.invoiceType == OrderType.purchase
@@ -1050,6 +1052,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
           : _checkoutCubit.createSalesOrder(widget.args.orderInput, date);
 
       final provider = Provider.of<Billing>(context, listen: false);
+
+
+       DatabaseHelper().deleteOrderItemInput(
+                             widget.args.orderInput);
       widget.args.invoiceType == OrderType.purchase
           ? provider.removePurchaseBillItems(widget.args.orderId)
           : provider.removeSalesBillItems(widget.args.orderId);
