@@ -3,11 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
 
 class ScreenArguments {
   final String partyId;
@@ -33,13 +39,16 @@ class PartyCreditPage extends StatefulWidget {
 class _PartyCreditPageState extends State<PartyCreditPage> {
   late final SpecificPartyCubit _specificpartyCubit;
   late Party _specificPartyInput;
-
+  PinService _pinService = PinService();
+  late final ReportCubit _reportCubit;
+  final TextEditingController pinController = TextEditingController();
   @override
   void initState() {
     super.initState();
     _specificpartyCubit = SpecificPartyCubit();
     fetchdata();
     _specificPartyInput = Party();
+    _reportCubit = ReportCubit();
   }
 
   void fetchdata() {
@@ -51,7 +60,28 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   @override
   void dispose() {
     _specificpartyCubit.close();
+    _reportCubit.close();
     super.dispose();
+  }
+
+  void sort(List<Order> o) {
+    for (int i = 0; i < o.length; i++) {
+      for (int j = i + 1; j < o.length; j++) {
+        String dateString = o[i].createdAt!;
+
+        DateTime dateTimei = DateTime.parse(dateString);
+
+        String dateStringj = o[j].createdAt!;
+
+        DateTime dateTimej = DateTime.parse(dateStringj);
+
+        if (dateTimej.isBefore(dateTimei)) {
+          var temp = o[i];
+          o[i] = o[j];
+          o[j] = temp;
+        }
+      }
+    }
   }
 
   TextEditingController value = TextEditingController();
@@ -78,13 +108,16 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           builder: (context, state) {
             if (state is SpecificPartyListRender) {
               final orders = state.specificparty;
+
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
                 reverse: true,
                 itemCount: orders.length,
                 itemBuilder: (BuildContext context, int index) {
+                  sort(orders);
                   final order = orders[index];
+
                   return Column(
                     children: [
                       Center(
@@ -436,19 +469,31 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             ListTile(
               title: const Text("Edit"),
               onTap: () async {
-                Navigator.pop(context);
-                await modelOpenUpdate(context, id, total, type);
+                var result = await _showPinDialog();
+                if (result!) {
+                  Navigator.pop(context);
+                  await modelOpenUpdate(context, id, total, type);
+                } else {
+                  Navigator.pop(context);
+                  locator<GlobalServices>().errorSnackBar("Incorrect pin");
+                }
               },
             ),
             ListTile(
               title: const Text("Delete"),
-              onTap: () {
-                widget.args.tabbarNo == 0
-                    ? _specificpartyCubit.deleteCustomerExpense(
-                        Party(id: id), widget.args.partyId)
-                    : _specificpartyCubit.deleteSupplierExpense(
-                        Party(id: id), widget.args.partyId);
-                Navigator.pop(context);
+              onTap: () async {
+                var result = await _showPinDialog();
+                if (result!) {
+                  widget.args.tabbarNo == 0
+                      ? _specificpartyCubit.deleteCustomerExpense(
+                          Party(id: id), widget.args.partyId)
+                      : _specificpartyCubit.deleteSupplierExpense(
+                          Party(id: id), widget.args.partyId);
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pop(context);
+                  locator<GlobalServices>().errorSnackBar("Incorrect pin");
+                }
               },
             ),
           ],
@@ -462,5 +507,59 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
       d.day.toString() + " " + datereq + ", " + d.year.toString(),
       style: const TextStyle(color: Colors.black45),
     );
+  }
+
+  Future<bool?> _showPinDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: pinCode.PinCodeTextField(
+                autoDisposeControllers: false,
+                appContext: context,
+                length: 6,
+                obscureText: true,
+                obscuringCharacter: '*',
+                blinkWhenObscuring: true,
+                animationType: pinCode.AnimationType.fade,
+                keyboardType: TextInputType.number,
+                pinTheme: pinCode.PinTheme(
+                  shape: pinCode.PinCodeFieldShape.underline,
+                  borderRadius: BorderRadius.circular(5),
+                  fieldHeight: 40,
+                  fieldWidth: 30,
+                  inactiveColor: Colors.black45,
+                  inactiveFillColor: Colors.white,
+                  selectedFillColor: Colors.white,
+                  selectedColor: Colors.black45,
+                  disabledColor: Colors.black,
+                  activeFillColor: Colors.white,
+                ),
+                cursorColor: Colors.black,
+                controller: pinController,
+                animationDuration: const Duration(milliseconds: 300),
+                enableActiveFill: true,
+              ),
+              title: Text('Enter your pin'),
+              actions: [
+                Center(
+                    child: CustomButton(
+                        title: 'Verify',
+                        onTap: () async {
+                          bool status = await _pinService.verifyPin(
+                              int.parse(pinController.text.toString()));
+                              print(status);
+                          if (status) {
+                            pinController.clear();
+                            Navigator.of(ctx).pop(true);
+                          } else {
+                            Navigator.of(ctx).pop(false);
+                            pinController.clear();
+
+                            return;
+                          }
+                        }))
+              ],
+            ));
   }
 }

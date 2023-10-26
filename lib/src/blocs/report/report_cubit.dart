@@ -64,7 +64,9 @@ class ReportCubit extends Cubit<ReportState> {
 
   _emitPurchaseReport(Response res, [bool isDownload = false]) {
     final data = res.data['purchase'];
-    final orders =
+    print("purchase data");
+    print(data);
+    final orders = 
         List.generate(data.length, (index) => Order.fromMap(data[index]));
     emit(isDownload
         ? ReportsDownload(orders: orders)

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/expense/expense_cubit.dart';
+import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/create_expense.dart';
+import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/locator.dart';
+import 'package:shopos/src/services/set_or_change_pin.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/expense_card_horizontal.dart';
+import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
 
 class ExpensePage extends StatefulWidget {
   static const String routeName = '/expense';
@@ -15,6 +21,9 @@ class ExpensePage extends StatefulWidget {
 
 class _ExpensePageState extends State<ExpensePage> {
   late final ExpenseCubit _expenseCubit;
+  PinService _pinService = PinService();
+  late final ReportCubit _reportCubit;
+  final TextEditingController pinController = TextEditingController();
 
   ///
   @override
@@ -72,16 +81,30 @@ class _ExpensePageState extends State<ExpensePage> {
                   itemBuilder: (context, index) {
                     return ExpenseCardHorizontal(
                       expense: state.expense[index],
-                      onDelete: () {
-                        _expenseCubit.deleteExpense(state.expense[index]);
+                      onDelete: () async {
+                        var result = await _showPinDialog();
+                        if (result!) {
+                          _expenseCubit.deleteExpense(state.expense[index]);
+                        } else {
+                          Navigator.pop(context);
+                          locator<GlobalServices>()
+                              .errorSnackBar("Incorrect pin");
+                        }
                       },
                       onEdit: () async {
-                        await Navigator.pushNamed(
-                          context,
-                          CreateExpensePage.routeName,
-                          arguments: state.expense[index].id,
-                        );
-                        _expenseCubit.getExpense();
+                        var result = await _showPinDialog();
+                        if (result!) {
+                          await Navigator.pushNamed(
+                            context,
+                            CreateExpensePage.routeName,
+                            arguments: state.expense[index].id,
+                          );
+                          _expenseCubit.getExpense();
+                        } else {
+                          Navigator.pop(context);
+                          locator<GlobalServices>()
+                              .errorSnackBar("Incorrect pin");
+                        }
                       },
                     );
                   },
@@ -100,5 +123,58 @@ class _ExpensePageState extends State<ExpensePage> {
         ],
       ),
     );
+  }
+
+  Future<bool?> _showPinDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: pinCode.PinCodeTextField(
+                autoDisposeControllers: false,
+                appContext: context,
+                length: 6,
+                obscureText: true,
+                obscuringCharacter: '*',
+                blinkWhenObscuring: true,
+                animationType: pinCode.AnimationType.fade,
+                keyboardType: TextInputType.number,
+                pinTheme: pinCode.PinTheme(
+                  shape: pinCode.PinCodeFieldShape.underline,
+                  borderRadius: BorderRadius.circular(5),
+                  fieldHeight: 40,
+                  fieldWidth: 30,
+                  inactiveColor: Colors.black45,
+                  inactiveFillColor: Colors.white,
+                  selectedFillColor: Colors.white,
+                  selectedColor: Colors.black45,
+                  disabledColor: Colors.black,
+                  activeFillColor: Colors.white,
+                ),
+                cursorColor: Colors.black,
+                controller: pinController,
+                animationDuration: const Duration(milliseconds: 300),
+                enableActiveFill: true,
+              ),
+              title: Text('Enter your pin'),
+              actions: [
+                Center(
+                    child: CustomButton(
+                        title: 'Verify',
+                        onTap: () async {
+                          bool status = await _pinService.verifyPin(
+                              int.parse(pinController.text.toString()));
+                          if (status) {
+                            pinController.clear();
+                            Navigator.of(ctx).pop(true);
+                          } else {
+                            Navigator.of(ctx).pop(false);
+                            pinController.clear();
+
+                            return;
+                          }
+                        }))
+              ],
+            ));
   }
 }
