@@ -82,7 +82,11 @@ class _ExpensePageState extends State<ExpensePage> {
                     return ExpenseCardHorizontal(
                       expense: state.expense[index],
                       onDelete: () async {
-                        var result = await _showPinDialog();
+                        var result = true;
+
+                        if (await _pinService.pinStatus()==true) {
+                          result = await _showPinDialog() as bool;
+                        }
                         if (result!) {
                           _expenseCubit.deleteExpense(state.expense[index]);
                         } else {
@@ -92,7 +96,11 @@ class _ExpensePageState extends State<ExpensePage> {
                         }
                       },
                       onEdit: () async {
-                        var result = await _showPinDialog();
+                        var result = true;
+
+                        if (await _pinService.pinStatus()==true) {
+                          result = await _showPinDialog() as bool;
+                        }
                         if (result!) {
                           await Navigator.pushNamed(
                             context,

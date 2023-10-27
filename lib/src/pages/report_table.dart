@@ -235,8 +235,7 @@ class _ReportTableState extends State<ReportTable> {
 
       for (int i = 0; i < datelist.length; i++) {
         if (partynamelist[i] == partynametoFilter || partynametoFilter == "") {
-        
-        /*
+          /*
           print("ADadda");
           print(datelist[i]);
           print(timelist[i]);
@@ -884,10 +883,17 @@ class _ReportTableState extends State<ReportTable> {
     //   widget.args.invoiceType == OrderType.sale ? "customer" : "supplier";
 
     try {
-      final response =
-          await const PartyService().getSearch(pattern, type: "customer");
-      final data = response.data['allParty'] as List<dynamic>;
-      return data.map((e) => Party.fromMap(e));
+      final response;
+      if (widget.args.type == "ReportType.purchase") {
+        response = await const PartyService().getCreditPurchaseParties();
+      } else {
+        response = await const PartyService().getCreditSaleParties();
+      }
+      //  final response =await const PartyService().getSearch(pattern, type: "customer");
+
+      // final data = response.data['allParty'] as List<dynamic>;
+      //  return data.map((e) => Party.fromMap(e));
+      return response;
     } catch (err) {
       // log(err.toString());
       return [];
@@ -906,12 +912,13 @@ class _ReportTableState extends State<ReportTable> {
                     ? Text("Expense Report")
                     : Text("Stock Report"),
         actions: [
-          if(widget.args.type != "ReportType.stock"&& widget.args.type != "ReportType.expense")
-          IconButton(
-              onPressed: () {
-                _showDialog();
-              },
-              icon: Icon(Icons.filter_alt)),
+          if (widget.args.type != "ReportType.stock" &&
+              widget.args.type != "ReportType.expense")
+            IconButton(
+                onPressed: () {
+                  _showDialog();
+                },
+                icon: Icon(Icons.filter_alt)),
           IconButton(
             onPressed: () async {
               // sharePDF();

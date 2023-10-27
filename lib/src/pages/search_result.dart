@@ -227,9 +227,15 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           product: prodList[index],
                                           isAvailable: isAvailable,
                                           onDelete: () async {
-                                            _showPinDialog();
+                                          
+                                          var result =true;
+                                       
+                                            if(await _pinService.pinStatus()==true)
+                                            {
+                                                 result = await _showPinDialog() as bool;
+                                            }
 
-                                            var result = await _showPinDialog();
+                                        
                                             if (result!) {
                                               _productCubit.deleteProduct(
                                                   prodList[index],
@@ -241,9 +247,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             }
                                           },
                                           onEdit: () async {
-                                            var result = await _showPinDialog();
 
-                                            if (result!) {
+                                            var result =true;
+                                       
+                                            if( await _pinService.pinStatus()==true)
+                                            {
+                                                 result = await _showPinDialog() as bool;
+                                            }
+                                            if (result) {
                                               await Navigator.pushNamed(
                                                 context,
                                                 CreateProduct.routeName,

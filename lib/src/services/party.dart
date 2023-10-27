@@ -23,7 +23,7 @@ class PartyService {
     };
     if (type != null) {
       params.addAll({"type": type});
-    }
+    } 
     return await ApiV1Service.getRequest(
       '/party/search',
       queryParameters: params,

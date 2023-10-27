@@ -212,7 +212,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    CustomButton(
+                  /*  CustomButton(
                       onTap: () async {
                         await launchUrl(
                           Uri.parse('https://getcube.shop/signup'),
@@ -221,7 +221,7 @@ class _SignInPageState extends State<SignInPage> {
                         Navigator.pop(context);
                       },
                       title: 'Sign Up',
-                    ),
+                    ),*/
                   ],
                 ),
               ),

@@ -287,35 +287,37 @@ class _PartiesListViewState extends State<PartiesListView> {
             ListTile(
               title: const Text("Edit"),
               onTap: () async {
-                var result =await  _showPinDialog();
+                var result = true;
+
+                if (await _pinService.pinStatus()==true) {
+                  result = await _showPinDialog() as bool;
+                }
                 if (result == true) {
                   await Navigator.pushNamed(context, CreatePartyPage.routeName,
                       arguments: CreatePartyArguments(_party.id!, _party.name!,
                           _party.phoneNumber!, _party.address!, _partyType));
                   Navigator.pop(context);
                   widget.partyCubit.getInitialCreditParties();
-                }
-                else
-                {
-                   Navigator.pop(context);
-                       locator<GlobalServices>()
-                                .errorSnackBar("Incorrect pin");
+                } else {
+                  Navigator.pop(context);
+                  locator<GlobalServices>().errorSnackBar("Incorrect pin");
                 }
               },
             ),
             ListTile(
               title: const Text("Delete"),
-              onTap: () async{
-                var result = await _showPinDialog();
+              onTap: () async {
+                var result = true;
+
+                if (await _pinService.pinStatus()==true) {
+                  result = await _showPinDialog() as bool;
+                }
                 if (result == true) {
                   widget.partyCubit.deleteParty(_party);
                   Navigator.pop(context);
-                }
-                else
-                {
-                   Navigator.pop(context);
-                       locator<GlobalServices>()
-                                .errorSnackBar("Incorrect pin");
+                } else {
+                  Navigator.pop(context);
+                  locator<GlobalServices>().errorSnackBar("Incorrect pin");
                 }
               },
             ),
@@ -368,7 +370,7 @@ class _PartiesListViewState extends State<PartiesListView> {
                           } else {
                             Navigator.of(ctx).pop(false);
                             pinController.clear();
-                       
+
                             return;
                           }
                         }))

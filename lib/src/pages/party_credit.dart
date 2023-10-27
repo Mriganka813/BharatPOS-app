@@ -469,7 +469,11 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             ListTile(
               title: const Text("Edit"),
               onTap: () async {
-                var result = await _showPinDialog();
+                var result = true;
+
+                if (await _pinService.pinStatus()==true) {
+                  result = await _showPinDialog() as bool;
+                }
                 if (result!) {
                   Navigator.pop(context);
                   await modelOpenUpdate(context, id, total, type);
@@ -482,7 +486,11 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             ListTile(
               title: const Text("Delete"),
               onTap: () async {
-                var result = await _showPinDialog();
+                var result = true;
+
+                if (await _pinService.pinStatus()==true) {
+                  result = await _showPinDialog() as bool;
+                }
                 if (result!) {
                   widget.args.tabbarNo == 0
                       ? _specificpartyCubit.deleteCustomerExpense(
@@ -548,7 +556,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         onTap: () async {
                           bool status = await _pinService.verifyPin(
                               int.parse(pinController.text.toString()));
-                              print(status);
+                          print(status);
                           if (status) {
                             pinController.clear();
                             Navigator.of(ctx).pop(true);
