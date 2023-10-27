@@ -201,7 +201,7 @@ class _SignInPageState extends State<SignInPage> {
                       title: 'Login',
                     ),
                     const SizedBox(height: 15),
-                    const Divider(
+                   /*   const Divider(
                       color: Colors.black,
                     ),
                     const SizedBox(height: 15),
@@ -212,7 +212,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                  /*  CustomButton(
+                  CustomButton(
                       onTap: () async {
                         await launchUrl(
                           Uri.parse('https://getcube.shop/signup'),
