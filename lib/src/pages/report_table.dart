@@ -353,71 +353,109 @@ class _ReportTableState extends State<ReportTable> {
     var sgstTotal = 0;
     var igstTotal = 0;
     var mrpTotal = 0;
-    return List.generate(datelist.length, (int index) {
-      if (index != datelist.length - 1 && totalsplist[index].length != 0)
-        total += int.parse(totalsplist[index]);
 
-      if (index != datelist.length - 1 &&
-          basesplist[index].length != 0 &&
-          basesplist[index] != "N/A")
-        basesplitTotal += int.parse(basesplist[index].split(".")[0]);
-      if (index != datelist.length - 1 &&
-          gstratelist[index].length != 0 &&
-          gstratelist[index] != "N/A%")
-        gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
-      if (index != datelist.length - 1 &&
-          cgstlist[index].length != 0 &&
-          cgstlist[index] != "N/A")
-        cgstTotal += int.parse(cgstlist[index].split(".")[0]);
-      if (index != datelist.length - 1 &&
-          sgstlist[index].length != 0 &&
-          sgstlist[index] != "N/A")
-        sgstTotal += int.parse(sgstlist[index].split(".")[0]);
-      if (index != datelist.length - 1 &&
-          igstlist[index].length != 0 &&
-          igstlist[index] != "N/A")
-        igstTotal += int.parse(igstlist[index].split(".")[0]);
-      if (index != datelist.length - 1 &&
-          mrplist[index].length != 0 &&
-          mrplist[index] != "N/A") mrpTotal += int.parse(mrplist[index]);
+    List<DataRow> list = [];
 
-      return DataRow(cells: [
-        DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
-        DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
-        DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
-        DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
-        DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1
-                ? basesplitTotal.toString()
-                : basesplist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1
-                ? gstrateTotal.toString()
-                : gstratelist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1
-                ? cgstTotal.toString()
-                : cgstlist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1
-                ? sgstTotal.toString()
-                : sgstlist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1
-                ? igstTotal.toString()
-                : igstlist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(
-            index == datelist.length - 1 ? mrpTotal.toString() : mrplist[index],
-            style: TextStyle(fontSize: 6))),
-        DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
-      ]);
-    });
+    for (int index = 0; index < datelist.length; index++) {
+      if (partynamelist[index] == partynametoFilter ||
+          partynametoFilter == "") {
+        if (index != datelist.length - 1 && totalsplist[index].length != 0)
+          total += int.parse(totalsplist[index]);
+
+        if (index != datelist.length - 1 &&
+            basesplist[index].length != 0 &&
+            basesplist[index] != "N/A")
+          basesplitTotal += int.parse(basesplist[index].split(".")[0]);
+        if (index != datelist.length - 1 &&
+            gstratelist[index].length != 0 &&
+            gstratelist[index] != "N/A%")
+          gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
+        if (index != datelist.length - 1 &&
+            cgstlist[index].length != 0 &&
+            cgstlist[index] != "N/A")
+          cgstTotal += int.parse(cgstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 &&
+            sgstlist[index].length != 0 &&
+            sgstlist[index] != "N/A")
+          sgstTotal += int.parse(sgstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 &&
+            igstlist[index].length != 0 &&
+            igstlist[index] != "N/A")
+          igstTotal += int.parse(igstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 &&
+            mrplist[index].length != 0 &&
+            mrplist[index] != "N/A") mrpTotal += int.parse(mrplist[index]);
+
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? basesplitTotal.toString()
+                  : basesplist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? gstrateTotal.toString()
+                  : gstratelist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? cgstTotal.toString()
+                  : cgstlist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? sgstTotal.toString()
+                  : sgstlist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? igstTotal.toString()
+                  : igstlist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(
+              index == datelist.length - 1
+                  ? mrpTotal.toString()
+                  : mrplist[index],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+        ]));
+      }
+    }
+
+
+      if (partynametoFilter != "")
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[datelist.length - 1],
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(basesplitTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstrateTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(cgstTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(sgstTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(igstTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(mrpTotal.toString(),
+              style: TextStyle(fontSize: 6))),
+          DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+        ]));
+      return list;
+   
   }
 
   showExpenseRow() {

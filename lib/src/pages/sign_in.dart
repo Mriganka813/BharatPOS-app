@@ -89,9 +89,10 @@ class _SignInPageState extends State<SignInPage> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 80),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -201,7 +202,7 @@ class _SignInPageState extends State<SignInPage> {
                       title: 'Login',
                     ),
                     const SizedBox(height: 15),
-                   /*   const Divider(
+                  /*   const Divider(
                       color: Colors.black,
                     ),
                     const SizedBox(height: 15),
@@ -212,7 +213,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                  CustomButton(
+                   CustomButton(
                       onTap: () async {
                         await launchUrl(
                           Uri.parse('https://getcube.shop/signup'),
