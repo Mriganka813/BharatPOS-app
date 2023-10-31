@@ -33,7 +33,7 @@ class Product {
   String? id;
   DateTime? createdAt;
   int? v;
-  int purchasePrice;
+  double purchasePrice;
   String? gstRate;
   String? salesgst;
   String? salecgst;
@@ -46,13 +46,13 @@ class Product {
   String? sellerName;
   String? batchNumber;
   DateTime? expiryDate;
-
+  num i=0;
   factory Product.fromMap(Map<String, dynamic> json) => Product(
       name: json["name"],
       sellingPrice: double.parse(json["sellingPrice"].toString()) ?? 0.0,
       barCode: json["barCode"],
       quantity: json["quantity"],
-      purchasePrice: json['purchasePrice'] ?? 0,
+      purchasePrice: double.parse(json['purchasePrice'].toString())  ?? 0.0,
       user: json["user"],
       image: json['image'],
       id: json["_id"],
@@ -74,6 +74,7 @@ class Product {
           : null);
 
   Map<String, dynamic> toMap() => {
+        
         "name": name,
         "sellingPrice": sellingPrice,
         "barCode": barCode,

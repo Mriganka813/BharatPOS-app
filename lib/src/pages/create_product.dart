@@ -409,7 +409,7 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField(
                             label: "GST Rate (%)",
                             value: _formInput.gstRate,
-                            inputType: TextInputType.number,
+                            inputType: TextInputType.text,
                             onChanged: (e) {
                               _formInput.gstRate = e;
                               _productCubit.calculategst();
@@ -550,6 +550,8 @@ class _CreateProductState extends State<CreateProduct> {
                           print(_formInput.expiryDate);
                           print(_formInput.batchNumber);
                           _productCubit.createProduct(_formInput);
+                          print("Barcode:");
+                          print(_formInput.barCode);
                         }
                       },
                     ),

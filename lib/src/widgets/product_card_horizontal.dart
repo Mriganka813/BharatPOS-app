@@ -263,7 +263,7 @@ class ProductCardPurchase extends StatelessWidget {
 
     double basePurchasePrice = 0;
     double Purchasegstvalue = 0;
-    int PurchasePrice = 0;
+    double PurchasePrice = 0;
 
     if (type == "sale") {
       if (product.gstRate != "null") {

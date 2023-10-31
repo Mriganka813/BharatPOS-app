@@ -6,6 +6,7 @@ import 'package:shopos/src/services/auth.dart';
 class UserService {
   const UserService();
 
+  
   static Future<Response<dynamic>> me() async {
     var response;
     try {
@@ -15,6 +16,7 @@ class UserService {
     } catch (e) {
       print('cube token expired');
       await getNewToken();
+      response = await ApiV1Service.getRequest('/me');
     }
 
     return response;

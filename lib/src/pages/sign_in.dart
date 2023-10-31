@@ -92,7 +92,7 @@ class _SignInPageState extends State<SignInPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 80),
+                     
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(

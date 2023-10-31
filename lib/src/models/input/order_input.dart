@@ -74,7 +74,7 @@ class OrderItemInput {
     this.saleIGST,
   });
 
-  int? price;
+ double? price;
   int quantity;
   Product? product;
   String? saleSGST;
