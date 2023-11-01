@@ -16,6 +16,7 @@ import 'package:shopos/src/services/product.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_icons.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/widgets/custom_text_field2.dart';
 import 'package:switcher/core/switcher_size.dart';
 import 'package:switcher/switcher.dart';
 import 'package:shopos/src/widgets/custom_date_picker.dart';
@@ -40,6 +41,10 @@ class _CreateProductState extends State<CreateProduct> {
   late final ImagePicker _picker;
   bool _showLoader = false;
   bool gstSwitch = false;
+
+  TextEditingController sellingPriceController=TextEditingController();
+    TextEditingController purchasePriceController=TextEditingController();
+      TextEditingController gstratePriceController=TextEditingController();
 
   ///
   @override
@@ -66,12 +71,31 @@ class _CreateProductState extends State<CreateProduct> {
     } on DioError catch (err) {
       log(err.message.toString());
     }
-    if (productInput == null) {
+    if (productInput == null) { 
       return;
     }
     setState(() {
       _formInput = productInput!;
     });
+
+    print("gstttt");
+    print(_formInput.gstRate);
+    print(_formInput.gst);
+    if(_formInput.gstRate!=null&&_formInput.gstRate!="null"&&_formInput.gstRate!="")
+    {
+      _formInput.gst=true;
+    }
+    sellingPriceController.text=_formInput.sellingPrice as String;
+    purchasePriceController.text= _formInput.purchasePrice != "null"
+                                ? _formInput.purchasePrice as String
+                                : "";
+                                setState(() {
+                                  
+                                });
+
+    gstratePriceController.text=_formInput.gstRate!="null"?_formInput.gstRate as String:"";
+
+    calculate();
   }
 
   @override
@@ -158,55 +182,13 @@ class _CreateProductState extends State<CreateProduct> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Product'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10.0),
-        child: Form(
-          key: _formKey,
-          child: BlocListener<ProductCubit, ProductState>(
-            bloc: _productCubit,
-            listener: (context, state) {
-              if (state is! ProductLoading && _showLoader) {
-                setState(() {
-                  _showLoader = false;
-                });
-                Navigator.pop(context);
-              }
-              if (state is ProductCreated) {
-                Navigator.pop(context);
-              }
-              if (state is ProductLoading) {
-                if (!_showLoader) {
-                  setState(() {
-                    _showLoader = true;
-                  });
-                  locator<GlobalServices>().showBottomSheetLoader();
-                }
-              }
-              if (state is gstincludeoptionenable) {
-                setState(() {
-                  if (gstSwitch) {
-                    gstSwitch = false;
-                    _formInput.gst = true;
-                  } else {
-                    gstSwitch = true;
-                    _formInput.gst = false;
-                    _formInput.gstRate = null;
-                    _formInput.salesgst = null;
-                    _formInput.salecgst = null;
-                    _formInput.saleigst = null;
-                    _formInput.baseSellingPriceGst = null;
-                  }
-                });
-              }
-              if (state is calculateallgst) {
-                if (_formInput.gstRate != null && _formInput.gst) {
+
+  void calculate()
+  {
+     print("gggggggggg");
+      if (_formInput.gstRate != null && _formInput.gst) {
                   int rate = int.parse(_formInput.gstRate!);
+                
 
 // selling price
                   if (_formInput.sellingPrice != null) {
@@ -242,8 +224,66 @@ class _CreateProductState extends State<CreateProduct> {
                       _formInput.basePurchasePriceGst =
                           basepp.toStringAsFixed(2).toString();
                     });
+
                   }
+                  
+                    print("pruchase");
+                    print(_formInput.basePurchasePriceGst);
                 }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("sellingggggggPrice:");
+    print(sellingPriceController.text);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Create Product'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
+        child: Form(
+          key: _formKey,
+          child: BlocListener<ProductCubit, ProductState>(
+            bloc: _productCubit,
+            listener: (context, state) {
+              if (state is! ProductLoading && _showLoader) {
+                setState(() {
+                  _showLoader = false;
+                });
+                Navigator.pop(context);
+              }
+              if (state is ProductCreated) {
+                Navigator.pop(context);
+              }
+              if (state is ProductLoading) {
+                if (!_showLoader) {
+                  setState(() {
+                    _showLoader = true;
+                  });
+                  locator<GlobalServices>().showBottomSheetLoader();
+                }
+              }
+              if (state is gstincludeoptionenable) {
+                setState(() {
+                  if (gstSwitch) {
+                    gstSwitch = false;
+                    _formInput.gst = true;
+                    
+                  } else {
+                    gstSwitch = true;
+                  //  calculate();
+                  /*  _formInput.gst = false;
+                    _formInput.gstRate = null;
+                    _formInput.salesgst = null;
+                    _formInput.salecgst = null;
+                    _formInput.saleigst = null;
+                    _formInput.baseSellingPriceGst = null;*/
+                  }
+                });
+              }
+              if (state is calculateallgst) {
+                  calculate();
               }
             },
             child: BlocBuilder<ProductCubit, ProductState>(
@@ -331,13 +371,15 @@ class _CreateProductState extends State<CreateProduct> {
                     Row(
                       children: [
                         Expanded(
-                          child: CustomTextField(
+                          child: CustomTextField2(
+                            controller: sellingPriceController,
                             label: "Selling Price",
                             value: _formInput.sellingPrice,
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               if (e.isNotEmpty) {
                                 _formInput.sellingPrice = e;
+                                calculate();
                               }
                             },
                             validator: (p0) {
@@ -348,9 +390,11 @@ class _CreateProductState extends State<CreateProduct> {
                             },
                           ),
                         ),
+                        
                         const VerticalDivider(color: Colors.transparent),
                         Expanded(
-                          child: CustomTextField(
+                          child: CustomTextField2(
+                            controller: purchasePriceController,
                             label: "Purchase Price",
                             value: _formInput.purchasePrice != "null"
                                 ? _formInput.purchasePrice
@@ -358,6 +402,7 @@ class _CreateProductState extends State<CreateProduct> {
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.purchasePrice = e;
+                              calculate();
                             },
                             validator: (e) => null,
                           ),
@@ -377,6 +422,11 @@ class _CreateProductState extends State<CreateProduct> {
                           colorOn: Colors.blue,
                           onChanged: (bool gststate) {
                             _productCubit.gst();
+                      
+                        
+           
+                            
+                        
                           },
                         ),
                         VerticalDivider(),
@@ -406,13 +456,14 @@ class _CreateProductState extends State<CreateProduct> {
                       child: Column(
                         children: [
                           const Divider(color: Colors.transparent),
-                          CustomTextField(
+                          CustomTextField2(
+                            controller: gstratePriceController,
                             label: "GST Rate (%)",
-                            value: _formInput.gstRate,
-                            inputType: TextInputType.text,
+                            value:5.toString(),
+                            inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.gstRate = e;
-                              _productCubit.calculategst();
+                             calculate();
                             },
                             validator: (e) {
                               if (!gstSwitch && e == "") return "Enter Rate";
@@ -462,7 +513,7 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField(
                             readonly: true,
                             label: "Base Selling Price",
-                            value: _formInput.baseSellingPriceGst,
+                            value: _formInput.baseSellingPriceGst=="null"?"0":_formInput.baseSellingPriceGst,
                             onChanged: (e) {
                               _formInput.baseSellingPriceGst = e;
                             },
@@ -472,7 +523,7 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField(
                             readonly: true,
                             label: "Base Purchase Price",
-                            value: _formInput.basePurchasePriceGst,
+                            value: _formInput.basePurchasePriceGst=="null"?"0":_formInput.basePurchasePriceGst,
                             onChanged: (e) {
                               _formInput.basePurchasePriceGst = e;
                             },
@@ -545,10 +596,17 @@ class _CreateProductState extends State<CreateProduct> {
 
                         print(_formInput.purchasePrice);
 
+                        if(_formInput.purchasePrice==null||_formInput.purchasePrice=="null"||_formInput.purchasePrice=="")
+                        {
+                          _formInput.purchasePrice="0";
+                        }
+                       
+
                         if (_formKey.currentState?.validate() ?? false) {
                           print(_formInput.available);
                           print(_formInput.expiryDate);
                           print(_formInput.batchNumber);
+                  
                           _productCubit.createProduct(_formInput);
                           print("Barcode:");
                           print(_formInput.barCode);

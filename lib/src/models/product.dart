@@ -49,10 +49,10 @@ class Product {
   num i=0;
   factory Product.fromMap(Map<String, dynamic> json) => Product(
       name: json["name"],
-      sellingPrice: double.parse(json["sellingPrice"].toString()) ?? 0.0,
+      sellingPrice:json["sellingPrice"]==null?0.0: double.parse(json["sellingPrice"].toString()) ,
       barCode: json["barCode"],
       quantity: json["quantity"],
-      purchasePrice: double.parse(json['purchasePrice'].toString())  ?? 0.0,
+      purchasePrice:json['purchasePrice']==null?0.0: double.parse(json['purchasePrice'].toString()),
       user: json["user"],
       image: json['image'],
       id: json["_id"],

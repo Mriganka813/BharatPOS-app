@@ -14,7 +14,8 @@ class ProductService {
       final image = MapEntry("image", await MultipartFile.fromFile(filePath));
       inputMap.files.add(image);
     }
-    print(inputMap);
+    print("input");
+    print(input.toMap());
     print(input.available);
     final response =
         await ApiV1Service.postRequest('/inventory/new', formData: inputMap);

@@ -111,14 +111,14 @@ class _SplashScreenState extends State<SplashScreen> {
         appBar: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarIconBrightness: Brightness.dark,
-            statusBarColor: Colors.white,
+            statusBarColor: Color.fromARGB(255, 89, 160, 218),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 89, 160, 218),
         ),
-        backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
+        backgroundColor: Color.fromARGB(255, 89, 160, 218),
         body: Container(
             width: double.infinity,
             height: double.infinity,
-            child:Image.asset("assets/images/madeIndia.gif")));
+            child:Center(child: Image.asset("assets/icon/CUBE.png",width: 50,height: 50,))));
   }
 }

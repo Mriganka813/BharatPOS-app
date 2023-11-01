@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomTextField extends StatefulWidget {
+class CustomTextField2 extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
@@ -17,8 +17,10 @@ class CustomTextField extends StatefulWidget {
   final bool obsecureText;
   final bool readonly;
   final bool bypassValidator;
+  TextEditingController controller;
+
   final Function(String?)? onsubmitted;
-  const CustomTextField(
+   CustomTextField2(
       {Key? key,
       this.onChanged,
       this.initialValue,
@@ -35,21 +37,29 @@ class CustomTextField extends StatefulWidget {
       this.obsecureText = false,
       this.readonly = false,
       this.bypassValidator = false,
+     required this.controller,
+   
       this.onsubmitted})
-      ;
+      : super(key: key);
 
   @override
-  State<CustomTextField> createState() => _CustomTextFieldState();
+  State<CustomTextField2> createState() => _CustomTextFieldState();
 }
 
-class _CustomTextFieldState extends State<CustomTextField> {
-
-    
+class _CustomTextFieldState extends State<CustomTextField2> {
+  
+    TextEditingController ?controller;
+    FocusNode ?node;
 
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
+  
+
+    this.controller=widget.controller;
+
+
   }
 
   @override
@@ -67,7 +77,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
-          
+   
           readOnly: widget.readonly,
           obscureText: widget.obsecureText,
           inputFormatters: widget.inputFormatters,
@@ -79,9 +89,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
             return null;
           },
-          controller: widget.value != null || widget.initialValue != null
-              ? TextEditingController(text: widget.value ?? widget.initialValue)
-              : null,
+          controller:controller,
           enabled: !widget.isLoading,
           onChanged: (e) {
             if (widget.onChanged == null) {
