@@ -11,6 +11,9 @@ class ProductCardHorizontal extends StatefulWidget {
   final VoidCallback? addQuantity;
   final int selectQuantity;
   final bool? isSelecting;
+  Function onAdd;
+  Function onRemove;
+  Function onTap;
   bool isAvailable;
   ProductCardHorizontal({
     Key? key,
@@ -22,6 +25,10 @@ class ProductCardHorizontal extends StatefulWidget {
     this.reduceQuantity,
     this.selectQuantity = 0,
     this.isAvailable = true,
+    required this.onAdd,
+    required this.onRemove,
+    required this.onTap,
+
   }) : super(key: key);
 
   @override
@@ -29,211 +36,259 @@ class ProductCardHorizontal extends StatefulWidget {
 }
 
 class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
+
+
+  int itemQuantity=0;
   ProductAvailabilityService productAvailability = ProductAvailabilityService();
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.31,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: widget.product.image != null
-                      ? CachedNetworkImage(
-                          imageUrl: widget.product.image!,
-                          fit: BoxFit.cover,
-                        )
-                      : Image.asset('assets/images/image_placeholder.png'),
+    return GestureDetector(
+      onTap: (){
+     
+        if(itemQuantity==0)
+        itemQuantity=1;
+        setState(() {
+          
+        });
+           widget.onTap();
+      },
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.31,
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: widget.product.image != null
+                        ? CachedNetworkImage(
+                            imageUrl: widget.product.image!,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset('assets/images/image_placeholder.png'),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2.25,
-                      alignment: Alignment.center,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
-                        child: Text(
-                          widget.product.name ?? "",
-                          maxLines: 1,
-                          softWrap: false,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.headline6,
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2.25,
+                        alignment: Alignment.center,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: BouncingScrollPhysics(),
+                          child: Text(
+                            widget.product.name ?? "",
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
                         ),
                       ),
-                    ),
-                    Divider(color: Colors.black54),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Available'),
-                        Text(
-                          widget.product.quantity == null ||
-                                  widget.product.quantity! > 9999
-                              ? 'Unlimited'
-                              : '${widget.product.quantity}',
-                        ),
-                      ],
-                    ),
-
-                    Visibility(
-                      visible: widget.product.gstRate != "null",
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Price'),
-                              Text('₹ ${widget.product.baseSellingPriceGst}'),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('GST @${widget.product.gstRate}%'),
-                              Text('₹ ${widget.product.saleigst}'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Net Sell Price'),
-                        Expanded(
-                            child: Text(
-                          ' ₹ ${widget.product.sellingPrice!.toStringAsFixed(2) ?? 0.0}',
-                          maxLines: 1,
-                        )),
-                      ],
-                    ),
-
-                    Visibility(
-                      visible: widget.product.batchNumber != null,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Batch no '),
-                              Expanded(
-                                  child: Text(
-                                '${widget.product.batchNumber}',
-                                maxLines: 1,
-                              )),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    Visibility(
-                      visible: widget.product.expiryDate != null,
-                      child: Row(
+                      Divider(color: Colors.black54),
+                      const SizedBox(height: 5),
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('Expiry date '),
+                          Text('Available'),
+                          Text(
+                            widget.product.quantity == null ||
+                                    widget.product.quantity! > 9999
+                                ? 'Unlimited'
+                                : '${widget.product.quantity}',
+                          ),
+                        ],
+                      ),
+    
+                      Visibility(
+                        visible: widget.product.gstRate != "null",
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Price'),
+                                Text('₹ ${widget.product.baseSellingPriceGst}'),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('GST @${widget.product.gstRate}%'),
+                                Text('₹ ${widget.product.saleigst}'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Net Sell Price'),
                           Expanded(
                               child: Text(
-                            '${widget.product.expiryDate}',
+                            ' ₹ ${widget.product.sellingPrice!.toStringAsFixed(2) ?? 0.0}',
                             maxLines: 1,
                           )),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 10),
-
-                 /*   Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Switch(
-                            value: widget.isAvailable,
-                            onChanged: (val) async {
-                              widget.isAvailable = val;
-                              if (widget.isAvailable == true) {
-                                await productAvailability.isProductAvailable(
-                                    widget.product.id!, 'active');
-                              } else {
-                                await productAvailability.isProductAvailable(
-                                    widget.product.id!, 'disable');
-                              }
-                              setState(() {});
-                            }),
-                      ],
-                    ),*/
-
-                    // previous version (will use after sometime)
-                    // Text('${product.quantity} pcs'),
-                    // // const SizedBox(height: 2),
-                    // // Text(color),
-                    // const SizedBox(height: 2),
-                    // product.purchasePrice != 0
-                    //     ? Text('Purchase Price ${product.purchasePrice}')
-                    //     : Container(),
-                    // const SizedBox(height: 2),
-                    // Text('Sale Price ${product.sellingPrice}'),
-                  ],
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topRight,
-              child: GestureDetector(
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PopupMenuButton<int>(
-                    child: const Icon(Icons.more_vert_rounded),
-                    onSelected: (int e) {
-                      if (e == 0) {
-                        widget.onEdit();
-                      } else if (e == 1) {
-                        widget.onDelete();
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return <PopupMenuItem<int>>[
-                        const PopupMenuItem<int>(
-                          value: 0,
-                          child: Text('Edit'),
+    
+                      Visibility(
+                        visible: widget.product.batchNumber != null,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Batch no '),
+                                Expanded(
+                                    child: Text(
+                                  '${widget.product.batchNumber}',
+                                  maxLines: 1,
+                                )),
+                              ],
+                            ),
+                          ],
                         ),
-                        const PopupMenuItem<int>(
-                          value: 1,
+                      ),
+                      const SizedBox(height: 10),
+    
+                      Visibility(
+                        visible: widget.product.expiryDate != null,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Expiry date '),
+                            Expanded(
+                                child: Text(
+                              '${widget.product.expiryDate}',
+                              maxLines: 1,
+                            )),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                         Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                                itemQuantity++;
+                            });
+                          
+                            widget.onAdd();
+                          
+                          },
+                          icon: const Icon(Icons.add_circle_outline_rounded),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(3.0),
                           child: Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.red),
+                            "$itemQuantity",
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        )
-                      ];
-                    },
+                        ),
+                        IconButton(
+                          onPressed: () {
+                         
+                             setState(() {
+                                   itemQuantity--;
+                             });
+                            widget.onRemove();
+                         
+                          },
+                          icon: const Icon(Icons.remove_circle_outline_rounded),
+                        ),
+                      ],
+                    ),
+    
+                   /*   Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Switch(
+                              value: widget.isAvailable,
+                              onChanged: (val) async {
+                                widget.isAvailable = val;
+                                if (widget.isAvailable == true) {
+                                  await productAvailability.isProductAvailable(
+                                      widget.product.id!, 'active');
+                                } else {
+                                  await productAvailability.isProductAvailable(
+                                      widget.product.id!, 'disable');
+                                }
+                                setState(() {});
+                              }),
+                        ],
+                      ),*/
+    
+                      // previous version (will use after sometime)
+                      // Text('${product.quantity} pcs'),
+                      // // const SizedBox(height: 2),
+                      // // Text(color),
+                      // const SizedBox(height: 2),
+                      // product.purchasePrice != 0
+                      //     ? Text('Purchase Price ${product.purchasePrice}')
+                      //     : Container(),
+                      // const SizedBox(height: 2),
+                      // Text('Sale Price ${product.sellingPrice}'),
+                    ],
                   ),
                 ),
               ),
-            )
-          ],
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PopupMenuButton<int>(
+                      child: const Icon(Icons.more_vert_rounded),
+                      onSelected: (int e) {
+                        if (e == 0) {
+                          widget.onEdit();
+                        } else if (e == 1) {
+                          widget.onDelete();
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuItem<int>>[
+                          const PopupMenuItem<int>(
+                            value: 0,
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<int>(
+                            value: 1,
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          )
+                        ];
+                      },
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

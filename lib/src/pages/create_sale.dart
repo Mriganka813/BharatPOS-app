@@ -26,7 +26,7 @@ class BillingPageArgs {
   final List<OrderItemInput>? editOrders;
   final id;
 
-  BillingPageArgs({this.orderId, this.editOrders,this.id});
+  BillingPageArgs({this.orderId, this.editOrders, this.id});
 }
 
 class CreateSale extends StatefulWidget {
@@ -42,7 +42,7 @@ class CreateSale extends StatefulWidget {
 class _CreateSaleState extends State<CreateSale> {
   late OrderInput _orderInput;
   late final AudioCache _audioCache;
- List<OrderItemInput> ?newAddedItems=[];
+  List<OrderItemInput>? newAddedItems = [];
 
   bool isLoading = false;
 
@@ -53,13 +53,10 @@ class _CreateSaleState extends State<CreateSale> {
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
 
- 
-
     _orderInput = OrderInput(
-      id:widget.args!.id,
+      id: widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
-    
   }
 
   void _onAdd(OrderItemInput orderItem) {
@@ -117,12 +114,9 @@ class _CreateSaleState extends State<CreateSale> {
     print(product.salesgst);
   }
 
-   void insertToDatabase(Billing provider)
-  {
-    DatabaseHelper().InsertOrderInput(_orderInput, provider,newAddedItems!);
+  void insertToDatabase(Billing provider) {
+    DatabaseHelper().InsertOrderInput(_orderInput, provider, newAddedItems!);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -298,10 +292,49 @@ class _CreateSaleState extends State<CreateSale> {
                           if (result == null && result is! List<Product>) {
                             return;
                           }
-                          final orderItems = (result as List<Product>)
+
+                          var temp = result as List<Product>;
+                          var tempMap = {};
+
+                          for (int i = 0; i < temp.length; i++) {
+                            int count=1;
+                            if(!tempMap.containsKey("${temp[i].id}"))
+                            {
+                              for (int j = i+1; j < temp.length; j++) {
+                              if(temp[i].id==temp[j].id)
+                              {
+                                count++;
+                                print("count =$count");
+                               
+                              }
+                            }
+                            tempMap["${temp[i].id}"]=count;   
+                            }
+                            
+                          }
+
+
+
+                              for (int i = 0; i < temp.length; i++) {
+                  
+                           
+                              for (int j = i+1; j < temp.length; j++) {
+                              if(temp[i].id==temp[j].id)
+                              {
+                            
+                                    temp.removeAt(j);
+                                    j--;
+                               
+                              }
+                            }
+                       
+                            
+                          }
+
+                          final orderItems = temp
                               .map((e) => OrderItemInput(
                                     product: e,
-                                    quantity: 1,
+                                    quantity: tempMap["${e.id}"],
                                     price: 0,
                                   ))
                               .toList();
@@ -368,9 +401,8 @@ class _CreateSaleState extends State<CreateSale> {
 
                         if (_orderItems.isNotEmpty) {
                           print('orderid: ${widget.args?.orderId}');
-                          
 
-                                  insertToDatabase(provider);
+                          insertToDatabase(provider);
                         }
 
                         Navigator.pushNamed(

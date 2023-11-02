@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/checkout.dart';
 
@@ -83,7 +85,7 @@ class OrderItemInput {
   String? saleIGST;
 
   factory OrderItemInput.fromMap(Map<String, dynamic> json) => OrderItemInput(
-        price: json["price"],
+        price: double.parse(json["price"].toString()) ,
         quantity: json["quantity"],
         product: json["product"],
         saleCGST: json["saleCGST"].toString(),

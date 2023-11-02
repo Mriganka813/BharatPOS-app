@@ -111,10 +111,26 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     }
 
     setState(() {
-      !_products.contains(product)
-          ? _products.add(product)
-          : _products.remove(product);
+      _products.add(product);
     });
+  }
+
+  void increaseTheQuantity(Product product) {
+    _selectProduct(product);
+  }
+
+  void decreaseTheQuantity(Product product) {
+
+      for (int j =0; j < _products.length; j++) {
+        if (_products[j].id == product.id) {
+          _products.removeAt(j);
+         break;
+        }
+      }
+      setState(() {
+        
+      });
+    
   }
 
   @override
@@ -212,11 +228,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                           controller: scrollController,
                           itemBuilder: (context, index) {
                             if (index < prodList.length) {
-                              return GestureDetector(
-                                onTap: () {
-                                  _selectProduct(prodList[index]);
-                                },
-                                child: Column(
+                              return Column(
                                   children: [
                                     SizedBox(
                                       height: height / 240,
@@ -224,18 +236,31 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                     Stack(
                                       children: [
                                         ProductCardHorizontal(
+                                          onTap: (){
+                                             _selectProduct(prodList[index]);
+                                             setState(() {
+                                               
+                                             });
+                                          },
+                                          onAdd: () {
+                                            increaseTheQuantity(
+                                                prodList[index]);
+                                          },
+                                          onRemove: () {
+                                            decreaseTheQuantity(
+                                                prodList[index]);
+                                          },
                                           product: prodList[index],
                                           isAvailable: isAvailable,
                                           onDelete: () async {
-                                          
-                                          var result =true;
-                                       
-                                            if(await _pinService.pinStatus()==true)
-                                            {
-                                                 result = await _showPinDialog() as bool;
+                                            var result = true;
+
+                                            if (await _pinService.pinStatus() ==
+                                                true) {
+                                              result = await _showPinDialog()
+                                                  as bool;
                                             }
 
-                                        
                                             if (result!) {
                                               _productCubit.deleteProduct(
                                                   prodList[index],
@@ -247,12 +272,12 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             }
                                           },
                                           onEdit: () async {
+                                            var result = true;
 
-                                            var result =true;
-                                       
-                                            if( await _pinService.pinStatus()==true)
-                                            {
-                                                 result = await _showPinDialog() as bool;
+                                            if (await _pinService.pinStatus() ==
+                                                true) {
+                                              result = await _showPinDialog()
+                                                  as bool;
                                             }
                                             if (result) {
                                               await Navigator.pushNamed(
@@ -288,7 +313,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                       height: height / 240,
                                     ),
                                   ],
-                                ),
+                               
                               );
                             } else {
                               return Center(

@@ -27,7 +27,7 @@ class Product {
   String? name;
   double? sellingPrice;
   String? barCode;
-  int? quantity;
+  int? quantity=0;
   String? user;
   String? image;
   String? id;

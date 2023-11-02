@@ -104,21 +104,21 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        primary: false,
-        appBar: AppBar(
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarIconBrightness: Brightness.dark,
-            statusBarColor: Color.fromARGB(255, 89, 160, 218),
-          ),
-          backgroundColor: Color.fromARGB(255, 89, 160, 218),
+      primary: false,
+      appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: Color.fromARGB(255, 81, 163, 251),
         ),
-        backgroundColor: Color.fromARGB(255, 89, 160, 218),
-        body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            child:Center(child: Image.asset("assets/icon/CUBE.png",width: 50,height: 50,))));
+        backgroundColor: Color.fromARGB(255, 81, 163, 251),
+      ),
+      backgroundColor: Color.fromARGB(255, 81, 163, 251),
+      body: Center(
+        child: SvgPicture.asset("assets/icon/splash.svg"),
+      ),
+    );
   }
 }
