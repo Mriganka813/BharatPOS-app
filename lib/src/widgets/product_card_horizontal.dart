@@ -166,7 +166,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                     ),
                     const SizedBox(height: 10),
 
-                    Row(
+                 /*   Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Switch(
@@ -183,7 +183,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               setState(() {});
                             }),
                       ],
-                    ),
+                    ),*/
 
                     // previous version (will use after sometime)
                     // Text('${product.quantity} pcs'),

@@ -84,6 +84,9 @@ class _CreateProductState extends State<CreateProduct> {
     if(_formInput.gstRate!=null&&_formInput.gstRate!="null"&&_formInput.gstRate!="")
     {
       _formInput.gst=true;
+      print("kkkk");
+      gstSwitch=true;
+      
     }
     sellingPriceController.text=_formInput.sellingPrice as String;
     purchasePriceController.text= _formInput.purchasePrice != "null"
@@ -235,7 +238,7 @@ class _CreateProductState extends State<CreateProduct> {
   @override
   Widget build(BuildContext context) {
     print("sellingggggggPrice:");
-    print(sellingPriceController.text);
+    print(gstSwitch);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Product'),
@@ -403,6 +406,8 @@ class _CreateProductState extends State<CreateProduct> {
                             onChanged: (e) {
                               _formInput.purchasePrice = e;
                               calculate();
+                              print("pppppppooooppp");
+                              print(gstSwitch);
                             },
                             validator: (e) => null,
                           ),
@@ -413,24 +418,9 @@ class _CreateProductState extends State<CreateProduct> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Switcher(
-                          value: false,
-                          size: SwitcherSize.small,
-                          switcherButtonRadius: 50,
-                          enabledSwitcherButtonRotate: true,
-                          colorOff: Colors.black12,
-                          colorOn: Colors.blue,
-                          onChanged: (bool gststate) {
-                            _productCubit.gst();
-                      
-                        
-           
-                            
-                        
-                          },
-                        ),
+                   Switch(value: gstSwitch, onChanged: (value){_productCubit.gst();}),
                         VerticalDivider(),
-                        gstSwitch
+                        !gstSwitch
                             ? Text(
                                 "GST Details",
                                 style: Theme.of(context)
@@ -452,14 +442,14 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     Visibility(
-                      visible: !gstSwitch,
+                      visible: gstSwitch,
                       child: Column(
                         children: [
                           const Divider(color: Colors.transparent),
                           CustomTextField2(
                             controller: gstratePriceController,
                             label: "GST Rate (%)",
-                            value:5.toString(),
+                            value:_formInput.gstRate!="null"?_formInput.gstRate:"",
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.gstRate = e;
