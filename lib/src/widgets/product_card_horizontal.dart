@@ -40,17 +40,28 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
 
   int itemQuantity=0;
   ProductAvailabilityService productAvailability = ProductAvailabilityService();
+
+  bool tapflag=false;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
      
+        widget.onTap(itemQuantity);
+        if(tapflag)
+           if(itemQuantity==1)
+        itemQuantity=0;
+
+      if(!tapflag)
         if(itemQuantity==0)
         itemQuantity=1;
+
+     
+     tapflag=!tapflag;
         setState(() {
           
         });
-           widget.onTap();
+           
       },
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.31,
@@ -185,11 +196,13 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                         ),
                       ),
                       const SizedBox(height: 10),
+                      if(itemQuantity>0)
                          Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
                           onPressed: () {
+                            
                             setState(() {
                                 itemQuantity++;
                             });
@@ -208,6 +221,12 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                         ),
                         IconButton(
                           onPressed: () {
+
+                            if(itemQuantity==1)
+                            {
+                              tapflag=!tapflag;
+                              
+                            }
                          
                              setState(() {
                                    itemQuantity--;

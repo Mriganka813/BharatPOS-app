@@ -42,6 +42,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   bool isLoadingMore = false;
   late final ProductCubit _productCubit;
   late List<Product> _products;
+  bool itemCheckedFlag = false;
 
   int page = 0;
   int _currentPage = 1;
@@ -120,17 +121,13 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   }
 
   void decreaseTheQuantity(Product product) {
-
-      for (int j =0; j < _products.length; j++) {
-        if (_products[j].id == product.id) {
-          _products.removeAt(j);
-         break;
-        }
+    for (int j = 0; j < _products.length; j++) {
+      if (_products[j].id == product.id) {
+        _products.removeAt(j);
+        break;
       }
-      setState(() {
-        
-      });
-    
+    }
+    setState(() {});
   }
 
   @override
@@ -229,91 +226,96 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                           itemBuilder: (context, index) {
                             if (index < prodList.length) {
                               return Column(
-                                  children: [
-                                    SizedBox(
-                                      height: height / 240,
-                                    ),
-                                    Stack(
-                                      children: [
-                                        ProductCardHorizontal(
-                                          onTap: (){
-                                             _selectProduct(prodList[index]);
-                                             setState(() {
-                                               
-                                             });
-                                          },
-                                          onAdd: () {
-                                            increaseTheQuantity(
-                                                prodList[index]);
-                                          },
-                                          onRemove: () {
+                                children: [
+                                  SizedBox(
+                                    height: height / 240,
+                                  ),
+                                  Stack(
+                                    children: [
+                                      ProductCardHorizontal(
+                                        onTap: (q) {
+                                          if (q==1) {
                                             decreaseTheQuantity(
                                                 prodList[index]);
-                                          },
-                                          product: prodList[index],
-                                          isAvailable: isAvailable,
-                                          onDelete: () async {
-                                            var result = true;
+                                                itemCheckedFlag=false;
+                                          } else if(q==0)
+                                          {
+                                              _selectProduct(prodList[index]);
+                                              itemCheckedFlag=true;
+                                          }
+                                            
 
-                                            if (await _pinService.pinStatus() ==
-                                                true) {
-                                              result = await _showPinDialog()
-                                                  as bool;
-                                            }
+                                          setState(() {});
+                                        },
+                                        onAdd: () {
+                                          increaseTheQuantity(prodList[index]);
+                                        },
+                                        onRemove: () {
+                                          decreaseTheQuantity(prodList[index]);
+                                        },
+                                        product: prodList[index],
+                                        isAvailable: isAvailable,
+                                        onDelete: () async {
+                                          var result = true;
 
-                                            if (result!) {
-                                              _productCubit.deleteProduct(
-                                                  prodList[index],
-                                                  _currentPage,
-                                                  _limit);
-                                              setState(() {
-                                                prodList.removeAt(index);
-                                              });
-                                            }
-                                          },
-                                          onEdit: () async {
-                                            var result = true;
+                                          if (await _pinService.pinStatus() ==
+                                              true) {
+                                            result =
+                                                await _showPinDialog() as bool;
+                                          }
 
-                                            if (await _pinService.pinStatus() ==
-                                                true) {
-                                              result = await _showPinDialog()
-                                                  as bool;
-                                            }
-                                            if (result) {
-                                              await Navigator.pushNamed(
-                                                context,
-                                                CreateProduct.routeName,
-                                                arguments: prodList[index].id,
-                                              );
+                                          if (result!) {
+                                            _productCubit.deleteProduct(
+                                                prodList[index],
+                                                _currentPage,
+                                                _limit);
+                                            setState(() {
+                                              prodList.removeAt(index);
+                                            });
+                                          }
+                                        },
+                                        onEdit: () async {
+                                          var result = true;
 
-                                              _productCubit.getProducts(
-                                                  _currentPage, _limit);
-                                              pinController.clear();
-                                            }
-                                          },
-                                        ),
-                                        if (_products.contains(prodList[index]))
-                                          const Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: CircleAvatar(
-                                                radius: 15,
-                                                backgroundColor: Colors.green,
-                                                child: Icon(
-                                                  Icons.check,
-                                                  color: Colors.white,
-                                                ),
+                                          if (await _pinService.pinStatus() ==
+                                              true) {
+                                            result =
+                                                await _showPinDialog() as bool;
+                                          }
+                                          if (result) {
+                                            await Navigator.pushNamed(
+                                              context,
+                                              CreateProduct.routeName,
+                                              arguments: prodList[index].id,
+                                            );
+
+                                            _productCubit.getProducts(
+                                                _currentPage, _limit);
+                                            pinController.clear();
+                                          }
+                                        },
+                                      ),
+                                      if (_products.contains(prodList[index]))
+                                        const Align(
+                                          alignment: Alignment.topRight,
+                                          child: Padding(
+                                            padding: EdgeInsets.all(8.0),
+                                            child: CircleAvatar(
+                                              radius: 15,
+                                              backgroundColor: Colors.green,
+                                              child: Icon(
+                                                Icons.check,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: height / 240,
-                                    ),
-                                  ],
-                               
+                                        ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: height / 240,
+                                  ),
+                                ],
                               );
                             } else {
                               return Center(
