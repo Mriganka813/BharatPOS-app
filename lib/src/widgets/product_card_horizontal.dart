@@ -196,7 +196,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      if(itemQuantity>0)
+                      if(itemQuantity>0&&widget.isSelecting==true)
                          Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

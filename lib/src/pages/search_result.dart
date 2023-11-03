@@ -61,6 +61,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     scrollController.addListener(_scrollListener);
     _reportCubit = ReportCubit();
     fetchSearchedProducts();
+    
   }
 
   //goToProductDetails(BuildContext context, int idx) {
@@ -234,6 +235,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
+                                        isSelecting: widget.args!.isSelecting,
                                         onTap: (q) {
                                           if (q == 1) {
                                             decreaseTheQuantity(

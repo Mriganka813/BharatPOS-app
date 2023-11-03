@@ -5,6 +5,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
@@ -221,6 +222,10 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               SearchProductListScreen.routeName,
+                                  arguments:  ProductListPageArgs(
+                              isSelecting: false,
+                              orderType: OrderType.sale,
+                            ),
                             );
                           },
                         ),

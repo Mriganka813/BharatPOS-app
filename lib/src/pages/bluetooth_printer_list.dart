@@ -9,6 +9,7 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/widgets/custom_text_field2.dart';
 
 class CombineArgs {
   BluetoothArgs? bluetoothArgs;
@@ -386,7 +387,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
     if(i==0)
-    bytes += generator.text('${args.user.GstIN}',
+    bytes += generator.text('GSTIN ${args.user.GstIN.toString().split("STIN")[1]}',
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
     }
@@ -506,11 +507,18 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           children: [
               
               if(widget.args.billArgs == null)
-              Container(
-                width: 200,
-                child: TextField(
-                  controller: tableNoController,
-                  decoration: InputDecoration(hintText: "Enter table no"),)),
+             Padding(
+               padding: const EdgeInsets.all(20),
+               child: CustomTextField2(
+                hintText: "Enter Table No (optional)",
+                inputType: TextInputType.number,
+                    controller: tableNoController,
+                            
+                              value:"",
+                             
+                              validator: (e) => null,
+                            ),
+             ),
             _devices.isNotEmpty
                 ? Container(
                   height: 400,
