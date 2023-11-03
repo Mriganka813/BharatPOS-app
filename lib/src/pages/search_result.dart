@@ -5,6 +5,7 @@ import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_product.dart';
+
 import 'package:shopos/src/services/search_service.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
@@ -234,16 +235,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                     children: [
                                       ProductCardHorizontal(
                                         onTap: (q) {
-                                          if (q==1) {
+                                          if (q == 1) {
                                             decreaseTheQuantity(
                                                 prodList[index]);
-                                                itemCheckedFlag=false;
-                                          } else if(q==0)
-                                          {
-                                              _selectProduct(prodList[index]);
-                                              itemCheckedFlag=true;
+                                            itemCheckedFlag = false;
+                                          } else if (q == 0) {
+                                            _selectProduct(prodList[index]);
+                                            itemCheckedFlag = true;
                                           }
-                                            
 
                                           setState(() {});
                                         },

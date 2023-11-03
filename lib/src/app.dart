@@ -12,6 +12,7 @@ import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_expense.dart';
 import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pages/create_product.dart';
+
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';

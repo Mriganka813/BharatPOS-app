@@ -42,9 +42,9 @@ class _CreateProductState extends State<CreateProduct> {
   bool _showLoader = false;
   bool gstSwitch = false;
 
-  TextEditingController sellingPriceController=TextEditingController();
-    TextEditingController purchasePriceController=TextEditingController();
-      TextEditingController gstratePriceController=TextEditingController();
+  TextEditingController sellingPriceController = TextEditingController();
+  TextEditingController purchasePriceController = TextEditingController();
+  TextEditingController gstratePriceController = TextEditingController();
 
   ///
   @override
@@ -57,6 +57,7 @@ class _CreateProductState extends State<CreateProduct> {
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
     _fetchProductData();
+    _productCubit.gst();
   }
 
   void _fetchProductData() async {
@@ -71,7 +72,7 @@ class _CreateProductState extends State<CreateProduct> {
     } on DioError catch (err) {
       log(err.message.toString());
     }
-    if (productInput == null) { 
+    if (productInput == null) {
       return;
     }
     setState(() {
@@ -81,22 +82,22 @@ class _CreateProductState extends State<CreateProduct> {
     print("gstttt");
     print(_formInput.gstRate);
     print(_formInput.gst);
-    if(_formInput.gstRate!=null&&_formInput.gstRate!="null"&&_formInput.gstRate!="")
-    {
-      _formInput.gst=true;
+    if (_formInput.gstRate != null &&
+        _formInput.gstRate != "null" &&
+        _formInput.gstRate != "") {
+      _formInput.gst = true;
       print("kkkk");
-      gstSwitch=true;
-      
+      print(_formInput.gst);
+      gstSwitch = true;
     }
-    sellingPriceController.text=_formInput.sellingPrice as String;
-    purchasePriceController.text= _formInput.purchasePrice != "null"
-                                ? _formInput.purchasePrice as String
-                                : "";
-                                setState(() {
-                                  
-                                });
+    sellingPriceController.text = _formInput.sellingPrice as String;
+    purchasePriceController.text = _formInput.purchasePrice != "null"
+        ? _formInput.purchasePrice as String
+        : "";
+    setState(() {});
 
-    gstratePriceController.text=_formInput.gstRate!="null"?_formInput.gstRate as String:"";
+    gstratePriceController.text =
+        _formInput.gstRate != "null" ? _formInput.gstRate as String : "";
 
     calculate();
   }
@@ -185,54 +186,51 @@ class _CreateProductState extends State<CreateProduct> {
     });
   }
 
-
-  void calculate()
-  {
-     print("gggggggggg");
-      if (_formInput.gstRate != null && _formInput.gst) {
-                  int rate = int.parse(_formInput.gstRate!);
-                
+  void calculate() {
+    print("gggggggggg");
+    if (_formInput.gstRate != null && _formInput.gst) {
+      int rate = int.parse(_formInput.gstRate!);
 
 // selling price
-                  if (_formInput.sellingPrice != null) {
-                    int oldsp = int.parse(_formInput.sellingPrice!);
-                    double basesp = (oldsp * 100 / (100 + rate));
-                    String salesgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
-                    String salecgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
-                    String saleigst = (oldsp - basesp).toStringAsFixed(2);
+      if (_formInput.sellingPrice != null) {
+        int oldsp = int.parse(_formInput.sellingPrice!);
+        double basesp = (oldsp * 100 / (100 + rate));
+        String salesgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+        String salecgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+        String saleigst = (oldsp - basesp).toStringAsFixed(2);
 
-                    setState(() {
-                      _formInput.salesgst = salesgst.toString();
-                      _formInput.salecgst = salecgst.toString();
-                      _formInput.saleigst = saleigst.toString();
-                      _formInput.baseSellingPriceGst =
-                          basesp.toStringAsFixed(2).toString();
-                    });
-                  }
+        setState(() {
+          _formInput.salesgst = salesgst.toString();
+          _formInput.salecgst = salecgst.toString();
+          _formInput.saleigst = saleigst.toString();
+          _formInput.baseSellingPriceGst = basesp.toStringAsFixed(2).toString();
+        });
+      }
 
 // purchase price
-                  if (_formInput.purchasePrice != null) {
-                    int oldpp = int.parse(_formInput.purchasePrice!);
-                    double basepp = (oldpp * 100 / (100 + rate));
-                    String purchasecgst =
-                        ((oldpp - basepp) / 2).toStringAsFixed(2);
-                    String purchasesgst =
-                        ((oldpp - basepp) / 2).toStringAsFixed(2);
-                    String purchaseigst = (oldpp - basepp).toStringAsFixed(2);
+      if (_formInput.purchasePrice != null) {
+        int oldpp = int.parse(_formInput.purchasePrice!);
+        double basepp = (oldpp * 100 / (100 + rate));
+        String purchasecgst = ((oldpp - basepp) / 2).toStringAsFixed(2);
+        String purchasesgst = ((oldpp - basepp) / 2).toStringAsFixed(2);
+        String purchaseigst = (oldpp - basepp).toStringAsFixed(2);
 
-                    setState(() {
-                      _formInput.purchasesgst = purchasesgst.toString();
-                      _formInput.purchasecgst = purchasecgst.toString();
-                      _formInput.purchaseigst = purchaseigst.toString();
-                      _formInput.basePurchasePriceGst =
-                          basepp.toStringAsFixed(2).toString();
-                    });
+        setState(() {
+          _formInput.purchasesgst = purchasesgst.toString();
+          _formInput.purchasecgst = purchasecgst.toString();
+          _formInput.purchaseigst = purchaseigst.toString();
+          _formInput.basePurchasePriceGst =
+              basepp.toStringAsFixed(2).toString();
+        });
+      }
 
-                  }
-                  
-                    print("pruchase");
-                    print(_formInput.basePurchasePriceGst);
-                }
+      print("pruchase");
+      print(_formInput.basePurchasePriceGst);
+    }
+
+    var temp = _formInput;
+    _formInput = temp;
+    setState(() {});
   }
 
   @override
@@ -240,59 +238,14 @@ class _CreateProductState extends State<CreateProduct> {
     print("sellingggggggPrice:");
     print(gstSwitch);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Product'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10.0),
-        child: Form(
-          key: _formKey,
-          child: BlocListener<ProductCubit, ProductState>(
-            bloc: _productCubit,
-            listener: (context, state) {
-              if (state is! ProductLoading && _showLoader) {
-                setState(() {
-                  _showLoader = false;
-                });
-                Navigator.pop(context);
-              }
-              if (state is ProductCreated) {
-                Navigator.pop(context);
-              }
-              if (state is ProductLoading) {
-                if (!_showLoader) {
-                  setState(() {
-                    _showLoader = true;
-                  });
-                  locator<GlobalServices>().showBottomSheetLoader();
-                }
-              }
-              if (state is gstincludeoptionenable) {
-                setState(() {
-                  if (gstSwitch) {
-                    gstSwitch = false;
-                    _formInput.gst = true;
-                    
-                  } else {
-                    gstSwitch = true;
-                  //  calculate();
-                  /*  _formInput.gst = false;
-                    _formInput.gstRate = null;
-                    _formInput.salesgst = null;
-                    _formInput.salecgst = null;
-                    _formInput.saleigst = null;
-                    _formInput.baseSellingPriceGst = null;*/
-                  }
-                });
-              }
-              if (state is calculateallgst) {
-                  calculate();
-              }
-            },
-            child: BlocBuilder<ProductCubit, ProductState>(
-              bloc: _productCubit,
-              builder: (context, state) {
-                return Column(
+        appBar: AppBar(
+          title: const Text('Create Product'),
+        ),
+        body: SingleChildScrollView(
+            padding: const EdgeInsets.all(10.0),
+            child: Form(
+                key: _formKey,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Text(
@@ -393,7 +346,6 @@ class _CreateProductState extends State<CreateProduct> {
                             },
                           ),
                         ),
-                        
                         const VerticalDivider(color: Colors.transparent),
                         Expanded(
                           child: CustomTextField2(
@@ -418,7 +370,17 @@ class _CreateProductState extends State<CreateProduct> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                   Switch(value: gstSwitch, onChanged: (value){_productCubit.gst();}),
+                        Switch(
+                            value: gstSwitch,
+                            onChanged: (value) {
+
+                     
+                              setState(() {
+                                         gstSwitch=value;
+                                         _formInput.gst=true;
+                              });
+                      
+                            }),
                         VerticalDivider(),
                         !gstSwitch
                             ? Text(
@@ -449,11 +411,15 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField2(
                             controller: gstratePriceController,
                             label: "GST Rate (%)",
-                            value:_formInput.gstRate!="null"?_formInput.gstRate:"",
+                            value: _formInput.gstRate != "null"
+                                ? _formInput.gstRate
+                                : "0",
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.gstRate = e;
-                             calculate();
+                           
+                              setState(() {});
+                              calculate();
                             },
                             validator: (e) {
                               if (!gstSwitch && e == "") return "Enter Rate";
@@ -503,7 +469,9 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField(
                             readonly: true,
                             label: "Base Selling Price",
-                            value: _formInput.baseSellingPriceGst=="null"?"0":_formInput.baseSellingPriceGst,
+                            value: _formInput.baseSellingPriceGst == "null"
+                                ? "0"
+                                : _formInput.baseSellingPriceGst,
                             onChanged: (e) {
                               _formInput.baseSellingPriceGst = e;
                             },
@@ -513,7 +481,9 @@ class _CreateProductState extends State<CreateProduct> {
                           CustomTextField(
                             readonly: true,
                             label: "Base Purchase Price",
-                            value: _formInput.basePurchasePriceGst=="null"?"0":_formInput.basePurchasePriceGst,
+                            value: _formInput.basePurchasePriceGst == "null"
+                                ? "0"
+                                : _formInput.basePurchasePriceGst,
                             onChanged: (e) {
                               _formInput.basePurchasePriceGst = e;
                             },
@@ -586,31 +556,26 @@ class _CreateProductState extends State<CreateProduct> {
 
                         print(_formInput.purchasePrice);
 
-                        if(_formInput.purchasePrice==null||_formInput.purchasePrice=="null"||_formInput.purchasePrice=="")
-                        {
-                          _formInput.purchasePrice="0";
+                        if (_formInput.purchasePrice == null ||
+                            _formInput.purchasePrice == "null" ||
+                            _formInput.purchasePrice == "") {
+                          _formInput.purchasePrice = "0";
                         }
-                       
 
                         if (_formKey.currentState?.validate() ?? false) {
                           print(_formInput.available);
                           print(_formInput.expiryDate);
                           print(_formInput.batchNumber);
-                  
+
                           _productCubit.createProduct(_formInput);
                           print("Barcode:");
                           print(_formInput.barCode);
                         }
+                          Navigator.pop(context);
                       },
                     ),
                   ],
-                );
-              },
-            ),
-          ),
-        ),
-      ),
-    );
+                ))));
   }
 
   Future<void> _scanBarode() async {
