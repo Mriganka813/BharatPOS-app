@@ -262,7 +262,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     bytes += generator.text(dateFormat(),
         styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center));
     bytes += generator.text(
-      'Table : ${tableNoController.text}',
+      'Table no : ${tableNoController.text}',
       styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),
       linesAfter: 2,
     );
@@ -392,8 +392,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     }
     bytes += generator.text('${args.user.phoneNumber}',
         styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
-            bytes += generator.text('Table no: ${tableNoController.text}',
-        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
+        
 
 
     bytes += generator.row([
@@ -505,7 +504,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-
+              
+              if(widget.args.billArgs == null)
               Container(
                 width: 200,
                 child: TextField(
