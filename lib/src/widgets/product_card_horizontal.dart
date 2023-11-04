@@ -15,6 +15,7 @@ class ProductCardHorizontal extends StatefulWidget {
   Function onRemove;
   Function onTap;
   bool isAvailable;
+  int noOfQuatityadded;
   ProductCardHorizontal({
     Key? key,
     required this.product,
@@ -25,9 +26,11 @@ class ProductCardHorizontal extends StatefulWidget {
     this.reduceQuantity,
     this.selectQuantity = 0,
     this.isAvailable = true,
+      this.noOfQuatityadded=0,
     required this.onAdd,
     required this.onRemove,
     required this.onTap,
+  
 
   }) : super(key: key);
 
@@ -43,7 +46,18 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
 
   bool tapflag=false;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    itemQuantity=widget.noOfQuatityadded;
+    setState(() {
+      
+    });
+  }
+  @override
   Widget build(BuildContext context) {
+
+    print(widget.isSelecting);
     return GestureDetector(
       onTap: (){
      

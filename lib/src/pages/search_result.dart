@@ -132,6 +132,20 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     setState(() {});
   }
 
+
+  int countNoOfQuatityInArray(Product product)
+  {
+
+      int count=0;
+      _products.forEach((element) { 
+        if(element.id==product.id)
+        count++;
+      });
+
+      return count;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -235,6 +249,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
+                                        noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
                                         isSelecting: widget.args!.isSelecting,
                                         onTap: (q) {
                                           if (q == 1) {
@@ -296,7 +311,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           }
                                         },
                                       ),
-                                      if (_products.contains(prodList[index]))
+                                      if (countNoOfQuatityInArray(prodList[index])>0)
                                         const Align(
                                           alignment: Alignment.topRight,
                                           child: Padding(
@@ -335,8 +350,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
               hintText: 'Search',
               onChanged: (String e) async {
                 if (e.isNotEmpty) {
-                  prodList = await searchProductServices.searchproduct(e);
 
+                  prodList.clear();
+                  setState(() {
+                    
+                  });
+                  prodList = await searchProductServices.searchproduct(e);
+                  print(_products); 
+                  
                   print("searchbar running");
                   setState(() {});
                 }
