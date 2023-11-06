@@ -34,7 +34,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   // List<BluetoothDevice> _devices = [];
   List<BluetoothInfo> _devices = [];
   String _deviceMsg = "";
-  TextEditingController tableNoController=TextEditingController();
+  TextEditingController tableNoController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -386,15 +386,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       bytes += generator.text('${addressRows()!.elementAt(i)}',
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
-    if(i==0)
-    bytes += generator.text('GSTIN ${args.user.GstIN.toString().split("STIN")[1]}',
-          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
-
+      if (i == 0 && args.user.GstIN.toString() != "null")
+        bytes += generator.text('GSTIN ${args.user.GstIN}',
+            styles:
+                PosStyles(height: PosTextSize.size1, align: PosAlign.center));
     }
     bytes += generator.text('${args.user.phoneNumber}',
         styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
-        
-
 
     bytes += generator.row([
       PosColumn(
@@ -495,7 +493,6 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     return bytes;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -505,46 +502,45 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         backgroundColor: Colors.white,
         body: Column(
           children: [
-              
-              if(widget.args.billArgs == null)
-             Padding(
-               padding: const EdgeInsets.all(20),
-               child: CustomTextField2(
-                hintText: "Enter Table No (optional)",
-                inputType: TextInputType.number,
-                    controller: tableNoController,
-                            
-                              value:"",
-                             
-                              validator: (e) => null,
-                            ),
-             ),
+            if (widget.args.billArgs == null)
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: CustomTextField2(
+                  hintText: "Enter Table No (optional)",
+                  inputType: TextInputType.number,
+                  controller: tableNoController,
+                  value: "",
+                  validator: (e) => null,
+                ),
+              ),
             _devices.isNotEmpty
-                ? Container(
-                  height: 400,
-                  child: ListView.builder(
-                      itemBuilder: (context, position) {
-                        return ListTile(
-                          onTap: () async {
-                            // printPdfViaBluetooth(_devices[position]);
-                            // printkot(_devices[position].macAdress);
-                            if (widget.args.bluetoothArgs != null &&
-                                widget.args.billArgs == null) {
-                              printKot(_devices[position].macAdress);
-                            } else if (widget.args.billArgs != null &&
-                                widget.args.bluetoothArgs == null) {
-                              print('ok');
-                              printbill(_devices[position].macAdress);
-                            }
-                          },
-                          leading: Icon(Icons.print),
-                          title: Text(_devices[position].name),
-                          subtitle: Text(_devices[position].macAdress),
-                        );
-                      },
-                      itemCount: _devices.length,
+                ? Expanded(
+                    child: Container(
+                      height: 400,
+                      child: ListView.builder(
+                        itemBuilder: (context, position) {
+                          return ListTile(
+                            onTap: () async {
+                              // printPdfViaBluetooth(_devices[position]);
+                              // printkot(_devices[position].macAdress);
+                              if (widget.args.bluetoothArgs != null &&
+                                  widget.args.billArgs == null) {
+                                printKot(_devices[position].macAdress);
+                              } else if (widget.args.billArgs != null &&
+                                  widget.args.bluetoothArgs == null) {
+                                print('ok');
+                                printbill(_devices[position].macAdress);
+                              }
+                            },
+                            leading: Icon(Icons.print),
+                            title: Text(_devices[position].name),
+                            subtitle: Text(_devices[position].macAdress),
+                          );
+                        },
+                        itemCount: _devices.length,
+                      ),
                     ),
-                )
+                  )
                 : Center(
                     child: Text(
                       _deviceMsg ?? 'Ops something went wrong!',
