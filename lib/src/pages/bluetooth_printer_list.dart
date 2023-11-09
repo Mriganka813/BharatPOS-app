@@ -9,6 +9,7 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/widgets/custom_text_field2.dart';
 
 class CombineArgs {
@@ -232,6 +233,11 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
   Future<List<int>> kotTicket() async {
     final bargs = widget.args.bluetoothArgs!;
+
+    List<Map<String, dynamic>> list =
+        await DatabaseHelper().getKotData(bargs.orderInput.id!);
+    await DatabaseHelper().updateKot(bargs.orderInput.id!);
+
     List<int> bytes = [];
     // Using default profile
     final profile = await CapabilityProfile.load();
@@ -292,15 +298,15 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       // ),
     ]);
 
-    for (int i = 0; i < bargs.orderInput.orderItems!.length; i++) {
+    for (int i = 0; i < list.length; i++) {
       bytes += generator.row([
         PosColumn(
-          text: '${bargs.orderInput.orderItems![i].product!.name}',
+          text: '${list[i]['name']}',
           width: 9,
           styles: PosStyles(height: PosTextSize.size1),
         ),
         PosColumn(
-          text: '${bargs.orderInput.orderItems![i].quantity}',
+          text: '${list[i]['qty']}',
           width: 3,
           styles: PosStyles(height: PosTextSize.size1),
         ),
@@ -521,6 +527,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                         itemBuilder: (context, position) {
                           return ListTile(
                             onTap: () async {
+                          
+
                               // printPdfViaBluetooth(_devices[position]);
                               // printkot(_devices[position].macAdress);
                               if (widget.args.bluetoothArgs != null &&

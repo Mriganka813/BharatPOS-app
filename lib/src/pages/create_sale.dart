@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
+import 'package:shopos/src/models/KotModel.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 
 import 'package:shopos/src/models/product.dart';
@@ -43,7 +44,7 @@ class _CreateSaleState extends State<CreateSale> {
   late OrderInput _orderInput;
   late final AudioCache _audioCache;
   List<OrderItemInput>? newAddedItems = [];
-
+  List<Product> Kotlist = [];
   bool isLoading = false;
 
   @override
@@ -114,8 +115,18 @@ class _CreateSaleState extends State<CreateSale> {
     print(product.salesgst);
   }
 
-  void insertToDatabase(Billing provider) {
-    DatabaseHelper().InsertOrderInput(_orderInput, provider, newAddedItems!);
+  void insertToDatabase(Billing provider) async {
+    int id = await DatabaseHelper()
+        .InsertOrderInput(_orderInput, provider, newAddedItems!);
+    List<KotModel> kotItemlist = [];
+    var tempMap = CountNoOfitemIsList(Kotlist);
+    Kotlist.forEach((element) {
+      var model = KotModel(id, element.name!, tempMap['${element.id}'],"no");
+      kotItemlist.add(model);
+    });
+
+
+    DatabaseHelper().insertKot(kotItemlist);
   }
 
   @override
@@ -253,6 +264,8 @@ class _CreateSaleState extends State<CreateSale> {
                                   type: "sale",
                                   product: product,
                                   onAdd: () {
+                                    Kotlist.add(_orderInput
+                                        .orderItems![index].product!);
                                     _onAdd(_orderItem);
                                   },
                                   onDelete: () {
@@ -294,43 +307,10 @@ class _CreateSaleState extends State<CreateSale> {
                           }
 
                           var temp = result as List<Product>;
-                          var tempMap = {};
 
-                          for (int i = 0; i < temp.length; i++) {
-                            int count=1;
-                            if(!tempMap.containsKey("${temp[i].id}"))
-                            {
-                              for (int j = i+1; j < temp.length; j++) {
-                              if(temp[i].id==temp[j].id)
-                              {
-                                count++;
-                                print("count =$count");
-                               
-                              }
-                            }
-                            tempMap["${temp[i].id}"]=count;   
-                            }
-                            
-                          }
+                          Kotlist.addAll(temp);
 
-
-
-                              for (int i = 0; i < temp.length; i++) {
-                  
-                           
-                              for (int j = i+1; j < temp.length; j++) {
-                              if(temp[i].id==temp[j].id)
-                              {
-                            
-                                    temp.removeAt(j);
-                                    j--;
-                               
-                              }
-                            }
-                       
-                            
-                          }
-
+                          var tempMap = CountNoOfitemIsList(temp);
                           final orderItems = temp
                               .map((e) => OrderItemInput(
                                     product: e,
@@ -462,5 +442,33 @@ class _CreateSaleState extends State<CreateSale> {
       }
     } catch (_) {}
     Navigator.pop(context);
+  }
+
+  Map CountNoOfitemIsList(List<Product> temp) {
+    var tempMap = {};
+
+    for (int i = 0; i < temp.length; i++) {
+      int count = 1;
+      if (!tempMap.containsKey("${temp[i].id}")) {
+        for (int j = i + 1; j < temp.length; j++) {
+          if (temp[i].id == temp[j].id) {
+            count++;
+            print("count =$count");
+          }
+        }
+        tempMap["${temp[i].id}"] = count;
+      }
+    }
+
+    for (int i = 0; i < temp.length; i++) {
+      for (int j = i + 1; j < temp.length; j++) {
+        if (temp[i].id == temp[j].id) {
+          temp.removeAt(j);
+          j--;
+        }
+      }
+    }
+
+    return tempMap;
   }
 }

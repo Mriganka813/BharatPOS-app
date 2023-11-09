@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
+import 'package:shopos/src/models/KotModel.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/product.dart';
@@ -85,11 +86,20 @@ class DatabaseHelper {
              gst Text
           )
         ''');
+
+        db.execute('''
+          CREATE TABLE Kot(
+            orderId INTEGER,
+            name Text,
+            qty INTEGER,
+            isPrinted Text
+          )
+        ''');
       },
     );
   }
 
-  void InsertOrderInput(OrderInput input, Billing provider,
+  Future<int> InsertOrderInput(OrderInput input, Billing provider,
       List<OrderItemInput> newAddeditems) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
@@ -147,6 +157,7 @@ class DatabaseHelper {
     }
 
     insertOrderItemsInput(input.orderItems!, newAddeditems, highestId);
+    return highestId;
   }
 
   void insertOrderItemsInput(List<OrderItemInput> data,
@@ -293,5 +304,37 @@ class DatabaseHelper {
     final db = await dbHelper.database;
     await db.delete("OrderInput", where: "id = ?", whereArgs: [input.id]);
     await db.delete("OrderItemInput", where: "OIID = ?", whereArgs: [input.id]);
+  }
+
+  insertKot(List<KotModel> list) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+
+    for (int i = 0; i < list.length; i++) {
+      var map = list[i].toMap();
+      await db.insert(
+        'Kot',
+        map,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  updateKot(int id) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+    db.execute("update Kot set isPrinted='yes' where orderId=$id");
+  }
+
+  Future<List<Map<String, dynamic>>> getKotData(int id) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+
+    final List<Map<String, dynamic>> data = await db.query("Kot",
+        where: 'isPrinted=? AND orderId=?', whereArgs: ["no", id]);
+
+    print(data);
+
+    return data;
   }
 }
