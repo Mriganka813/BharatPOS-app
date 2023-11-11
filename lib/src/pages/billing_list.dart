@@ -609,6 +609,21 @@ class _BillingListScreenState extends State<BillingListScreen> {
                             // ),
                             // Divider(color: Colors.black54),
                             const SizedBox(height: 10),
+                            if (provider.salesBilling.values
+                                    .toList()[index]
+                                    .tableNo !=
+                                "-1")
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Table No'),
+                                  Text(
+                                    '${provider.salesBilling.values.toList()[index].tableNo}',
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -636,20 +651,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                             ),
                             const SizedBox(height: 5),
                             const SizedBox(height: 5),
-                            if (provider.salesBilling.values
-                                    .toList()[index]
-                                    .tableNo !=
-                                "-1")
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Table No'),
-                                  Text(
-                                    '${provider.salesBilling.values.toList()[index].tableNo}',
-                                  ),
-                                ],
-                              ),
+
                             const SizedBox(height: 5),
                             Divider(color: Colors.black54),
                             const SizedBox(height: 5),
