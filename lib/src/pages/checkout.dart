@@ -893,7 +893,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 child: UPIPaymentQRCode(
                                   upiDetails: _myUpiId!,
                                   size: 200,
-                                  embeddedImagePath: 'assets/icon/CUBE.png',
+                                  embeddedImagePath: 'assets/icon/BharatPos.png',
                                   embeddedImageSize: const Size(40, 40),
                                   upiQRErrorCorrectLevel:
                                       UPIQRErrorCorrectLevel.high,

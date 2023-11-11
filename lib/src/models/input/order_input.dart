@@ -11,6 +11,7 @@ class OrderInput {
     this.id=-1,
     this.orderItems,
     this.modeOfPayment,
+
     this.party,
     this.user,
     this.createdAt,
@@ -18,6 +19,7 @@ class OrderInput {
     this.businessName,
     this.businessAddress,
     this.gst,
+    this.tableNo="-1"
   });
 
   int ?id;
@@ -30,6 +32,7 @@ class OrderInput {
   String? businessName;
   String? businessAddress;
   String? gst;
+  String tableNo;
 
   factory OrderInput.fromMap(Map<String, dynamic> json) => OrderInput(
         id:json["id"],
@@ -46,6 +49,7 @@ class OrderInput {
         businessName: json['businessName'],
         businessAddress: json['businessAddress'],
         gst: json['gst'],
+        tableNo: json['tableNo']
       );
 
   Map<String, dynamic> toMap(OrderType type) => {
@@ -61,7 +65,8 @@ class OrderInput {
         "reciverName": reciverName,
         "businessName": businessName,
         "businessAddress": businessAddress,
-        "gst": gst
+        "gst": gst,
+        "tableNo":tableNo
       };
 }
 

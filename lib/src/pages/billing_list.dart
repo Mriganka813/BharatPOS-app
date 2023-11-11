@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +10,6 @@ import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
-
 
 enum kotType {
   is57mm,
@@ -45,7 +42,7 @@ class BluetoothArgs {
 class BillingListScreen extends StatefulWidget {
   static const routeName = '/billing-list';
   BuildContext context;
-BillingListScreen(this.context,{Key? key, required this.orderType})
+  BillingListScreen(this.context, {Key? key, required this.orderType})
       : super(key: key);
 
   final OrderType orderType;
@@ -71,14 +68,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   @override
   void initState() {
-
     super.initState();
     fetchNTPTime();
- 
   }
-
-
- 
 
   Future<void> fetchNTPTime() async {
     DateTime currentTime;
@@ -414,19 +406,11 @@ class _BillingListScreenState extends State<BillingListScreen> {
     );
   }
 
-
-
- 
-
   @override
   Widget build(BuildContext context) {
-
     final provider = Provider.of<Billing>(
       context,
     );
-
-    
-
 
     return WillPopScope(
       onWillPop: () async {
@@ -465,25 +449,23 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 ListTile(
                                   onTap: () {
-                                
                                     widget.orderType == OrderType.sale
-                                        ? Navigator.pushNamed(
-                                            context, CreateSale.routeName,
+                                        ? Navigator.pushNamed(context, CreateSale.routeName,
                                             arguments: BillingPageArgs(
-                                           
                                                 orderId: provider.salesBilling.keys
                                                     .toList()[index],
-                                                editOrders: provider
-                                                    .salesBilling.values
+                                                editOrders: provider.salesBilling.values
                                                     .toList()[index]
-                                                    .orderItems,id: provider.salesBilling.values.toList()[index].id))
+                                                    .orderItems,
+                                                id: provider.salesBilling.values
+                                                    .toList()[index]
+                                                    .id))
                                         : Navigator.pushNamed(
                                             context, CreatePurchase.routeName,
                                             arguments: BillingPageArgs(
                                                 orderId: provider.purchaseBilling.keys
                                                     .toList()[index],
-                                                editOrders: provider
-                                                    .purchaseBilling.values
+                                                editOrders: provider.purchaseBilling.values
                                                     .toList()[index]
                                                     .orderItems));
                                   },
@@ -602,15 +584,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
                       return _showDialog();
                     },
                     onDismissed: (direction) async {
-                       DatabaseHelper().deleteOrderItemInput(
-                              provider.salesBilling.values.toList()[index]);
+                      DatabaseHelper().deleteOrderItemInput(
+                          provider.salesBilling.values.toList()[index]);
                       widget.orderType == OrderType.sale
                           ? provider.removeSalesBillItems(
                               provider.salesBilling.keys.toList()[index])
                           : provider.removePurchaseBillItems(
                               provider.purchaseBilling.keys.toList()[index]);
-
-                             
 
                       setState(() {});
                     },
@@ -655,6 +635,22 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               ],
                             ),
                             const SizedBox(height: 5),
+                            const SizedBox(height: 5),
+                            if (provider.salesBilling.values
+                                    .toList()[index]
+                                    .tableNo !=
+                                "-1")
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Table No'),
+                                  Text(
+                                    '${provider.salesBilling.values.toList()[index].tableNo}',
+                                  ),
+                                ],
+                              ),
+                            const SizedBox(height: 5),
                             Divider(color: Colors.black54),
                             const SizedBox(height: 5),
                             Row(
@@ -667,6 +663,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                 ),
                               ],
                             ),
+
                             const SizedBox(height: 5),
                             // Divider(color: Colors.black54),
                             // const Divider(color: Colors.transparent),

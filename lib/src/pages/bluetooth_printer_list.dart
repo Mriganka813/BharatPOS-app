@@ -46,7 +46,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     // });
     // Timer.periodic(Duration(seconds: 10), (timer) {
     //   initPrinter();
+
+    
     // });
+  
+  if(widget.args.bluetoothArgs!.orderInput.tableNo!="-1")
+  tableNoController.text=widget.args.bluetoothArgs!.orderInput.tableNo;
+  print(widget.args.bluetoothArgs!.orderInput.tableNo);
   }
 
   getDevices() async {
@@ -236,7 +242,6 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
     List<Map<String, dynamic>> list =
         await DatabaseHelper().getKotData(bargs.orderInput.id!);
-    await DatabaseHelper().updateKot(bargs.orderInput.id!);
 
     List<int> bytes = [];
     // Using default profile
@@ -499,63 +504,79 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     return bytes;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Printer page"),
-        ),
-        backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            if (widget.args.billArgs == null)
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: CustomTextField2(
-                  hintText: "Enter Table No (optional)",
-                  inputType: TextInputType.number,
-                  controller: tableNoController,
-                  value: "",
-                  validator: (e) => null,
-                ),
-              ),
-            _devices.isNotEmpty
-                ? Expanded(
-                    child: Container(
-                      height: 400,
-                      child: ListView.builder(
-                        itemBuilder: (context, position) {
-                          return ListTile(
-                            onTap: () async {
-                          
+  bool isPrinted = false;
 
-                              // printPdfViaBluetooth(_devices[position]);
-                              // printkot(_devices[position].macAdress);
-                              if (widget.args.bluetoothArgs != null &&
-                                  widget.args.billArgs == null) {
-                                printKot(_devices[position].macAdress);
-                              } else if (widget.args.billArgs != null &&
-                                  widget.args.bluetoothArgs == null) {
-                                print('ok');
-                                printbill(_devices[position].macAdress);
-                              }
-                            },
-                            leading: Icon(Icons.print),
-                            title: Text(_devices[position].name),
-                            subtitle: Text(_devices[position].macAdress),
-                          );
-                        },
-                        itemCount: _devices.length,
+  @override
+  Widget build(BuildContext context) { 
+    return WillPopScope(
+      onWillPop: () async {
+        if (isPrinted) {
+          final bargs = widget.args.bluetoothArgs!;
+          await DatabaseHelper().updateKot(bargs.orderInput.id!);
+          await DatabaseHelper()
+              .updateTableNo(tableNoController.text, bargs.orderInput.id!);
+          widget.args.bluetoothArgs!.orderInput.tableNo =
+              tableNoController.text;
+        }
+
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text("Printer page"),
+          ),
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              if (widget.args.billArgs == null)
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: CustomTextField2(
+                    hintText: "Enter Table No (optional)",
+                    inputType: TextInputType.number,
+                    controller: tableNoController,
+                    value: "${widget.args.bluetoothArgs!.orderInput.tableNo}",
+                    validator: (e) => null,
+                  ),
+                ),
+              _devices.isNotEmpty
+                  ? Expanded(
+                      child: Container(
+                        height: 400,
+                        child: ListView.builder(
+                          itemBuilder: (context, position) {
+                            return ListTile(
+                              onTap: () async {
+                                // printPdfViaBluetooth(_devices[position]);
+                                // printkot(_devices[position].macAdress);
+                                if (widget.args.bluetoothArgs != null &&
+                                    widget.args.billArgs == null) {
+                                  isPrinted = true;
+                                  setState(() {});
+                                  printKot(_devices[position].macAdress);
+                                } else if (widget.args.billArgs != null &&
+                                    widget.args.bluetoothArgs == null) {
+                                  print('ok');
+                                  printbill(_devices[position].macAdress);
+                                }
+                              },
+                              leading: Icon(Icons.print),
+                              title: Text(_devices[position].name),
+                              subtitle: Text(_devices[position].macAdress),
+                            );
+                          },
+                          itemCount: _devices.length,
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        _deviceMsg ?? 'Ops something went wrong!',
+                        style: TextStyle(fontSize: 24),
                       ),
                     ),
-                  )
-                : Center(
-                    child: Text(
-                      _deviceMsg ?? 'Ops something went wrong!',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }

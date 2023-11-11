@@ -83,7 +83,8 @@ class DatabaseHelper {
              reciverName Text,
              businessName Text,
              businessAddress Text,
-             gst Text
+             gst Text,
+             tableNo Text
           )
         ''');
 
@@ -243,6 +244,8 @@ class DatabaseHelper {
       Map<String, dynamic> t = {};
 
       t.addAll(OrderInputData[j]);
+      print("data=");
+      print(t);
 
       List<OrderItemInput> plist = [];
 
@@ -336,5 +339,11 @@ class DatabaseHelper {
     print(data);
 
     return data;
+  }
+
+  updateTableNo(String tablNo, int id) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+    db.execute("update OrderInput set tableNo='$tablNo' where id=$id");
   }
 }

@@ -76,7 +76,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/CUBE.png"
+  image_path: "assets/icon/BharatPos.png"
 
 flutter:
   uses-material-design: true

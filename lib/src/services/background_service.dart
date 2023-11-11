@@ -52,7 +52,7 @@ Future<void> onStart(ServiceInstance service) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         service.setForegroundNotificationInfo(
-            title: 'CUBE', content: 'Tap to view more');
+            title: 'BharatPOS', content: 'Tap to view more');
       }
     }
     WidgetsFlutterBinding.ensureInitialized();

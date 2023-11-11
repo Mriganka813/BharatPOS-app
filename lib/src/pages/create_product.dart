@@ -91,6 +91,7 @@ class _CreateProductState extends State<CreateProduct> {
       gstSwitch = true;
     }
     sellingPriceController.text = _formInput.sellingPrice as String;
+
     purchasePriceController.text = _formInput.purchasePrice != "null"
         ? _formInput.purchasePrice as String
         : "";
@@ -98,6 +99,17 @@ class _CreateProductState extends State<CreateProduct> {
 
     gstratePriceController.text =
         _formInput.gstRate != "null" ? _formInput.gstRate as String : "";
+    purchasePriceController.text =
+        _formInput.purchasePrice != "null" && _formInput.purchasePrice != ""
+            ? _formInput.purchasePrice!
+            : "0";
+    if (_formInput.purchasePrice != "null" && _formInput.purchasePrice != "") {
+      purchasePriceController.text = _formInput.purchasePrice!;
+    } else {
+      purchasePriceController.text = "0";
+      _formInput.purchasePrice = "0";
+      setState(() {});
+    }
 
     calculate();
   }
@@ -351,9 +363,10 @@ class _CreateProductState extends State<CreateProduct> {
                           child: CustomTextField2(
                             controller: purchasePriceController,
                             label: "Purchase Price",
-                            value: _formInput.purchasePrice != "null"
+                            value: _formInput.purchasePrice != "null" &&
+                                    _formInput.purchasePrice != ""
                                 ? _formInput.purchasePrice
-                                : "",
+                                : "0",
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.purchasePrice = e;
@@ -373,13 +386,10 @@ class _CreateProductState extends State<CreateProduct> {
                         Switch(
                             value: gstSwitch,
                             onChanged: (value) {
-
-                     
                               setState(() {
-                                         gstSwitch=value;
-                                         _formInput.gst=true;
+                                gstSwitch = value;
+                                _formInput.gst = true;
                               });
-                      
                             }),
                         VerticalDivider(),
                         !gstSwitch
@@ -417,7 +427,7 @@ class _CreateProductState extends State<CreateProduct> {
                             inputType: TextInputType.number,
                             onChanged: (e) {
                               _formInput.gstRate = e;
-                           
+
                               setState(() {});
                               calculate();
                             },
@@ -571,7 +581,7 @@ class _CreateProductState extends State<CreateProduct> {
                           print("Barcode:");
                           print(_formInput.barCode);
                         }
-                          Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                     ),
                   ],

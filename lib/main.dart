@@ -17,7 +17,7 @@ void main() async {
 
   locator.registerLazySingleton(() => GlobalServices());
   await Firebase.initializeApp(
-      name: 'CUBE', options: DefaultFirebaseOptions.currentPlatform);
+      name: 'BharatPOS', options: DefaultFirebaseOptions.currentPlatform);
   await Permission.notification.isDenied.then((value) => {
         if (value) {Permission.notification.request()}
       });
