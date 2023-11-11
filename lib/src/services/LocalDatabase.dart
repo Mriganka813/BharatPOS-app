@@ -42,14 +42,14 @@ class DatabaseHelper {
             createdAt TEXT,
             __v INTEGER,
             purchasePrice INTEGER,
-            gstRate TEXT,
-            salesgst TEXT,
-            salecgst TEXT,
-            saleigst TEXT,
+            GSTRate TEXT,
+            saleSGST TEXT,
+            saleCGST TEXT,
+            saleIGST TEXT,
             baseSellingPrice TEXT,
-            purchasesgst TEXT,
-            purchasecgst TEXT,
-            purchaseigst TEXT,
+            purchaseSGST TEXT,
+            purchaseCGST TEXT,
+            purchaseIGST TEXT,
             basePurchasePrice TEXT,
             sellerName TEXT,
             batchNumber TEXT,
@@ -283,6 +283,7 @@ class DatabaseHelper {
     Otemp.addAll(OrderItemInputData);
 
     final List<Map<String, dynamic>> Productdata = await db.query('Product');
+    print("product data: $Productdata ");
 
     Productdata.forEach((ele) {
       Map<String, dynamic> t = {};
