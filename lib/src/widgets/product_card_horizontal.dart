@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/services/product_availability_service.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
 
 class ProductCardHorizontal extends StatefulWidget {
   final Product product;
@@ -217,11 +218,29 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                         IconButton(
                           onPressed: () {
                             
-                            setState(() {
-                                itemQuantity++;
-                            });
-                          
-                            widget.onAdd();
+                            bool flag = true;
+                                bool flag2 = true;
+                                if (widget.product.quantity! >= 99000) {
+                                     _showError(
+                                      "Maximum value of quantity is 99000");
+                               
+                                  flag = false;
+                                 
+                                } 
+
+                                if (itemQuantity >= 999) {
+                                  _showError(
+                                      "Cant purchase the item more than 999");
+                                      flag2=false;
+                                }
+
+                                if(flag&&flag2)
+                                {
+                                     setState(() {
+                                    itemQuantity++;
+                                  });
+                                   widget.onAdd();
+                                }
                           
                           },
                           icon: const Icon(Icons.add_circle_outline_rounded),
@@ -325,6 +344,38 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
         ),
       ),
     );
+  }
+
+  Future<bool?> _showError(String error) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: Text(error),
+              title: Row(
+                children: [
+                  Expanded(child: Text('Alert')),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Icon(Icons.close))
+                ],
+              ),
+              actions: [
+                Center(
+                    child: Container(
+                  width: 200,
+                  height: 40,
+                  child: CustomButton(
+                      title: 'Ok',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      onTap: () async {
+                        Navigator.of(ctx).pop(false);
+                      }),
+                ))
+              ],
+            ));
   }
 }
 

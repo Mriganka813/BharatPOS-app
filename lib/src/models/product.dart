@@ -1,3 +1,5 @@
+import 'package:pin_code_fields/pin_code_fields.dart';
+
 class Product {
   Product({
     this.name,
@@ -47,11 +49,23 @@ class Product {
   String? batchNumber;
   DateTime? expiryDate;
   num i=0;
-  factory Product.fromMap(Map<String, dynamic> json) => Product(
+  factory Product.fromMap(Map<String, dynamic> json){ 
+
+    if(json['quantity'] is int)
+    {
+      print("${json["name"]} have int quantity");
+    }
+    else
+    {
+      print("${json["name"]} have double quantity(${json['quantity']})");
+    }
+    
+    
+    return Product(
       name: json["name"],
       sellingPrice:json["sellingPrice"]==null?0.0: double.parse(json["sellingPrice"].toString()) ,
       barCode: json["barCode"],
-      quantity: json["quantity"],
+      quantity:  json['quantity'],
       purchasePrice:json['purchasePrice']==null?0.0: double.parse(json['purchasePrice'].toString()),
       user: json["user"],
       image: json['image'],
@@ -72,6 +86,9 @@ class Product {
       expiryDate: json['expiryDate'] != null
           ? DateTime.parse((json['expiryDate']).toString().substring(0, 10))
           : null);
+          
+          
+      }
 
   Map<String, dynamic> toMap() => {
         

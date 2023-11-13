@@ -360,31 +360,31 @@ class _ReportTableState extends State<ReportTable> {
       if (partynamelist[index] == partynametoFilter ||
           partynametoFilter == "") {
         if (index != datelist.length - 1 && totalsplist[index].length != 0)
-          total += int.parse(totalsplist[index]);
+          total += int.parse(totalsplist[index].split(".")[0]);
 
         if (index != datelist.length - 1 &&
             basesplist[index].length != 0 &&
-            basesplist[index] != "N/A")
+            basesplist[index] != "N/A"&& basesplist[index] != "null")
           basesplitTotal += int.parse(basesplist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             gstratelist[index].length != 0 &&
-            gstratelist[index] != "N/A%")
+            gstratelist[index] != "N/A%"&& basesplist[index] != "null")
           gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
         if (index != datelist.length - 1 &&
             cgstlist[index].length != 0 &&
-            cgstlist[index] != "N/A")
+            cgstlist[index] != "N/A"&& basesplist[index] != "null")
           cgstTotal += int.parse(cgstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             sgstlist[index].length != 0 &&
-            sgstlist[index] != "N/A")
+            sgstlist[index] != "N/A"&& basesplist[index] != "null")
           sgstTotal += int.parse(sgstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             igstlist[index].length != 0 &&
-            igstlist[index] != "N/A")
+            igstlist[index] != "N/A"&& basesplist[index] != "null")
           igstTotal += int.parse(igstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             mrplist[index].length != 0 &&
-            mrplist[index] != "N/A") mrpTotal += int.parse(mrplist[index]);
+            mrplist[index] != "N/A"&& basesplist[index] != "null") mrpTotal += int.parse(mrplist[index].split(".")[0]);
 
         list.add(DataRow(cells: [
           DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
