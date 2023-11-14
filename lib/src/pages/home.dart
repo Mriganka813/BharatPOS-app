@@ -225,6 +225,7 @@ class _HomePageState extends State<HomePage> {
                                   arguments:  ProductListPageArgs(
                               isSelecting: false,
                               orderType: OrderType.sale,
+                              productlist:  []
                             ),
                             );
                           },

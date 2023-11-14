@@ -97,27 +97,56 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   CustomButton(
                     title: "Add Product",
                     onTap: () async {
-                      final result = await Navigator.pushNamed(
-                        context,
-                        SearchProductListScreen.routeName,
-                        arguments: const ProductListPageArgs(
-                          isSelecting: true,
-                          orderType: OrderType.purchase,
-                        ),
-                      );
-                      if (result == null && result is! List<Product>) {
-                        return;
-                      }
-                      final orderItems = (result as List<Product>)
-                          .map((e) => OrderItemInput(
-                                product: e,
-                                quantity: 1,
-                                price: e.purchasePrice,
-                              ))
-                          .toList();
-                      setState(() {
-                        _orderInput.orderItems = orderItems;
-                      });
+                        final result = await Navigator.pushNamed(
+                            context,
+                            SearchProductListScreen.routeName,
+                            arguments:  ProductListPageArgs(
+                              isSelecting: true,
+                              orderType: OrderType.purchase,
+                              productlist:  _orderInput.orderItems!
+                            ),
+                          );
+                          if (result == null && result is! List<Product>) {
+                            return;
+                          }
+
+                          var temp = result as List<Product>;
+
+                         // Kotlist.addAll(temp);
+
+                          var tempMap = CountNoOfitemIsList(temp);
+                          final orderItems = temp
+                              .map((e) => OrderItemInput(
+                                    product: e,
+                                    quantity: tempMap["${e.id}"],
+                                    price: 0,
+                                  ))
+                              .toList();
+
+                          var tempOrderitems=_orderInput.orderItems;
+
+                          for(int i=0;i<tempOrderitems!.length;i++)
+                          {
+                            for(int j=0;j<orderItems.length;j++)
+                           {
+                                if(tempOrderitems[i].product!.id==orderItems[j].product!.id)
+                                {
+                                   
+                                  tempOrderitems[i].product!.quantity= tempOrderitems[i].product!.quantity!+orderItems[j].quantity;
+                                  tempOrderitems[i].quantity=tempOrderitems[i].quantity+orderItems[j].quantity;
+                                  orderItems.removeAt(j);
+                                }
+                           }
+                          }  
+
+
+                          _orderInput.orderItems=tempOrderitems;
+
+                          setState(() {
+                          
+                            _orderInput.orderItems?.addAll(orderItems);
+                         
+                          });
                     },
                   ),
                   // const VerticalDivider(
@@ -201,5 +230,32 @@ class _CreatePurchaseState extends State<CreatePurchase> {
         ),
       ),
     );
+  }
+  Map CountNoOfitemIsList(List<Product> temp) {
+    var tempMap = {};
+
+    for (int i = 0; i < temp.length; i++) {
+      int count = 1;
+      if (!tempMap.containsKey("${temp[i].id}")) {
+        for (int j = i + 1; j < temp.length; j++) {
+          if (temp[i].id == temp[j].id) {
+            count++;
+            print("count =$count");
+          }
+        }
+        tempMap["${temp[i].id}"] = count;
+      }
+    }
+
+    for (int i = 0; i < temp.length; i++) {
+      for (int j = i + 1; j < temp.length; j++) {
+        if (temp[i].id == temp[j].id) {
+          temp.removeAt(j);
+          j--;
+        }
+      }
+    }
+
+    return tempMap;
   }
 }

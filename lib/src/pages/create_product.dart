@@ -596,8 +596,9 @@ class _CreateProductState extends State<CreateProduct> {
                           _productCubit.createProduct(_formInput);
                           print("Barcode:");
                           print(_formInput.barCode);
+                             Navigator.pop(context);
                         }
-                        Navigator.pop(context);
+                     
                       },
                     ),
                   ],

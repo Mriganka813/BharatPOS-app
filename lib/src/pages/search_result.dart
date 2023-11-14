@@ -3,6 +3,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shopos/src/blocs/product/product_cubit.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_product.dart';
 
@@ -19,10 +20,12 @@ import '../widgets/custom_button.dart';
 class ProductListPageArgs {
   final bool isSelecting;
   final OrderType orderType;
-  const ProductListPageArgs({
-    required this.isSelecting,
-    required this.orderType,
-  });
+
+  List<OrderItemInput> productlist = [];
+  ProductListPageArgs(
+      {required this.isSelecting,
+      required this.orderType,
+      required this.productlist});
 }
 
 class SearchProductListScreen extends StatefulWidget {
@@ -58,10 +61,10 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     super.initState();
     _products = [];
     _productCubit = ProductCubit()..getProducts(_currentPage, _limit);
+
     scrollController.addListener(_scrollListener);
     _reportCubit = ReportCubit();
     fetchSearchedProducts();
-    
   }
 
   //goToProductDetails(BuildContext context, int idx) {
@@ -81,6 +84,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     for (var product in newProducts) {
       if (!prodList.contains(product)) {
         prodList.add(product);
+      }
+    }
+
+    for (int i = 0; i < widget.args!.productlist.length; i++) {
+      for (int j = 0; j < prodList.length; j++) {
+        if (widget.args!.productlist[i].product!.id == prodList[j].id) {
+          prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+        }
       }
     }
     print("searched products: $prodList");
@@ -132,19 +143,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     setState(() {});
   }
 
+  int countNoOfQuatityInArray(Product product) {
+    int count = 0;
+    _products.forEach((element) {
+      if (element.id == product.id) count++;
+    });
 
-  int countNoOfQuatityInArray(Product product)
-  {
-
-      int count=0;
-      _products.forEach((element) { 
-        if(element.id==product.id)
-        count++;
-      });
-
-      return count;
+    return count;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -249,25 +255,68 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
-                                        noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
+                                        type: widget.args!.orderType,
+                                        noOfQuatityadded:
+                                            countNoOfQuatityInArray(
+                                                prodList[index]),
                                         isSelecting: widget.args!.isSelecting,
                                         onTap: (q) {
                                           if (q == 1) {
                                             decreaseTheQuantity(
                                                 prodList[index]);
                                             itemCheckedFlag = false;
+                                            if (widget.args!.orderType ==
+                                                OrderType.sale) {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! + 1;
+                                            } else {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! - 1;
+                                            }
                                           } else if (q == 0) {
                                             _selectProduct(prodList[index]);
                                             itemCheckedFlag = true;
+                                            if (widget.args!.orderType ==
+                                                OrderType.sale) {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! - 1;
+                                            } else {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! + 1;
+                                            }
                                           }
 
                                           setState(() {});
                                         },
                                         onAdd: () {
                                           increaseTheQuantity(prodList[index]);
+                                            if (widget.args!.orderType ==
+                                                OrderType.sale) {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! - 1;
+                                            } else {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! + 1;
+                                            }
+                                            setState(() {
+                                              
+                                            });
                                         },
                                         onRemove: () {
                                           decreaseTheQuantity(prodList[index]);
+                                           itemCheckedFlag = false;
+                                            if (widget.args!.orderType ==
+                                                OrderType.sale) {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! + 1;
+                                            } else {
+                                              prodList[index].quantity =
+                                                  prodList[index].quantity! - 1;
+                                            }
+                                            setState(() {
+                                              
+                                            });
+
                                         },
                                         product: prodList[index],
                                         isAvailable: isAvailable,
@@ -311,7 +360,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           }
                                         },
                                       ),
-                                      if (countNoOfQuatityInArray(prodList[index])>0)
+                                      if (countNoOfQuatityInArray(
+                                              prodList[index]) >
+                                          0)
                                         const Align(
                                           alignment: Alignment.topRight,
                                           child: Padding(
@@ -350,14 +401,20 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
               hintText: 'Search',
               onChanged: (String e) async {
                 if (e.isNotEmpty) {
-
                   prodList.clear();
-                  setState(() {
-                    
-                  });
+                  setState(() {});
                   prodList = await searchProductServices.searchproduct(e);
-                  print(_products); 
-                  
+                  for (int i = 0; i < widget.args!.productlist.length; i++) {
+                    for (int j = 0; j < prodList.length; j++) {
+                      if (widget.args!.productlist[i].product!.id ==
+                          prodList[j].id) {
+                        prodList[j].quantity =
+                            widget.args!.productlist[i].product!.quantity;
+                      }
+                    }
+                  }
+                  print(_products);
+
                   print("searchbar running");
                   setState(() {});
                 }

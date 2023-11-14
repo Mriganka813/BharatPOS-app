@@ -297,9 +297,10 @@ class _CreateSaleState extends State<CreateSale> {
                           final result = await Navigator.pushNamed(
                             context,
                             SearchProductListScreen.routeName,
-                            arguments: const ProductListPageArgs(
+                            arguments:  ProductListPageArgs(
                               isSelecting: true,
                               orderType: OrderType.sale,
+                              productlist:  _orderInput.orderItems!
                             ),
                           );
                           if (result == null && result is! List<Product>) {
@@ -318,7 +319,28 @@ class _CreateSaleState extends State<CreateSale> {
                                     price: 0,
                                   ))
                               .toList();
+
+                          var tempOrderitems=_orderInput.orderItems;
+
+                          for(int i=0;i<tempOrderitems!.length;i++)
+                          {
+                            for(int j=0;j<orderItems.length;j++)
+                           {
+                                if(tempOrderitems[i].product!.id==orderItems[j].product!.id)
+                                {
+
+                                  tempOrderitems[i].product!.quantity= tempOrderitems[i].product!.quantity!-orderItems[j].quantity;
+                                  tempOrderitems[i].quantity=tempOrderitems[i].quantity+orderItems[j].quantity;
+                                  orderItems.removeAt(j);
+                                }
+                           }
+                          }  
+
+
+                          _orderInput.orderItems=tempOrderitems;
+
                           setState(() {
+                          
                             _orderInput.orderItems?.addAll(orderItems);
                             newAddedItems!.addAll(orderItems);
                           });
