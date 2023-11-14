@@ -617,10 +617,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Table No'),
+                                  Text('Table No',style: TextStyle(fontWeight: FontWeight.bold)),
                                   Text(
                                     '${provider.salesBilling.values.toList()[index].tableNo}',
-                                  ),
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
                                 ],
                               ),
                             const SizedBox(height: 20),

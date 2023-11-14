@@ -121,10 +121,9 @@ class _CreateSaleState extends State<CreateSale> {
     List<KotModel> kotItemlist = [];
     var tempMap = CountNoOfitemIsList(Kotlist);
     Kotlist.forEach((element) {
-      var model = KotModel(id, element.name!, tempMap['${element.id}'],"no");
+      var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
       kotItemlist.add(model);
     });
-
 
     DatabaseHelper().insertKot(kotItemlist);
   }
@@ -277,6 +276,20 @@ class _CreateSaleState extends State<CreateSale> {
                                             : _orderItem.quantity -= 1;
                                       },
                                     );
+
+                                
+                                      for (int i = 0; i < Kotlist.length; i++) {
+                                        if (Kotlist[i].id ==
+                                            _orderInput.orderItems![index]
+                                                .product!.id) {
+                                          Kotlist.removeAt(i);
+                                          break;
+                                        }
+                                      }
+
+                                          if (widget.args!.orderId == null)
+                                          
+                                    setState(() {});
                                   },
                                   productQuantity: _orderItem.quantity,
                                 ),
@@ -297,11 +310,10 @@ class _CreateSaleState extends State<CreateSale> {
                           final result = await Navigator.pushNamed(
                             context,
                             SearchProductListScreen.routeName,
-                            arguments:  ProductListPageArgs(
-                              isSelecting: true,
-                              orderType: OrderType.sale,
-                              productlist:  _orderInput.orderItems!
-                            ),
+                            arguments: ProductListPageArgs(
+                                isSelecting: true,
+                                orderType: OrderType.sale,
+                                productlist: _orderInput.orderItems!),
                           );
                           if (result == null && result is! List<Product>) {
                             return;
@@ -320,27 +332,26 @@ class _CreateSaleState extends State<CreateSale> {
                                   ))
                               .toList();
 
-                          var tempOrderitems=_orderInput.orderItems;
+                          var tempOrderitems = _orderInput.orderItems;
 
-                          for(int i=0;i<tempOrderitems!.length;i++)
-                          {
-                            for(int j=0;j<orderItems.length;j++)
-                           {
-                                if(tempOrderitems[i].product!.id==orderItems[j].product!.id)
-                                {
+                          for (int i = 0; i < tempOrderitems!.length; i++) {
+                            for (int j = 0; j < orderItems.length; j++) {
+                              if (tempOrderitems[i].product!.id ==
+                                  orderItems[j].product!.id) {
+                                tempOrderitems[i].product!.quantity =
+                                    tempOrderitems[i].product!.quantity! -
+                                        orderItems[j].quantity;
+                                tempOrderitems[i].quantity =
+                                    tempOrderitems[i].quantity +
+                                        orderItems[j].quantity;
+                                orderItems.removeAt(j);
+                              }
+                            }
+                          }
 
-                                  tempOrderitems[i].product!.quantity= tempOrderitems[i].product!.quantity!-orderItems[j].quantity;
-                                  tempOrderitems[i].quantity=tempOrderitems[i].quantity+orderItems[j].quantity;
-                                  orderItems.removeAt(j);
-                                }
-                           }
-                          }  
-
-
-                          _orderInput.orderItems=tempOrderitems;
+                          _orderInput.orderItems = tempOrderitems;
 
                           setState(() {
-                          
                             _orderInput.orderItems?.addAll(orderItems);
                             newAddedItems!.addAll(orderItems);
                           });

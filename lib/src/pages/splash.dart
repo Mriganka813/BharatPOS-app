@@ -48,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
     provider.removeAll();
 
     data.forEach((element) {
-      provider.addSalesBill(element, DateTime.now().toString());
+      provider.addSalesBill(element, element.id.toString());
     });
   }
 

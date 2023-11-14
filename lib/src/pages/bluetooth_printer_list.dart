@@ -47,12 +47,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     // Timer.periodic(Duration(seconds: 10), (timer) {
     //   initPrinter();
 
-    
     // });
-  
-  if(widget.args.bluetoothArgs!.orderInput.tableNo!="-1")
-  tableNoController.text=widget.args.bluetoothArgs!.orderInput.tableNo;
-  print(widget.args.bluetoothArgs!.orderInput.tableNo);
+
+    if (widget.args.billArgs == null) {
+      if (widget.args.bluetoothArgs!.orderInput.tableNo != "-1")
+        tableNoController.text = widget.args.bluetoothArgs!.orderInput.tableNo;
+      print(widget.args.bluetoothArgs!.orderInput.tableNo);
+    }
   }
 
   getDevices() async {
@@ -63,6 +64,11 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       String mac = bluetooth.macAdress;
     });
     setState(() {});
+         final bargs = widget.args.bluetoothArgs!;
+        List<Map<String, dynamic>> list =
+        await DatabaseHelper().getKotData(bargs.orderInput.id!);
+        print("Kot Data:");
+        print(list);
   }
 
   // Future<void> initPrinter() async {
@@ -507,7 +513,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   bool isPrinted = false;
 
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
         if (isPrinted) {

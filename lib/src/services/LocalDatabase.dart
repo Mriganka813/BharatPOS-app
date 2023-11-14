@@ -313,14 +313,30 @@ class DatabaseHelper {
   insertKot(List<KotModel> list) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
-
     for (int i = 0; i < list.length; i++) {
-      var map = list[i].toMap();
-      await db.insert(
+      List<Map<String, dynamic>> result = await db.query(
         'Kot',
-        map,
-        conflictAlgorithm: ConflictAlgorithm.replace,
+        columns: ['qty'],
+        where: 'orderId =? AND isPrinted=? AND name=?',
+        whereArgs: [list[i].orderId, "no", list[i].name],
       );
+      try {
+        int qty = result.first['qty'];
+        db.execute(
+            "update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
+        print("check qty");
+        print(qty);
+      } catch (e) {
+        for (int i = 0; i < list.length; i++) {
+          var map = list[i].toMap();
+          await db.insert(
+            'Kot',
+            map,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+        print("exception");
+      }
     }
   }
 
@@ -340,6 +356,32 @@ class DatabaseHelper {
     print(data);
 
     return data;
+  }
+
+  deleteKot(
+    int id,
+    String itemName,
+  ) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+
+    List<Map<String, dynamic>> result = await db.query(
+      'Kot',
+      columns: ['qty'],
+      where: 'orderId =? AND isPrinted=? AND name=?',
+      whereArgs: [id, "no", itemName],
+    );
+
+    int qty = result.first['qty'] as int;
+
+    if (qty > 1) {
+      qty = qty - 1;
+      db.execute(
+          "update Kot set qty=$qty where orderId=$id and isPrinted='no' and name='$itemName'");
+    } else {
+      db.execute(
+          "delete from Kot  where orderId=$id and isPrinted='no' and name='$itemName'");
+    }
   }
 
   updateTableNo(String tablNo, int id) async {
