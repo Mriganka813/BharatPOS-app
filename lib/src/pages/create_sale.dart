@@ -120,7 +120,9 @@ class _CreateSaleState extends State<CreateSale> {
         .InsertOrderInput(_orderInput, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
     var tempMap = CountNoOfitemIsList(Kotlist);
+   
     Kotlist.forEach((element) {
+       print("qtycount:${tempMap['${element.id}']}");
       var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
       kotItemlist.add(model);
     });
@@ -268,6 +270,11 @@ class _CreateSaleState extends State<CreateSale> {
                                     _onAdd(_orderItem);
                                   },
                                   onDelete: () {
+
+                                       DatabaseHelper().deleteKot(
+                                        widget.args!.id!,
+                                        _orderInput
+                                            .orderItems![index].product!.name!);
                                     setState(
                                       () {
                                         _orderItem.quantity == 1
@@ -277,19 +284,19 @@ class _CreateSaleState extends State<CreateSale> {
                                       },
                                     );
 
-                                
-                                      for (int i = 0; i < Kotlist.length; i++) {
-                                        if (Kotlist[i].id ==
-                                            _orderInput.orderItems![index]
-                                                .product!.id) {
-                                          Kotlist.removeAt(i);
-                                          break;
-                                        }
-                                      }
+                                    for (int i = 0; i < Kotlist.length; i++) {
+                                      if (Kotlist[i].id ==
+                                          _orderInput
+                                              .orderItems![index].product!.id) {
+                                        Kotlist.removeAt(i);
 
-                                          if (widget.args!.orderId == null)
-                                          
-                                    setState(() {});
+                                        break;
+                                      }
+                                    }
+                                 
+
+                                    if (widget.args!.orderId == null)
+                                      setState(() {});
                                   },
                                   productQuantity: _orderItem.quantity,
                                 ),

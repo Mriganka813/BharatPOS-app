@@ -320,21 +320,25 @@ class DatabaseHelper {
         where: 'orderId =? AND isPrinted=? AND name=?',
         whereArgs: [list[i].orderId, "no", list[i].name],
       );
-      try {
+      print(list[i].name);
+
+      print("result");
+      print(result);
+
+      if (result.isNotEmpty) {
         int qty = result.first['qty'];
         db.execute(
             "update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
         print("check qty");
-        print(qty);
-      } catch (e) {
-        for (int i = 0; i < list.length; i++) {
-          var map = list[i].toMap();
-          await db.insert(
-            'Kot',
-            map,
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
-        }
+        print(list);
+      } else {
+        var map = list[i].toMap();
+        await db.insert(
+          'Kot',
+          map,
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
         print("exception");
       }
     }
@@ -364,6 +368,7 @@ class DatabaseHelper {
   ) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
+    print("${id} and $itemName");
 
     List<Map<String, dynamic>> result = await db.query(
       'Kot',
