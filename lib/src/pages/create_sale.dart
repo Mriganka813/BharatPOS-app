@@ -289,7 +289,7 @@ class _CreateSaleState extends State<CreateSale> {
                                           _orderInput
                                               .orderItems![index].product!.id) {
                                         Kotlist.removeAt(i);
-
+                                        
                                         break;
                                       }
                                     }
