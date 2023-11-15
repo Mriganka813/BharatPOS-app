@@ -120,9 +120,9 @@ class _CreateSaleState extends State<CreateSale> {
         .InsertOrderInput(_orderInput, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
     var tempMap = CountNoOfitemIsList(Kotlist);
-   
+
     Kotlist.forEach((element) {
-       print("qtycount:${tempMap['${element.id}']}");
+      print("qtycount:${tempMap['${element.id}']}");
       var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
       kotItemlist.add(model);
     });
@@ -270,8 +270,7 @@ class _CreateSaleState extends State<CreateSale> {
                                     _onAdd(_orderItem);
                                   },
                                   onDelete: () {
-
-                                       DatabaseHelper().deleteKot(
+                                    DatabaseHelper().deleteKot(
                                         widget.args!.id!,
                                         _orderInput
                                             .orderItems![index].product!.name!);
@@ -289,15 +288,15 @@ class _CreateSaleState extends State<CreateSale> {
                                           _orderInput
                                               .orderItems![index].product!.id) {
                                         Kotlist.removeAt(i);
-                                        i++;
+
+                                      
                                         break;
-                                      }
-                                    }
+                                          }
                                  
 
                                     if (widget.args!.orderId == null)
-                                      setState(() {});
-                                  },
+                
+                           },
                                   productQuantity: _orderItem.quantity,
                                 ),
                               );
