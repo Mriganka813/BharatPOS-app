@@ -542,7 +542,8 @@ class _CreateProductState extends State<CreateProduct> {
                         if (e!.contains(".") || e.contains(",")) {
                           return '(. ,) characters are not allowed';
                         }
-                        if (int.parse(e!) > 99999) {
+                          if(e.isNotEmpty)
+                        if (int.parse(e) > 99999) {
                           return 'Maximum value is 99999';
                         }
                         return null;

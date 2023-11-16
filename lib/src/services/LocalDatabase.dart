@@ -150,7 +150,7 @@ class DatabaseHelper {
       input.id = highestId;
       provider.addSalesBill(
         input,
-        DateTime.now().toString(),
+        input.id.toString(),
       );
     } else {
       //if we udpating alreay existing item
