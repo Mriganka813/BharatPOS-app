@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shopos/firebase_options.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/background_service.dart';
+import 'package:shopos/src/services/firebase_api.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 
@@ -18,6 +19,8 @@ void main() async {
   locator.registerLazySingleton(() => GlobalServices());
   await Firebase.initializeApp(
       name: 'BharatPOS', options: DefaultFirebaseOptions.currentPlatform);
+ 
+  await FirebaseApi().initNotifications();
   await Permission.notification.isDenied.then((value) => {
         if (value) {Permission.notification.request()}
       });

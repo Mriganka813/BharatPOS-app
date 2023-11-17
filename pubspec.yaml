@@ -21,6 +21,8 @@ dependencies:
   firebase_core: 
   flutter:
     sdk: flutter
+  firebase_messaging:
+  firebase_analytics:
   flutter_barcode_scanner: 
   flutter_bloc: 
   flutter_html_to_pdf: 

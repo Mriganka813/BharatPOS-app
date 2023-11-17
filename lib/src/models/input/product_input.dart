@@ -24,6 +24,7 @@ class ProductFormInput {
     this.available = true,
     this.expiryDate,
     this.batchNumber,
+    this.hsn,
   });
 
   String? name;
@@ -34,6 +35,7 @@ class ProductFormInput {
   String? salesgst;
   String? salecgst;
   String? saleigst;
+  String? hsn;
   String? purchasesgst;
   String? purchasecgst;
   String? purchaseigst;
@@ -57,6 +59,7 @@ class ProductFormInput {
         "sellingPrice": sellingPrice,
         if (barCode != "" && barCode != 'null') "barCode": barCode,
         "quantity": quantity,
+        "hsn":hsn,
         "id": id,
         if (expiryDate != null) 'expiryDate': expiryDate,
         if (gst) "GSTRate": gstRate,
@@ -86,6 +89,7 @@ class ProductFormInput {
       salecgst: map['saleCGST'].toString(),
       saleigst: map['saleIGST'].toString(),
       salesgst: map['saleSGST'].toString(),
+      hsn: map['hsn'].toString(),
       purchasecgst: map['purchaseCGST'].toString(),
       purchaseigst: map['purchaseIGST'].toString(),
       purchasesgst: map['purchaseSGST'].toString(),

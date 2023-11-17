@@ -528,6 +528,18 @@ class _CreateProductState extends State<CreateProduct> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(Duration(days: 365 * 3)),
                     ),
+  const Divider(color: Colors.transparent),
+                     CustomTextField(
+                            readonly: true,
+                            label: "HSN",
+                            value: _formInput.hsn == "null"
+                                ? " "
+                                : _formInput.hsn,
+                            onChanged: (e) {
+                              _formInput.hsn = e;
+                            },
+                            validator: (e) => null,
+                          ),
                     const Divider(color: Colors.transparent),
                     CustomTextField(
                       label: "Quantity",

@@ -97,6 +97,9 @@ String invoiceTemplatewithGST({
                   '<td class="left">${orderItem.product?.name}</td>'
                   '<td class="left">${orderItem.quantity}</td>'
                   '<td class="left">₹ ${baseprice}</td>'
+                  '<td class="left">₹ ${orderItem.product!.expiryDate}</td>'
+                  '<td class="left">₹ ${orderItem.product!.hsn}</td>'
+
                   '<td class="left">${orderItem.product?.saleigst}<p style="text-align:left"><small>${gstrate}%</small></p></td>'
                   '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)}</td>'
                   '</tr>';

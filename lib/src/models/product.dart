@@ -14,6 +14,7 @@ class Product {
     this.v,
     this.salecgst,
     this.saleigst,
+    this.hsn,
     this.salesgst,
     this.purchasecgst,
     this.purchaseigst,
@@ -35,6 +36,7 @@ class Product {
   String? id;
   DateTime? createdAt;
   int? v;
+  String? hsn;
   double purchasePrice;
   String? gstRate;
   String? salesgst;
@@ -70,6 +72,7 @@ class Product {
       user: json["user"],
       image: json['image'],
       id: json["_id"],
+      hsn: json["hsn"],
       createdAt: DateTime.parse(json["createdAt"]),
       v: json["__v"],
       gstRate: json['GSTRate'].toString(),
@@ -98,6 +101,7 @@ class Product {
         "image": image,
         "quantity": quantity,
         "user": user,
+        "hsn":hsn,
         "_id": id,
         'purchasePrice': purchasePrice,
         "createdAt": createdAt?.toIso8601String(),

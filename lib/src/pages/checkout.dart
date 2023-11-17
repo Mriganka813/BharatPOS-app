@@ -299,6 +299,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   void _viewPdf() async {
+
+    bool expirydateAvailableFlag=false;
+    bool hsnAvailableFlag=false;
+    widget.args.orderInput.orderItems!.forEach((element) {
+      if(element.product!.expiryDate!=null)
+      {
+        expirydateAvailableFlag=true;
+      }
+      if(element.product!.hsn!=null)
+      {
+        hsnAvailableFlag=true;
+      }
+     });
+
+     var headerList=["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"];
+
+     if(expirydateAvailableFlag==true){
+      headerList.insert(3, "Expiry");
+
+     }
+     if(hsnAvailableFlag==true&&expirydateAvailableFlag==true)
+     {
+      headerList.insert(4, "HSN");
+     }
+
     final targetPath = await getExternalCacheDirectories();
     const targetFileName = "Invoice";
     final htmlContent = invoiceTemplatewithGST(
@@ -307,7 +332,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       companyName: userData.businessName ?? "",
       order: widget.args.orderInput,
       user: userData,
-      headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
+      headers: headerList,
       total: totalPrice() ?? "",
       subtotal: totalbasePrice() ?? "",
       gsttotal: totalgstPrice() ?? "",
