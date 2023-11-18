@@ -52,6 +52,7 @@ class Product {
   DateTime? expiryDate;
   num i=0;
   factory Product.fromMap(Map<String, dynamic> json){ 
+    
 
     if(json['quantity'] is int)
     {
@@ -61,6 +62,7 @@ class Product {
     {
       print("${json["name"]} have double quantity(${json['quantity']})");
     }
+    print('hsn =${json['hsn']}');
     
     
     return Product(
@@ -93,7 +95,10 @@ class Product {
           
       }
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() { 
+        print('hsn =$hsn');
+    return
+    {
         
         "name": name,
         "sellingPrice": sellingPrice,
@@ -119,4 +124,6 @@ class Product {
         "batchNumber": batchNumber,
         "expiryDate": expiryDate,
       };
+
+  }
 }

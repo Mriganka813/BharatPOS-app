@@ -14,4 +14,6 @@ class HomeCubit extends Cubit<HomeState> {
     final user = User.fromMap(response.data['user']);
     emit(HomeRender(user));
   }
+
+
 }

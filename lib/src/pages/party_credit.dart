@@ -3,17 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/party.dart';
+import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
+import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
+import 'package:url_launcher/url_launcher.dart';
 
 class ScreenArguments {
   final String partyId;
@@ -42,6 +46,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   PinService _pinService = PinService();
   late final ReportCubit _reportCubit;
   final TextEditingController pinController = TextEditingController();
+
+  User ?user;
   @override
   void initState() {
     super.initState();
@@ -51,10 +57,17 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     _reportCubit = ReportCubit();
   }
 
-  void fetchdata() {
+  void fetchdata()async {
     widget.args.tabbarNo == 0
         ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId)
         : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
+
+
+        final response = await UserService.me();
+   user = User.fromMap(response.data['user']);
+   setState(() {
+     
+   });
   }
 
   @override
@@ -86,6 +99,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
   TextEditingController value = TextEditingController();
 
+  String balanceToShareOnWhatsapp="";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +115,12 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
             ),
           ],
         ),
+        actions: [GestureDetector(
+          onTap: (){_launchUrl(user!.businessName!, widget.args.partyContactNo);},
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset("assets/images/whats.png",height: 25,width: 25,),
+          ))],
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 12, right: 12),
@@ -199,11 +220,21 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
                   bloc: _specificpartyCubit,
                   builder: (context, state) {
+
                     int balance = 0;
                     int negbalance = 0;
+                  
                     if (state is SpecificPartyListRender) {
+             
                       balance = state.partyDetails.balance ?? 0;
                       negbalance = balance * -1;
+                     
+                      Future.delayed(Duration(seconds: 3),(){
+                          balanceToShareOnWhatsapp=balance.toString();
+                          setState(() {
+                            
+                          });
+                      });
                     }
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -311,6 +342,72 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
       ),
     );
   }
+
+ /* Future<Widget> ShowShareDialog(String name,String number)async
+  {
+    TextEditingController controller =TextEditingController();
+      return await  showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            backgroundColor: Colors.white,
+                            title: Column(children: [
+                              Text(
+                                "Enter Whatsapp numer\n(10-digit number only)",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins-Regular",
+                                    color: Colors.black),
+                              )
+                            ]),
+                            content: TextField(
+                              autofocus: true,
+                              controller: controller,
+                              decoration: InputDecoration(
+                                hintText: "Enter 10-digit number",
+                                enabledBorder: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                  onPressed: () {
+                                  
+                                      _launchUrl(
+                                      controller.text
+                                      );
+                                  },
+                                  child: Text("Yes")),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text("Cancel"))
+                            ],
+                          ));
+  }
+
+  */
+
+
+Future<void> _launchUrl(String name,String mobile) async {
+
+  String Message="Dear customer, your credit balance with ${name} is rupees $balanceToShareOnWhatsapp. Please pay the amount as soon as possible. Thank you for your business.%0A%0A*Powered by BharatPOS*";
+  
+
+  final Uri _url = Uri.parse(
+      'https://wa.me/${mobile}?text=$Message'); 
+
+  if (await canLaunchUrl(_url)) {
+    await launchUrl(_url, mode: LaunchMode.externalApplication);
+  } else {
+    throw Exception('Could not launch $_url');
+  }
+}
 
 // add settle and credit
   modelOpen(context, String modeofPayment) {
@@ -570,4 +667,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
               ],
             ));
   }
+
 }
+

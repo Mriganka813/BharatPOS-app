@@ -76,6 +76,21 @@ String invoiceTemplatewithGST({
     return '';
   }
 
+
+   bool expirydateAvailableFlag=false;
+    bool hsnAvailableFlag=false;
+    order.orderItems!.forEach((element) {
+      if(element.product!.expiryDate!=null&&element.product!.expiryDate!="null"&&element.product!.expiryDate!="")
+      {
+        expirydateAvailableFlag=true;
+      }
+      if(element.product!.hsn!=null)
+      {
+        hsnAvailableFlag=true;
+      }
+     });
+
+
   ///
   String itemRows() => List.generate(
         (order.orderItems ?? []).length,
@@ -96,9 +111,9 @@ String invoiceTemplatewithGST({
               return '<tr>'
                   '<td class="left">${orderItem.product?.name}</td>'
                   '<td class="left">${orderItem.quantity}</td>'
-                  '<td class="left">₹ ${baseprice}</td>'
-                  '<td class="left">₹ ${orderItem.product!.expiryDate}</td>'
-                  '<td class="left">₹ ${orderItem.product!.hsn}</td>'
+                  '<td class="left">₹ ${baseprice}</td>'+
+                (expirydateAvailableFlag?orderItem.product!.expiryDate!=null?  '<td class="left">${orderItem.product!.expiryDate.toString().split(" ")[0]}</td>':'<td class="left"> </td>':'')+
+                   (hsnAvailableFlag?orderItem.product!.hsn!=null?  '<td class="left">₹ ${orderItem.product!.hsn}</td>':'<td class="left"></td>':'')+
 
                   '<td class="left">${orderItem.product?.saleigst}<p style="text-align:left"><small>${gstrate}%</small></p></td>'
                   '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)}</td>'

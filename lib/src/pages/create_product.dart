@@ -530,7 +530,7 @@ class _CreateProductState extends State<CreateProduct> {
                     ),
   const Divider(color: Colors.transparent),
                      CustomTextField(
-                            readonly: true,
+                            
                             label: "HSN",
                             value: _formInput.hsn == "null"
                                 ? " "

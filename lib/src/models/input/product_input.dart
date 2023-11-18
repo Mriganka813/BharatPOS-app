@@ -52,7 +52,10 @@ class ProductFormInput {
   bool gst;
   XFile? imageFile;
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap() { 
+        print('sssshsn =$hsn');
+    return 
+    {
         "name": name,
         if (purchasePrice != "" && purchasePrice != 'null')
           'purchasePrice': purchasePrice,
@@ -76,6 +79,7 @@ class ProductFormInput {
         "available": available ?? true,
         if (batchNumber != null) "batchNumber": batchNumber,
       };
+  }
 
   factory ProductFormInput.fromMap(map) => ProductFormInput(
       name: map['name'],

@@ -303,7 +303,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     bool expirydateAvailableFlag=false;
     bool hsnAvailableFlag=false;
     widget.args.orderInput.orderItems!.forEach((element) {
-      if(element.product!.expiryDate!=null)
+      if(element.product!.expiryDate!=null&&element.product!.expiryDate!="null"&&element.product!.expiryDate!="")
       {
         expirydateAvailableFlag=true;
       }
@@ -325,7 +325,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
      }
 
     final targetPath = await getExternalCacheDirectories();
-    const targetFileName = "Invoice";
+    const targetFileName = "Invoiceee5";
     final htmlContent = invoiceTemplatewithGST(
       type: widget.args.invoiceType.toString(),
       date: DateTime.now(),
