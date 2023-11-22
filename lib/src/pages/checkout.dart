@@ -299,33 +299,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   void _viewPdf() async {
-
-    bool expirydateAvailableFlag=false;
-    bool hsnAvailableFlag=false;
+    bool expirydateAvailableFlag = false;
+    bool hsnAvailableFlag = false;
     widget.args.orderInput.orderItems!.forEach((element) {
-      if(element.product!.expiryDate!=null&&element.product!.expiryDate!="null"&&element.product!.expiryDate!="")
-      {
-        expirydateAvailableFlag=true;
+      if (element.product!.expiryDate != null &&
+          element.product!.expiryDate != "null" &&
+          element.product!.expiryDate != "") {
+        expirydateAvailableFlag = true;
       }
-      if(element.product!.hsn!=null)
-      {
-        hsnAvailableFlag=true;
+      if (element.product!.hsn != null &&
+          element.product!.hsn != "null" &&
+          element.product!.hsn != "") {
+        hsnAvailableFlag = true;
       }
-     });
+    });
 
-     var headerList=["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"];
+    var headerList = ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"];
 
-     if(expirydateAvailableFlag==true){
-      headerList.insert(3, "Expiry");
-
-     }
-     if(hsnAvailableFlag==true&&expirydateAvailableFlag==true)
-     {
-      headerList.insert(4, "HSN");
-     }
-
+    if (hsnAvailableFlag == true) {
+      headerList.insert(2, "HSN");
+    }
+    if (expirydateAvailableFlag == true) {
+      headerList.insert(2, "Expiry");
+    }
     final targetPath = await getExternalCacheDirectories();
-    const targetFileName = "Invoiceee5";
+    var targetFileName = "Invoice " + DateTime.now().toString();
     final htmlContent = invoiceTemplatewithGST(
       type: widget.args.invoiceType.toString(),
       date: DateTime.now(),
@@ -918,7 +916,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                 child: UPIPaymentQRCode(
                                   upiDetails: _myUpiId!,
                                   size: 200,
-                                  embeddedImagePath: 'assets/icon/BharatPos.png',
+                                  embeddedImagePath:
+                                      'assets/icon/BharatPos.png',
                                   embeddedImageSize: const Size(40, 40),
                                   upiQRErrorCorrectLevel:
                                       UPIQRErrorCorrectLevel.high,
@@ -1069,7 +1068,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   void _onTapSubmit() async {
-      
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
       widget.args.invoiceType == OrderType.purchase
@@ -1078,9 +1076,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
       final provider = Provider.of<Billing>(context, listen: false);
 
-
-       DatabaseHelper().deleteOrderItemInput(
-                             widget.args.orderInput);
+      DatabaseHelper().deleteOrderItemInput(widget.args.orderInput);
       widget.args.invoiceType == OrderType.purchase
           ? provider.removePurchaseBillItems(widget.args.orderId)
           : provider.removeSalesBillItems(widget.args.orderId);

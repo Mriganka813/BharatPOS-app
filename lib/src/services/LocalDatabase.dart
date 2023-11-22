@@ -53,7 +53,8 @@ class DatabaseHelper {
             basePurchasePrice TEXT,
             sellerName TEXT,
             batchNumber TEXT,
-            expiryDate TEXT
+            expiryDate TEXT,
+            hsn TEXT
           )
         ''');
 
@@ -153,7 +154,7 @@ class DatabaseHelper {
         input.id.toString(),
       );
     } else {
-      //if we udpating alreay existing item
+      //if we udpating alreay existing item  
       highestId = input.id!;
     }
 

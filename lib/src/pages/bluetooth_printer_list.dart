@@ -64,11 +64,11 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       String mac = bluetooth.macAdress;
     });
     setState(() {});
-         final bargs = widget.args.bluetoothArgs!;
-        List<Map<String, dynamic>> list =
+    final bargs = widget.args.bluetoothArgs!;
+    List<Map<String, dynamic>> list =
         await DatabaseHelper().getKotData(bargs.orderInput.id!);
-        print("Kot Data:");
-        print(list);
+    print("Kot Data:");
+    print(list);
   }
 
   // Future<void> initPrinter() async {

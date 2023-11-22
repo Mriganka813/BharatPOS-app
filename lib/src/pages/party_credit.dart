@@ -100,6 +100,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   TextEditingController value = TextEditingController();
 
   String balanceToShareOnWhatsapp="";
+  bool whatsappButtonPresssed=false;
 
   @override
   Widget build(BuildContext context) {
@@ -116,91 +117,110 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           ],
         ),
         actions: [GestureDetector(
-          onTap: (){_launchUrl(user!.businessName!, widget.args.partyContactNo);},
+          onTap: (){
+            whatsappButtonPresssed=true;
+            setState(() {
+              
+            });
+            Future.delayed(Duration(seconds: 3),(){
+               _launchUrl(user!.businessName!, "+91"+widget.args.partyContactNo);
+            });
+           
+           },
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: Image.asset("assets/images/whats.png",height: 25,width: 25,),
+            child: Image.asset("assets/images/whats.png",height: 30,width: 30,),
           ))],
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12),
-        child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
-          bloc: _specificpartyCubit,
-          builder: (context, state) {
-            if (state is SpecificPartyListRender) {
-              final orders = state.specificparty;
+      body: Stack(
+        children: [
+          if(balanceToShareOnWhatsapp==""&&whatsappButtonPresssed==true)
+          Center(
+            child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12, right: 12),
+            child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
+              bloc: _specificpartyCubit,
+              builder: (context, state) {
+                if (state is SpecificPartyListRender) {
+                  final orders = state.specificparty;
 
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                reverse: true,
-                itemCount: orders.length,
-                itemBuilder: (BuildContext context, int index) {
-                  sort(orders);
-                  final order = orders[index];
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    reverse: true,
+                    itemCount: orders.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      sort(orders);
+                      final order = orders[index];
 
-                  return Column(
-                    children: [
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 15, bottom: 15),
-                          child: currentdate(order.createdAt!),
-                        ),
-                      ),
-                      Align(
-                        alignment: order.modeOfPayment == "Settle"
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
-                        child: SizedBox(
-                          height: 50,
-                          width: 111,
-                          child: GestureDetector(
-                            onLongPress: () async {
-                              HapticFeedback.vibrate();
-                              await openEditModal(
-                                  order.id!,
-                                  order.total!,
-                                  order.createdAt!,
-                                  order.modeOfPayment!,
-                                  context);
-                            },
-                            child: Card(
-                              clipBehavior: Clip.hardEdge,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: Colors.black, width: 0.5),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "${order.total}",
-                                  style: TextStyle(
-                                    color: order.modeOfPayment == "Settle"
-                                        ? Colors.green
-                                        : Colors.red,
-                                    fontSize: 20,
+                      return Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 15, bottom: 15),
+                              child: currentdate(order.createdAt!),
+                            ),
+                          ),
+                          Align(
+                            alignment: order.modeOfPayment == "Settle"
+                                ? Alignment.centerLeft
+                                : Alignment.centerRight,
+                            child: SizedBox(
+                              height: 50,
+                              width: 111,
+                              child: GestureDetector(
+                                onLongPress: () async {
+                                  HapticFeedback.vibrate();
+                                  await openEditModal(
+                                      order.id!,
+                                      order.total!,
+                                      order.createdAt!,
+                                      order.modeOfPayment!,
+                                      context);
+                                },
+                                child: Card(
+                                  clipBehavior: Clip.hardEdge,
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        color: Colors.black, width: 0.5),
+                                    borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  textAlign: TextAlign.center,
+                                  elevation: 0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "${order.total}",
+                                      style: TextStyle(
+                                        color: order.modeOfPayment == "Settle"
+                                            ? Colors.green
+                                            : Colors.red,
+                                        fontSize: 20,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   );
-                },
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
-              ),
-            );
-          },
-        ),
+                }
+                return const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 100,
