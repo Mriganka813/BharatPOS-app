@@ -83,6 +83,8 @@ class _ReportsPageState extends State<ReportsPage> {
       body: BlocListener<ReportCubit, ReportState>(
         bloc: _reportCubit,
         listener: (context, state) async {
+
+         
           if (_showLoader) {
             Navigator.pop(context);
           }

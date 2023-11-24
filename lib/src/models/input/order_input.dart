@@ -79,7 +79,8 @@ class OrderItemInput {
     this.saleCGST,
     this.baseSellingPrice,
     this.saleIGST,
-    this.discount,
+    this.discountAmt,
+
   });
 
  double? price;
@@ -89,7 +90,8 @@ class OrderItemInput {
   String? saleCGST;
   String? baseSellingPrice;
   String? saleIGST;
-  String? discount;
+  String ?discountAmt;
+
 
   factory OrderItemInput.fromMap(Map<String, dynamic> json) => OrderItemInput(
         price: double.parse(json["price"].toString()) ,
@@ -99,6 +101,7 @@ class OrderItemInput {
         saleSGST: json["saleSGST"].toString(),
         baseSellingPrice: json["baseSellingPrice"].toString(),
         saleIGST: json["saleIGST"].toString(),
+        discountAmt: "90",
       );
 
   Map<String, dynamic> toSaleMap() => {
@@ -111,9 +114,12 @@ class OrderItemInput {
             ? '0'
             : product!.baseSellingPriceGst,
         "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
+        "discountAmt":discountAmt,
+        "orginalbaseSellingPrice":   (int.parse(product!.baseSellingPriceGst!)+ int.parse(discountAmt!)).toString()
       };
   Map<String, dynamic> toPurchaseMap() => {
         "price": (product?.purchasePrice ?? 1),
+        "discount"
         "quantity": quantity,
         "product": product?.id,
       };

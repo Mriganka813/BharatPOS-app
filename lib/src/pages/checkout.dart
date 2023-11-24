@@ -1071,6 +1071,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onTapSubmit() async {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
+
+        print("discountttttttt=${widget.args.orderInput.orderItems![0].discountAmt}");
       widget.args.invoiceType == OrderType.purchase
           ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput, date)
           : _checkoutCubit.createSalesOrder(widget.args.orderInput, date);

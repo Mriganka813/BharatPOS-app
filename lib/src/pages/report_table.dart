@@ -494,9 +494,11 @@ class _ReportTableState extends State<ReportTable> {
     int salesValueTotal = 0;
     double purchaseValueTotal = 0;
     int marginValueTotal = 0;
+    
     List<DataRow> list = [];
     for (int index = 0; index < widget.args.products!.length; index++) {
       final product = widget.args.products?[index];
+      
       var salesValue = product!.quantity! * product.sellingPrice!;
       var purchaseValue = product.quantity! * product.purchasePrice;
 
@@ -527,6 +529,8 @@ class _ReportTableState extends State<ReportTable> {
 
   String breakruler = "";
   itemSPRows() {
+    print("discount ${widget.args.orders![0].discountAmt}");
+  
     return widget.args.orders!.map((Order e) {
       return e.orderItems!.map((OrderItem item) {
         // print(e.user!.type);
@@ -587,6 +591,10 @@ class _ReportTableState extends State<ReportTable> {
             DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!);
       }).toList();
     }).toList();
+
+  
+
+
   }
 
   String total() {

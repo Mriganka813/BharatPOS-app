@@ -10,6 +10,7 @@ class OrderItem {
     this.saleCGST,
     this.baseSellingPrice,
     this.saleIGST,
+    this.hsn
   });
 
   int price;
@@ -20,13 +21,16 @@ class OrderItem {
   String? saleCGST;
   String? baseSellingPrice;
   String? saleIGST;
+  String? hsn;
 
   factory OrderItem.fromMap(Map<String, dynamic> json) => OrderItem(
-        price: json["price"] ?? 0,
+        price: json["price"]!=null?  double.parse(json["price"].toString()).toInt() :0,
         quantity: json["quantity"] ?? 1,
         image: json["image"],
         product:
             json["product"] is Map ? Product.fromMap(json["product"]) : null,
+        hsn: json["hsn"],
+
         saleCGST: json["saleCGST"].toString(),
         saleSGST: json["saleSGST"].toString(),
         baseSellingPrice: json["baseSellingPrice"].toString(),
@@ -38,5 +42,6 @@ class OrderItem {
         "quantity": quantity,
         "image": image,
         "product": product,
+        "hsn":hsn
       };
 }

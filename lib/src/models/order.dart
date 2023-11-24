@@ -11,6 +11,9 @@ class Order {
     this.total = 0,
     this.id,
     this.createdAt = '',
+    this.discountAmt,
+    
+    
   });
 
   List<OrderItem>? orderItems;
@@ -20,6 +23,7 @@ class Order {
   int? total;
   String? id;
   String? createdAt;
+  String?discountAmt;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
         orderItems: List<OrderItem>.from(
@@ -29,10 +33,11 @@ class Order {
         ),
         modeOfPayment: json["modeOfPayment"],
         id: json["_id"],
+        discountAmt: json['discountAmt'],
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"] ?? json['date'],
-        total: json['total'] ?? 0,
+        total:json['total']!=null? double.parse(json['total'].toString()).toInt()  :0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -41,6 +46,7 @@ class Order {
         "party": party,
         "user": user,
         "_id": id,
+        "discountAmt":discountAmt,
         "createdAt": createdAt ?? DateTime.now().toIso8601String(),
       };
 }

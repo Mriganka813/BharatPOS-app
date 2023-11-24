@@ -18,6 +18,7 @@ class ProductCardHorizontal extends StatefulWidget {
   Function onRemove;
   Function onTap;
   bool isAvailable;
+
   int noOfQuatityadded;
   ProductCardHorizontal({
     Key? key,
@@ -31,6 +32,7 @@ class ProductCardHorizontal extends StatefulWidget {
     this.selectQuantity = 0,
     this.isAvailable = true,
     this.noOfQuatityadded = 0,
+
     required this.onAdd,
     required this.onRemove,
     required this.onTap,
@@ -402,12 +404,14 @@ class ProductCardPurchase extends StatelessWidget {
   final VoidCallback onAdd;
   final VoidCallback onDelete;
   final String? type;
-  const ProductCardPurchase(
+  String discount;
+  ProductCardPurchase(
       {Key? key,
       required this.product,
       required this.onAdd,
       required this.productQuantity,
       required this.onDelete,
+      this.discount="",
       this.type})
       : super(key: key);
 
@@ -566,7 +570,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Discount @0%'),
-                        Text('₹ ${product.discountAmt}'),
+                        Text('₹ ${discount}'),
                       ],
                     ),
                     const SizedBox(height: 10),
