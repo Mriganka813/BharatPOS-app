@@ -46,6 +46,7 @@ class _CreateSaleState extends State<CreateSale> {
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
   bool isLoading = false;
+  double discount = 0;
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _CreateSaleState extends State<CreateSale> {
     // _audioCache = AudioCache(
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
-      
+
     _orderInput = OrderInput(
       id: widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
@@ -120,9 +121,9 @@ class _CreateSaleState extends State<CreateSale> {
         .InsertOrderInput(_orderInput, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
     var tempMap = CountNoOfitemIsList(Kotlist);
-   
+
     Kotlist.forEach((element) {
-       print("qtycount:${tempMap['${element.id}']}");
+      print("qtycount:${tempMap['${element.id}']}");
       var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
       kotItemlist.add(model);
     });
@@ -187,7 +188,7 @@ class _CreateSaleState extends State<CreateSale> {
                                                     onChanged: (val) {
                                                       localSellingPrice = val;
                                                     },
-                                                    hintText: 'Enter subtotal',
+                                                    hintText: 'change subtotal of the item',
                                                   ),
                                                   Padding(
                                                     padding:
@@ -222,6 +223,18 @@ class _CreateSaleState extends State<CreateSale> {
                                                             localSellingPrice);
                                                         print(discountedPrice);
 
+                                                        discount = double.parse(
+                                                                _orderItem
+                                                                    .product!
+                                                                    .baseSellingPriceGst!) -
+                                                            double.parse(
+                                                                localSellingPrice!);
+
+                                                        _orderItems[index]
+                                                                .product!
+                                                                .discountAmt =
+                                                            discount.toString();
+                                                        setState(() {});
                                                         // if ((localSellingPrice !=
                                                         //             null ||
                                                         //         localSellingPrice!
@@ -270,8 +283,7 @@ class _CreateSaleState extends State<CreateSale> {
                                     _onAdd(_orderItem);
                                   },
                                   onDelete: () {
-
-                                       DatabaseHelper().deleteKot(
+                                    DatabaseHelper().deleteKot(
                                         widget.args!.id!,
                                         _orderInput
                                             .orderItems![index].product!.name!);
@@ -293,7 +305,6 @@ class _CreateSaleState extends State<CreateSale> {
                                         break;
                                       }
                                     }
-                                 
 
                                     if (widget.args!.orderId == null)
                                       setState(() {});

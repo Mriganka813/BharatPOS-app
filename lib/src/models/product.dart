@@ -25,6 +25,7 @@ class Product {
     this.sellerName,
     this.batchNumber,
     this.expiryDate,
+    this.discountAmt
   });
 
   String? name;
@@ -51,6 +52,7 @@ class Product {
   String? batchNumber;
   DateTime? expiryDate;
   num i=0;
+  String? discountAmt;
   factory Product.fromMap(Map<String, dynamic> json){ 
     
 
@@ -75,6 +77,7 @@ class Product {
       image: json['image'],
       id: json["_id"],
       hsn: json["hsn"],
+      
       createdAt: DateTime.parse(json["createdAt"]),
       v: json["__v"],
       gstRate: json['GSTRate'].toString(),
@@ -86,6 +89,7 @@ class Product {
       purchaseigst: json['purchaseIGST'].toString(),
       purchasesgst: json['purchaseSGST'].toString(),
       basePurchasePriceGst: json['basePurchasePrice'].toString(),
+      discountAmt: json['discountAmt'].toString(),
       sellerName: json['sellerName'].toString(),
       batchNumber: json['batchNumber'] ?? null,
       expiryDate: json['expiryDate'] != null

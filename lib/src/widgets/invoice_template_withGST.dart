@@ -113,7 +113,7 @@ String invoiceTemplatewithGST({
                       '<td class="left">${orderItem.quantity}</td>' +
                   (expirydateAvailableFlag
                       ? orderItem.product!.expiryDate != null
-                          ? '<td class="left">${orderItem.product!.expiryDate.toString().split(" ")[0].split("-")[0]}</td>'
+                          ? '<td class="left">${orderItem.product!.expiryDate!.day}/${orderItem.product!.expiryDate!.month}/${orderItem.product!.expiryDate!.year}</td>'
                           : '<td class="left"> </td>'
                       : '') +
                   (hsnAvailableFlag
@@ -134,7 +134,7 @@ String invoiceTemplatewithGST({
                      
                   (expirydateAvailableFlag
                       ? orderItem.product!.expiryDate != null
-                          ? '<td class="left">${orderItem.product!.expiryDate.toString().split(" ")[0]}</td>'
+                          ? '<td class="left">${orderItem.product!.expiryDate!.day}/${orderItem.product!.expiryDate!.month}/${orderItem.product!.expiryDate!.year}</td>'
                           : '<td class="left"></td>'
                       : '') +
                   (hsnAvailableFlag
@@ -263,6 +263,8 @@ String invoiceTemplatewithGST({
                 <td></td>
                 <td></td>
                 <td></td>
+                ${headers.contains("HSN")?"<td></td>":""}
+                ${headers.contains("Expiry")?"<td></td>":""}
                   <td class="left">
                     <strong>Sub Total</strong>
                     <br>

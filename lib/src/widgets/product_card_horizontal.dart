@@ -566,7 +566,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Discount @0%'),
-                        Text('₹ 0'),
+                        Text('₹ ${product.discountAmt}'),
                       ],
                     ),
                     const SizedBox(height: 10),

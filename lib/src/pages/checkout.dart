@@ -209,7 +209,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               height: 10,
             ),
             ListTile(
-              title: const Text("Open pdf"),
+              title: const Text("Print"),
               onTap: () async {
                 // _onTapShare(2);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -301,6 +301,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _viewPdf() async {
     bool expirydateAvailableFlag = false;
     bool hsnAvailableFlag = false;
+  
     widget.args.orderInput.orderItems!.forEach((element) {
       if (element.product!.expiryDate != null &&
           element.product!.expiryDate != "null" &&
@@ -314,7 +315,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       }
     });
 
-    var headerList = ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"];
+    var headerList = ["Name", "Qty", "Taxable value", "GST", "Amount"];
 
     if (hsnAvailableFlag == true) {
       headerList.insert(2, "HSN");
