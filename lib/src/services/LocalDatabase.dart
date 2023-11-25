@@ -68,7 +68,8 @@ class DatabaseHelper {
             saleSGST TEXT,
             saleCGST TEXT,
             baseSellingPrice TEXT,
-            saleIGST TEXT
+            saleIGST TEXT,
+            discountAmt TEXT
           )
         ''');
 

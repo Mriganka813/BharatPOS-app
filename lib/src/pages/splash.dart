@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
     var data = await DatabaseHelper().getOrderItems();
     print("kkkkkk=");
-    print(data[0].id);
+  
     provider.removeAll();
 
     data.forEach((element) {

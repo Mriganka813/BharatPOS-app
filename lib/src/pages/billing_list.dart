@@ -609,6 +609,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                             // ),
                             // Divider(color: Colors.black54),
                             const SizedBox(height: 10),
+                            if(provider.salesBilling.values
+                                    .toList().isNotEmpty)
                             if (provider.salesBilling.values
                                     .toList()[index]
                                     .tableNo !=
