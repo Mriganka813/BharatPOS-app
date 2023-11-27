@@ -1,6 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 
-class ProductFormInput {
+class  ProductFormInput {
   ProductFormInput({
     this.name,
     this.sellingPrice,
@@ -25,6 +25,7 @@ class ProductFormInput {
     this.expiryDate,
     this.batchNumber,
     this.hsn,
+    this.GSTincluded=true
   });
 
   String? name;
@@ -48,6 +49,7 @@ class ProductFormInput {
   bool? available;
   DateTime? expiryDate;
   String? batchNumber;
+  bool ?GSTincluded;
 
   bool gst;
   XFile? imageFile;
@@ -77,6 +79,7 @@ class ProductFormInput {
         if (gst) "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
         "available": available ?? true,
+        if(gst) "GSTincluded":GSTincluded, 
         if (batchNumber != null) "batchNumber": batchNumber,
       };
   }
@@ -104,5 +107,9 @@ class ProductFormInput {
       batchNumber: map['batchNumber'] != null ? map['batchNumber'] : null,
       expiryDate: map['expiryDate'] != null
           ? DateTime.parse((map['expiryDate']).toString().substring(0, 10))
-          : null);
+          : null,
+          
+          GSTincluded: map['GSTincluded']
+          );
+      
 }

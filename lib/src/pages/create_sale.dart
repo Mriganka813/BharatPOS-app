@@ -188,8 +188,7 @@ class _CreateSaleState extends State<CreateSale> {
                                                     onChanged: (val) {
                                                       localSellingPrice = val;
                                                     },
-                                                    hintText:
-                                                        'change subtotal of the item',
+                                                    hintText: 'change subtotal of the item',
                                                   ),
                                                   Padding(
                                                     padding:
@@ -224,15 +223,15 @@ class _CreateSaleState extends State<CreateSale> {
                                                             localSellingPrice);
                                                         print(discountedPrice);
 
-                                                        discount = _orderItem
-                                                                .product!
-                                                                .sellingPrice! -
-                                                            int.parse(
-                                                                    localSellingPrice!)
-                                                                .toDouble();
+                                                        discount = 
+                                                                _orderItem
+                                                                    .product!
+                                                                    .sellingPrice! -
+                                                           
+                                                                int.parse(localSellingPrice!).toDouble();
 
-                                                        _orderItems[index]
-                                                                .discountAmt =
+                                                        _orderItems[index].
+                                                                discountAmt =
                                                             discount.toString();
                                                         setState(() {});
                                                         // if ((localSellingPrice !=
@@ -277,7 +276,8 @@ class _CreateSaleState extends State<CreateSale> {
                                 child: ProductCardPurchase(
                                   type: "sale",
                                   product: product,
-                                  discount: _orderItems[index].discountAmt!,
+                                  discount:    _orderItems[index].
+                                                                discountAmt,
                                   onAdd: () {
                                     Kotlist.add(_orderInput
                                         .orderItems![index].product!);
