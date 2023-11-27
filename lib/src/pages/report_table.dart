@@ -529,7 +529,7 @@ class _ReportTableState extends State<ReportTable> {
 
   String breakruler = "";
   itemSPRows() {
-    print("discount ${widget.args.orders![0].discountAmt}");
+   // print("discount ${widget.args.orders![0].discountAmt}");
   
     return widget.args.orders!.map((Order e) {
       return e.orderItems!.map((OrderItem item) {
