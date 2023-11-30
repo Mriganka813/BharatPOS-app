@@ -13,6 +13,7 @@ import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/api_v1.dart';
+import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:upgrader/upgrader.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,6 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getDataFromDatabase() async {
+
+    try{
+
+    
     final provider = Provider.of<Billing>(
       widget.context,
     );
@@ -50,6 +55,11 @@ class _SplashScreenState extends State<SplashScreen> {
     data.forEach((element) {
       provider.addSalesBill(element, element.id.toString());
     });
+    }
+    catch(e)
+    {
+  // showRestartAppDialouge();
+    }
   }
 
   checkForUpdate() async {
@@ -120,5 +130,27 @@ class _SplashScreenState extends State<SplashScreen> {
         child: SvgPicture.asset("assets/icon/BharatPos.svg"),
       ),
     );
+  }
+
+  Future<bool?> showRestartAppDialouge() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: Text('App needed to restart'),
+              title: Text('Alert'),
+              actions: [
+                Center(
+                    child: CustomButton(
+                        title: 'ok',
+                        onTap: () async {
+                             Navigator.of(context).pop();
+                        await  DatabaseHelper().deleteTHEDatabase();
+                      
+                          
+                       
+                        }))
+              ],
+            ));
   }
 }

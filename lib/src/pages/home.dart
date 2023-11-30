@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
+import 'package:shopos/src/app.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -20,6 +21,7 @@ import 'package:shopos/src/pages/set_pin.dart';
 import 'package:shopos/src/pages/sign_in.dart';
 import 'package:shopos/src/pages/terms_conditions.dart';
 import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
@@ -51,14 +53,35 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
+        checkIfNewColumnsAreAdded();
   }
 
   @override
   void dispose() {
     _homeCubit.close();
     super.dispose();
+
+    
   }
 
+  void checkIfNewColumnsAreAdded()async
+  {
+    bool result= await DatabaseHelper().checkIfNewColumnsAreAdded();
+
+    if(result)
+    {
+      //showRestartAppDialouge();
+     print("new columns are there");
+       await DatabaseHelper().deleteTHEDatabase();
+        await DatabaseHelper().initDatabase();
+    }
+    else
+    {
+         print("There are No new columns are there");
+    }
+  }
+
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,11 +245,10 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               SearchProductListScreen.routeName,
-                                  arguments:  ProductListPageArgs(
-                              isSelecting: false,
-                              orderType: OrderType.sale,
-                              productlist:  []
-                            ),
+                              arguments: ProductListPageArgs(
+                                  isSelecting: false,
+                                  orderType: OrderType.sale,
+                                  productlist: []),
                             );
                           },
                         ),
@@ -326,12 +348,9 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, CreateSale.routeName,  arguments: BillingPageArgs(
-                                                id:-1,
-                                                orderId:"",
-                                                editOrders:[]
-                                                   ));
+                              Navigator.pushNamed(context, CreateSale.routeName,
+                                  arguments: BillingPageArgs(
+                                      id: -1, orderId: "", editOrders: []));
                             },
                             child: Card(
                               elevation: 5,
@@ -375,6 +394,26 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  Future<bool?> showRestartAppDialouge() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: Text('App needed to restart'),
+              title: Text('Alert'),
+              actions: [
+                Center(
+                    child: CustomButton(
+                        title: 'ok',
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          //await DatabaseHelper().deleteTHEDatabase();
+                          // runApp(MyApp());
+                        }))
+              ],
+            ));
   }
 }
 

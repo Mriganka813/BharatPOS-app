@@ -56,10 +56,12 @@ android {
         minSdkVersion 21
         // minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 47
-        versionName '1.2.6'
+        versionCode 50
+        versionName '1.2.9'
         multiDexEnabled true
     }
+
+    // Todo should  change the  no of column  in checkIfNewColumnsAreAdded(LocalDatabase.dart) when new columns are added
 
     signingConfigs {
        release {

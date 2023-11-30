@@ -9,6 +9,10 @@ import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:sqflite/sqflite.dart';
 
+
+
+
+
 class DatabaseHelper {
   static Database? _database;
 
@@ -69,7 +73,9 @@ class DatabaseHelper {
             saleCGST TEXT,
             baseSellingPrice TEXT,
             saleIGST TEXT,
-            discountAmt TEXT
+            discountAmt Text
+          
+           
           )
         ''');
 
@@ -155,7 +161,7 @@ class DatabaseHelper {
         input.id.toString(),
       );
     } else {
-      //if we udpating alreay existing item  
+      //if we udpating alreay existing item
       highestId = input.id!;
     }
 
@@ -175,6 +181,8 @@ class DatabaseHelper {
       var map = data[i].toSaleMap();
       map['product'] = data[i].product!.id;
       map['OIID'] = id;
+
+      map.remove("originalbaseSellingPrice");
 
       //case when we dont add new product but incresed the quatitiy so we just update
       //so when OrderItemsData is empty that means we increased or decresed the quatity oru such updates
@@ -206,6 +214,7 @@ class DatabaseHelper {
       var map = curr[i].toSaleMap();
       map['product'] = curr[i].product!.id;
       map['OIID'] = id;
+       map.remove("originalbaseSellingPrice");
 
       await db.update(
         'OrderItemInput',
@@ -395,5 +404,51 @@ class DatabaseHelper {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     db.execute("update OrderInput set tableNo='$tablNo' where id=$id");
+  }
+
+  deleteTHEDatabase() async {
+    String path = join(await getDatabasesPath(), 'database.db');
+    await deleteDatabase(path);
+    print('Database cleared.');
+  }
+
+ Future<bool>  checkIfNewColumnsAreAdded() async {
+    final Database db = await database;
+
+    // Run a query to get the table information
+    List<Map<String, dynamic>> orderItemInputcolumns =
+        await db.rawQuery('PRAGMA table_info(OrderItemInput)');
+        
+
+        if(orderItemInputcolumns.length<10)
+        {
+          print("lessssssssssssssssssssss");
+            return true;
+            
+        }
+    List<Map<String, dynamic>> productcolumns =
+        await db.rawQuery('PRAGMA table_info(Product)');
+
+        if(productcolumns.length<23)
+        {
+          return true;
+        }
+    List<Map<String, dynamic>> orderInputcolumns =
+        await db.rawQuery('PRAGMA table_info(OrderInput)');
+        if(orderInputcolumns.length<10)
+        {
+            return true;
+        }
+    List<Map<String, dynamic>> kotcolumns =
+        await db.rawQuery('PRAGMA table_info(Kot)');
+        if(kotcolumns.length<4)
+        {
+            return true;
+        }
+
+        return false;
+
+    // Return the number of columns
+ 
   }
 }

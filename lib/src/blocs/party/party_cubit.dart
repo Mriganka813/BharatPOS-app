@@ -37,19 +37,24 @@ class PartyCubit extends Cubit<PartyState> {
 
   /// Get the intial credit parties
   void getInitialCreditParties() async {
+
     emit(PartyLoading());
     try {
       print('6388415501');
+           print("gggggggggggggg");
       final sales = await _partyService.getCreditSaleParties();
+ 
       print('ok');
       final purchase = await _partyService.getCreditPurchaseParties();
       print('okk');
       _saleParties.clear();
       _purchaseParties.clear();
+       
       _saleParties.addAll(sales);
       print('sale');
       _purchaseParties.addAll(purchase);
       print('purchase');
+         
       emit(CreditPartiesListRender(
         purchaseParties: _purchaseParties,
         saleParties: _saleParties,

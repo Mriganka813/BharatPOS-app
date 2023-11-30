@@ -36,7 +36,7 @@ void main() async {
   );
 
   /// TODO uncomment this line
-  // await Utils().checkForUpdate();
+   //await Utils().checkForUpdate();
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(
       create: (context) => Billing(),

@@ -49,13 +49,13 @@ class  ProductFormInput {
   bool? available;
   DateTime? expiryDate;
   String? batchNumber;
-  bool ?GSTincluded;
+  bool ?GSTincluded=true;
 
   bool gst;
   XFile? imageFile;
 
   Map<String, dynamic> toMap() { 
-        print('sssshsn =$hsn');
+        print('included =$GSTincluded');
     return 
     {
         "name": name,
@@ -79,7 +79,7 @@ class  ProductFormInput {
         if (gst) "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
         "available": available ?? true,
-        if(gst) "GSTincluded":GSTincluded, 
+        if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded, 
         if (batchNumber != null) "batchNumber": batchNumber,
       };
   }

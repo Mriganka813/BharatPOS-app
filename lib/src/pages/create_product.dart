@@ -42,7 +42,6 @@ class _CreateProductState extends State<CreateProduct> {
   bool _showLoader = false;
   bool gstSwitch = false;
 
-
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController purchasePriceController = TextEditingController();
   TextEditingController gstratePriceController = TextEditingController();
@@ -73,8 +72,6 @@ class _CreateProductState extends State<CreateProduct> {
       final response = await const ProductService().getProduct(widget.id!);
       print(response.toString());
       productInput = ProductFormInput.fromMap(response.data['inventory']);
-
-
     } on DioError catch (err) {
       log(err.message.toString());
     }
@@ -85,18 +82,13 @@ class _CreateProductState extends State<CreateProduct> {
       _formInput = productInput!;
     });
 
-   
-       if(_formInput.GSTincluded!)
-       {
-        includedExcludedRadioButton=1;
-            print("it is 1");
-       }
-       else
-       {
-        includedExcludedRadioButton=2;
-        print("it is 2");
-       }
-    
+    if (_formInput.GSTincluded != null) if (_formInput.GSTincluded!) {
+      includedExcludedRadioButton = 1;
+      print("it is 1");
+    } else {
+      includedExcludedRadioButton = 2;
+      print("it is 2");
+    }
 
     print("gstttt");
     print(_formInput.gstRate);
@@ -110,6 +102,7 @@ class _CreateProductState extends State<CreateProduct> {
       gstSwitch = true;
     }
     sellingPriceController.text = _formInput.sellingPrice as String;
+    print("testttt=${_formInput.sellingPrice}");
 
     purchasePriceController.text = _formInput.purchasePrice != "null"
         ? _formInput.purchasePrice as String
@@ -122,6 +115,12 @@ class _CreateProductState extends State<CreateProduct> {
         _formInput.purchasePrice != "null" && _formInput.purchasePrice != ""
             ? _formInput.purchasePrice!
             : "0";
+
+    baseSellingPriceController.text =
+        _formInput.baseSellingPriceGst != "null" &&
+                _formInput.baseSellingPriceGst != ""
+            ? _formInput.baseSellingPriceGst!
+            : "0";
     if (_formInput.purchasePrice != "null" && _formInput.purchasePrice != "") {
       purchasePriceController.text = _formInput.purchasePrice!;
     } else {
@@ -129,8 +128,6 @@ class _CreateProductState extends State<CreateProduct> {
       _formInput.purchasePrice = "0";
       setState(() {});
     }
-
-  
 
     calculate();
   }
@@ -220,45 +217,52 @@ class _CreateProductState extends State<CreateProduct> {
   }
 
   void calculate() {
- 
     if (_formInput.gstRate != null && _formInput.gst) {
       int rate = int.parse(_formInput.gstRate!);
 
 // selling price
-      if (_formInput.sellingPrice != null&&includedExcludedRadioButton==1) {
+      if (_formInput.sellingPrice != null && includedExcludedRadioButton == 1) {
         print("gggggggggg");
-          double oldsp = double.parse(_formInput.sellingPrice!);
-          double basesp = (oldsp * 100 / (100 + rate));
+        double oldsp = double.parse(_formInput.sellingPrice!);
+        double basesp = (oldsp * 100 / (100 + rate));
 
-          String salesgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
-          String salecgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
-          String saleigst = (oldsp - basesp).toStringAsFixed(2);
-          setState(() {
-            _formInput.salesgst = salesgst.toString();
-            _formInput.salecgst = salecgst.toString();
-            _formInput.saleigst = saleigst.toString();
-            _formInput.baseSellingPriceGst =
-                basesp.toStringAsFixed(2).toString();
-          });
+        String salesgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+        String salecgst = ((oldsp - basesp) / 2).toStringAsFixed(2);
+        String saleigst = (oldsp - basesp).toStringAsFixed(2);
+        setState(() {
+          _formInput.salesgst = salesgst.toString();
+          _formInput.salecgst = salecgst.toString();
+          _formInput.saleigst = saleigst.toString();
+          _formInput.baseSellingPriceGst = basesp.toStringAsFixed(2).toString();
+        });
 
-          baseSellingPriceController.text=basesp.toStringAsFixed(2).toString();
-        
-      } 
-        if (includedExcludedRadioButton == 2) {
-          double bsp = double.parse(_formInput.baseSellingPriceGst!);
-          double gstRate = double.parse(_formInput.gstRate!);
-        
+        baseSellingPriceController.text = basesp.toStringAsFixed(2).toString();
+      }
+      if (includedExcludedRadioButton == 2) {
+        double bsp = double.parse(_formInput.baseSellingPriceGst!);
+        double gstRate = double.parse(_formInput.gstRate!);
 
-          double gstAmt = (bsp * (gstRate / 100));
-          _formInput.sellingPrice = (bsp + gstAmt).toString();
-          print(
-              "Seeling price changed by changing bsp:${_formInput.sellingPrice}");
+        double gstAmt = (bsp * (gstRate / 100));
+        _formInput.sellingPrice = (bsp + gstAmt).toString();
 
-          sellingPriceController.text= (bsp + gstAmt).toStringAsFixed(2).toString();
+        double oldsp = double.parse(_formInput.sellingPrice!);
 
-          setState(() {});
-        }
-      
+        String salesgst = ((oldsp - bsp) / 2).toStringAsFixed(2);
+        String salecgst = ((oldsp - bsp) / 2).toStringAsFixed(2);
+        String saleigst = (oldsp - bsp).toStringAsFixed(2);
+
+        _formInput.salesgst = salesgst.toString();
+        _formInput.salecgst = salecgst.toString();
+        _formInput.saleigst = saleigst.toString();
+
+        print(
+            "Seeling price changed by changing bsp:${_formInput.sellingPrice}");
+
+        sellingPriceController.text =
+            (bsp + gstAmt).toStringAsFixed(2).toString();
+
+        setState(() {});
+      }
 
 // purchase price
       if (_formInput.purchasePrice != null) {
@@ -381,19 +385,21 @@ class _CreateProductState extends State<CreateProduct> {
                       children: [
                         Expanded(
                           child: CustomTextField2(
-                            readonly: includedExcludedRadioButton==2?true:false,
+                            readonly:
+                                includedExcludedRadioButton == 2 ? true : false,
                             controller: sellingPriceController,
                             label: "Selling Price",
                             value: _formInput.sellingPrice,
                             inputType: TextInputType.number,
                             onChanged: (e) {
-                              if (e.isNotEmpty&&includedExcludedRadioButton==1) {
+                              if (e.isNotEmpty &&
+                                  includedExcludedRadioButton == 1) {
                                 _formInput.sellingPrice = e;
                                 calculate();
                               }
                             },
                             validator: (e) {
-                              if ( e!.contains(",")) {
+                              if (e!.contains(",")) {
                                 return '(,) characters are not allowed';
                               }
                               if (e.isEmpty) {
@@ -420,7 +426,7 @@ class _CreateProductState extends State<CreateProduct> {
                               print(gstSwitch);
                             },
                             validator: (e) {
-                              if ( e!.contains(",")) {
+                              if (e!.contains(",")) {
                                 return '(,) characters are not allowed';
                               }
                               return null;
@@ -474,38 +480,42 @@ class _CreateProductState extends State<CreateProduct> {
                                   value: 1,
                                   groupValue: includedExcludedRadioButton,
                                   onChanged: (val) {
-                                  _formInput.GSTincluded=true;
-                                      sellingPriceController.text=baseSellingPriceController.text;
-                                      _formInput.sellingPrice=baseSellingPriceController.text;
-                                     
-                                      baseSellingPriceController.text="";
+                                    _formInput.GSTincluded = true;
+                                    sellingPriceController.text =
+                                        baseSellingPriceController.text;
+                                    _formInput.sellingPrice =
+                                        baseSellingPriceController.text;
+
+                                    baseSellingPriceController.text = "";
                                     setState(() {
-                                    
                                       includedExcludedRadioButton = 1;
-                                 
                                     });
                                     calculate();
                                   },
                                   child: Text("Included")),
-                                     RadioMenuButton(
-                              value: 2,
-                              groupValue: includedExcludedRadioButton,
-                              onChanged: (val) {
-                                _formInput.GSTincluded=false;
-                                baseSellingPriceController.text=sellingPriceController.text;
-                                _formInput.baseSellingPriceGst=sellingPriceController.text;
-                              //  sellingPriceController.text="";
-                                
-                                setState(() {
-                                  includedExcludedRadioButton = 2;
-                                });
-                                calculate();
-                              },
-                              child: Text("Excluded"))
+                              RadioMenuButton(
+                                  value: 2,
+                                  groupValue: includedExcludedRadioButton,
+                                  onChanged: (val) {
+                                    _formInput.GSTincluded = false;
+                                    baseSellingPriceController.text =
+                                        sellingPriceController.text;
+                                    _formInput.baseSellingPriceGst =
+                                        sellingPriceController.text;
+                                    //  sellingPriceController.text="";
+
+                                    setState(() {
+                                      includedExcludedRadioButton = 2;
+                                    });
+                                    calculate();
+                                  },
+                                  child: Text("Excluded"))
                             ],
                           ),
-                          SizedBox(height: 50,),
-                       
+                          SizedBox(
+                            height: 50,
+                          ),
+
                           CustomTextField2(
                             controller: gstratePriceController,
                             label: "GST Rate (%)",
@@ -573,12 +583,11 @@ class _CreateProductState extends State<CreateProduct> {
                                 ? "0"
                                 : _formInput.baseSellingPriceGst,
                             onChanged: (e) {
-                              if(includedExcludedRadioButton==2)
-                              {
-                              _formInput.baseSellingPriceGst = e;
+                              if (includedExcludedRadioButton == 2) {
+                                _formInput.baseSellingPriceGst = e;
 
-                              setState(() {});
-                              calculate();
+                                setState(() {});
+                                calculate();
                               }
                             },
                             validator: (e) => null,

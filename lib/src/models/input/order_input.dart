@@ -94,7 +94,7 @@ class OrderItemInput {
         saleSGST: json["saleSGST"].toString(),
         baseSellingPrice: json["baseSellingPrice"].toString(),
         saleIGST: json["saleIGST"].toString(),
-        discountAmt: "90",
+        discountAmt: json['discountAmt'].toString(),
       );
 
   Map<String, dynamic> toSaleMap() => {

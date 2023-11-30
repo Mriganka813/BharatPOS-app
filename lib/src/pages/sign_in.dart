@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_version/new_version.dart';
+import 'package:provider/provider.dart';
 import 'package:shopos/src/blocs/auth/auth_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/home.dart';
+import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/LocalDatabase.dart';
 // import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
@@ -28,6 +31,30 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
     // _checkUpdate();
     _authCubit = AuthCubit();
+    getDataFromDatabase();
+  }
+
+   getDataFromDatabase() async {
+
+    try{
+
+    
+    final provider = Provider.of<Billing>(
+context
+    );
+    var data = await DatabaseHelper().getOrderItems();
+    print("kkkkkk=");
+  
+    provider.removeAll();
+
+    data.forEach((element) {
+      provider.addSalesBill(element, element.id.toString());
+    });
+    }
+    catch(e)
+    {
+   showRestartAppDialouge();
+    }
   }
 
   Future<void> _checkUpdate() async {
@@ -232,5 +259,27 @@ class _SignInPageState extends State<SignInPage> {
         ),
       ),
     );
+  }
+
+   Future<bool?> showRestartAppDialouge() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: Text('App needed to restart'),
+              title: Text('Alert'),
+              actions: [
+                Center(
+                    child: CustomButton(
+                        title: 'ok',
+                        onTap: () async {
+                             Navigator.of(context).pop();
+                        await  DatabaseHelper().deleteTHEDatabase();
+                      
+                          
+                       
+                        }))
+              ],
+            ));
   }
 }

@@ -241,8 +241,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                   bloc: _specificpartyCubit,
                   builder: (context, state) {
 
-                    int balance = 0;
-                    int negbalance = 0;
+                    double balance = 0;
+                    double negbalance = 0;
                   
                     if (state is SpecificPartyListRender) {
              
@@ -478,7 +478,7 @@ Future<void> _launchUrl(String name,String mobile) async {
                       onTap: () {
                         setState(() {
                           _specificPartyInput.modeOfPayment = modeofPayment;
-                          _specificPartyInput.total = int.parse(value.text);
+                          _specificPartyInput.total = double.parse(value.text);
                           _specificPartyInput.id = widget.args.partyId;
                           _specificPartyInput.createdAt = DateTime.now();
 
@@ -552,7 +552,7 @@ Future<void> _launchUrl(String name,String mobile) async {
                     ),
                     CustomButton(
                       onTap: () {
-                        int amountnew = int.parse(newtotal);
+                        double amountnew = double.parse(newtotal);
                         widget.args.tabbarNo == 0
                             ? _specificpartyCubit.updateAmountCustomer(
                                 Party(id: id, total: amountnew),

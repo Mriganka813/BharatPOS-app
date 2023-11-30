@@ -21,10 +21,10 @@ class Party {
   DateTime? createdAt;
   String? type;
   String? v;
-  int? totalCreditAmount;
-  int? totalSettleAmount;
-  int? total;
-  int? balance;
+  double? totalCreditAmount;
+  double? totalSettleAmount;
+  double? total;
+  double? balance;
 
   factory Party.fromMap(Map<String, dynamic> json) => Party(
         name: json["name"],
@@ -32,10 +32,10 @@ class Party {
         id: json["_id"],
         type: json['type'],
         createdAt: DateTime.parse(json["createdAt"]),
-        totalCreditAmount: json["totalCreditAmount"],
-        totalSettleAmount: json['totalSettleAmount'],
-        balance: json['balance'] ?? 0,
-        total: json["total"],
+        totalCreditAmount: json['totalCreditAmount']!=null? double.parse(json['totalCreditAmount'].toString())  : 0.0,
+        totalSettleAmount: json['totalSettleAmount']!=null? double.parse(json['totalSettleAmount'].toString())  : 0.0,
+        balance: json['balance']!=null? double.parse(json['balance'].toString())  : 0.0,
+        total: json['total']!=null? double.parse(json['total'].toString())  : 0.0,
         address: json["address"],
         v: json["__v"].toString(),
       );
