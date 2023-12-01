@@ -435,7 +435,7 @@ class DatabaseHelper {
         }
     List<Map<String, dynamic>> orderInputcolumns =
         await db.rawQuery('PRAGMA table_info(OrderInput)');
-        if(orderInputcolumns.length<10)
+        if(orderInputcolumns.length<20)
         {
             return true;
         }

@@ -545,6 +545,24 @@ class ProductCardPurchase extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 10),
+                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('TaxableValue'),
+                        type == "sale"
+                            ? Text('₹ ${(baseSellingPrice+ double.parse(discount)).toStringAsFixed(2)}')
+                            : Text('₹ ${basePurchasePrice}'),
+                      ],
+                    ),
+                            const SizedBox(height: 5),
+                       Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Discount '),
+                        Text('₹ ${discount}'),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -566,14 +584,7 @@ class ProductCardPurchase extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Discount @0%'),
-                        Text('₹ ${discount}'),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
+                 
                     Divider(
                       color: Colors.black54,
                     ),

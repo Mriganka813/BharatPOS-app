@@ -46,7 +46,6 @@ class _CreateSaleState extends State<CreateSale> {
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
   bool isLoading = false;
-  double discount = 0;
 
   @override
   void initState() {
@@ -59,10 +58,26 @@ class _CreateSaleState extends State<CreateSale> {
       id: widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
+
+    init();
+  }
+
+  List<String> sellingPriceListForShowinDiscountTextBOX = [];
+
+  void init() {
+    _orderInput.orderItems!.forEach((element) {
+      sellingPriceListForShowinDiscountTextBOX
+          .add(element.product!.baseSellingPriceGst!);
+    });
   }
 
   void _onAdd(OrderItemInput orderItem) {
     final qty = orderItem.quantity + 1;
+    double discountForOneItem =
+        double.parse(orderItem.discountAmt) / orderItem.quantity;
+    orderItem.discountAmt =
+        (double.parse(orderItem.discountAmt) + discountForOneItem)
+            .toStringAsFixed(2);
     final availableQty = orderItem.product?.quantity ?? 0;
     if (qty > availableQty) {
       locator<GlobalServices>().infoSnackBar("Quantity not available");
@@ -162,7 +177,13 @@ class _CreateSaleState extends State<CreateSale> {
                             itemCount: _orderItems.length,
                             itemBuilder: (context, index) {
                               final _orderItem = _orderItems[index];
+                              double discount =
+                                  double.parse(_orderItem.discountAmt);
                               final product = _orderItems[index].product!;
+                              final basesellingprice=0.0;
+                              if(  _orderItem.product!.baseSellingPriceGst!=null&& _orderItem.product!.baseSellingPriceGst!="null")
+                              final basesellingprice = double.parse(
+                                  _orderItem.product!.baseSellingPriceGst??"0.0");
 
                               return GestureDetector(
                                 onLongPress: () {
@@ -175,13 +196,23 @@ class _CreateSaleState extends State<CreateSale> {
                                         String? discountedPrice;
 
                                         return Column(
-                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisSize: MainAxisSize.min, 
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             AlertDialog(
                                               content: Column(
                                                 children: [
+                                                  Text(
+                                                    "Discount",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 25),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
                                                   CustomTextField(
                                                     inputType:
                                                         TextInputType.number,
@@ -189,7 +220,7 @@ class _CreateSaleState extends State<CreateSale> {
                                                       localSellingPrice = val;
                                                     },
                                                     hintText:
-                                                        'change subtotal of the item',
+                                                        'Enter Taxable Value   (${basesellingprice + discount})',
                                                   ),
                                                   Padding(
                                                     padding:
@@ -203,7 +234,8 @@ class _CreateSaleState extends State<CreateSale> {
                                                     onChanged: (val) {
                                                       discountedPrice = val;
                                                     },
-                                                    hintText: 'Enter total',
+                                                    hintText:
+                                                        'Enter total value   (${sellingPriceListForShowinDiscountTextBOX[index]})',
                                                     validator: (val) {
                                                       if (val!.isNotEmpty &&
                                                           localSellingPrice!
@@ -220,30 +252,33 @@ class _CreateSaleState extends State<CreateSale> {
                                                   child: CustomButton(
                                                       title: 'Submit',
                                                       onTap: () {
-                                                        print(
-                                                            localSellingPrice);
-                                                        print(discountedPrice);
+                                                        if (localSellingPrice !=
+                                                            null) {
+                                                          print(
+                                                              localSellingPrice);
+                                                          print(
+                                                              discountedPrice);
 
-                                                        discount = _orderItem
-                                                                .product!
-                                                                .sellingPrice! -
-                                                            int.parse(
-                                                                    localSellingPrice!)
-                                                                .toDouble();
+                                                          discount = (double.parse(
+                                                                      _orderItem
+                                                                          .product!
+                                                                          .baseSellingPriceGst!) +
+                                                                  double.parse(
+                                                                      _orderItem
+                                                                          .discountAmt) -
+                                                                  int.parse(
+                                                                          localSellingPrice!)
+                                                                      .toDouble()) *
+                                                              _orderItem
+                                                                  .quantity;
 
-                                                        _orderItems[index]
-                                                                .discountAmt =
-                                                            discount.toString();
-                                                        setState(() {});
-                                                        // if ((localSellingPrice !=
-                                                        //             null ||
-                                                        //         localSellingPrice!
-                                                        //             .isNotEmpty) &&
-                                                        //     (discountedPrice != null ||
-                                                        //         discountedPrice!
-                                                        //             .isNotEmpty)) {
-                                                        //   return;
-                                                        // }
+                                                          _orderItems[index]
+                                                                  .discountAmt =
+                                                              discount
+                                                                  .toStringAsFixed(
+                                                                      2);
+                                                          setState(() {});
+                                                        }
 
                                                         if (localSellingPrice !=
                                                                 null &&
@@ -258,9 +293,33 @@ class _CreateSaleState extends State<CreateSale> {
                                                           print(
                                                               's$discountedPrice');
 
+                                                          double
+                                                              realBaseSellingPrice =
+                                                              double.parse(
+                                                                  _orderItem
+                                                                      .product!
+                                                                      .baseSellingPriceGst!);
+
                                                           _onTotalChange(
                                                               product,
                                                               discountedPrice);
+                                                          print(
+                                                              "realbase selling price=${realBaseSellingPrice}");
+                                                          print(
+                                                              "discount=${discount}");
+                                                          discount = (realBaseSellingPrice +
+                                                                  discount -
+                                                                  double.parse(
+                                                                      _orderItem
+                                                                          .product!
+                                                                          .baseSellingPriceGst!)) *
+                                                              _orderItem
+                                                                  .quantity;
+                                                          _orderItems[index]
+                                                                  .discountAmt =
+                                                              discount
+                                                                  .toStringAsFixed(
+                                                                      2);
 
                                                           setState(() {});
                                                         }
@@ -288,6 +347,14 @@ class _CreateSaleState extends State<CreateSale> {
                                         widget.args!.id!,
                                         _orderInput
                                             .orderItems![index].product!.name!);
+
+                                    double discountForOneItem =
+                                        double.parse(_orderItem.discountAmt) /
+                                            _orderItem.quantity;
+                                    _orderItem.discountAmt =
+                                        (double.parse(_orderItem.discountAmt) -
+                                                discountForOneItem)
+                                            .toStringAsFixed(2);
                                     setState(
                                       () {
                                         _orderItem.quantity == 1
@@ -339,6 +406,11 @@ class _CreateSaleState extends State<CreateSale> {
                           }
 
                           var temp = result as List<Product>;
+
+                          temp.forEach((element) {
+                            sellingPriceListForShowinDiscountTextBOX
+                                .add(element.sellingPrice.toString());
+                          });
 
                           Kotlist.addAll(temp);
 
@@ -433,7 +505,7 @@ class _CreateSaleState extends State<CreateSale> {
 
                         if (_orderItems.isNotEmpty) {
                           print('orderid: ${widget.args?.orderId}');
-                         
+
                           insertToDatabase(provider);
                         }
 

@@ -65,7 +65,7 @@ dependencies:
   # excel: ^2.1.0
   syncfusion_flutter_xlsio: ^23.1.40
   sqflite:
-  
+  package_info_plus:
   path:
  
 

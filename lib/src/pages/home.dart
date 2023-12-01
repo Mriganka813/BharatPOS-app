@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
-        checkIfNewColumnsAreAdded();
+      
   }
 
   @override
@@ -64,22 +64,6 @@ class _HomePageState extends State<HomePage> {
     
   }
 
-  void checkIfNewColumnsAreAdded()async
-  {
-    bool result= await DatabaseHelper().checkIfNewColumnsAreAdded();
-
-    if(result)
-    {
-      //showRestartAppDialouge();
-     print("new columns are there");
-       await DatabaseHelper().deleteTHEDatabase();
-        await DatabaseHelper().initDatabase();
-    }
-    else
-    {
-         print("There are No new columns are there");
-    }
-  }
 
  
   @override

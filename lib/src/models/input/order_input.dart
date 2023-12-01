@@ -109,7 +109,7 @@ class OrderItemInput {
         "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
         "discountAmt": discountAmt,
         "originalbaseSellingPrice":
-            (double.parse(product!.baseSellingPriceGst!) +
+            (double.parse(product!.baseSellingPriceGst! =="null"?'0':product!.baseSellingPriceGst!) +
                     double.parse(discountAmt!))
                 .toString()
       };
