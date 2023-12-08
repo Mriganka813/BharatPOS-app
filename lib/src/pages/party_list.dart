@@ -50,6 +50,7 @@ class _PartyListPageState extends State<PartyListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Party'),
       ),
       floatingActionButton: Container(
@@ -70,7 +71,7 @@ class _PartyListPageState extends State<PartyListPage>
               }
             }
           },
-          backgroundColor: ColorsConst.primaryColor,
+          backgroundColor: Colors.green,
           child: const Icon(
             Icons.add,
             color: Colors.white,
@@ -99,6 +100,8 @@ class _PartyListPageState extends State<PartyListPage>
                   controller: _typeAheadController,
                   autofocus: true,
                   decoration: InputDecoration(
+                    fillColor: Color(0xffEAEAEA),
+                    filled: true,
                     hintText: "Search",
                     prefixIcon: const Icon(Icons.search),
                     contentPadding: const EdgeInsets.symmetric(
@@ -106,6 +109,7 @@ class _PartyListPageState extends State<PartyListPage>
                       horizontal: 10,
                     ),
                     border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -146,12 +150,17 @@ class _PartyListPageState extends State<PartyListPage>
                           TabBar(
                             controller: _tabController,
                             indicatorColor: ColorsConst.primaryColor,
-                            labelColor: Colors.black,
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.black,
                             labelStyle: Theme.of(context).textTheme.bodyLarge,
+                            indicator: MyTabIndicator(),
+                            indicatorPadding: EdgeInsets.all(5),
                             // <-- Your TabBar
                             tabs: const [
                               Tab(
+                                
                                 text: "Customer",
+                                
                               ),
                               Tab(
                                 text: "Supplier",
@@ -249,14 +258,20 @@ class _PartiesListViewState extends State<PartiesListView> {
       itemBuilder: (context, index) {
         final party = widget.parties[index];
         return ListTile(
-          title: Text(party.name ?? ""),
+          title: Row(
+            children: [
+              Image.asset("assets/images/teamwork.png",height: 40,),
+              SizedBox(width: 10,),
+              Text(party.name ?? ""),
+            ],
+          ),
           trailing: party.balance! >= 0
               ? Text(
-                  "${party.balance}",
+                  " ₹ ${ party.balance}",
                   style: TextStyle(color: Colors.red),
                 )
               : Text(
-                  "${party.balance!.abs()}",
+                  " ₹ ${party.balance!.abs()}",
                   style: TextStyle(color: Colors.green),
                 ), //here when api will be fixed then we will get the correct value
           onTap: () async {
@@ -376,5 +391,31 @@ class _PartiesListViewState extends State<PartiesListView> {
                         }))
               ],
             ));
+  }
+
+
+  
+}
+
+
+class MyTabIndicator extends Decoration {
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _MyBoxPainter(this, onChanged);
+  }
+}
+
+class _MyBoxPainter extends BoxPainter {
+  final MyTabIndicator decoration;
+
+  _MyBoxPainter(this.decoration, VoidCallback? onChanged)
+      : super(onChanged);
+
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    final Rect rect = offset & configuration.size!;
+    final Paint paint = Paint();
+    paint.color = Colors.blue; // Set your desired tab background color here
+    canvas.drawRect(rect, paint);
   }
 }

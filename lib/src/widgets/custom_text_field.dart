@@ -18,6 +18,7 @@ class CustomTextField extends StatefulWidget {
   final bool readonly;
   final bool bypassValidator;
   final Function(String?)? onsubmitted;
+  final int? maxLines;
   const CustomTextField(
       {Key? key,
       this.onChanged,
@@ -35,6 +36,7 @@ class CustomTextField extends StatefulWidget {
       this.obsecureText = false,
       this.readonly = false,
       this.bypassValidator = false,
+      this.maxLines,
       this.onsubmitted})
       ;
 
@@ -67,49 +69,60 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ),
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
-          
-          readOnly: widget.readonly,
-          obscureText: widget.obsecureText,
-          inputFormatters: widget.inputFormatters,
-          textInputAction: TextInputAction.next,
-          validator: (e) {
-            if (!widget.bypassValidator && widget.validator != null) {
-              // conditionally call validator
-              return widget.validator!(e);
-            }
-            return null;
-          },
-          controller: widget.value != null || widget.initialValue != null
-              ? TextEditingController(text: widget.value ?? widget.initialValue)
-              : null,
-          enabled: !widget.isLoading,
-          onChanged: (e) {
-            if (widget.onChanged == null) {
-              return;
-            }
-            widget.onChanged!(e);
-          },
-          onFieldSubmitted: widget.onsubmitted,
-          onSaved: (e) {
-            if (widget.onSave == null) {
-              return;
-            }
-            widget.onSave!(e);
-          },
-          keyboardType: widget.inputType,
-          decoration: InputDecoration(
-            prefixIcon: widget.prefixIcon,
-            hintText: widget.hintText,
-            suffixIcon: widget.suffixIcon,
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 2,
-              horizontal: 10,
-            ),
-            border: OutlineInputBorder(
+            maxLines:  widget.maxLines,
+            
+            readOnly: widget.readonly,
+            obscureText: widget.obsecureText,
+            inputFormatters: widget.inputFormatters,
+            textInputAction: TextInputAction.next,
+            
+            validator: (e) {
+              if (!widget.bypassValidator && widget.validator != null) {
+                // conditionally call validator
+                return widget.validator!(e);
+              }
+              return null;
+            },
+            controller: widget.value != null || widget.initialValue != null
+                ? TextEditingController(text: widget.value ?? widget.initialValue)
+                : null,
+            enabled: !widget.isLoading,
+            onChanged: (e) {
+              if (widget.onChanged == null) {
+                return;
+              }
+              widget.onChanged!(e);
+            },
+            onFieldSubmitted: widget.onsubmitted,
+            onSaved: (e) {
+              if (widget.onSave == null) {
+                return;
+              }
+              widget.onSave!(e);
+            },
+            keyboardType: widget.inputType,
+            decoration: InputDecoration(
+              
+              fillColor:      widget.prefixIcon!=null? Color(0xffEAEAEA):Colors.transparent,
+              filled: true,
+              prefixIcon: widget.prefixIcon,
+              hintText: widget.hintText,
+              suffixIcon: widget.suffixIcon,
+              
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 2,
+                horizontal: 10,
+              ),
+              border: widget.prefixIcon!=null? OutlineInputBorder(
+                borderSide: BorderSide.none,
+                
+                borderRadius: BorderRadius.circular(10),
+              ): OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
             ),
+            ),
           ),
-        ),
+        
       ],
     );
   }

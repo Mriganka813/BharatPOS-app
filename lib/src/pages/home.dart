@@ -1,6 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:shopos/src/app.dart';
@@ -53,19 +54,14 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
-      
   }
 
   @override
   void dispose() {
     _homeCubit.close();
     super.dispose();
-
-    
   }
 
-
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,12 +73,33 @@ class _HomePageState extends State<HomePage> {
             return Scaffold(
               appBar: AppBar(
                 // toolbarHeight: MediaQuery.of(context).size.height * 0.07,
-                title: Text(state.user.businessName ?? ""),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Hi ${state.user.businessName ?? ""}!"),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Image.asset(
+                          "assets/images/handwave.png",
+                          height: 25,
+                        )
+                      ],
+                    ),
+                    Text(
+                      "Welcome back",
+                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                    )
+                  ],
+                ),
                 actions: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      /*  Container(
                         height: 30,
                         child: Switch(
                             activeColor: Colors.green,
@@ -99,32 +116,34 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.black,
                             fontSize: 14,
                             fontWeight: FontWeight.w600),
-                      ),
+                      ),*/
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset(
+                          "assets/images/bell.png",
+                          height: 30,
+                        ),
+                      )
                     ],
                   )
                 ],
               ),
               drawer: Drawer(
+                backgroundColor: Colors.white,
                 child: SafeArea(
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(
-                          Icons.business_outlined,
-                          color: Colors.black,
-                        ),
+                        leading: Image  .asset("assets/images/bharat.png",height:30,),
                         title: Title(
                           color: Colors.black,
                           child: Text(
-                            state.user.businessName ?? "",
+                           "",
                             textScaleFactor: 1.4,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        subtitle: Text(
-                          state.user.email ?? "",
-                          textScaleFactor: 1.2,
-                        ),
+                      
                       ),
                       Divider(),
                       // ListTile(
@@ -140,8 +159,30 @@ class _HomePageState extends State<HomePage> {
                       //     Navigator.pop(context);
                       //   },
                       // ),
+
+                       ListTile(
+                        leading: Image.asset("assets/images/shop.png",height: 30,),
+                        title: Title(
+                          color: Colors.black,
+                          child: Text(
+                            state.user.businessName ?? "",
+                        
+                         
+                          ),
+                        ),
+                        subtitle: Text(
+                          state.user.email ?? "",
+                          textScaleFactor: 1.2,
+                        ),
+                        onTap: () async {
+                          bool status = await _pinService.pinStatus();
+                          print(status);
+                          Navigator.of(context).pushNamed(SetPinPage.routeName,
+                              arguments: status);
+                        },
+                      ),
                       ListTile(
-                        leading: Icon(Icons.lock),
+                        leading: Image.asset("assets/images/keyy.png",height: 30,),
                         title: Title(
                             color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
@@ -151,8 +192,9 @@ class _HomePageState extends State<HomePage> {
                               arguments: status);
                         },
                       ),
+                     
                       ListTile(
-                        leading: Icon(Icons.security_outlined),
+                        leading: Image.asset("assets/images/lock.png",height: 30,),
                         title: Title(
                             color: Colors.black,
                             child: Text("Change Password")),
@@ -163,9 +205,9 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       ListTile(
-                        leading: Icon(Icons.policy_outlined),
+                        leading: Image.asset("assets/images/about.png",height: 30,),
                         title: Title(
-                            color: Colors.black, child: Text("Privacy Policy")),
+                            color: Colors.black, child: Text("About")),
                         onTap: () {
                           Navigator.pushNamed(
                               context,
@@ -173,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                                   .routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
-                      ListTile(
+                    /*  ListTile(
                         leading: Icon(Icons.control_point),
                         title: Title(
                             color: Colors.black,
@@ -184,9 +226,9 @@ class _HomePageState extends State<HomePage> {
                               TermsAndConditionsPage
                                   .routeName); // Navigate to the PrivacyPolicyPage
                         },
-                      ),
+                      ),*/
                       ListTile(
-                        leading: Icon(Icons.logout),
+                        leading: Image.asset("assets/images/logout.png",height: 30,),
                         title:
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
@@ -213,17 +255,14 @@ class _HomePageState extends State<HomePage> {
                       shrinkWrap: true,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 1,
-                      ),
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 30.0,
+                              mainAxisExtent: 166),
                       padding: const EdgeInsets.all(10),
                       children: [
                         HomeCard(
-                          icon: const Icon(
-                            CustomIcons.product,
-                            size: 50,
-                            color: ColorsConst.primaryColor,
-                          ),
+                          color: 0XFF48AFFF,
+                          icon: 'assets/images/products.png',
                           title: "Products",
                           onTap: () {
                             Navigator.pushNamed(
@@ -237,11 +276,8 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         HomeCard(
-                          icon: const Icon(
-                            CustomIcons.person,
-                            size: 50,
-                            color: ColorsConst.primaryColor,
-                          ),
+                          color: 0XFFFFC700,
+                          icon: 'assets/images/party.png',
                           title: "Party",
                           onTap: () {
                             Navigator.pushNamed(
@@ -251,11 +287,8 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         HomeCard(
-                          icon: const Icon(
-                            CustomIcons.report_svg,
-                            color: ColorsConst.primaryColor,
-                            size: 50,
-                          ),
+                          color: 0XFFFF5959,
+                          icon: 'assets/images/expense.png',
                           title: "Expense",
                           onTap: () {
                             Navigator.pushNamed(
@@ -265,11 +298,8 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         HomeCard(
-                          icon: const Icon(
-                            CustomIcons.growth_graph,
-                            color: ColorsConst.primaryColor,
-                            size: 50,
-                          ),
+                          color: 0XFF5642A6,
+                          icon: 'assets/images/reports.png',
                           title: "Reports",
                           onTap: () {
                             Navigator.pushNamed(context, ReportsPage.routeName);
@@ -277,20 +307,23 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    OnlineStoreWidget(
+                    /*  OnlineStoreWidget(
                       activeOrders: 5,
                       onTap: () {
                         Navigator.pushNamed(context, ReportsPage.routeName);
                       },
-                    ),
+                    ),*/
                     const Spacer(),
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.center,
                       child: Text(
                         "Create Invoice",
                         textAlign: TextAlign.left,
                         style: Theme.of(context).textTheme.headline6,
                       ),
+                    ),
+                    const SizedBox(
+                      height: 30,
                     ),
                     Row(
                       children: [
@@ -302,30 +335,33 @@ class _HomePageState extends State<HomePage> {
                                 CreatePurchase.routeName,
                               );
                             },
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  children: [
-                                    const Icon(
-                                      CustomIcons.arrow_down,
-                                      color: Colors.red,
-                                      size: 40,
+                            child: Column(
+                              children: [
+                                Card(
+                                  color: Color.fromARGB(255, 255, 101, 122)
+                                      .withOpacity(0.5),
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color: Color.fromARGB(255, 175, 76,
+                                          76), // Set the border color
+                                      width: 2.0, // Set the border width
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "Purchase",
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                  ),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Image.asset(
+                                        "assets/images/purchase.png",
+                                        height: 100,
+                                        width: 110,
+                                      )),
                                 ),
-                              ),
+                                Text(
+                                  "Purchasee",
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              ],
                             ),
                           ),
                         ),
@@ -336,30 +372,34 @@ class _HomePageState extends State<HomePage> {
                                   arguments: BillingPageArgs(
                                       id: -1, orderId: "", editOrders: []));
                             },
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  children: [
-                                    const Icon(
-                                      CustomIcons.arrow_up,
-                                      color: ColorsConst.primaryColor,
-                                      size: 40,
+                            child: Column(
+                              children: [
+                                Card(
+                                  color:
+                                      const Color.fromARGB(255, 101, 255, 106)
+                                          .withOpacity(0.5),
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color:
+                                          Colors.green, // Set the border color
+                                      width: 2.0, // Set the border width
                                     ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "Sale",
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                  ),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Image.asset(
+                                        "assets/images/sale.png",
+                                        height: 100,
+                                        width: 110,
+                                      )),
                                 ),
-                              ),
+                                Text(
+                                  "Sale",
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              ],
                             ),
                           ),
                         ),
@@ -402,13 +442,15 @@ class _HomePageState extends State<HomePage> {
 }
 
 class HomeCard extends StatelessWidget {
-  final Widget icon;
+  final String icon;
   final VoidCallback onTap;
   final String title;
+  final int color;
   const HomeCard({
     Key? key,
     required this.icon,
     required this.title,
+    required this.color,
     required this.onTap,
   }) : super(key: key);
 
@@ -418,27 +460,34 @@ class HomeCard extends StatelessWidget {
       onTap: () {
         onTap();
       },
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 5,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                child: icon,
+      child: Column(
+        children: [
+          Card(
+            color: Color(color),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 5,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    icon,
+                    height: 100,
+                    width: 100,
+                  ),
+                ],
               ),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headline6,
-                textAlign: TextAlign.center,
-              ),
-            ],
+            ),
           ),
-        ),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

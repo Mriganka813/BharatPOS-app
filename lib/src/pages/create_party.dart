@@ -54,6 +54,7 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Create ${widget.args.partyType} party'),
+        centerTitle: true,
       ),
       body: BlocListener<PartyCubit, PartyState>(
         bloc: _partyCubit,
@@ -108,12 +109,15 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
                       },
                     ),
                     const Divider(color: Colors.transparent),
+                    
                     CustomTextField(
+                      maxLines: 8,
                       validator: (e) => null,
                       isLoading: isLoading,
                       initialValue: widget.args.partyAddress,
                       label: 'Address',
-                      hintText: "Optional",
+                   
+                      
                       onSave: (e) {
                         _partyInput.address = e;
                       },

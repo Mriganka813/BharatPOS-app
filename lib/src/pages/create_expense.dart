@@ -64,6 +64,7 @@ class _CreateExpensePageState extends State<CreateExpensePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create Expense"),
+        centerTitle: true,
       ),
       body: Form(
           key: _formKey,

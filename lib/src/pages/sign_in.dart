@@ -10,6 +10,7 @@ import 'package:shopos/src/services/LocalDatabase.dart';
 // import 'package:shopos/src/pages/sign_up.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/widgets/custom_text_field2.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SignInPage extends StatefulWidget {
@@ -75,7 +76,9 @@ context
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         elevation: 0,
       ),
@@ -119,9 +122,9 @@ context
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: 100,),
+                 
                      
-                    Align(
+                /*    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Log in",
@@ -137,20 +140,35 @@ context
                         "Enter your credentials to access your account",
                         style: TextStyle(color: Colors.grey),
                       ),
-                    ),
+                    ),*/
+
+                    Image.asset("assets/images/bharat2.png",height: 200,),
                     const SizedBox(height: 60),
-                    CustomTextField(
-                      label: "Email ID",
+                    CustomTextField2(
+                      controller: TextEditingController(),
+                 
                       hintText: 'name@company.com',
                       onSave: (e) {
                         _email = e!;
                       },
                     ),
                     const Divider(color: Colors.transparent),
-                    Row(
+               
+                    const SizedBox(height: 5),
+                    CustomTextField2(
+                      controller: TextEditingController(),
+                      
+                      hintText: "Password",
+                      onSave: (e) {
+                        _password = e!;
+                      },
+                      obsecureText: true,
+                    ),
+                    const SizedBox(height: 5),
+                         Row(
                       children: [
                         Text(
-                          "Password",
+                          "      ",
                           style:
                               Theme.of(context).textTheme.headline6?.copyWith(
                                     color: Colors.black,
@@ -169,22 +187,15 @@ context
                             "Forgot Password?",
                             style:
                                 Theme.of(context).textTheme.headline6?.copyWith(
-                                      color: ColorsConst.primaryColor,
+                                      color: const Color.fromARGB(255, 1, 2, 3),
                                       fontWeight: FontWeight.normal,
                                     ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 5),
-                    CustomTextField(
-                      onSave: (e) {
-                        _password = e!;
-                      },
-                      obsecureText: true,
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
+                    SizedBox(height: 50,),
+                 /*   Row(
                       children: [
                         Checkbox(
                           value: _rememberMe,
@@ -206,6 +217,7 @@ context
                             });
                           },
                         ),
+                        
                         Text(
                           "Remember me",
                           style:
@@ -215,7 +227,7 @@ context
                                   ),
                         ),
                       ],
-                    ),
+                    ),*/
                     const SizedBox(height: 5),
                     CustomButton(
                       onTap: () {

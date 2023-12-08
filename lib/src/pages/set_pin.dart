@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import 'package:shopos/src/services/set_or_change_pin.dart';
@@ -78,16 +79,23 @@ class _SetPinPageState extends State<SetPinPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      appBar: AppBar(leading: GestureDetector(
+        
+        onTap: (){
+          Navigator.of(context).pop();
+        },
+        child: Icon(Icons.arrow_back)),title: Text("Set /Change Pin"),centerTitle: true,),
       body: SingleChildScrollView(
         child: GestureDetector(
           onTap: () {},
           child: SizedBox(
-            height: height,
+            height: height-100,
             width: width,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                SvgPicture.asset('assets/images/changepin.svg',height: 200,width: 200,),
                 if (widget.isPinSet)
                   Padding(
                     padding:
@@ -115,8 +123,8 @@ class _SetPinPageState extends State<SetPinPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                   child: Text(
-                    'Enter your new pin',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    'Enter Your New Pin',
+                    style: TextStyle( fontSize: 22),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -132,8 +140,8 @@ class _SetPinPageState extends State<SetPinPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
                   child: Text(
-                    'Re-enter your pin',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    'Re-etype Your Pin',
+                    style: TextStyle( fontSize: 22),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -150,16 +158,22 @@ class _SetPinPageState extends State<SetPinPage> {
                   height: 20,
                 ),
                 const SizedBox(
-                  height: 14,
+                  height: 29,
                 ),
                 Center(
                   child: SizedBox(
-                    width: width / 1.1,
+                    width: 300,
                     child: CustomButton(
+                      
+                      
                         title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
                         onTap: () {
                           setPin();
-                        }),
+                        },
+                        
+                        
+                        ),
+                      
                   ),
                 ),
                 const SizedBox(
@@ -187,7 +201,7 @@ class _SetPinPageState extends State<SetPinPage> {
                               .headline6!
                               .copyWith(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                          ),
                         ),
                         onPressed: () async {
                           bool? done = await _showPinDialog();
@@ -229,11 +243,11 @@ class _SetPinPageState extends State<SetPinPage> {
         }
         return null;
       },
-      backgroundColor: Colors.white,
+   
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.box,
         borderRadius: BorderRadius.circular(5),
-        fieldHeight: 50,
+        fieldHeight: 40,
         fieldWidth: 40,
         inactiveColor: Colors.black45,
         inactiveFillColor: Colors.white,

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 // import 'package:shopos/src/models/input/order_input.dart';
 // import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
+import 'package:shopos/src/pages/AboutOptionPage.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
@@ -16,6 +17,7 @@ import 'package:shopos/src/pages/create_product.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
+import 'package:shopos/src/pages/forgotPasswordIInitialPage.dart';
 import 'package:shopos/src/pages/forgot_password.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/online_order_list.dart';
@@ -132,9 +134,9 @@ class _MyAppState extends State<MyApp> {
               case ChangePassword.routeName:
                 return ChangePassword(user: settings.arguments as User?);
               case Forgotpassword.routeName:
-                return Forgotpassword();
+                return ForgotpassWordInitialPage();
               case PrivacyPolicyPage.routeName:
-                return PrivacyPolicyPage();
+                return AboutOptionPage();
               case TermsAndConditionsPage.routeName:
                 return TermsAndConditionsPage();
               case OnlineOrderList.routeName:

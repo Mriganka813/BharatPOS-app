@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
+import 'package:shopos/src/widgets/custom_text_field2.dart';
 
 class ChangePassword extends StatefulWidget {
   static const String routeName = 'changepassword';
@@ -27,26 +29,32 @@ class _ChangePasswordState extends State<ChangePassword> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Change Password"),
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(17),
         child: SingleChildScrollView(
           reverse: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+
+              SvgPicture.asset("assets/images/Resetpassword.svg",height: 250,),
               widget.user == null
-                  ? CustomTextField(
+                  ? CustomTextField2(
+                    controller: TextEditingController(),
                       label: "Email",
                     )
-                  : CustomTextField(
+                  : CustomTextField2(
+                     controller: TextEditingController(),
                       label: "Email",
                       readonly: true,
                       initialValue: widget.user!.email,
                     ),
               Divider(color: Colors.transparent),
-              CustomTextField(
+              CustomTextField2(
+                 controller: TextEditingController(),
                 label: "Current Password",
                 obsecureText: true,
                 onChanged: (e) {
@@ -56,7 +64,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                 },
               ),
               Divider(color: Colors.transparent),
-              CustomTextField(
+              CustomTextField2(
+                    controller: TextEditingController(),
                 label: "New Password",
                 obsecureText: true,
                 onChanged: (e) {
@@ -66,7 +75,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                 },
               ),
               Divider(color: Colors.transparent),
-              CustomTextField(
+              CustomTextField2(
+                controller: TextEditingController(),
                 label: "Confirm New Password",
                 obsecureText: true,
                 onChanged: (e) {
@@ -82,7 +92,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 color: Colors.transparent,
               ),
               CustomButton(
-                  title: "Change",
+                  title: "Change Password",
                   onTap: () async {
                     if (newPassword.length < 8) {
                       locator<GlobalServices>().errorSnackBar(

@@ -79,6 +79,7 @@ class _ReportsPageState extends State<ReportsPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Reports'),
+        centerTitle: true,
       ),
       body: BlocListener<ReportCubit, ReportState>(
         bloc: _reportCubit,

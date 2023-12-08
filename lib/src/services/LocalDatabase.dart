@@ -412,7 +412,7 @@ class DatabaseHelper {
     print('Database cleared.');
   }
 
- Future<bool>  checkIfNewColumnsAreAdded() async {
+ /*Future<bool>  checkIfNewColumnsAreAdded() async {
     final Database db = await database;
 
     // Run a query to get the table information
@@ -450,5 +450,5 @@ class DatabaseHelper {
 
     // Return the number of columns
  
-  }
+  }*/
 }

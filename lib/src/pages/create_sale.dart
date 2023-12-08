@@ -153,6 +153,7 @@ class _CreateSaleState extends State<CreateSale> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sales'),
+        centerTitle: true,
       ),
       body: isLoading
           ? Center(
@@ -461,25 +462,30 @@ class _CreateSaleState extends State<CreateSale> {
                       ),
                     ],
                   ),
-                  const Divider(color: Colors.transparent),
+                  const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
                   HorizontalSlidableButton(
+                    
                     width: double.maxFinite,
-                    buttonWidth: 100.0,
+                    buttonWidth: 50,
+                    
                     color: Colors.green,
                     isRestart: true,
-                    buttonColor: Colors.white24,
+                    buttonColor: Colors.green,
                     dismissible: false,
+                    
                     label: const Center(
-                      child: Icon(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
                         Icons.arrow_forward_ios_rounded,
-                        color: Colors.white,
-                      ),
+                        color: Colors.black,
+                      ),)
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Swipe to continue",
+                          "Swipe to Purchase",
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -488,6 +494,7 @@ class _CreateSaleState extends State<CreateSale> {
                       ],
                     ),
                     height: 50,
+                    
                     onChanged: (position) {
                       if (position == SlidableButtonPosition.end) {
                         // if (_orderItems.isEmpty) {

@@ -13,6 +13,7 @@ class ProductCardHorizontal extends StatefulWidget {
   final VoidCallback? addQuantity;
   final int selectQuantity;
   final bool? isSelecting;
+  int color;
   OrderType type;
   Function onAdd;
   Function onRemove;
@@ -32,7 +33,7 @@ class ProductCardHorizontal extends StatefulWidget {
     this.selectQuantity = 0,
     this.isAvailable = true,
     this.noOfQuatityadded = 0,
-
+    required this.color,
     required this.onAdd,
     required this.onRemove,
     required this.onTap,
@@ -64,15 +65,17 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
         if (tapflag) if (itemQuantity == 1) itemQuantity = 0;
 
         if (!tapflag) if (itemQuantity == 0) {
-          if (widget.product.quantity! >= 99000&&widget.type==OrderType.purchase) {
-               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                       "Total quantity can't exceed 99999",
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ),);
+          if (widget.product.quantity! >= 99000 &&
+              widget.type == OrderType.purchase) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.red,
+                content: Text(
+                  "Total quantity can't exceed 99999",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            );
             tapflag = !tapflag;
             itemQuantity = 1;
             widget.onTap(itemQuantity);
@@ -87,9 +90,14 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.31,
         child: Card(
+          color: Color(widget.color).withOpacity(1),
           elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
+            side: BorderSide(
+              color: Color(widget.color), // Set the border color
+              width: 5.0, // Set the border width
+            ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -225,34 +233,37 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               onPressed: () {
                                 bool flag = true;
                                 bool flag2 = true;
-                                if (widget.product.quantity! >= 99000&&widget.type==OrderType.purchase) {
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                       "Total quantity can't exceed 99999",
-                                      style: const TextStyle(color: Colors.white),
+                                if (widget.product.quantity! >= 99000 &&
+                                    widget.type == OrderType.purchase) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        "Total quantity can't exceed 99999",
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
                                     ),
-                                  ),);
-                                 /* _showError(
+                                  );
+                                  /* _showError(
                                      "Total quantity can't exceed 99999");*/
 
                                   flag = false;
                                 }
 
-                                if (itemQuantity >= 999&&widget.type==OrderType.purchase) {
-
-                                  
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                      "Total quantity can't exceed 999",
-                                      style: const TextStyle(color: Colors.white),
+                                if (itemQuantity >= 999 &&
+                                    widget.type == OrderType.purchase) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text(
+                                        "Total quantity can't exceed 999",
+                                        style: const TextStyle(
+                                            color: Colors.white),
+                                      ),
                                     ),
-                                  ),);
-                                 /* _showError(
+                                  );
+                                  /* _showError(
                                       "Total quantity can't exceed 999");*/
                                   flag2 = false;
                                 }
@@ -411,7 +422,7 @@ class ProductCardPurchase extends StatelessWidget {
       required this.onAdd,
       required this.productQuantity,
       required this.onDelete,
-      this.discount="",
+      this.discount = "",
       this.type})
       : super(key: key);
 
@@ -545,17 +556,18 @@ class ProductCardPurchase extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 10),
-                     Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('TaxableValue'),
                         type == "sale"
-                            ? Text('₹ ${(baseSellingPrice+ double.parse(discount)).toStringAsFixed(2)}')
+                            ? Text(
+                                '₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}')
                             : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
-                            const SizedBox(height: 5),
-                       Row(
+                    const SizedBox(height: 5),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Discount '),
@@ -584,7 +596,7 @@ class ProductCardPurchase extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 5),
-                 
+
                     Divider(
                       color: Colors.black54,
                     ),

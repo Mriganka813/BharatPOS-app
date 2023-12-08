@@ -56,6 +56,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   late final ReportCubit _reportCubit;
   final TextEditingController pinController = TextEditingController();
 
+  List<int> CardColors=[0XFF53B175,0XFF00AAFF,0XFFD7D7D7,0XFFFF8600,0XFFFF2B00];
+  int ColorIndex=0;
+
   @override
   void initState() {
     super.initState();
@@ -167,6 +170,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                 fontSize: height / 45,
                 fontFamily: 'GilroyBold'),
           ),
+          centerTitle: true,
         ),
         floatingActionButton: Container(
           margin: const EdgeInsets.only(
@@ -209,7 +213,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                   await Navigator.pushNamed(context, '/create-product');
                   _productCubit.getProducts(_currentPage, _limit);
                 },
-                backgroundColor: ColorsConst.primaryColor,
+                backgroundColor: Colors.green,
                 child: const Icon(
                   Icons.add,
                   color: Colors.white,
@@ -246,6 +250,10 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                               : prodList.length,
                           controller: scrollController,
                           itemBuilder: (context, index) {
+                            if(ColorIndex==5)
+                            {
+                                ColorIndex=0;
+                            }
                             if (index < prodList.length) {
                               return Column(
                                 children: [
@@ -255,6 +263,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
+                                        color:0XFFFFFFFF,
                                         type: widget.args!.orderType,
                                         noOfQuatityadded:
                                             countNoOfQuatityInArray(

@@ -47,7 +47,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   late final ReportCubit _reportCubit;
   final TextEditingController pinController = TextEditingController();
 
-  User ?user;
+  User? user;
   @override
   void initState() {
     super.initState();
@@ -57,17 +57,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     _reportCubit = ReportCubit();
   }
 
-  void fetchdata()async {
+  void fetchdata() async {
     widget.args.tabbarNo == 0
         ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId)
         : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
 
-
-        final response = await UserService.me();
-   user = User.fromMap(response.data['user']);
-   setState(() {
-     
-   });
+    final response = await UserService.me();
+    user = User.fromMap(response.data['user']);
+    setState(() {});
   }
 
   @override
@@ -99,47 +96,64 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
   TextEditingController value = TextEditingController();
 
-  String balanceToShareOnWhatsapp="";
-  bool whatsappButtonPresssed=false;
+  String balanceToShareOnWhatsapp = "";
+  bool whatsappButtonPresssed = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(widget.args.partName),
-            Text(
-              widget.args.partyContactNo,
-              style: Theme.of(context).textTheme.bodyMedium,
+            Image.asset(
+              "assets/images/teamwork.png",
+              height: 30,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.args.partName),
+                Text(
+                  widget.args.partyContactNo,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
           ],
         ),
-        actions: [GestureDetector(
-          onTap: (){
-            whatsappButtonPresssed=true;
-            setState(() {
-              
-            });
-            Future.delayed(Duration(seconds: 3),(){
-               _launchUrl(user!.businessName!, "+91"+widget.args.partyContactNo);
-            });
-           
-           },
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Image.asset("assets/images/whats.png",height: 30,width: 30,),
-          ))],
+        centerTitle: true,
+        actions: [
+          GestureDetector(
+              onTap: () {
+                whatsappButtonPresssed = true;
+                setState(() {});
+                Future.delayed(Duration(seconds: 3), () {
+                  _launchUrl(
+                      user!.businessName!, "+91" + widget.args.partyContactNo);
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Image.asset(
+                  "assets/images/whats.png",
+                  height: 30,
+                  width: 30,
+                ),
+              ))
+        ],
       ),
       body: Stack(
         children: [
-          if(balanceToShareOnWhatsapp==""&&whatsappButtonPresssed==true)
-          Center(
-            child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
-                    ),
-          ),
+          if (balanceToShareOnWhatsapp == "" && whatsappButtonPresssed == true)
+            Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.only(left: 12, right: 12),
             child: BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
@@ -161,7 +175,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         children: [
                           Center(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 15, bottom: 15),
+                              padding:
+                                  const EdgeInsets.only(top: 15, bottom: 15),
                               child: currentdate(order.createdAt!),
                             ),
                           ),
@@ -185,15 +200,18 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                 child: Card(
                                   clipBehavior: Clip.hardEdge,
                                   shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        color: Colors.black, width: 0.5),
+                                    side: BorderSide(
+                                        color: order.modeOfPayment == "Settle"
+                                            ? Colors.green
+                                            : Colors.red,
+                                        width: 0.5),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   elevation: 0,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      "${order.total}",
+                                      " ₹ ${order.total}",
                                       style: TextStyle(
                                         color: order.modeOfPayment == "Settle"
                                             ? Colors.green
@@ -214,7 +232,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 }
                 return const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(ColorsConst.primaryColor),
+                    valueColor:
+                        AlwaysStoppedAnimation(ColorsConst.primaryColor),
                   ),
                 );
               },
@@ -240,39 +259,41 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 BlocBuilder<SpecificPartyCubit, SpecificPartyState>(
                   bloc: _specificpartyCubit,
                   builder: (context, state) {
-
                     double balance = 0;
                     double negbalance = 0;
-                  
+
                     if (state is SpecificPartyListRender) {
-             
                       balance = state.partyDetails.balance ?? 0;
                       negbalance = balance * -1;
-                     
-                      Future.delayed(Duration(seconds: 3),(){
-                          balanceToShareOnWhatsapp=balance.toString();
-                          setState(() {
-                            
-                          });
+
+                      Future.delayed(Duration(seconds: 3), () {
+                        balanceToShareOnWhatsapp = balance.toString();
+                        setState(() {});
                       });
                     }
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.only(left: 20),
                       child: balance >= 0
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 const Text(
                                   "Balance Due",
-                                  textScaleFactor: 1.7,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                SizedBox(
+                                  width: 10,
                                 ),
                                 Text(
-                                  "$balance",
-                                  textScaleFactor: 1.7,
+                                  "₹ $balance",
                                   style: const TextStyle(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
                                 ),
                               ],
                             )
@@ -296,22 +317,32 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     );
                   },
                 ),
+                Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(
-                      height: 50,
-                      width: 140,
-                      child: ElevatedButton(
+                    Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          side: BorderSide(color: Colors.green, width: 1)),
+                      color: Color.fromRGBO(148, 255, 194, 100),
+                      child: TextButton(
                         onPressed: () {
                           modelOpen(context, "Settle");
                         },
-                        child: const Text(
-                          "Received",
-                          style: TextStyle(
-                            color: Color.fromRGBO(32, 150, 82, 100),
-                          ),
-                          textScaleFactor: 1.7,
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/recieve.png",
+                              height: 22,
+                            ),
+                            const Text(
+                              "Received",
+                              style: TextStyle(
+                                  color: Color.fromRGBO(32, 150, 82, 100),
+                                  fontSize: 19),
+                            ),
+                          ],
                         ),
                         style: ButtonStyle(
                           shape:
@@ -322,22 +353,38 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             ),
                           ),
                           backgroundColor: MaterialStateProperty.all(
-                            const Color.fromRGBO(148, 255, 194, 100),
+                            const Color.fromRGBO(255, 0, 0, 0),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 50,
-                      width: 140,
-                      child: ElevatedButton(
+                    Card(
+                      color: Color.fromRGBO(255, 209, 209, 10),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          side: BorderSide(color: Colors.red, width: 1)),
+                      child: TextButton(
                         onPressed: () {
                           modelOpen(context, "Credit");
                         },
-                        child: const Text(
-                          "Given",
-                          style: TextStyle(color: Colors.red),
-                          textScaleFactor: 1.7,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Image.asset(
+                              "assets/images/given.png",
+                              height: 22,
+                            ),
+                            const Text(
+                              "Given",
+                              style: TextStyle(color: Colors.red, fontSize: 19),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                          ],
                         ),
                         style: ButtonStyle(
                           shape:
@@ -348,7 +395,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             ),
                           ),
                           backgroundColor: MaterialStateProperty.all(
-                            const Color.fromRGBO(255, 209, 209, 10),
+                            const Color.fromRGBO(255, 0, 0, 0),
                           ),
                         ),
                       ),
@@ -363,7 +410,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     );
   }
 
- /* Future<Widget> ShowShareDialog(String name,String number)async
+  /* Future<Widget> ShowShareDialog(String name,String number)async
   {
     TextEditingController controller =TextEditingController();
       return await  showDialog(
@@ -413,21 +460,18 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
   */
 
+  Future<void> _launchUrl(String name, String mobile) async {
+    String Message =
+        "Dear customer, your credit balance with ${name} is rupees $balanceToShareOnWhatsapp. Please pay the amount as soon as possible. Thank you for your business.%0A%0A*Powered by BharatPOS*";
 
-Future<void> _launchUrl(String name,String mobile) async {
+    final Uri _url = Uri.parse('https://wa.me/${mobile}?text=$Message');
 
-  String Message="Dear customer, your credit balance with ${name} is rupees $balanceToShareOnWhatsapp. Please pay the amount as soon as possible. Thank you for your business.%0A%0A*Powered by BharatPOS*";
-  
-
-  final Uri _url = Uri.parse(
-      'https://wa.me/${mobile}?text=$Message'); 
-
-  if (await canLaunchUrl(_url)) {
-    await launchUrl(_url, mode: LaunchMode.externalApplication);
-  } else {
-    throw Exception('Could not launch $_url');
+    if (await canLaunchUrl(_url)) {
+      await launchUrl(_url, mode: LaunchMode.externalApplication);
+    } else {
+      throw Exception('Could not launch $_url');
+    }
   }
-}
 
 // add settle and credit
   modelOpen(context, String modeofPayment) {
@@ -450,7 +494,7 @@ Future<void> _launchUrl(String name,String mobile) async {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text("Add Amount",
+                    const Text("Enter Amount",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20)),
                     Padding(
@@ -474,26 +518,30 @@ Future<void> _launchUrl(String name,String mobile) async {
                         ),
                       ),
                     ),
-                    CustomButton(
-                      onTap: () {
-                        setState(() {
-                          _specificPartyInput.modeOfPayment = modeofPayment;
-                          _specificPartyInput.total = double.parse(value.text);
-                          _specificPartyInput.id = widget.args.partyId;
-                          _specificPartyInput.createdAt = DateTime.now();
+                    SizedBox(
+                      width: 250,
+                      child: CustomButton(
+                        onTap: () {
+                          setState(() {
+                            _specificPartyInput.modeOfPayment = modeofPayment;
+                            _specificPartyInput.total =
+                                double.parse(value.text);
+                            _specificPartyInput.id = widget.args.partyId;
+                            _specificPartyInput.createdAt = DateTime.now();
 
-                          value.clear();
-                        });
-                        if (widget.args.tabbarNo == 0) {
-                          _specificpartyCubit
-                              .updateCreditHistory(_specificPartyInput);
-                        } else {
-                          _specificpartyCubit
-                              .updatepurchaseHistory(_specificPartyInput);
-                        }
-                        Navigator.pop(context);
-                      },
-                      title: "Confirm",
+                            value.clear();
+                          });
+                          if (widget.args.tabbarNo == 0) {
+                            _specificpartyCubit
+                                .updateCreditHistory(_specificPartyInput);
+                          } else {
+                            _specificpartyCubit
+                                .updatepurchaseHistory(_specificPartyInput);
+                          }
+                          Navigator.pop(context);
+                        },
+                        title: "    Confirm    ",
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -588,7 +636,7 @@ Future<void> _launchUrl(String name,String mobile) async {
               onTap: () async {
                 var result = true;
 
-                if (await _pinService.pinStatus()==true) {
+                if (await _pinService.pinStatus() == true) {
                   result = await _showPinDialog() as bool;
                 }
                 if (result!) {
@@ -605,7 +653,7 @@ Future<void> _launchUrl(String name,String mobile) async {
               onTap: () async {
                 var result = true;
 
-                if (await _pinService.pinStatus()==true) {
+                if (await _pinService.pinStatus() == true) {
                   result = await _showPinDialog() as bool;
                 }
                 if (result!) {
@@ -628,9 +676,30 @@ Future<void> _launchUrl(String name,String mobile) async {
   currentdate(String dates) {
     DateTime d = DateTime.parse(dates);
     var datereq = DateFormat.MMMM().format(d);
+
+    final String _inputTime = '${d.hour}:${d.minute}';
+    final DateFormat _inputFormat = DateFormat('HH:mm');
+    final DateFormat _outputFormat = DateFormat('h:mm a');
+
+    DateTime inputDateTime = _inputFormat.parse(_inputTime);
+    String outputTime = _outputFormat.format(inputDateTime);
+
+    String pmAmFlag = "AM";
+
+    if (d.hour >= 13) {
+      pmAmFlag = "PM";
+    } else {
+      pmAmFlag = "AM";
+    }
     return Text(
-      d.day.toString() + " " + datereq + ", " + d.year.toString(),
-      style: const TextStyle(color: Colors.black45),
+      d.day.toString() +
+          "." +
+          d.month.toString() +
+          "." +
+          d.year.toString() +
+          " | " +
+   outputTime,
+      style: const TextStyle(color: Colors.black45,fontSize: 13),
     );
   }
 
@@ -687,6 +756,4 @@ Future<void> _launchUrl(String name,String mobile) async {
               ],
             ));
   }
-
 }
-

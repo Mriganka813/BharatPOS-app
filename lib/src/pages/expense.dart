@@ -43,6 +43,7 @@ class _ExpensePageState extends State<ExpensePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Expense"),
+        centerTitle: true,
       ),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(
@@ -54,7 +55,7 @@ class _ExpensePageState extends State<ExpensePage> {
             await Navigator.pushNamed(context, CreateExpensePage.routeName);
             _expenseCubit.getExpense();
           },
-          backgroundColor: ColorsConst.primaryColor,
+          backgroundColor: Colors.green,
           child: const Icon(
             Icons.add,
             color: Colors.white,

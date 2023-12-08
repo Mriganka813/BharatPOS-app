@@ -297,6 +297,7 @@ class _CreateProductState extends State<CreateProduct> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Create Product'),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
             padding: const EdgeInsets.all(10.0),

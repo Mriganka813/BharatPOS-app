@@ -7,13 +7,14 @@ class TermsAndConditionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Privacy Policy'),
+        title: Text('Terms And Conditions'),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(20),
           child: Text(
-            """Terms and Conditions:
+            """
 
 These Terms and Conditions ("Terms") govern your use of the CUBE mobile application ("the App") provided by Magicstep Solutions Private Limited ("we," "us," or "our"). By using the App, you agree to comply with these Terms. If you do not agree with any part of these Terms, please refrain from using the App.
 
@@ -47,11 +48,7 @@ These Terms are governed by and construed in accordance with the laws of India. 
 If you have any questions or concerns about these Terms and Conditions, please contact us at info@getcube.shop.
 
 """,
-            style: Theme.of(context).textTheme.headline3?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 20.0,
-                ),
+            style: TextStyle(color: Colors.grey)
           ),
         ),
       ),

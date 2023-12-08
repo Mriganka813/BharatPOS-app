@@ -67,6 +67,8 @@ dependencies:
   sqflite:
   package_info_plus:
   path:
+  otp_text_field:
+  widget_toolkit_otp:
  
 
 dev_dependencies:
