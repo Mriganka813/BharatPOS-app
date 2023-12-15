@@ -8,6 +8,7 @@ import 'package:shopos/src/blocs/report/report_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/user.dart';
@@ -74,14 +75,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     super.dispose();
   }
 
-  void sort(List<Order> o) {
+  void sort(List<OrderInput> o) {
     for (int i = 0; i < o.length; i++) {
       for (int j = i + 1; j < o.length; j++) {
-        String dateString = o[i].createdAt!;
+        String dateString = o[i].createdAt.toString();
 
         DateTime dateTimei = DateTime.parse(dateString);
 
-        String dateStringj = o[j].createdAt!;
+        String dateStringj = o[j].createdAt.toString();
 
         DateTime dateTimej = DateTime.parse(dateStringj);
 
@@ -177,7 +178,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.only(top: 15, bottom: 15),
-                              child: currentdate(order.createdAt!),
+                              child: currentdate(order.createdAt.toString()),
                             ),
                           ),
                           Align(
@@ -191,9 +192,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
                                   await openEditModal(
-                                      order.id!,
-                                      order.total!,
-                                      order.createdAt!,
+                                      order.id.toString(),
+                                      /*order.total!*/100,
+                                      order.createdAt.toString(),
                                       order.modeOfPayment!,
                                       context);
                                 },
@@ -211,7 +212,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      " ₹ ${order.total}",
+                                      " ₹ ${100}",
                                       style: TextStyle(
                                         color: order.modeOfPayment == "Settle"
                                             ? Colors.green
