@@ -62,6 +62,8 @@ class ProductCubit extends Cubit<ProductState> {
     }
   }
 
+  
+
   ///
   void createProduct(ProductFormInput product) async {
     emit(ProductLoading());

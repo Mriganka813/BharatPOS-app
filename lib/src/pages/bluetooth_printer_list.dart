@@ -403,7 +403,10 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       bytes += generator.text('${addressRows()!.elementAt(i)}',
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
-      if (i == 0 && args.user.GstIN.toString() != "null")
+  
+
+      if (i == 0 &&
+          args.user.GstIN.toString() != "null" )
         bytes += generator.text('GSTIN ${args.user.GstIN}',
             styles:
                 PosStyles(height: PosTextSize.size1, align: PosAlign.center));
@@ -539,7 +542,6 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                   padding: const EdgeInsets.all(20),
                   child: CustomTextField2(
                     hintText: "Enter Table No (optional)",
-                   
                     controller: tableNoController,
                     value: "${widget.args.bluetoothArgs!.orderInput.tableNo}",
                     validator: (e) => null,

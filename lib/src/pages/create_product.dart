@@ -481,34 +481,38 @@ class _CreateProductState extends State<CreateProduct> {
                                   value: 1,
                                   groupValue: includedExcludedRadioButton,
                                   onChanged: (val) {
-                                    _formInput.GSTincluded = true;
-                                    sellingPriceController.text =
-                                        baseSellingPriceController.text;
-                                    _formInput.sellingPrice =
-                                        baseSellingPriceController.text;
+                                    if (includedExcludedRadioButton == 2) {
+                                      _formInput.GSTincluded = true;
+                                      sellingPriceController.text =
+                                          baseSellingPriceController.text;
+                                      _formInput.sellingPrice =
+                                          baseSellingPriceController.text;
 
-                                    baseSellingPriceController.text = "";
-                                    setState(() {
-                                      includedExcludedRadioButton = 1;
-                                    });
-                                    calculate();
+                                      baseSellingPriceController.text = "";
+                                      setState(() {
+                                        includedExcludedRadioButton = 1;
+                                      });
+                                      calculate();
+                                    }
                                   },
                                   child: Text("Included")),
                               RadioMenuButton(
                                   value: 2,
                                   groupValue: includedExcludedRadioButton,
                                   onChanged: (val) {
-                                    _formInput.GSTincluded = false;
-                                    baseSellingPriceController.text =
-                                        sellingPriceController.text;
-                                    _formInput.baseSellingPriceGst =
-                                        sellingPriceController.text;
-                                    //  sellingPriceController.text="";
+                                    if (includedExcludedRadioButton == 1) {
+                                      _formInput.GSTincluded = false;
+                                      baseSellingPriceController.text =
+                                          sellingPriceController.text;
+                                      _formInput.baseSellingPriceGst =
+                                          sellingPriceController.text;
+                                      //  sellingPriceController.text="";
 
-                                    setState(() {
-                                      includedExcludedRadioButton = 2;
-                                    });
-                                    calculate();
+                                      setState(() {
+                                        includedExcludedRadioButton = 2;
+                                      });
+                                      calculate();
+                                    }
                                   },
                                   child: Text("Excluded"))
                             ],

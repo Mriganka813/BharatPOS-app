@@ -63,6 +63,8 @@ String invoiceTemplatewithGST({
   }
 
   String usergstin() {
+
+   
     if (order.gst != null && order.gst!.isNotEmpty) {
       return '<div><strong>GSTIN: </strong>${order.gst!.toUpperCase()}</div>';
     }
@@ -70,7 +72,17 @@ String invoiceTemplatewithGST({
   }
 
   String shopkeepergstin() {
-    if (user.GstIN != null && user.GstIN!.isNotEmpty) {
+
+
+         bool atleastOneItemhaveGST = false;
+      print("Value OF GST");
+      order.orderItems!.forEach((element) {
+        print(element.product!.gstRate);
+        if (element.product!.gstRate != "null") {
+          atleastOneItemhaveGST = true;
+        }
+      });
+    if (user.GstIN != null && user.GstIN!.isNotEmpty&&atleastOneItemhaveGST) {
       return '<div> GSTIN ${user.GstIN!.toUpperCase()} </div>';
     }
     return '';

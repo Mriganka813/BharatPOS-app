@@ -16,6 +16,9 @@ class ProductService {
     }
     print("input");
     print(input.toMap());
+    print("FormInput:");
+    print(inputMap.fields[0]);
+
     print(input.available);
     final response =
         await ApiV1Service.postRequest('/inventory/new', formData: inputMap);

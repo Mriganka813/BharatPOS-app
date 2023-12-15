@@ -7,11 +7,8 @@ import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/provider/billing_order.dart';
+import 'package:shopos/src/services/user.dart';
 import 'package:sqflite/sqflite.dart';
-
-
-
-
 
 class DatabaseHelper {
   static Database? _database;
@@ -62,6 +59,39 @@ class DatabaseHelper {
           )
         ''');
 
+
+          db.execute('''
+          CREATE TABLE  SubProduct(
+         
+            
+          
+            subId Text,
+            name TEXT,
+            sellingPrice  REAL,
+            barCode TEXT,
+            quantity INTEGER,
+            user TEXT,
+            image TEXT,
+            _id  TEXT,
+            createdAt TEXT,
+            __v INTEGER,
+            purchasePrice INTEGER,
+            GSTRate TEXT,
+            saleSGST TEXT,
+            saleCGST TEXT,
+            saleIGST TEXT,
+            baseSellingPrice TEXT,
+            purchaseSGST TEXT,
+            purchaseCGST TEXT,
+            purchaseIGST TEXT,
+            basePurchasePrice TEXT,
+            sellerName TEXT,
+            batchNumber TEXT,
+            expiryDate TEXT,
+            hsn TEXT
+          )
+        ''');
+
         db.execute('''
           CREATE TABLE OrderItemInput(
             id INTEGER PRIMARY KEY,
@@ -82,7 +112,7 @@ class DatabaseHelper {
         db.execute('''
           CREATE TABLE OrderInput(
             id INTEGER PRIMARY KEY,
-            
+            userId Text,
              
              modeOfPayment Text,
              party Text,
@@ -110,6 +140,9 @@ class DatabaseHelper {
 
   Future<int> InsertOrderInput(OrderInput input, Billing provider,
       List<OrderItemInput> newAddeditems) async {
+    final response = await UserService.me();
+    final user = User.fromMap(response.data['user']);
+
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
 
@@ -129,6 +162,7 @@ class DatabaseHelper {
       tempMap.remove(
           "id"); // It is removed becasue, when inserting the item it should autoincrement the id, but we give id in the map, it will ovverrite and id  will be -1
     }
+    tempMap["userId"] = user.id;
 
     //to change the actual null to string null to remove problems related to null
     tempMap.forEach((key, value) {
@@ -214,7 +248,7 @@ class DatabaseHelper {
       var map = curr[i].toSaleMap();
       map['product'] = curr[i].product!.id;
       map['OIID'] = id;
-       map.remove("originalbaseSellingPrice");
+      map.remove("originalbaseSellingPrice");
 
       await db.update(
         'OrderItemInput',
@@ -241,13 +275,15 @@ class DatabaseHelper {
   }
 
   Future<List<OrderInput>> getOrderItems() async {
+       final response = await UserService.me();
+    final user = User.fromMap(response.data['user']);
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
 
     final List<Map<String, dynamic>> OrderItemInputData =
         await db.query('OrderItemInput');
     final List<Map<String, dynamic>> OrderInputData =
-        await db.query('OrderInput');
+        await db.query('OrderInput',  where: 'userId=?', whereArgs: [user.id]);
 
     List<OrderInput> list = [];
 
@@ -412,7 +448,7 @@ class DatabaseHelper {
     print('Database cleared.');
   }
 
- /*Future<bool>  checkIfNewColumnsAreAdded() async {
+  /*Future<bool>  checkIfNewColumnsAreAdded() async {
     final Database db = await database;
 
     // Run a query to get the table information

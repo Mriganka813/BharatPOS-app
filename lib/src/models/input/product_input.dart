@@ -81,6 +81,16 @@ class  ProductFormInput {
         "available": available ?? true,
         if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded, 
         if (batchNumber != null) "batchNumber": batchNumber,
+        "subProducts":[{
+         "product":"653a6406e881cfb206bee15f",
+         "quantity":0.5
+        },
+        {
+         "product":"653a6a2ce881cfb206bf06ca",
+         "quantity":2
+        }
+        ],
+        "unit":"hhhhh"
       };
   }
 

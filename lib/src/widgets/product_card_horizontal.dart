@@ -170,7 +170,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('GST @${widget.product.gstRate}%'),
-                                Text('₹ ${widget.product.saleigst}'),
+                                Text('₹ ${widget.product.saleigst=="null"?"0":double.parse(widget.product.saleigst!).toStringAsFixed(2)}'),
                               ],
                             ),
                           ],
@@ -607,11 +607,11 @@ class ProductCardPurchase extends StatelessWidget {
                         Text('Item Total'),
                         type == "sale"
                             ? Text(
-                                '₹ ${SellingPrice}',
+                                '₹ ${SellingPrice.toStringAsFixed(2)}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
                             : Text(
-                                '₹ ${PurchasePrice}',
+                                '₹ ${PurchasePrice.toStringAsFixed(2)}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               )
                       ],

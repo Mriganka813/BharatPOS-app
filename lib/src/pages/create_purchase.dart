@@ -47,6 +47,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Purchase'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -165,18 +166,23 @@ class _CreatePurchaseState extends State<CreatePurchase> {
             ),
             const Divider(color: Colors.transparent),
             HorizontalSlidableButton(
-              width: double.maxFinite,
-              buttonWidth: 100.0,
-              color: Colors.green,
-              isRestart: true,
-              buttonColor: Colors.white24,
-              dismissible: false,
-              label: const Center(
-                child: Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white,
-                ),
-              ),
+             
+                    width: double.maxFinite,
+                    buttonWidth: 50,
+                    
+                    color: Colors.green,
+                    isRestart: true,
+                    buttonColor: Colors.green,
+                    dismissible: false,
+                    
+                    label: const Center(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.black,
+                      ),)
+                    ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

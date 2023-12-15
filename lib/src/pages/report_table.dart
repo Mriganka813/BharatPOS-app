@@ -9,6 +9,7 @@ import 'package:pdf/pdf.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shopos/src/models/expense.dart';
+import 'package:shopos/src/models/input/order_input.dart';
 
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/order_item.dart';
@@ -25,7 +26,7 @@ import 'package:shopos/src/services/party.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 class tableArg {
-  final List<Order>? orders;
+  final List<OrderInput>? orders;
   final List<Expense>? expenses;
   final List<Product>? products;
   final String type;
@@ -59,6 +60,10 @@ class _ReportTableState extends State<ReportTable> {
   List<String> moplist = [];
   List<String> totallist = [];
   List<String> mrplist = [];
+  List<String> hsn = [];
+  List<String> discountAmt = [];
+  List<String> orginalbasePurchasePrice = [];
+
   String taxfileType = "initailized";
 
   String partynametoFilter = "";
@@ -86,6 +91,9 @@ class _ReportTableState extends State<ReportTable> {
       igstlist.add("");
       totalsplist.add(total());
       moplist.add("");
+      hsn.add("");
+      discountAmt.add("");
+      orginalbasePurchasePrice.add("");
     }
   }
 
@@ -101,6 +109,8 @@ class _ReportTableState extends State<ReportTable> {
       'CGST/Unit',
       'SGST/Unit',
       'GST/Unit',
+      'Hsn',
+      "Discount Amount",
       'MRP/Unit',
       'Total',
     ];
@@ -198,6 +208,7 @@ class _ReportTableState extends State<ReportTable> {
             DataCell(Text(moplist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(mrplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text("hsssssssn", style: TextStyle(fontSize: 6))),
             DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
           ]));
           if (i != datelist.length - 1) total += int.parse(totalsplist[i]);
@@ -218,6 +229,7 @@ class _ReportTableState extends State<ReportTable> {
               style: TextStyle(fontSize: 6))),
           DataCell(Text(mrplist[datelist.length - 1],
               style: TextStyle(fontSize: 6))),
+          DataCell(Text("hsssssssn", style: TextStyle(fontSize: 6))),
           DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
         ]));
 
@@ -225,13 +237,13 @@ class _ReportTableState extends State<ReportTable> {
     } else {
       List<DataRow> list = [];
 
-      var total = 0;
-      var basesplitTotal = 0;
-      var gstrateTotal = 0;
-      var cgstTotal = 0;
-      var sgstTotal = 0;
-      var igstTotal = 0;
-      var mrpTotal = 0;
+      double total = 0;
+      double basesplitTotal = 0;
+      double gstrateTotal = 0;
+      double cgstTotal = 0;
+      double sgstTotal = 0;
+      double igstTotal = 0;
+      double mrpTotal = 0;
 
       for (int i = 0; i < datelist.length; i++) {
         if (partynamelist[i] == partynametoFilter || partynametoFilter == "") {
@@ -252,37 +264,37 @@ class _ReportTableState extends State<ReportTable> {
 
           if (i != datelist.length - 1 &&
               totalsplist[i].length != 0 &&
-              totalsplist[i] != "null") total += int.parse(totalsplist[i]);
+              totalsplist[i] != "null") total += double.parse(totalsplist[i]);
 
           if (i != datelist.length - 1 &&
               basesplist[i].length != 0 &&
               basesplist[i] != "N/A" &&
               basesplist[i] != "null")
-            basesplitTotal += int.parse(basesplist[i].split(".")[0]);
+            basesplitTotal += double.parse(basesplist[i].split(".")[0]);
           if (i != datelist.length - 1 &&
               gstratelist[i].length != 0 &&
               gstratelist[i] != "N/A%" &&
               gstratelist[i] != "null%")
-            gstrateTotal += int.parse(gstratelist[i].split("%")[0]);
+            gstrateTotal += double.parse(gstratelist[i].split("%")[0]);
           if (i != datelist.length - 1 &&
               cgstlist[i].length != 0 &&
               cgstlist[i] != "N/A" &&
               cgstlist[i] != "null")
-            cgstTotal += int.parse(cgstlist[i].split(".")[0]);
+            cgstTotal += double.parse(cgstlist[i].split(".")[0]);
           if (i != datelist.length - 1 &&
               sgstlist[i].length != 0 &&
               sgstlist[i] != "N/A" &&
               sgstlist[i] != "null")
-            sgstTotal += int.parse(sgstlist[i].split(".")[0]);
+            sgstTotal += double.parse(sgstlist[i].split(".")[0]);
           if (i != datelist.length - 1 &&
               igstlist[i].length != 0 &&
               igstlist[i] != "N/A" &&
               igstlist[i] != "null")
-            igstTotal += int.parse(igstlist[i].split(".")[0]);
+            igstTotal += double.parse(igstlist[i].split(".")[0]);
           if (i != datelist.length - 1 &&
               mrplist[i].length != 0 &&
               mrplist[i] != "N/A" &&
-              mrplist[i] != "null") mrpTotal += int.parse(mrplist[i]);
+              mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
           list.add(DataRow(cells: [
             DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
@@ -308,6 +320,8 @@ class _ReportTableState extends State<ReportTable> {
             DataCell(Text(
                 i == datelist.length - 1 ? igstTotal.toString() : igstlist[i],
                 style: TextStyle(fontSize: 6))),
+            DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(discountAmt[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(
                 i == datelist.length - 1 ? mrpTotal.toString() : mrplist[i],
                 style: TextStyle(fontSize: 6))),
@@ -364,27 +378,34 @@ class _ReportTableState extends State<ReportTable> {
 
         if (index != datelist.length - 1 &&
             basesplist[index].length != 0 &&
-            basesplist[index] != "N/A"&& basesplist[index] != "null")
+            basesplist[index] != "N/A" &&
+            basesplist[index] != "null")
           basesplitTotal += int.parse(basesplist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             gstratelist[index].length != 0 &&
-            gstratelist[index] != "N/A%"&& basesplist[index] != "null")
+            gstratelist[index] != "N/A%" &&
+            basesplist[index] != "null")
           gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
         if (index != datelist.length - 1 &&
             cgstlist[index].length != 0 &&
-            cgstlist[index] != "N/A"&& basesplist[index] != "null")
+            cgstlist[index] != "N/A" &&
+            basesplist[index] != "null")
           cgstTotal += int.parse(cgstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             sgstlist[index].length != 0 &&
-            sgstlist[index] != "N/A"&& basesplist[index] != "null")
+            sgstlist[index] != "N/A" &&
+            basesplist[index] != "null")
           sgstTotal += int.parse(sgstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             igstlist[index].length != 0 &&
-            igstlist[index] != "N/A"&& basesplist[index] != "null")
+            igstlist[index] != "N/A" &&
+            basesplist[index] != "null")
           igstTotal += int.parse(igstlist[index].split(".")[0]);
         if (index != datelist.length - 1 &&
             mrplist[index].length != 0 &&
-            mrplist[index] != "N/A"&& basesplist[index] != "null") mrpTotal += int.parse(mrplist[index].split(".")[0]);
+            mrplist[index] != "N/A" &&
+            basesplist[index] != "null")
+          mrpTotal += int.parse(mrplist[index].split(".")[0]);
 
         list.add(DataRow(cells: [
           DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
@@ -417,6 +438,8 @@ class _ReportTableState extends State<ReportTable> {
                   ? igstTotal.toString()
                   : igstlist[index],
               style: TextStyle(fontSize: 6))),
+          DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(discountAmt[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(
               index == datelist.length - 1
                   ? mrpTotal.toString()
@@ -427,35 +450,30 @@ class _ReportTableState extends State<ReportTable> {
       }
     }
 
-
-      if (partynametoFilter != "")
-        list.add(DataRow(cells: [
-          DataCell(Text(datelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(timelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(partynamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(productnamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(basesplitTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(gstrateTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(cgstTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(sgstTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(igstTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(mrpTotal.toString(),
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
-        ]));
-      return list;
-   
+    if (partynametoFilter != "")
+      list.add(DataRow(cells: [
+        DataCell(
+            Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(
+            Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(partynamelist[datelist.length - 1],
+            style: TextStyle(fontSize: 6))),
+        DataCell(
+            Text(moplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(productnamelist[datelist.length - 1],
+            style: TextStyle(fontSize: 6))),
+        DataCell(
+            Text(basesplitTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(gstrateTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(cgstTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(sgstTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(igstTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(mrpTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text("", style: TextStyle(fontSize: 6))),
+        DataCell(Text(" ", style: TextStyle(fontSize: 6))),
+        DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+      ]));
+    return list;
   }
 
   showExpenseRow() {
@@ -494,11 +512,11 @@ class _ReportTableState extends State<ReportTable> {
     int salesValueTotal = 0;
     double purchaseValueTotal = 0;
     int marginValueTotal = 0;
-    
+
     List<DataRow> list = [];
     for (int index = 0; index < widget.args.products!.length; index++) {
       final product = widget.args.products?[index];
-      
+
       var salesValue = product!.quantity! * product.sellingPrice!;
       var purchaseValue = product.quantity! * product.purchasePrice;
 
@@ -529,14 +547,15 @@ class _ReportTableState extends State<ReportTable> {
 
   String breakruler = "";
   itemSPRows() {
-   // print("discount ${widget.args.orders![0].discountAmt}");
-  
-    return widget.args.orders!.map((Order e) {
-      return e.orderItems!.map((OrderItem item) {
+    // print("discount ${widget.args.orders![0].discountAmt}");
+
+    return widget.args.orders!.map((OrderInput e) {
+      return e.orderItems!.map((OrderItemInput item) {
         // print(e.user!.type);
         taxfileType = e.user!.type ?? "notdone";
         if (breakruler !=
-            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!)) {
+            DateFormat('hh:mm a')
+                .format(DateTime.tryParse(e.createdAt.toString())!)) {
           datelist.add("");
           timelist.add("");
           partynamelist.add("");
@@ -548,12 +567,14 @@ class _ReportTableState extends State<ReportTable> {
           igstlist.add("");
           totalsplist.add("");
           mrplist.add("");
+          hsn.add("");
+          discountAmt.add("");
           moplist.add("");
         }
         datelist.add(DateFormat('dd MMM, yyyy')
-            .format(DateTime.tryParse(e.createdAt!)!));
-        timelist.add(
-            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!));
+            .format(DateTime.tryParse(e.createdAt.toString())!));
+        timelist.add(DateFormat('hh:mm a')
+            .format(DateTime.tryParse(e.createdAt.toString())!));
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
         gstratelist.add(
@@ -582,19 +603,19 @@ class _ReportTableState extends State<ReportTable> {
             ? mrplist.add("${item.price}")
             : mrplist.add(
                 "${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
+        hsn.add("${item.product!.hsn == "null" ? "N/A" : item.product!.hsn}");
+        discountAmt
+            .add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
         widget.args.type == "ReportType.sale"
             ? totalsplist.add("${(item.quantity) * (item.price ?? 0)}")
             : totalsplist
                 .add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
+
         moplist.add("${e.modeOfPayment ?? "N/A"}");
-        breakruler =
-            DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt!)!);
+        breakruler = DateFormat('hh:mm a')
+            .format(DateTime.tryParse(e.createdAt.toString())!);
       }).toList();
     }).toList();
-
-  
-
-
   }
 
   String total() {
@@ -716,7 +737,8 @@ class _ReportTableState extends State<ReportTable> {
       'CGST/Unit',
       'SGST/Unit',
       'GST/Unit',
-      'MRP/Unit',
+      "Hsn"
+          'MRP/Unit',
       'Total',
     ];
 

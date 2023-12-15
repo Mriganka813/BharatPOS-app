@@ -36,31 +36,9 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     authStatus();
     checkForUpdate();
-    getDataFromDatabase();
-  }
-
-  getDataFromDatabase() async {
-
-    try{
-
-    
-    final provider = Provider.of<Billing>(
-      widget.context,
-    );
-    var data = await DatabaseHelper().getOrderItems();
-    print("kkkkkk=");
   
-    provider.removeAll();
-
-    data.forEach((element) {
-      provider.addSalesBill(element, element.id.toString());
-    });
-    }
-    catch(e)
-    {
-  // showRestartAppDialouge();
-    }
   }
+
 
   checkForUpdate() async {
     update = await InAppUpdate.checkForUpdate();
@@ -105,9 +83,9 @@ class _SplashScreenState extends State<SplashScreen> {
                         durationUntilAlertAgain: Duration(seconds: 2),
                         //willDisplayUpgrade: ({appStoreVersion, required display, installedVersion, minAppVersion}) => ,
                       ),
-                      child: HomePage(),
+                      child: HomePage(widget.context),
                     )
-                  : HomePage()  
+                  : HomePage(widget.context)  
               : SignInPage()),
         ),
       ),

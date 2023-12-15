@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/global.dart';
@@ -13,7 +14,11 @@ class AuthCubit extends Cubit<AuthState> {
   final _authService = const AuthService();
   final _authInstace = fb.FirebaseAuth.instance;
   String? _verificationId;
-
+  void saveAccount(String email,String pass)async
+  {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString(email, pass);
+  }
   ///
   signIn(String email, String password, [bool rememberMe = false]) async {
     emit(AuthLoading());
@@ -24,6 +29,8 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError('Invalid email or password'));
         return;
       }
+
+      saveAccount(email, password);
       emit(SignInSucces());
     } catch (err) {
       emit(AuthError('Invalid email or password'));

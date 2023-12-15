@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 // import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/AboutOptionPage.dart';
+import 'package:shopos/src/pages/CreateSalesReturn.dart';
+import 'package:shopos/src/pages/SwitchAccountPage.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
@@ -55,7 +57,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-   
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -83,7 +84,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home:  SplashScreen(context),
+      home: SplashScreen(context),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(
           settings: settings,
@@ -94,7 +95,7 @@ class _MyAppState extends State<MyApp> {
               case SignUpPage.routeName:
                 return const SignUpPage();
               case HomePage.routeName:
-                return HomePage();
+                return HomePage(context);
               case SearchProductListScreen.routeName:
                 return SearchProductListScreen(
                   args: settings.arguments as ProductListPageArgs?,
@@ -135,14 +136,17 @@ class _MyAppState extends State<MyApp> {
                 return ChangePassword(user: settings.arguments as User?);
               case Forgotpassword.routeName:
                 return ForgotpassWordInitialPage();
-              case PrivacyPolicyPage.routeName:
+              case AboutOptionPage.routeName:
                 return AboutOptionPage();
+              case CreateSaleReturn.routeName:
+                return CreateSaleReturn();
               case TermsAndConditionsPage.routeName:
                 return TermsAndConditionsPage();
               case OnlineOrderList.routeName:
                 return OnlineOrderList();
               case BillingListScreen.routeName:
-                return BillingListScreen(context,
+                return BillingListScreen(
+                  context,
                   orderType: settings.arguments as OrderType,
                 );
               case SetPinPage.routeName:
@@ -150,6 +154,8 @@ class _MyAppState extends State<MyApp> {
                 return SetPinPage(
                   isPinSet: status,
                 );
+                case SwitchAccountPage.rountName:
+                return SwitchAccountPage();
 
               case ReportTable.routeName:
                 return ReportTable(
@@ -161,7 +167,7 @@ class _MyAppState extends State<MyApp> {
                   args: settings.arguments as CombineArgs,
                 );
               default:
-                return  SplashScreen(context);
+                return SplashScreen(context);
             }
           },
         );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shopos/src/blocs/product/product_cubit.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
@@ -47,6 +48,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   late final ProductCubit _productCubit;
   late List<Product> _products;
   bool itemCheckedFlag = false;
+  int groupedValue = 10;
 
   int page = 0;
   int _currentPage = 1;
@@ -56,8 +58,17 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
   late final ReportCubit _reportCubit;
   final TextEditingController pinController = TextEditingController();
 
-  List<int> CardColors=[0XFF53B175,0XFF00AAFF,0XFFD7D7D7,0XFFFF8600,0XFFFF2B00];
-  int ColorIndex=0;
+  int expiryDaysTOSearch = 7;
+  String searchMode = "normalSearch";
+
+  List<int> CardColors = [
+    0XFF53B175,
+    0XFF00AAFF,
+    0XFFD7D7D7,
+    0XFFFF8600,
+    0XFFFF2B00
+  ];
+  int ColorIndex = 0;
 
   @override
   void initState() {
@@ -81,15 +92,34 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     super.dispose();
   }
 
+  
+
   Future<void> fetchSearchedProducts() async {
-    var newProducts =
-        await searchProductServices.allproduct(_currentPage, _limit);
+    List newProducts = [];
+    if (searchMode == "normalSearch") {
+      newProducts =
+          await searchProductServices.allproduct(_currentPage, _limit);
+    } else if (searchMode == "expiry") {
+      var list = await searchProductServices.searchByExpiry(expiryDaysTOSearch);
+      if (list.isEmpty) {
+        locator<GlobalServices>()
+            .errorSnackBar(" No items expiring within the specified days.");
+      } else {
+        newProducts = list;
+      }
+    }
+
     for (var product in newProducts) {
-      if (!prodList.contains(product)) {
+      bool checkFlag=false;
+      prodList.forEach((element) { if(element.id==product.id){
+          checkFlag=true;
+      }});
+      if (!checkFlag) {
         prodList.add(product);
       }
     }
 
+    // To show the same quantity selected in search page list also
     for (int i = 0; i < widget.args!.productlist.length; i++) {
       for (int j = 0; j < prodList.length; j++) {
         if (widget.args!.productlist[i].product!.id == prodList[j].id) {
@@ -122,7 +152,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
       return;
     }
     final isSale = widget.args?.orderType == OrderType.sale;
-    if (isSale && (product.quantity ?? 0) < 1) {
+    if (isSale && (product.quantity ?? 0) < 1 ) {
       locator<GlobalServices>().infoSnackBar('Item not available');
       return;
     }
@@ -171,6 +201,16 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                 fontFamily: 'GilroyBold'),
           ),
           centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                  onTap: () {
+                    _showFilterDialog();
+                  },
+                  child: Icon(Icons.filter_alt)),
+            )
+          ],
         ),
         floatingActionButton: Container(
           margin: const EdgeInsets.only(
@@ -250,10 +290,6 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                               : prodList.length,
                           controller: scrollController,
                           itemBuilder: (context, index) {
-                            if(ColorIndex==5)
-                            {
-                                ColorIndex=0;
-                            }
                             if (index < prodList.length) {
                               return Column(
                                 children: [
@@ -263,7 +299,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
-                                        color:0XFFFFFFFF,
+                                        color: 0XFFFFFFFF,
                                         type: widget.args!.orderType,
                                         noOfQuatityadded:
                                             countNoOfQuatityInArray(
@@ -299,33 +335,28 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                         },
                                         onAdd: () {
                                           increaseTheQuantity(prodList[index]);
-                                            if (widget.args!.orderType ==
-                                                OrderType.sale) {
-                                              prodList[index].quantity =
-                                                  prodList[index].quantity! - 1;
-                                            } else {
-                                              prodList[index].quantity =
-                                                  prodList[index].quantity! + 1;
-                                            }
-                                            setState(() {
-                                              
-                                            });
+                                          if (widget.args!.orderType ==
+                                              OrderType.sale) {
+                                            prodList[index].quantity =
+                                                prodList[index].quantity! - 1;
+                                          } else {
+                                            prodList[index].quantity =
+                                                prodList[index].quantity! + 1;
+                                          }
+                                          setState(() {});
                                         },
                                         onRemove: () {
                                           decreaseTheQuantity(prodList[index]);
-                                           itemCheckedFlag = false;
-                                            if (widget.args!.orderType ==
-                                                OrderType.sale) {
-                                              prodList[index].quantity =
-                                                  prodList[index].quantity! + 1;
-                                            } else {
-                                              prodList[index].quantity =
-                                                  prodList[index].quantity! - 1;
-                                            }
-                                            setState(() {
-                                              
-                                            });
-
+                                          itemCheckedFlag = false;
+                                          if (widget.args!.orderType ==
+                                              OrderType.sale) {
+                                            prodList[index].quantity =
+                                                prodList[index].quantity! + 1;
+                                          } else {
+                                            prodList[index].quantity =
+                                                prodList[index].quantity! - 1;
+                                          }
+                                          setState(() {});
                                         },
                                         product: prodList[index],
                                         isAvailable: isAvailable,
@@ -492,5 +523,147 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                         }))
               ],
             ));
+  }
+
+  Future<bool?> _showFilterDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content: Container(
+                  height: 150,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        onTap: () {
+                          _showExpiryFilterDialog();
+                        },
+                        leading: Text("Expiry"),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 15,
+                        ),
+                      ),
+                    ],
+                  )),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Filter'),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(Icons.close))
+                ],
+              ),
+            ));
+  }
+
+  Future<bool?> _showExpiryFilterDialog() {
+    getData(int days) async {
+      prodList.clear();
+      expiryDaysTOSearch = days;
+      searchMode = "expiry";
+      setState(() {});
+      fetchSearchedProducts();
+
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
+
+    ;
+
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+              content:
+                  Container(height: 410, child: ExpiryFilterContent(getData)),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Select Expiry days'),
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(Icons.close))
+                ],
+              ),
+            ));
+  }
+}
+
+class ExpiryFilterContent extends StatefulWidget {
+  var ontap;
+  ExpiryFilterContent(this.ontap);
+
+  @override
+  State<ExpiryFilterContent> createState() => _RadioButtonGroupState();
+}
+
+class _RadioButtonGroupState extends State<ExpiryFilterContent> {
+  int groupedValue = 7;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        RadioMenuButton(
+            value: 7,
+            groupValue: groupedValue,
+            onChanged: (v) {
+              groupedValue = 7;
+              setState(() {});
+            },
+            child: Text("7")),
+        RadioMenuButton(
+            value: 15,
+            groupValue: groupedValue,
+            onChanged: (v) {
+              groupedValue = 15;
+              setState(() {});
+            },
+            child: Text("15")),
+        RadioMenuButton(
+            value: 30,
+            groupValue: groupedValue,
+            onChanged: (v) {
+              groupedValue = 30;
+              setState(() {});
+            },
+            child: Text("30")),
+        RadioMenuButton(
+            value: 90,
+            groupValue: groupedValue,
+            onChanged: (v) {
+              groupedValue = 90;
+              setState(() {});
+            },
+            child: Text("90")),
+        RadioMenuButton(
+            value: 180,
+            groupValue: groupedValue,
+            onChanged: (v) {
+              groupedValue = 180;
+              setState(() {});
+            },
+            child: Text("180")),
+            SizedBox(height: 20,),
+        CustomTextField(
+          inputType: TextInputType.number,
+          hintText: "Custom Expiry",
+          onChanged: (e) {
+            groupedValue = int.parse(e);
+          },
+        ),
+         SizedBox(height: 10,),
+        CustomButton(
+            title: 'Submit',
+            onTap: () async {
+              widget.ontap(groupedValue);
+            }),
+      ],
+    );
   }
 }

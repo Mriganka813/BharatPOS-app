@@ -7,6 +7,9 @@ import 'package:shopos/src/pages/terms_conditions.dart';
 
 class AboutOptionPage extends StatelessWidget
 {
+
+
+  static const String routeName="about";
   @override
   Widget build(BuildContext context) {
       return Scaffold(

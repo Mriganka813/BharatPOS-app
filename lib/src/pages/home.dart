@@ -7,6 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:shopos/src/app.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
+import 'package:shopos/src/pages/AboutOptionPage.dart';
+import 'package:shopos/src/pages/CreateSalesReturn.dart';
+import 'package:shopos/src/pages/SwitchAccountPage.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
@@ -33,7 +36,8 @@ import 'package:shopos/src/widgets/custom_icons.dart';
 // import 'package:switcher/switcher.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  BuildContext context;
+ HomePage(this.context, {Key? key}) : super(key: key);
   static const routeName = '/home';
   @override
   State<HomePage> createState() => _HomePageState();
@@ -54,7 +58,31 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
+    getDataFromDatabase();
   }
+    getDataFromDatabase() async {
+
+    try{
+
+    
+    final provider = Provider.of<Billing>(
+      widget.context,
+    );
+    var data = await DatabaseHelper().getOrderItems();
+    print("kkkkkk=");
+  
+    provider.removeAll();
+
+    data.forEach((element) {
+      provider.addSalesBill(element, element.id.toString());
+    });
+    }
+    catch(e)
+    {
+  // showRestartAppDialouge();
+    }
+  }
+
 
   @override
   void dispose() {
@@ -134,16 +162,18 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Image  .asset("assets/images/bharat.png",height:30,),
+                        leading: Image.asset(
+                          "assets/images/bharat.png",
+                          height: 30,
+                        ),
                         title: Title(
                           color: Colors.black,
                           child: Text(
-                           "",
+                            "",
                             textScaleFactor: 1.4,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                      
                       ),
                       Divider(),
                       // ListTile(
@@ -160,14 +190,15 @@ class _HomePageState extends State<HomePage> {
                       //   },
                       // ),
 
-                       ListTile(
-                        leading: Image.asset("assets/images/shop.png",height: 30,),
+                      ListTile(
+                        leading: Image.asset(
+                          "assets/images/shop.png",
+                          height: 30,
+                        ),
                         title: Title(
                           color: Colors.black,
                           child: Text(
                             state.user.businessName ?? "",
-                        
-                         
                           ),
                         ),
                         subtitle: Text(
@@ -175,14 +206,17 @@ class _HomePageState extends State<HomePage> {
                           textScaleFactor: 1.2,
                         ),
                         onTap: () async {
-                          bool status = await _pinService.pinStatus();
-                          print(status);
-                          Navigator.of(context).pushNamed(SetPinPage.routeName,
-                              arguments: status);
+                        Navigator.pushNamed(
+                              context,
+                              SwitchAccountPage
+                                  .rountName); //
                         },
                       ),
                       ListTile(
-                        leading: Image.asset("assets/images/keyy.png",height: 30,),
+                        leading: Image.asset(
+                          "assets/images/keyy.png",
+                          height: 30,
+                        ),
                         title: Title(
                             color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
@@ -192,9 +226,12 @@ class _HomePageState extends State<HomePage> {
                               arguments: status);
                         },
                       ),
-                     
+
                       ListTile(
-                        leading: Image.asset("assets/images/lock.png",height: 30,),
+                        leading: Image.asset(
+                          "assets/images/lock.png",
+                          height: 30,
+                        ),
                         title: Title(
                             color: Colors.black,
                             child: Text("Change Password")),
@@ -205,17 +242,22 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       ListTile(
-                        leading: Image.asset("assets/images/about.png",height: 30,),
-                        title: Title(
-                            color: Colors.black, child: Text("About")),
+                        leading: Image.asset(
+                          "assets/images/about.png",
+                          height: 30,
+                        ),
+                        title: Title(color: Colors.black, child: Text("About")),
                         onTap: () {
                           Navigator.pushNamed(
                               context,
-                              PrivacyPolicyPage
+                              AboutOptionPage
                                   .routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
-                    /*  ListTile(
+
+                  
+
+                      /*  ListTile(
                         leading: Icon(Icons.control_point),
                         title: Title(
                             color: Colors.black,
@@ -228,7 +270,10 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),*/
                       ListTile(
-                        leading: Image.asset("assets/images/logout.png",height: 30,),
+                        leading: Image.asset(
+                          "assets/images/logout.png",
+                          height: 30,
+                        ),
                         title:
                             Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
@@ -358,8 +403,8 @@ class _HomePageState extends State<HomePage> {
                                       )),
                                 ),
                                 Text(
-                                  "Purchasee",
-                                  style: TextStyle(fontSize: 20),
+                                  "Purchase",
+                                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),
@@ -371,6 +416,12 @@ class _HomePageState extends State<HomePage> {
                               Navigator.pushNamed(context, CreateSale.routeName,
                                   arguments: BillingPageArgs(
                                       id: -1, orderId: "", editOrders: []));
+                            },
+                            onLongPress: () {
+                              Navigator.pushNamed(
+                                context,
+                                CreateSaleReturn.routeName,
+                              );
                             },
                             child: Column(
                               children: [
@@ -397,7 +448,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   "Sale",
-                                  style: TextStyle(fontSize: 20),
+                                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),

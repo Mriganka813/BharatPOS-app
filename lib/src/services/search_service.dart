@@ -21,4 +21,15 @@ class SearchProductServices {
         .map((e) => Product.fromMap(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<List<Product>> searchByExpiry(int days) async {
+    final response = await ApiV1Service.getRequest(
+        '/inventory/64da35c9f2805549788a4fc6/expiring/$days');
+    print('search=${response.data}');
+    return response.data["expiringItems"] != null
+        ? (response.data["expiringItems"] as List)
+            .map((e) => Product.fromMap(e as Map<String, dynamic>))
+            .toList()
+        : [];
+  }
 }

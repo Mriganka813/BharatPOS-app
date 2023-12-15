@@ -149,7 +149,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
               //         (curr.product?.sellingPrice ?? 1.0)) +
               //     acc;
             },
-          ).toString();
+          ).toStringAsFixed(2);
   }
 
   ///
@@ -662,7 +662,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 Text('Grand Total'),
                                 Text(
-                                  '₹ ${totalPrice(index, provider)}',
+                                  '₹ ${ double.parse(totalPrice(index, provider)!).toStringAsFixed(2)}',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                               ],

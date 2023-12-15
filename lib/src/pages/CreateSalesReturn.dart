@@ -22,25 +22,25 @@ import 'package:slidable_button/slidable_button.dart';
 
 import '../services/product.dart';
 
-class BillingPageArgs {
+/*class BillingPageArgs {
   final String? orderId;
   final List<OrderItemInput>? editOrders;
   final id;
 
   BillingPageArgs({this.orderId, this.editOrders, this.id});
-}
+}*/
 
-class CreateSale extends StatefulWidget {
-  static const routeName = '/create_sale';
-  CreateSale({Key? key, this.args}) : super(key: key);
+class CreateSaleReturn extends StatefulWidget {
+  static const routeName = '/create_sale_return';
+  CreateSaleReturn({Key? key}) : super(key: key);
 
-  BillingPageArgs? args;
+  //BillingPageArgs? args;
 
   @override
-  State<CreateSale> createState() => _CreateSaleState();
+  State<CreateSaleReturn> createState() => _CreateSaleReturnState();
 }
 
-class _CreateSaleState extends State<CreateSale> {
+class _CreateSaleReturnState extends State<CreateSaleReturn> {
   late OrderInput _orderInput;
   late final AudioCache _audioCache;
   List<OrderItemInput>? newAddedItems = [];
@@ -55,8 +55,8 @@ class _CreateSaleState extends State<CreateSale> {
     // );
 
     _orderInput = OrderInput(
-      id: widget.args!.id,
-      orderItems: widget.args == null ? [] : widget.args?.editOrders,
+      id:0,
+      orderItems:  [] ,
     );
 
     init();
@@ -152,7 +152,7 @@ class _CreateSaleState extends State<CreateSale> {
     final provider = Provider.of<Billing>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sales'),
+        title: const Text('Sales Return'),
         centerTitle: true,
       ),
       body: isLoading
@@ -181,10 +181,14 @@ class _CreateSaleState extends State<CreateSale> {
                               double discount =
                                   double.parse(_orderItem.discountAmt);
                               final product = _orderItems[index].product!;
-                              final basesellingprice=0.0;
-                              if(  _orderItem.product!.baseSellingPriceGst!=null&& _orderItem.product!.baseSellingPriceGst!="null")
-                              final basesellingprice = double.parse(
-                                  _orderItem.product!.baseSellingPriceGst??"0.0");
+                              final basesellingprice = 0.0;
+                              if (_orderItem.product!.baseSellingPriceGst !=
+                                      null &&
+                                  _orderItem.product!.baseSellingPriceGst !=
+                                      "null")
+                                final basesellingprice = double.parse(
+                                    _orderItem.product!.baseSellingPriceGst ??
+                                        "0.0");
 
                               return GestureDetector(
                                 onLongPress: () {
@@ -197,7 +201,7 @@ class _CreateSaleState extends State<CreateSale> {
                                         String? discountedPrice;
 
                                         return Column(
-                                          mainAxisSize: MainAxisSize.min, 
+                                          mainAxisSize: MainAxisSize.min,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
@@ -344,10 +348,7 @@ class _CreateSaleState extends State<CreateSale> {
                                     _onAdd(_orderItem);
                                   },
                                   onDelete: () {
-                                    DatabaseHelper().deleteKot(
-                                        widget.args!.id!,
-                                        _orderInput
-                                            .orderItems![index].product!.name!);
+                                
 
                                     double discountForOneItem =
                                         double.parse(_orderItem.discountAmt) /
@@ -375,7 +376,7 @@ class _CreateSaleState extends State<CreateSale> {
                                       }
                                     }
 
-                                    if (widget.args!.orderId == null)
+                                 
                                       setState(() {});
                                   },
                                   productQuantity: _orderItem.quantity,
@@ -399,7 +400,7 @@ class _CreateSaleState extends State<CreateSale> {
                             SearchProductListScreen.routeName,
                             arguments: ProductListPageArgs(
                                 isSelecting: true,
-                                orderType: OrderType.sale,
+                                orderType: OrderType.saleReturn,
                                 productlist: _orderInput.orderItems!),
                           );
                           if (result == null && result is! List<Product>) {
@@ -464,28 +465,25 @@ class _CreateSaleState extends State<CreateSale> {
                   ),
                   const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
                   HorizontalSlidableButton(
-                    
                     width: double.maxFinite,
                     buttonWidth: 50,
-                    
                     color: Colors.green,
                     isRestart: true,
                     buttonColor: Colors.green,
                     dismissible: false,
-                    
                     label: const Center(
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
+                        child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(
                         Icons.arrow_forward_ios_rounded,
                         color: Colors.black,
-                      ),)
-                    ),
+                      ),
+                    )),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Swipe to continue",
+                          "Swipe to Return",
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -494,7 +492,6 @@ class _CreateSaleState extends State<CreateSale> {
                       ],
                     ),
                     height: 50,
-                    
                     onChanged: (position) {
                       if (position == SlidableButtonPosition.end) {
                         // if (_orderItems.isEmpty) {
@@ -511,14 +508,24 @@ class _CreateSaleState extends State<CreateSale> {
                         // }
 
                         if (_orderItems.isNotEmpty) {
-                          print('orderid: ${widget.args?.orderId}');
+                       
 
-                          insertToDatabase(provider);
+                          // insertToDatabase(provider);
+                          provider.addSalesBill(
+                            _orderInput,
+                            _orderInput.id.toString(),
+                          );
                         }
 
-                        Navigator.pushNamed(
-                            context, BillingListScreen.routeName,
-                            arguments: OrderType.sale);
+                       Navigator.pushNamed(
+                      context,
+                      CheckoutPage.routeName,
+                      arguments: CheckoutPageArgs(
+                        invoiceType: OrderType.saleReturn,
+                        orderId: "0",
+                        orderInput: _orderInput
+                      ),
+                    );
 
                         // Navigator.pushNamed(
                         //   context,

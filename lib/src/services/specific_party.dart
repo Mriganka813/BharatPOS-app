@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shopos/src/models/input/order_input.dart';
 import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/services/api_v1.dart';
@@ -6,21 +7,21 @@ import 'package:shopos/src/services/api_v1.dart';
 class SpecificPartyService {
   ///
 
-  Future<List<Order>> getSalesCreditHistory(String id) async {
+  Future<List<OrderInput>> getSalesCreditHistory(String id) async {
     final response = await ApiV1Service.getRequest('/sales/credit-history/$id');
     print("CreditData");
     print(response.data);
     return (response.data['data'] as List)
-        .map((e) => Order.fromMap(e as Map<String, dynamic>))
+        .map((e) => OrderInput.fromMap(e as Map<String, dynamic>))
         .toList();
   }
 
   ///
-  Future<List<Order>> getpurchaseCreditHistory(String id) async {
+  Future<List<OrderInput>> getpurchaseCreditHistory(String id) async {
     final response =
         await ApiV1Service.getRequest('/purchase/credit-history/$id');
     return (response.data['data'] as List)
-        .map((e) => Order.fromMap(e as Map<String, dynamic>))
+        .map((e) => OrderInput.fromMap(e as Map<String, dynamic>))
         .toList();
   }
 

@@ -36,7 +36,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/party.dart';
 
-enum OrderType { purchase, sale }
+enum OrderType { purchase, sale,saleReturn }
 
 class PrintBillArgs {
   final billType type;
@@ -692,7 +692,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             padding: const EdgeInsets.only(right: 15.0),
             child: Center(
               child: Text(
-                "₹ ${totalPrice()}",
+                "₹ ${ double.parse(totalPrice()!).toStringAsFixed(2)}",
                 style: Theme.of(context).appBarTheme.titleTextStyle,
               ),
             ),
@@ -798,7 +798,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                     children: [
                                       Text('Grand Total'),
                                       Text(
-                                        '₹ ${totalPrice()}',
+                                        '₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -1074,7 +1074,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
         print("discountttttttt=${widget.args.orderInput.orderItems![0].discountAmt}");
       widget.args.invoiceType == OrderType.purchase
-          ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput, date)
+          ? _checkoutCubit.createPurchaseOrder(widget.args.orderInput, date): widget.args.invoiceType == OrderType.saleReturn?_checkoutCubit.createSalesReturn(widget.args.orderInput, date,totalPrice()!)
           : _checkoutCubit.createSalesOrder(widget.args.orderInput, date);
 
       final provider = Provider.of<Billing>(context, listen: false);

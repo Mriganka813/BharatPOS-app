@@ -289,7 +289,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                   width: 10,
                                 ),
                                 Text(
-                                  "₹ $balance",
+                                  "₹ ${balance.toStringAsFixed(2)}",
                                   style: const TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold,
@@ -305,7 +305,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                   textScaleFactor: 1.7,
                                 ),
                                 Text(
-                                  "$negbalance",
+                                  "${negbalance.toStringAsFixed(2)}",
                                   textScaleFactor: 1.7,
                                   style: const TextStyle(
                                     color: Colors.green,
@@ -698,8 +698,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
           "." +
           d.year.toString() +
           " | " +
-   outputTime,
-      style: const TextStyle(color: Colors.black45,fontSize: 13),
+          outputTime,
+      style: const TextStyle(color: Colors.black45, fontSize: 13),
     );
   }
 
