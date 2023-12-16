@@ -11,9 +11,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shopos/src/models/expense.dart';
 import 'package:shopos/src/models/input/order_input.dart';
 
-import 'package:shopos/src/models/order.dart';
-import 'package:shopos/src/models/order_item.dart';
-
 import 'package:pdf/widgets.dart' as pw;
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/product.dart';

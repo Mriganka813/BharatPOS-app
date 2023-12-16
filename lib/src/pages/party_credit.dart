@@ -9,7 +9,7 @@ import 'package:shopos/src/blocs/specific%20party/specific_party_cubit.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order_input.dart';
-import 'package:shopos/src/models/order.dart';
+
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/global.dart';
@@ -212,7 +212,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      " ₹ ${100}",
+                                      " ₹ ${order.total}",
                                       style: TextStyle(
                                         color: order.modeOfPayment == "Settle"
                                             ? Colors.green

@@ -42,7 +42,7 @@ class CreateSale extends StatefulWidget {
 
 class _CreateSaleState extends State<CreateSale> {
   late OrderInput _orderInput;
-  late final AudioCache _audioCache;
+
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
   bool isLoading = false;
@@ -50,9 +50,6 @@ class _CreateSaleState extends State<CreateSale> {
   @override
   void initState() {
     super.initState();
-    // _audioCache = AudioCache(
-    //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
-    // );
 
     _orderInput = OrderInput(
       id: widget.args!.id,
@@ -66,84 +63,8 @@ class _CreateSaleState extends State<CreateSale> {
 
   void init() {
     _orderInput.orderItems!.forEach((element) {
-      sellingPriceListForShowinDiscountTextBOX
-          .add(element.product!.baseSellingPriceGst!);
+      sellingPriceListForShowinDiscountTextBOX.add(element.product!.baseSellingPriceGst!);
     });
-  }
-
-  void _onAdd(OrderItemInput orderItem) {
-    final qty = orderItem.quantity + 1;
-    double discountForOneItem =
-        double.parse(orderItem.discountAmt) / orderItem.quantity;
-    orderItem.discountAmt =
-        (double.parse(orderItem.discountAmt) + discountForOneItem)
-            .toStringAsFixed(2);
-    final availableQty = orderItem.product?.quantity ?? 0;
-    if (qty > availableQty) {
-      locator<GlobalServices>().infoSnackBar("Quantity not available");
-      return;
-    }
-    setState(() {
-      orderItem.quantity += 1;
-    });
-  }
-
-  _onSubtotalChange(Product product, String? localSellingPrice) async {
-    product.baseSellingPriceGst = localSellingPrice;
-    double newGStRate = (double.parse(product.baseSellingPriceGst!) *
-        double.parse(product.gstRate == 'null' ? '0' : product.gstRate!) /
-        100);
-    product.saleigst = newGStRate.toStringAsFixed(2);
-
-    product.salecgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salecgst);
-
-    product.salesgst = (newGStRate / 2).toStringAsFixed(2);
-    print(product.salesgst);
-
-    product.sellingPrice =
-        double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
-    print(product.sellingPrice);
-  }
-
-  _onTotalChange(Product product, String? discountedPrice) {
-    product.sellingPrice = double.parse(discountedPrice!);
-    print(product.gstRate);
-
-    double newBasePrice = (product.sellingPrice! * 100.0) /
-        (100.0 +
-            double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
-
-    print(newBasePrice);
-
-    product.baseSellingPriceGst = newBasePrice.toString();
-
-    double newGst = product.sellingPrice! - newBasePrice;
-
-    print(newGst);
-
-    product.saleigst = newGst.toStringAsFixed(2);
-
-    product.salecgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salecgst);
-
-    product.salesgst = (newGst / 2).toStringAsFixed(2);
-    print(product.salesgst);
-  }
-
-  void insertToDatabase(Billing provider) async {
-    int id = await DatabaseHelper()
-        .InsertOrderInput(_orderInput, provider, newAddedItems!);
-    List<KotModel> kotItemlist = [];
-    var tempMap = CountNoOfitemIsList(Kotlist);
-
-    Kotlist.forEach((element) {
-      print("qtycount:${tempMap['${element.id}']}");
-      var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
-      kotItemlist.add(model);
-    });
-
-    DatabaseHelper().insertKot(kotItemlist);
   }
 
   @override
@@ -177,208 +98,26 @@ class _CreateSaleState extends State<CreateSale> {
                             shrinkWrap: true,
                             itemCount: _orderItems.length,
                             itemBuilder: (context, index) {
-                              final _orderItem = _orderItems[index];
-                              double discount =
-                                  double.parse(_orderItem.discountAmt);
-                              final product = _orderItems[index].product!;
-                              final basesellingprice=0.0;
-                              if(  _orderItem.product!.baseSellingPriceGst!=null&& _orderItem.product!.baseSellingPriceGst!="null")
-                              final basesellingprice = double.parse(
-                                  _orderItem.product!.baseSellingPriceGst??"0.0");
+                              final basesellingprice = 0.0;
+                              if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null")
+                                final basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst ?? "0.0");
 
                               return GestureDetector(
                                 onLongPress: () {
-                                  showDialog(
-                                      useSafeArea: true,
-                                      useRootNavigator: true,
-                                      context: context,
-                                      builder: (ctx) {
-                                        String? localSellingPrice;
-                                        String? discountedPrice;
-
-                                        return Column(
-                                          mainAxisSize: MainAxisSize.min, 
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            AlertDialog(
-                                              content: Column(
-                                                children: [
-                                                  Text(
-                                                    "Discount",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 25),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10,
-                                                  ),
-                                                  CustomTextField(
-                                                    inputType:
-                                                        TextInputType.number,
-                                                    onChanged: (val) {
-                                                      localSellingPrice = val;
-                                                    },
-                                                    hintText:
-                                                        'Enter Taxable Value   (${basesellingprice + discount})',
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text('or'),
-                                                  ),
-                                                  CustomTextField(
-                                                    inputType:
-                                                        TextInputType.number,
-                                                    onChanged: (val) {
-                                                      discountedPrice = val;
-                                                    },
-                                                    hintText:
-                                                        'Enter total value   (${sellingPriceListForShowinDiscountTextBOX[index]})',
-                                                    validator: (val) {
-                                                      if (val!.isNotEmpty &&
-                                                          localSellingPrice!
-                                                              .isNotEmpty) {
-                                                        return 'Do not fill both fields';
-                                                      }
-                                                      return null;
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              actions: [
-                                                Center(
-                                                  child: CustomButton(
-                                                      title: 'Submit',
-                                                      onTap: () {
-                                                        if (localSellingPrice !=
-                                                            null) {
-                                                          print(
-                                                              localSellingPrice);
-                                                          print(
-                                                              discountedPrice);
-
-                                                          discount = (double.parse(
-                                                                      _orderItem
-                                                                          .product!
-                                                                          .baseSellingPriceGst!) +
-                                                                  double.parse(
-                                                                      _orderItem
-                                                                          .discountAmt) -
-                                                                  int.parse(
-                                                                          localSellingPrice!)
-                                                                      .toDouble()) *
-                                                              _orderItem
-                                                                  .quantity;
-
-                                                          _orderItems[index]
-                                                                  .discountAmt =
-                                                              discount
-                                                                  .toStringAsFixed(
-                                                                      2);
-                                                          setState(() {});
-                                                        }
-
-                                                        if (localSellingPrice !=
-                                                                null &&
-                                                            localSellingPrice!
-                                                                .isNotEmpty) {
-                                                          _onSubtotalChange(
-                                                              product,
-                                                              localSellingPrice);
-                                                          setState(() {});
-                                                        } else if (discountedPrice !=
-                                                            null) {
-                                                          print(
-                                                              's$discountedPrice');
-
-                                                          double
-                                                              realBaseSellingPrice =
-                                                              double.parse(
-                                                                  _orderItem
-                                                                      .product!
-                                                                      .baseSellingPriceGst!);
-
-                                                          _onTotalChange(
-                                                              product,
-                                                              discountedPrice);
-                                                          print(
-                                                              "realbase selling price=${realBaseSellingPrice}");
-                                                          print(
-                                                              "discount=${discount}");
-                                                          discount = (realBaseSellingPrice +
-                                                                  discount -
-                                                                  double.parse(
-                                                                      _orderItem
-                                                                          .product!
-                                                                          .baseSellingPriceGst!)) *
-                                                              _orderItem
-                                                                  .quantity;
-                                                          _orderItems[index]
-                                                                  .discountAmt =
-                                                              discount
-                                                                  .toStringAsFixed(
-                                                                      2);
-
-                                                          setState(() {});
-                                                        }
-
-                                                        Navigator.of(ctx).pop();
-                                                      }),
-                                                )
-                                              ],
-                                            ),
-                                          ],
-                                        );
-                                      });
+                                  showaddDiscountDialouge(basesellingprice, _orderItems, index);
                                 },
                                 child: ProductCardPurchase(
                                   type: "sale",
-                                  product: product,
+                                  product: _orderItems[index].product!,
                                   discount: _orderItems[index].discountAmt,
                                   onAdd: () {
-                                    Kotlist.add(_orderInput
-                                        .orderItems![index].product!);
-                                    _onAdd(_orderItem);
+                                    Kotlist.add(_orderInput.orderItems![index].product!);
+                                    _onAdd(_orderItems[index]);
                                   },
                                   onDelete: () {
-                                    DatabaseHelper().deleteKot(
-                                        widget.args!.id!,
-                                        _orderInput
-                                            .orderItems![index].product!.name!);
-
-                                    double discountForOneItem =
-                                        double.parse(_orderItem.discountAmt) /
-                                            _orderItem.quantity;
-                                    _orderItem.discountAmt =
-                                        (double.parse(_orderItem.discountAmt) -
-                                                discountForOneItem)
-                                            .toStringAsFixed(2);
-                                    setState(
-                                      () {
-                                        _orderItem.quantity == 1
-                                            ? _orderInput.orderItems
-                                                ?.removeAt(index)
-                                            : _orderItem.quantity -= 1;
-                                      },
-                                    );
-
-                                    for (int i = 0; i < Kotlist.length; i++) {
-                                      if (Kotlist[i].id ==
-                                          _orderInput
-                                              .orderItems![index].product!.id) {
-                                        Kotlist.removeAt(i);
-
-                                        break;
-                                      }
-                                    }
-
-                                    if (widget.args!.orderId == null)
-                                      setState(() {});
+                                    OnDelete(_orderItems[index], index);
                                   },
-                                  productQuantity: _orderItem.quantity,
+                                  productQuantity: _orderItems[index].quantity,
                                 ),
                               );
                             },
@@ -394,65 +133,9 @@ class _CreateSaleState extends State<CreateSale> {
                       CustomButton(
                         title: "Add manually",
                         onTap: () async {
-                          final result = await Navigator.pushNamed(
-                            context,
-                            SearchProductListScreen.routeName,
-                            arguments: ProductListPageArgs(
-                                isSelecting: true,
-                                orderType: OrderType.sale,
-                                productlist: _orderInput.orderItems!),
-                          );
-                          if (result == null && result is! List<Product>) {
-                            return;
-                          }
-
-                          var temp = result as List<Product>;
-
-                          temp.forEach((element) {
-                            sellingPriceListForShowinDiscountTextBOX
-                                .add(element.sellingPrice.toString());
-                          });
-
-                          Kotlist.addAll(temp);
-
-                          var tempMap = CountNoOfitemIsList(temp);
-                          final orderItems = temp
-                              .map((e) => OrderItemInput(
-                                    product: e,
-                                    quantity: tempMap["${e.id}"],
-                                    price: 0,
-                                  ))
-                              .toList();
-
-                          var tempOrderitems = _orderInput.orderItems;
-
-                          for (int i = 0; i < tempOrderitems!.length; i++) {
-                            for (int j = 0; j < orderItems.length; j++) {
-                              if (tempOrderitems[i].product!.id ==
-                                  orderItems[j].product!.id) {
-                                tempOrderitems[i].product!.quantity =
-                                    tempOrderitems[i].product!.quantity! -
-                                        orderItems[j].quantity;
-                                tempOrderitems[i].quantity =
-                                    tempOrderitems[i].quantity +
-                                        orderItems[j].quantity;
-                                orderItems.removeAt(j);
-                              }
-                            }
-                          }
-
-                          _orderInput.orderItems = tempOrderitems;
-
-                          setState(() {
-                            _orderInput.orderItems?.addAll(orderItems);
-                            newAddedItems!.addAll(orderItems);
-                          });
+                          _onAddManually(context);
                         },
                       ),
-                      // const VerticalDivider(
-                      //   color: Colors.transparent,
-                      //   width: 10,
-                      // ),
                       CustomButton(
                         title: "Scan barcode",
                         onTap: () async {
@@ -464,70 +147,39 @@ class _CreateSaleState extends State<CreateSale> {
                   ),
                   const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
                   HorizontalSlidableButton(
-                    
                     width: double.maxFinite,
                     buttonWidth: 50,
-                    
                     color: Colors.green,
                     isRestart: true,
                     buttonColor: Colors.green,
                     dismissible: false,
-                    
                     label: const Center(
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
+                        child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(
                         Icons.arrow_forward_ios_rounded,
                         color: Colors.black,
-                      ),)
-                    ),
+                      ),
+                    )),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Swipe to continue",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                         ),
                       ],
                     ),
                     height: 50,
-                    
                     onChanged: (position) {
                       if (position == SlidableButtonPosition.end) {
-                        // if (_orderItems.isEmpty) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     const SnackBar(
-                        //       backgroundColor: Colors.red,
-                        //       content: Text(
-                        //         "Please select products before continuing",
-                        //         style: TextStyle(color: Colors.white),
-                        //       ),
-                        //     ),
-                        //   );
-                        //   return;
-                        // }
-
                         if (_orderItems.isNotEmpty) {
                           print('orderid: ${widget.args?.orderId}');
 
                           insertToDatabase(provider);
                         }
 
-                        Navigator.pushNamed(
-                            context, BillingListScreen.routeName,
-                            arguments: OrderType.sale);
-
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   CheckoutPage.routeName,
-                        //   arguments: CheckoutPageArgs(
-                        //     invoiceType: OrderType.sale,
-                        //     orderInput: _orderInput,
-                        //   ),
-                        // );
+                        Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
                       }
                     },
                   ),
@@ -535,6 +187,73 @@ class _CreateSaleState extends State<CreateSale> {
               ),
             ),
     );
+  }
+
+  void _onAdd(OrderItemInput orderItem) {
+    final qty = orderItem.quantity + 1;
+    double discountForOneItem = double.parse(orderItem.discountAmt) / orderItem.quantity;
+    orderItem.discountAmt = (double.parse(orderItem.discountAmt) + discountForOneItem).toStringAsFixed(2);
+    final availableQty = orderItem.product?.quantity ?? 0;
+    if (qty > availableQty) {
+      locator<GlobalServices>().infoSnackBar("Quantity not available");
+      return;
+    }
+    setState(() {
+      orderItem.quantity += 1;
+    });
+  }
+
+  _onSubtotalChange(Product product, String? localSellingPrice) async {
+    product.baseSellingPriceGst = localSellingPrice;
+    double newGStRate = (double.parse(product.baseSellingPriceGst!) * double.parse(product.gstRate == 'null' ? '0' : product.gstRate!) / 100);
+    product.saleigst = newGStRate.toStringAsFixed(2);
+
+    product.salecgst = (newGStRate / 2).toStringAsFixed(2);
+    print(product.salecgst);
+
+    product.salesgst = (newGStRate / 2).toStringAsFixed(2);
+    print(product.salesgst);
+
+    product.sellingPrice = double.parse(product.baseSellingPriceGst!.toString()) + newGStRate;
+    print(product.sellingPrice);
+  }
+
+  _onTotalChange(Product product, String? discountedPrice) {
+    product.sellingPrice = double.parse(discountedPrice!);
+    print(product.gstRate);
+
+    double newBasePrice = (product.sellingPrice! * 100.0) / (100.0 + double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
+
+    print(newBasePrice);
+
+    product.baseSellingPriceGst = newBasePrice.toString();
+
+    double newGst = product.sellingPrice! - newBasePrice;
+
+    print(newGst);
+
+    product.saleigst = newGst.toStringAsFixed(2);
+
+    product.salecgst = (newGst / 2).toStringAsFixed(2);
+    print(product.salecgst);
+
+    product.salesgst = (newGst / 2).toStringAsFixed(2);
+    print(product.salesgst);
+  }
+
+  //local Database
+  void insertToDatabase(Billing provider) async {
+    int id = await DatabaseHelper().InsertOrderInput(_orderInput, provider, newAddedItems!);
+    List<KotModel> kotItemlist = [];
+    var tempMap = CountNoOfitemIsList(Kotlist);
+
+    Kotlist.forEach((element) {
+      print("qtycount:${tempMap['${element.id}']}");
+      var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
+      kotItemlist.add(model);
+    });
+
+    DatabaseHelper().insertKot(kotItemlist);
   }
 
   ///
@@ -554,13 +273,11 @@ class _CreateSaleState extends State<CreateSale> {
       final res = await const ProductService().getProductByBarcode(barcode);
       final product = Product.fromMap(res.data['inventory']);
       final order = OrderItemInput(product: product, quantity: 1, price: 0);
-      final hasProduct =
-          _orderInput.orderItems?.any((e) => e.product?.id == product.id);
+      final hasProduct = _orderInput.orderItems?.any((e) => e.product?.id == product.id);
 
       /// Check if product already exists
       if (hasProduct ?? false) {
-        final i = _orderInput.orderItems
-            ?.indexWhere((e) => e.product?.id == product.id);
+        final i = _orderInput.orderItems?.indexWhere((e) => e.product?.id == product.id);
 
         /// Increase quantity if product already exists
         setState(() {
@@ -601,5 +318,169 @@ class _CreateSaleState extends State<CreateSale> {
     }
 
     return tempMap;
+  }
+
+  void OnDelete(OrderItemInput _orderItem, index) {
+    DatabaseHelper().deleteKot(widget.args!.id!, _orderInput.orderItems![index].product!.name!);
+
+    double discountForOneItem = double.parse(_orderItem.discountAmt) / _orderItem.quantity;
+    _orderItem.discountAmt = (double.parse(_orderItem.discountAmt) - discountForOneItem).toStringAsFixed(2);
+    setState(
+      () {
+        _orderItem.quantity == 1 ? _orderInput.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
+      },
+    );
+
+    for (int i = 0; i < Kotlist.length; i++) {
+      if (Kotlist[i].id == _orderInput.orderItems![index].product!.id) {
+        Kotlist.removeAt(i);
+
+        break;
+      }
+    }
+
+    if (widget.args!.orderId == null) setState(() {});
+  }
+
+  void _onAddManually(BuildContext context) async {
+    final result = await Navigator.pushNamed(
+      context,
+      SearchProductListScreen.routeName,
+      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.sale, productlist: _orderInput.orderItems!),
+    );
+    if (result == null && result is! List<Product>) {
+      return;
+    }
+
+    var temp = result as List<Product>;
+
+    temp.forEach((element) {
+      sellingPriceListForShowinDiscountTextBOX.add(element.sellingPrice.toString());
+    });
+
+    Kotlist.addAll(temp);
+
+    var tempMap = CountNoOfitemIsList(temp);
+    final orderItems = temp
+        .map((e) => OrderItemInput(
+              product: e,
+              quantity: tempMap["${e.id}"],
+              price: 0,
+            ))
+        .toList();
+
+    var tempOrderitems = _orderInput.orderItems;
+
+    for (int i = 0; i < tempOrderitems!.length; i++) {
+      for (int j = 0; j < orderItems.length; j++) {
+        if (tempOrderitems[i].product!.id == orderItems[j].product!.id) {
+          tempOrderitems[i].product!.quantity = tempOrderitems[i].product!.quantity! - orderItems[j].quantity;
+          tempOrderitems[i].quantity = tempOrderitems[i].quantity + orderItems[j].quantity;
+          orderItems.removeAt(j);
+        }
+      }
+    }
+
+    _orderInput.orderItems = tempOrderitems;
+
+    setState(() {
+      _orderInput.orderItems?.addAll(orderItems);
+      newAddedItems!.addAll(orderItems);
+    });
+  }
+
+  void showaddDiscountDialouge(double basesellingprice, List<OrderItemInput> _orderItems, int index) {
+    final _orderItem = _orderItems[index];
+
+    double discount = double.parse(_orderItem.discountAmt);
+    final product = _orderItems[index].product!;
+    showDialog(
+        useSafeArea: true,
+        useRootNavigator: true,
+        context: context,
+        builder: (ctx) {
+          String? localSellingPrice;
+          String? discountedPrice;
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AlertDialog(
+                content: Column(
+                  children: [
+                    Text(
+                      "Discount",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CustomTextField(
+                      inputType: TextInputType.number,
+                      onChanged: (val) {
+                        localSellingPrice = val;
+                      },
+                      hintText: 'Enter Taxable Value   (${basesellingprice + discount})',
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('or'),
+                    ),
+                    CustomTextField(
+                      inputType: TextInputType.number,
+                      onChanged: (val) {
+                        discountedPrice = val;
+                      },
+                      hintText: 'Enter total value   (${sellingPriceListForShowinDiscountTextBOX[index]})',
+                      validator: (val) {
+                        if (val!.isNotEmpty && localSellingPrice!.isNotEmpty) {
+                          return 'Do not fill both fields';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+                actions: [
+                  Center(
+                    child: CustomButton(
+                        title: 'Submit',
+                        onTap: () {
+                          if (localSellingPrice != null) {
+                            print(localSellingPrice);
+                            print(discountedPrice);
+
+                            discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - int.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+
+                            _orderItems[index].discountAmt = discount.toStringAsFixed(2);
+                            setState(() {});
+                          }
+
+                          if (localSellingPrice != null && localSellingPrice!.isNotEmpty) {
+                            _onSubtotalChange(product, localSellingPrice);
+                            setState(() {});
+                          } else if (discountedPrice != null) {
+                            print('s$discountedPrice');
+
+                            double realBaseSellingPrice = double.parse(_orderItem.product!.baseSellingPriceGst!);
+
+                            _onTotalChange(product, discountedPrice);
+                            print("realbase selling price=${realBaseSellingPrice}");
+                            print("discount=${discount}");
+                            discount = (realBaseSellingPrice + discount - double.parse(_orderItem.product!.baseSellingPriceGst!)) * _orderItem.quantity;
+                            _orderItems[index].discountAmt = discount.toStringAsFixed(2);
+
+                            setState(() {});
+                          }
+
+                          Navigator.of(ctx).pop();
+                        }),
+                  )
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

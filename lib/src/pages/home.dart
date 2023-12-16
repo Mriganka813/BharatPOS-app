@@ -37,7 +37,7 @@ import 'package:shopos/src/widgets/custom_icons.dart';
 
 class HomePage extends StatefulWidget {
   BuildContext context;
- HomePage(this.context, {Key? key}) : super(key: key);
+  HomePage(this.context, {Key? key}) : super(key: key);
   static const routeName = '/home';
   @override
   State<HomePage> createState() => _HomePageState();
@@ -60,29 +60,25 @@ class _HomePageState extends State<HomePage> {
     initializeService();
     getDataFromDatabase();
   }
-    getDataFromDatabase() async {
 
-    try{
+  //LocalDatabase
+  getDataFromDatabase() async {
+    try {
+      final provider = Provider.of<Billing>(
+        widget.context,
+      );
+      var data = await DatabaseHelper().getOrderItems();
 
-    
-    final provider = Provider.of<Billing>(
-      widget.context,
-    );
-    var data = await DatabaseHelper().getOrderItems();
-    print("kkkkkk=");
-  
-    provider.removeAll();
 
-    data.forEach((element) {
-      provider.addSalesBill(element, element.id.toString());
-    });
-    }
-    catch(e)
-    {
-  // showRestartAppDialouge();
+      provider.removeAll();
+
+      data.forEach((element) {
+        provider.addSalesBill(element, element.id.toString());
+      });
+    } catch (e) {
+      // showRestartAppDialouge();
     }
   }
-
 
   @override
   void dispose() {
@@ -206,10 +202,8 @@ class _HomePageState extends State<HomePage> {
                           textScaleFactor: 1.2,
                         ),
                         onTap: () async {
-                        Navigator.pushNamed(
-                              context,
-                              SwitchAccountPage
-                                  .rountName); //
+                          Navigator.pushNamed(
+                              context, SwitchAccountPage.rountName); //
                         },
                       ),
                       ListTile(
@@ -254,8 +248,6 @@ class _HomePageState extends State<HomePage> {
                                   .routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
-
-                  
 
                       /*  ListTile(
                         leading: Icon(Icons.control_point),
@@ -404,7 +396,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   "Purchase",
-                                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),
@@ -448,7 +442,9 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   "Sale",
-                                  style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),

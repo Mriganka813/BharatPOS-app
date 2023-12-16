@@ -1,5 +1,5 @@
 import 'package:shopos/src/models/input/order_input.dart';
-import 'package:shopos/src/models/order.dart';
+
 import 'package:shopos/src/models/party.dart';
 
 abstract class SpecificPartyState {}

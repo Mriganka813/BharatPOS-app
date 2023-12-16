@@ -76,9 +76,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                           onDelete: () {
                             setState(
                               () {
-                                _orderItem.quantity == 1
-                                    ? _orderInput.orderItems?.removeAt(index)
-                                    : _orderItem.quantity -= 1;
+                                _orderItem.quantity == 1 ? _orderInput.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
                               },
                             );
                           },
@@ -98,56 +96,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   CustomButton(
                     title: "Add Product",
                     onTap: () async {
-                        final result = await Navigator.pushNamed(
-                            context,
-                            SearchProductListScreen.routeName,
-                            arguments:  ProductListPageArgs(
-                              isSelecting: true,
-                              orderType: OrderType.purchase,
-                              productlist:  _orderInput.orderItems!
-                            ),
-                          );
-                          if (result == null && result is! List<Product>) {
-                            return;
-                          }
-
-                          var temp = result as List<Product>;
-
-                         // Kotlist.addAll(temp);
-
-                          var tempMap = CountNoOfitemIsList(temp);
-                          final orderItems = temp
-                              .map((e) => OrderItemInput(
-                                    product: e,
-                                    quantity: tempMap["${e.id}"],
-                                    price: 0,
-                                  ))
-                              .toList();
-
-                          var tempOrderitems=_orderInput.orderItems;
-
-                          for(int i=0;i<tempOrderitems!.length;i++)
-                          {
-                            for(int j=0;j<orderItems.length;j++)
-                           {
-                                if(tempOrderitems[i].product!.id==orderItems[j].product!.id)
-                                {
-                                   
-                                  tempOrderitems[i].product!.quantity= tempOrderitems[i].product!.quantity!+orderItems[j].quantity;
-                                  tempOrderitems[i].quantity=tempOrderitems[i].quantity+orderItems[j].quantity;
-                                  orderItems.removeAt(j);
-                                }
-                           }
-                          }  
-
-
-                          _orderInput.orderItems=tempOrderitems;
-
-                          setState(() {
-                          
-                            _orderInput.orderItems?.addAll(orderItems);
-                         
-                          });
+                      addProduct();
                     },
                   ),
                   // const VerticalDivider(
@@ -166,69 +115,38 @@ class _CreatePurchaseState extends State<CreatePurchase> {
             ),
             const Divider(color: Colors.transparent),
             HorizontalSlidableButton(
-             
-                    width: double.maxFinite,
-                    buttonWidth: 50,
-                    
-                    color: Colors.green,
-                    isRestart: true,
-                    buttonColor: Colors.green,
-                    dismissible: false,
-                    
-                    label: const Center(
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.black,
-                      ),)
-                    ),
+              width: double.maxFinite,
+              buttonWidth: 50,
+              color: Colors.green,
+              isRestart: true,
+              buttonColor: Colors.green,
+              dismissible: false,
+              label: const Center(
+                  child: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.black,
+                ),
+              )),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Swipe to continue",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge
-                        ?.copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                   ),
                 ],
               ),
               height: 50,
               onChanged: (position) {
                 if (position == SlidableButtonPosition.end) {
-                  // if (_orderItems.isEmpty) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(
-                  //       backgroundColor: Colors.red,
-                  //       content: Text(
-                  //         "Please select products before continuing",
-                  //         style: TextStyle(color: Colors.white),
-                  //       ),
-                  //     ),
-                  //   );
-                  //   return;
-                  // }
                   final provider = Provider.of<Billing>(context, listen: false);
                   if (_orderItems.isNotEmpty) {
-                    provider.addPurchaseBill(
-                        _orderInput,
-                        widget.args?.orderId == null
-                            ? DateTime.now().toString()
-                            : widget.args!.orderId!);
+                    provider.addPurchaseBill(_orderInput, widget.args?.orderId == null ? DateTime.now().toString() : widget.args!.orderId!);
                   }
 
-                  Navigator.pushNamed(context, BillingListScreen.routeName,
-                      arguments: OrderType.purchase);
-                  // Navigator.pushNamed(
-                  //   context,
-                  //   CheckoutPage.routeName,
-                  //   arguments: CheckoutPageArgs(
-                  //     invoiceType: OrderType.purchase,
-                  //     orderInput: _orderInput,
-                  //   ),
-                  // );
+                  Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.purchase);
                 }
               },
             ),
@@ -237,6 +155,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
       ),
     );
   }
+
   Map CountNoOfitemIsList(List<Product> temp) {
     var tempMap = {};
 
@@ -263,5 +182,47 @@ class _CreatePurchaseState extends State<CreatePurchase> {
     }
 
     return tempMap;
+  }
+
+  void addProduct() async {
+    final result = await Navigator.pushNamed(
+      context,
+      SearchProductListScreen.routeName,
+      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.purchase, productlist: _orderInput.orderItems!),
+    );
+    if (result == null && result is! List<Product>) {
+      return;
+    }
+
+    var temp = result as List<Product>;
+
+    // Kotlist.addAll(temp);
+
+    var tempMap = CountNoOfitemIsList(temp);
+    final orderItems = temp
+        .map((e) => OrderItemInput(
+              product: e,
+              quantity: tempMap["${e.id}"],
+              price: 0,
+            ))
+        .toList();
+
+    var tempOrderitems = _orderInput.orderItems;
+
+    for (int i = 0; i < tempOrderitems!.length; i++) {
+      for (int j = 0; j < orderItems.length; j++) {
+        if (tempOrderitems[i].product!.id == orderItems[j].product!.id) {
+          tempOrderitems[i].product!.quantity = tempOrderitems[i].product!.quantity! + orderItems[j].quantity;
+          tempOrderitems[i].quantity = tempOrderitems[i].quantity + orderItems[j].quantity;
+          orderItems.removeAt(j);
+        }
+      }
+    }
+
+    _orderInput.orderItems = tempOrderitems;
+
+    setState(() {
+      _orderInput.orderItems?.addAll(orderItems);
+    });
   }
 }

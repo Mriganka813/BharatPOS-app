@@ -8,6 +8,7 @@ class OrderInput {
   OrderInput(
       {this.id = -1,
       this.orderItems,
+      this.total,
       this.modeOfPayment,
       this.party,
       this.user,
@@ -20,6 +21,7 @@ class OrderInput {
 
   int? id;
   List<OrderItemInput>? orderItems;
+  String? total;
   String? modeOfPayment;
   Party? party;
   User? user;
@@ -31,21 +33,20 @@ class OrderInput {
   String tableNo;
 
   factory OrderInput.fromMap(Map<String, dynamic> json) => OrderInput(
-      id: json["id"],
-      orderItems: List<OrderItemInput>.from(
-        json["orderItems"].map(
-          (x) => OrderItemInput.fromMap(x),
+        orderItems: List<OrderItemInput>.from(
+          json["orderItems"].map(
+            (x) => OrderItemInput.fromMap(x),
+          ),
         ),
-      ),
-      modeOfPayment: json["modeOfPayment"],
-      party: json["party"],
-      user: User(id: json["user"].toString()) ,
-      createdAt: DateTime.parse( json["createdAt"]),
-      reciverName: json['reciverName']??"",
-      businessName: json['businessName']??"",
-      businessAddress: json['businessAddress']??"",
-      gst: json['gst']??"",
-      tableNo: json['tableNo']??"");
+        modeOfPayment: json["modeOfPayment"] ?? "",
+        id: 1,
+        party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
+        user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
+        createdAt: json["createdAt"] == null
+            ? DateTime.now()
+            : DateTime.parse(json["createdAt"]),
+        total: json['total'].toString() ?? " ",
+      );
 
   Map<String, dynamic> toMap(OrderType type) => {
         "id": id,
@@ -66,18 +67,16 @@ class OrderInput {
 }
 
 class OrderItemInput {
-  OrderItemInput({
-    this.price = 0,
-    this.quantity = 0,
-    this.product,
-    this.saleSGST,
-    this.saleCGST,
-    this.baseSellingPrice,
-    this.saleIGST,
-    this.discountAmt = "0",
-    this.originalbaseSellingPrice=""
-  
-  });
+  OrderItemInput(
+      {this.price = 0,
+      this.quantity = 0,
+      this.product,
+      this.saleSGST,
+      this.saleCGST,
+      this.baseSellingPrice,
+      this.saleIGST,
+      this.discountAmt = "0",
+      this.originalbaseSellingPrice = ""});
 
   double? price;
   int quantity;
@@ -87,20 +86,18 @@ class OrderItemInput {
   String? baseSellingPrice;
   String? saleIGST;
   String discountAmt = "0";
-  String originalbaseSellingPrice="";
-
+  String originalbaseSellingPrice = "";
 
   factory OrderItemInput.fromMap(Map<String, dynamic> json) => OrderItemInput(
-        price: double.parse(json["price"].toString()),
-        quantity: 200,
-        product: Product.fromMap(json["product"])  ,
+        price: double.parse(json['price'].toString()) ?? 0,
+        quantity: json["quantity"],
+        product:
+            json["product"] is Map ? Product.fromMap(json["product"]) : null,
         saleCGST: json["saleCGST"].toString(),
         saleSGST: json["saleSGST"].toString(),
         baseSellingPrice: json["baseSellingPrice"].toString(),
         saleIGST: json["saleIGST"].toString(),
         discountAmt: json['discountAmt'].toString(),
-        originalbaseSellingPrice:json['discountAmt'].toString(),
-     
       );
 
   Map<String, dynamic> toSaleMap() => {
@@ -114,18 +111,19 @@ class OrderItemInput {
             : product!.baseSellingPriceGst,
         "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
         "discountAmt": discountAmt,
-        "originalbaseSellingPrice":
-            (double.parse(product!.baseSellingPriceGst! =="null"?'0':product!.baseSellingPriceGst!) +
-                    double.parse(discountAmt!))
-                .toString()
+        "originalbaseSellingPrice": (double.parse(
+                    product!.baseSellingPriceGst! == "null"
+                        ? '0'
+                        : product!.baseSellingPriceGst!) +
+                double.parse(discountAmt!))
+            .toString()
       };
 
-       Map<String, dynamic> toSaleReturnMap() => {
+  Map<String, dynamic> toSaleReturnMap() => {
         "price": (product?.sellingPrice ?? 1),
         "quantity": quantity,
         "product": product?.id,
         "_id": "657442744ee866a10928da95",
-     
       };
   Map<String, dynamic> toPurchaseMap() => {
         "price": (product?.purchasePrice ?? 1),
