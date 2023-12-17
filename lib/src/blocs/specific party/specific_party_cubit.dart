@@ -3,14 +3,14 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopos/src/blocs/specific%20party/specific_party_state.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/services/specific_party.dart';
 
 class SpecificPartyCubit extends Cubit<SpecificPartyState> {
-  final List<OrderInput> _specificsaleParties = [];
-  final List<OrderInput> _specificpurchaseParties = [];
+  final List<Order> _specificsaleParties = [];
+  final List<Order> _specificpurchaseParties = [];
   final SpecificPartyService _partyService = SpecificPartyService();
   late final Party _partyDetails;
   SpecificPartyCubit() : super(SpecificPartyInitial());

@@ -1,9 +1,9 @@
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 
 String invoiceTemplatewithGST({
   required String companyName,
-  required OrderInput order,
+  required Order order,
   required User user,
   required List<String> headers,
   required String total,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
+
 
 import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -23,7 +24,7 @@ enum billType {
 
 class BluetoothArgs {
   // final User user;
-  // final OrderInput order;
+  // final Order order;
   // final List<String> headers;
   // final DateTime date;
   // final String invoiceNum;
@@ -31,12 +32,12 @@ class BluetoothArgs {
   // final String subtotal;
   // final String gst;
 
-  final OrderInput orderInput;
+  final Order order;
   final DateTime dateTime;
   kotType type;
 
   BluetoothArgs(
-      {required this.orderInput, required this.dateTime, required this.type});
+      {required this.order, required this.dateTime, required this.type});
 }
 
 class BillingListScreen extends StatefulWidget {
@@ -52,14 +53,14 @@ class BillingListScreen extends StatefulWidget {
 }
 
 class _BillingListScreenState extends State<BillingListScreen> {
-  // List<OrderInput> _orderInput = [];
+  // List<Order> _Order = [];
   // List<OrderType> _orderType = [];
 
   // bool _isEdit = false;
 
-  // getAllOrderInputList() async {
+  // getAllOrderList() async {
   //   final provider = Provider.of<Billing>(context, listen: false);
-  //   _orderInput = provider.getAllOrderInput();
+  //   _Order = provider.getAllOrder();
   //   _orderType = provider.getAllOrderType();
   // }
 
@@ -170,7 +171,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
               // }
               // else {
               double sum = 0;
-              if (curr.product!.baseSellingPriceGst! != "null")
+              if (curr.product!.baseSellingPriceGst != "null")
                 sum = double.parse(curr.product!.baseSellingPriceGst!);
               else {
                 sum = curr.product!.sellingPrice!.toDouble();
@@ -268,7 +269,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
           ).toStringAsFixed(2);
   }
 
-  void _view57mmPdf(OrderInput orderInput) {
+  void _view57mmPdf(Order Order) {
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -280,7 +281,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     // }
     // await PdfKotUI.generate57mmKot(
     //     user: user,
-    //     order: orderInput,
+    //     order: Order,
     //     headers: ["Item", "Qty"],
     //     date: DateTime.now(),
     //     invoiceNum: date);
@@ -289,12 +290,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
         arguments: CombineArgs(
             billArgs: null,
             bluetoothArgs: BluetoothArgs(
-                orderInput: orderInput,
+                order: Order,
                 dateTime: DateTime.now(),
                 type: kotType.is57mm)));
   }
 
-  void _view80mmPdf(OrderInput orderInput) {
+  void _view80mmPdf(Order order) {
     // User user = User();
     // try {
     //   final res = await UserService.me();
@@ -306,7 +307,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
     // }
     // await PdfKotUI.generate80mmKot(
     //     user: user,
-    //     order: orderInput,
+    //     order: Order,
     //     headers: ["Item", "Qty"],
     //     date: DateTime.now(),
     //     invoiceNum: date);
@@ -315,12 +316,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
         arguments: CombineArgs(
             billArgs: null,
             bluetoothArgs: BluetoothArgs(
-                orderInput: orderInput,
+                order: order,
                 dateTime: DateTime.now(),
                 type: kotType.is80mm)));
   }
 
-  // void _viewSmallKot(OrderInput orderInput, int index, Billing provider) async {
+  // void _viewSmallKot(Order Order, int index, Billing provider) async {
   //   User user = User();
   //   final targetPath = await getExternalCacheDirectories();
   //   const targetFileName = "Invoice";
@@ -338,7 +339,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   //     invoiceNum: date,
   //   //     user: user,
   //   //     date: DateTime.now(),
-  //   //     order: orderInput,
+  //   //     order: Order,
   //   //     headers: [
   //   //       "Invoice 0000000",
   //   //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
@@ -354,7 +355,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   //   PdfUI.generate80mmPdf(
   //     user: user,
-  //     order: orderInput,
+  //     order: Order,
   //     headers: [
   //       "Invoice 0000000",
   //       "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
@@ -374,7 +375,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   // }
   // }
 
-  _showNewDialog(OrderInput order) async {
+  _showNewDialog(Order order) async {
     return showDialog(
       context: context,
       useRootNavigator: true,
@@ -550,7 +551,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                         orderId: widget.orderType == OrderType.sale
                             ? provider.salesBilling.keys.toList()[index]
                             : provider.purchaseBilling.keys.toList()[index],
-                        orderInput: widget.orderType == OrderType.sale
+                        order: widget.orderType == OrderType.sale
                             ? provider.salesBilling.values.toList()[index]
                             : provider.purchaseBilling.values.toList()[index],
                       ),

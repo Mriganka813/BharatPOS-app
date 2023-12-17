@@ -271,7 +271,7 @@ class _PartiesListViewState extends State<PartiesListView> {
                   style: TextStyle(color: const Color.fromRGBO(244, 67, 54, 1)),
                 )
               : Text(
-                  " ₹ ${party.balance!.toStringAsFixed(2)}",
+                  " ₹ ${party.balance!.abs().toStringAsFixed(2)}",
                   style: TextStyle(color: Colors.green),
                 ), //here when api will be fixed then we will get the correct value
           onTap: () async {

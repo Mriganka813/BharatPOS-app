@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/services/SalesReturn.dart';
 import 'package:shopos/src/services/purchase.dart';
 import 'package:shopos/src/services/sales.dart';
@@ -11,7 +11,7 @@ part 'checkout_state.dart';
 class CheckoutCubit extends Cubit<CheckoutState> {
   CheckoutCubit() : super(CheckoutInitial());
 
-  Future<void> createSalesOrder(OrderInput input, String invoiceNum) async {
+  Future<void> createSalesOrder(Order input, String invoiceNum) async {
     emit(CheckoutLoading());
     try {
       await SalesService.createSalesOrder(input, invoiceNum);
@@ -22,7 +22,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     }
   }
 
-  Future<void> createPurchaseOrder(OrderInput input, String invoiceNum) async {
+  Future<void> createPurchaseOrder(Order input, String invoiceNum) async {
     emit(CheckoutLoading());
     try {
       await PurchaseService.createPurchaseOrder(input, invoiceNum);
@@ -34,7 +34,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   }
 
 
-   Future<void> createSalesReturn(OrderInput input, String invoiceNum,String total) async {
+   Future<void> createSalesReturn(Order input, String invoiceNum,String total) async {
     emit(CheckoutLoading());
     try {
       await SalesReturnService.createSalesReturnOrder(input, invoiceNum,total);

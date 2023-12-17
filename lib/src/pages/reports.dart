@@ -64,7 +64,7 @@ class _ReportsPageState extends State<ReportsPage> {
     if (state.orders != null) {
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              orders: state.orders!, type: _reportInput.type.toString()));
+              orders: state.orders, type: _reportInput.type.toString()));
     }
     if (state.product != null) {
       Navigator.pushNamed(context, ReportTable.routeName,

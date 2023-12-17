@@ -1,10 +1,10 @@
 import 'package:intl/intl.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 
 String smallKotTemplate({
   required User user,
-  required OrderInput order,
+  required Order order,
   required List<String> headers,
   required DateTime date,
   required String invoiceNum,

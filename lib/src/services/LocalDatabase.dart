@@ -1,7 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
+import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:shopos/src/models/KotModel.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/models/user.dart';
@@ -59,8 +60,7 @@ class DatabaseHelper {
           )
         ''');
 
-
-          db.execute('''
+        db.execute('''
           CREATE TABLE  SubProduct(
          
             
@@ -138,8 +138,7 @@ class DatabaseHelper {
     );
   }
 
-  Future<int> InsertOrderInput(OrderInput input, Billing provider,
-      List<OrderItemInput> newAddeditems) async {
+  Future<int> InsertOrder(Order input, Billing provider, List<OrderItemInput> newAddeditems) async {
     final response = await UserService.me();
     final user = User.fromMap(response.data['user']);
 
@@ -151,16 +150,13 @@ class DatabaseHelper {
     //As we cant edit the data fetched from database because it is immutable we made a tempMap
     Map<String, dynamic> tempMap = {};
     tempMap.addAll(map);
-    tempMap.remove(
-        "orderItems"); //removed this because we are not inserting all items to this table instead we store the id as OIID in OrderItemInput table of each OrderItem
-    tempMap['party'] =
-        " "; //  given Empty String because we do not want to store it actually and its a Party type cant store it so replaced with  " "
+    tempMap.remove("orderItems"); //removed this because we are not inserting all items to this table instead we store the id as OIID in OrderItemInput table of each OrderItem
+    tempMap['party'] = " "; //  given Empty String because we do not want to store it actually and its a Party type cant store it so replaced with  " "
     tempMap['user'] = " "; //   same reason as above
 
-    //First time all OrderInput will have id -1 when we enter that into table only it changes
+    //First time all Order will have id -1 when we enter that into table only it changes
     if (input.id == -1) {
-      tempMap.remove(
-          "id"); // It is removed becasue, when inserting the item it should autoincrement the id, but we give id in the map, it will ovverrite and id  will be -1
+      tempMap.remove("id"); // It is removed becasue, when inserting the item it should autoincrement the id, but we give id in the map, it will ovverrite and id  will be -1
     }
     tempMap["userId"] = user.id;
 
@@ -171,7 +167,7 @@ class DatabaseHelper {
       }
     });
 
-    //Insert if the OrderInput is new and else update
+    //Insert if the Order is new and else update
     if (input.id == -1) {
       await db.insert(
         'OrderInput',
@@ -187,8 +183,7 @@ class DatabaseHelper {
 
     //get Highest id that meanse id of the last entered item to store that in OrderitemInput as OIID
     if (input.id == -1) {
-      highestId =
-          result.first['maxId'] == null ? 0 : result.first['maxId'] as int;
+      highestId = result.first['maxId'] == null ? 0 : result.first['maxId'] as int;
       input.id = highestId;
       provider.addSalesBill(
         input,
@@ -203,8 +198,7 @@ class DatabaseHelper {
     return highestId;
   }
 
-  void insertOrderItemsInput(List<OrderItemInput> data,
-      List<OrderItemInput> newOrderItemsData, int id) async {
+  void insertOrderItemsInput(List<OrderItemInput> data, List<OrderItemInput> newOrderItemsData, int id) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     var curr = data;
@@ -220,9 +214,9 @@ class DatabaseHelper {
 
       //case when we dont add new product but incresed the quatitiy so we just update
       //so when OrderItemsData is empty that means we increased or decresed the quatity oru such updates
-      //of current OrderInput
+      //of current Order
 
-      // so when  there is items in newOrderItemsData that means new OrderInput are there to input
+      // so when  there is items in newOrderItemsData that means new Order are there to input
       if (!newOrderItemsData.isEmpty) {
         await db.insert(
           'OrderItemInput',
@@ -240,10 +234,10 @@ class DatabaseHelper {
       await insertProductItems(data[i].product!);
     }
 
-    // this for loop is implemented to work in a situation like when we  both increase the qty and added new product to OrderInput
+    // this for loop is implemented to work in a situation like when we  both increase the qty and added new product to Order
     //so in above code we only insert the new items as newOrderItemInput have some contents( because variable data becomes newOrderIteminput)
 
-    // so in order to update all entire data of the OrderInput we do this
+    // so in order to update all entire data of the Order we do this
     for (int i = 0; i < curr.length; i++) {
       var map = curr[i].toSaleMap();
       map['product'] = curr[i].product!.id;
@@ -274,35 +268,30 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<OrderInput>> getOrderItems() async {
-       final response = await UserService.me();
+  Future<List<Order>> getOrderItems() async {
+    final response = await UserService.me();
     final user = User.fromMap(response.data['user']);
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
 
-    final List<Map<String, dynamic>> OrderItemInputData =
-        await db.query('OrderItemInput');
-    final List<Map<String, dynamic>> OrderInputData =
-        await db.query('OrderInput',  where: 'userId=?', whereArgs: [user.id]);
+    final List<Map<String, dynamic>> OrderItemInputData = await db.query('OrderItemInput');
+    final List<Map<String, dynamic>> OrderData = await db.query('OrderInput', where: 'userId=?', whereArgs: [user.id]);
+    print("From database");
+    List<Order> list = [];
 
-    List<OrderInput> list = [];
-
-    for (int j = 0; j < OrderInputData.length; j++) {
+    for (int j = 0; j < OrderData.length; j++) {
       Map<String, dynamic> t = {};
 
-      t.addAll(OrderInputData[j]);
+      t.addAll(OrderData[j]);
       print("data=");
       print(t);
 
       List<OrderItemInput> plist = [];
 
       for (int i = 0; i < OrderItemInputData.length; i++) {
-        print(OrderItemInputData[i]['OIID'].toString() +
-            "&" +
-            OrderInputData[j]['id'].toString());
-        if (OrderItemInputData[i]['OIID'] == OrderInputData[j]['id']) {
-          plist.addAll(await convertListOfMaptoListofOrderItemInput(
-              OrderItemInputData[i]));
+        print(OrderItemInputData[i]['OIID'].toString() + "&" + OrderData[j]['id'].toString());
+        if (OrderItemInputData[i]['OIID'] == OrderData[j]['id']) {
+          plist.addAll(await convertListOfMaptoListofOrderItemInput(OrderItemInputData[i]));
         }
       }
 
@@ -311,17 +300,18 @@ class DatabaseHelper {
       t['user'] = User();
       t['createdAt'] = DateTime.now();
 
-      OrderInput orderInputObject = OrderInput.fromMap(t);
-      orderInputObject.orderItems = plist;
+      Order OrderObject = Order.fromMap(t);
+      OrderObject.orderItems = plist;
 
-      list.add(orderInputObject);
+      list.add(OrderObject);
     }
+
+    print(list);
 
     return list;
   }
 
-  Future<List<OrderItemInput>> convertListOfMaptoListofOrderItemInput(
-      Map<String, dynamic> OrderItemInputData) async {
+  Future<List<OrderItemInput>> convertListOfMaptoListofOrderItemInput(Map<String, dynamic> OrderItemInputData) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     List<OrderItemInput> list = [];
@@ -345,12 +335,12 @@ class DatabaseHelper {
 
     Otemp.remove("OIID");
 
-    list.add(OrderItemInput.fromMap(Otemp));
+    list.add(OrderItemInput.fromMapForLocalDatabase(Otemp));
 
     return list;
   }
 
-  deleteOrderItemInput(OrderInput input) async {
+  deleteOrderItemInput(Order input) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     await db.delete("OrderInput", where: "id = ?", whereArgs: [input.id]);
@@ -374,8 +364,7 @@ class DatabaseHelper {
 
       if (result.isNotEmpty) {
         int qty = result.first['qty'];
-        db.execute(
-            "update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
+        db.execute("update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
         print("check qty");
         print(list);
       } else {
@@ -401,8 +390,7 @@ class DatabaseHelper {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
 
-    final List<Map<String, dynamic>> data = await db.query("Kot",
-        where: 'isPrinted=? AND orderId=?', whereArgs: ["no", id]);
+    final List<Map<String, dynamic>> data = await db.query("Kot", where: 'isPrinted=? AND orderId=?', whereArgs: ["no", id]);
 
     print(data);
 
@@ -428,11 +416,9 @@ class DatabaseHelper {
 
     if (qty > 1) {
       qty = qty - 1;
-      db.execute(
-          "update Kot set qty=$qty where orderId=$id and isPrinted='no' and name='$itemName'");
+      db.execute("update Kot set qty=$qty where orderId=$id and isPrinted='no' and name='$itemName'");
     } else {
-      db.execute(
-          "delete from Kot  where orderId=$id and isPrinted='no' and name='$itemName'");
+      db.execute("delete from Kot  where orderId=$id and isPrinted='no' and name='$itemName'");
     }
   }
 
@@ -469,9 +455,9 @@ class DatabaseHelper {
         {
           return true;
         }
-    List<Map<String, dynamic>> orderInputcolumns =
-        await db.rawQuery('PRAGMA table_info(OrderInput)');
-        if(orderInputcolumns.length<20)
+    List<Map<String, dynamic>> Ordercolumns =
+        await db.rawQuery('PRAGMA table_info(Order)');
+        if(Ordercolumns.length<20)
         {
             return true;
         }

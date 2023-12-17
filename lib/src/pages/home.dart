@@ -1,10 +1,9 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+
 import 'package:provider/provider.dart';
-import 'package:shopos/src/app.dart';
+
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/AboutOptionPage.dart';
@@ -17,23 +16,19 @@ import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/online_order_list.dart';
 
 import 'package:shopos/src/pages/party_list.dart';
-import 'package:shopos/src/pages/privacy_policy.dart';
-// import 'package:shopos/src/pages/products_list.dart';
+
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/pages/set_pin.dart';
 import 'package:shopos/src/pages/sign_in.dart';
-import 'package:shopos/src/pages/terms_conditions.dart';
+
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/auth.dart';
 import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
-import 'package:shopos/src/services/user.dart';
+
 import 'package:shopos/src/widgets/custom_button.dart';
-// import 'package:shopos/src/widgets/bulk_upload.dart';
-import 'package:shopos/src/widgets/custom_icons.dart';
-// import 'package:switcher/switcher.dart';
 
 class HomePage extends StatefulWidget {
   BuildContext context;
@@ -63,21 +58,20 @@ class _HomePageState extends State<HomePage> {
 
   //LocalDatabase
   getDataFromDatabase() async {
-    try {
+    print("sssssssss");
+    
+
       final provider = Provider.of<Billing>(
         widget.context,
       );
       var data = await DatabaseHelper().getOrderItems();
-
 
       provider.removeAll();
 
       data.forEach((element) {
         provider.addSalesBill(element, element.id.toString());
       });
-    } catch (e) {
-      // showRestartAppDialouge();
-    }
+ 
   }
 
   @override
@@ -143,9 +137,14 @@ class _HomePageState extends State<HomePage> {
                       ),*/
                       Padding(
                         padding: const EdgeInsets.all(10),
-                        child: Image.asset(
-                          "assets/images/bell.png",
-                          height: 30,
+                        child: GestureDetector(
+                          onTap: (){
+                           
+                          },
+                          child: Image.asset(
+                            "assets/images/bell.png",
+                            height: 30,
+                          ),
                         ),
                       )
                     ],
@@ -202,8 +201,7 @@ class _HomePageState extends State<HomePage> {
                           textScaleFactor: 1.2,
                         ),
                         onTap: () async {
-                          Navigator.pushNamed(
-                              context, SwitchAccountPage.rountName); //
+                          Navigator.pushNamed(context, SwitchAccountPage.rountName); //
                         },
                       ),
                       ListTile(
@@ -211,30 +209,25 @@ class _HomePageState extends State<HomePage> {
                           "assets/images/keyy.png",
                           height: 30,
                         ),
-                        title: Title(
-                            color: Colors.black, child: Text("Set/Change pin")),
+                        title: Title(color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {
                           bool status = await _pinService.pinStatus();
                           print(status);
-                          Navigator.of(context).pushNamed(SetPinPage.routeName,
-                              arguments: status);
+                          Navigator.of(context).pushNamed(SetPinPage.routeName, arguments: status);
                         },
                       ),
 
-                      ListTile(
+                    /*  ListTile(
                         leading: Image.asset(
                           "assets/images/lock.png",
                           height: 30,
                         ),
-                        title: Title(
-                            color: Colors.black,
-                            child: Text("Change Password")),
+                        title: Title(color: Colors.black, child: Text("Change Password")),
                         onTap: () async {
-                          await Navigator.pushNamed(context, 'changepassword',
-                              arguments: state.user);
+                          await Navigator.pushNamed(context, 'changepassword', arguments: state.user);
                           Navigator.pop(context);
                         },
-                      ),
+                      ),*/
                       ListTile(
                         leading: Image.asset(
                           "assets/images/about.png",
@@ -242,10 +235,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         title: Title(color: Colors.black, child: Text("About")),
                         onTap: () {
-                          Navigator.pushNamed(
-                              context,
-                              AboutOptionPage
-                                  .routeName); // Navigate to the PrivacyPolicyPage
+                          Navigator.pushNamed(context, AboutOptionPage.routeName); // Navigate to the PrivacyPolicyPage
                         },
                       ),
 
@@ -266,8 +256,7 @@ class _HomePageState extends State<HomePage> {
                           "assets/images/logout.png",
                           height: 30,
                         ),
-                        title:
-                            Title(color: Colors.black, child: Text("Logout")),
+                        title: Title(color: Colors.black, child: Text("Logout")),
                         onTap: () async {
                           await const AuthService().signOut();
                           // final provider =
@@ -290,11 +279,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     GridView(
                       shrinkWrap: true,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 30.0,
-                              mainAxisExtent: 166),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 30.0, mainAxisExtent: 166),
                       padding: const EdgeInsets.all(10),
                       children: [
                         HomeCard(
@@ -305,10 +290,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               SearchProductListScreen.routeName,
-                              arguments: ProductListPageArgs(
-                                  isSelecting: false,
-                                  orderType: OrderType.sale,
-                                  productlist: []),
+                              arguments: ProductListPageArgs(isSelecting: false, orderType: OrderType.sale, productlist: []),
                             );
                           },
                         ),
@@ -375,14 +357,12 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               children: [
                                 Card(
-                                  color: Color.fromARGB(255, 255, 101, 122)
-                                      .withOpacity(0.5),
+                                  color: Color.fromARGB(255, 255, 101, 122).withOpacity(0.5),
                                   elevation: 5,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     side: BorderSide(
-                                      color: Color.fromARGB(255, 175, 76,
-                                          76), // Set the border color
+                                      color: Color.fromARGB(255, 175, 76, 76), // Set the border color
                                       width: 2.0, // Set the border width
                                     ),
                                   ),
@@ -396,9 +376,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   "Purchase",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),
@@ -407,9 +385,7 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, CreateSale.routeName,
-                                  arguments: BillingPageArgs(
-                                      id: -1, orderId: "", editOrders: []));
+                              Navigator.pushNamed(context, CreateSale.routeName, arguments: BillingPageArgs(id: -1, orderId: "", editOrders: []));
                             },
                             onLongPress: () {
                               Navigator.pushNamed(
@@ -420,15 +396,12 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               children: [
                                 Card(
-                                  color:
-                                      const Color.fromARGB(255, 101, 255, 106)
-                                          .withOpacity(0.5),
+                                  color: const Color.fromARGB(255, 101, 255, 106).withOpacity(0.5),
                                   elevation: 5,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                     side: BorderSide(
-                                      color:
-                                          Colors.green, // Set the border color
+                                      color: Colors.green, // Set the border color
                                       width: 2.0, // Set the border width
                                     ),
                                   ),
@@ -442,9 +415,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 Text(
                                   "Sale",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                                 )
                               ],
                             ),

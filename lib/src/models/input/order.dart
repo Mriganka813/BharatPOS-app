@@ -4,8 +4,8 @@ import 'package:shopos/src/pages/checkout.dart';
 import '../party.dart';
 import '../user.dart';
 
-class OrderInput {
-  OrderInput(
+class Order {
+  Order(
       {this.id = -1,
       this.orderItems,
       this.total,
@@ -17,6 +17,7 @@ class OrderInput {
       this.businessName,
       this.businessAddress,
       this.gst,
+      this.invoiceNum,
       this.tableNo = "-1"});
 
   int? id;
@@ -30,9 +31,10 @@ class OrderInput {
   String? businessName;
   String? businessAddress;
   String? gst;
+  String? invoiceNum;
   String tableNo;
 
-  factory OrderInput.fromMap(Map<String, dynamic> json) => OrderInput(
+  factory Order.fromMap(Map<String, dynamic> json) => Order(
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
             (x) => OrderItemInput.fromMap(x),
@@ -44,7 +46,7 @@ class OrderInput {
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"] == null
             ? DateTime.now()
-            : DateTime.parse(json["createdAt"]),
+            : DateTime.parse(json["createdAt"].toString()),
         total: json['total'].toString() ?? " ",
       );
 
@@ -93,6 +95,19 @@ class OrderItemInput {
         quantity: json["quantity"],
         product:
             json["product"] is Map ? Product.fromMap(json["product"]) : null,
+        saleCGST: json["saleCGST"].toString(),
+        saleSGST: json["saleSGST"].toString(),
+        baseSellingPrice: json["baseSellingPrice"].toString(),
+        saleIGST: json["saleIGST"].toString(),
+        discountAmt: json['discountAmt'].toString(),
+            originalbaseSellingPrice: json[" originalbaseSellingPrice"]==null|| json[" originalbaseSellingPrice"]=="null"?"0.0":json[" originalbaseSellingPrice"]
+      );
+
+        factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json) => OrderItemInput(
+        price: double.parse(json['price'].toString()) ?? 0,
+        quantity: json["quantity"],
+        product:
+            json["product"],
         saleCGST: json["saleCGST"].toString(),
         saleSGST: json["saleSGST"].toString(),
         baseSellingPrice: json["baseSellingPrice"].toString(),

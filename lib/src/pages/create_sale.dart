@@ -4,7 +4,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
 import 'package:shopos/src/models/KotModel.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/billing_list.dart';
@@ -41,7 +41,7 @@ class CreateSale extends StatefulWidget {
 }
 
 class _CreateSaleState extends State<CreateSale> {
-  late OrderInput _orderInput;
+  late Order _Order;
 
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
@@ -51,7 +51,7 @@ class _CreateSaleState extends State<CreateSale> {
   void initState() {
     super.initState();
 
-    _orderInput = OrderInput(
+    _Order = Order(
       id: widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
@@ -62,14 +62,14 @@ class _CreateSaleState extends State<CreateSale> {
   List<String> sellingPriceListForShowinDiscountTextBOX = [];
 
   void init() {
-    _orderInput.orderItems!.forEach((element) {
+    _Order.orderItems!.forEach((element) {
       sellingPriceListForShowinDiscountTextBOX.add(element.product!.baseSellingPriceGst!);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final _orderItems = _orderInput.orderItems ?? [];
+    final _orderItems = _Order.orderItems ?? [];
     final provider = Provider.of<Billing>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +111,7 @@ class _CreateSaleState extends State<CreateSale> {
                                   product: _orderItems[index].product!,
                                   discount: _orderItems[index].discountAmt,
                                   onAdd: () {
-                                    Kotlist.add(_orderInput.orderItems![index].product!);
+                                    Kotlist.add(_Order.orderItems![index].product!);
                                     _onAdd(_orderItems[index]);
                                   },
                                   onDelete: () {
@@ -243,7 +243,7 @@ class _CreateSaleState extends State<CreateSale> {
 
   //local Database
   void insertToDatabase(Billing provider) async {
-    int id = await DatabaseHelper().InsertOrderInput(_orderInput, provider, newAddedItems!);
+    int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
     var tempMap = CountNoOfitemIsList(Kotlist);
 
@@ -273,19 +273,19 @@ class _CreateSaleState extends State<CreateSale> {
       final res = await const ProductService().getProductByBarcode(barcode);
       final product = Product.fromMap(res.data['inventory']);
       final order = OrderItemInput(product: product, quantity: 1, price: 0);
-      final hasProduct = _orderInput.orderItems?.any((e) => e.product?.id == product.id);
+      final hasProduct = _Order.orderItems?.any((e) => e.product?.id == product.id);
 
       /// Check if product already exists
       if (hasProduct ?? false) {
-        final i = _orderInput.orderItems?.indexWhere((e) => e.product?.id == product.id);
+        final i = _Order.orderItems?.indexWhere((e) => e.product?.id == product.id);
 
         /// Increase quantity if product already exists
         setState(() {
-          _orderInput.orderItems![i!].quantity += 1;
+          _Order.orderItems![i!].quantity += 1;
         });
       } else {
         setState(() {
-          _orderInput.orderItems?.add(order);
+          _Order.orderItems?.add(order);
         });
       }
     } catch (_) {}
@@ -321,18 +321,18 @@ class _CreateSaleState extends State<CreateSale> {
   }
 
   void OnDelete(OrderItemInput _orderItem, index) {
-    DatabaseHelper().deleteKot(widget.args!.id!, _orderInput.orderItems![index].product!.name!);
+    DatabaseHelper().deleteKot(widget.args!.id!, _Order.orderItems![index].product!.name!);
 
     double discountForOneItem = double.parse(_orderItem.discountAmt) / _orderItem.quantity;
     _orderItem.discountAmt = (double.parse(_orderItem.discountAmt) - discountForOneItem).toStringAsFixed(2);
     setState(
       () {
-        _orderItem.quantity == 1 ? _orderInput.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
+        _orderItem.quantity == 1 ? _Order.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
       },
     );
 
     for (int i = 0; i < Kotlist.length; i++) {
-      if (Kotlist[i].id == _orderInput.orderItems![index].product!.id) {
+      if (Kotlist[i].id == _Order.orderItems![index].product!.id) {
         Kotlist.removeAt(i);
 
         break;
@@ -346,7 +346,7 @@ class _CreateSaleState extends State<CreateSale> {
     final result = await Navigator.pushNamed(
       context,
       SearchProductListScreen.routeName,
-      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.sale, productlist: _orderInput.orderItems!),
+      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.sale, productlist: _Order.orderItems!),
     );
     if (result == null && result is! List<Product>) {
       return;
@@ -355,7 +355,7 @@ class _CreateSaleState extends State<CreateSale> {
     var temp = result as List<Product>;
 
     temp.forEach((element) {
-      sellingPriceListForShowinDiscountTextBOX.add(element.sellingPrice.toString());
+      
     });
 
     Kotlist.addAll(temp);
@@ -369,7 +369,7 @@ class _CreateSaleState extends State<CreateSale> {
             ))
         .toList();
 
-    var tempOrderitems = _orderInput.orderItems;
+    var tempOrderitems = _Order.orderItems;
 
     for (int i = 0; i < tempOrderitems!.length; i++) {
       for (int j = 0; j < orderItems.length; j++) {
@@ -381,10 +381,10 @@ class _CreateSaleState extends State<CreateSale> {
       }
     }
 
-    _orderInput.orderItems = tempOrderitems;
+    _Order.orderItems = tempOrderitems;
 
     setState(() {
-      _orderInput.orderItems?.addAll(orderItems);
+      _Order.orderItems?.addAll(orderItems);
       newAddedItems!.addAll(orderItems);
     });
   }

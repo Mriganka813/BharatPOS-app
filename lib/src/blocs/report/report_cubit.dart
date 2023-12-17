@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:shopos/src/models/expense.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/input/report_input.dart';
 
 
@@ -58,7 +58,7 @@ class ReportCubit extends Cubit<ReportState> {
 
   _emitSalesReport(Response res, [bool isDownload = false]) {
     final data = res.data['sales'];
-    final orders = data.map<OrderInput>((item) => OrderInput.fromMap(item)).toList();
+    final orders = data.map<Order>((item) => Order.fromMap(item)).toList();
     emit(isDownload
         ? ReportsDownload(orders: orders)
         : ReportsView(orders: orders));
@@ -69,7 +69,7 @@ class ReportCubit extends Cubit<ReportState> {
     print("purchase data");
     print(data);
     final orders = 
-        List.generate(data.length, (index) => OrderInput.fromMap(data[index]));
+        List.generate(data.length, (index) => Order.fromMap(data[index]));
     emit(isDownload
         ? ReportsDownload(orders: orders)
         : ReportsView(orders: orders));

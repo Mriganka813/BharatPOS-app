@@ -1,4 +1,4 @@
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/models/party.dart';
 
@@ -7,7 +7,7 @@ abstract class SpecificPartyState {}
 class SpecificPartyInitial extends SpecificPartyState {}
 
 class SpecificPartyListRender extends SpecificPartyState {
-  final List<OrderInput> specificparty;
+  final List<Order> specificparty;
   final Party partyDetails;
   SpecificPartyListRender({
     required this.specificparty,

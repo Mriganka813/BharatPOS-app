@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/api_v1.dart';
 import 'package:shopos/src/services/user.dart';
@@ -9,7 +9,7 @@ class SalesReturnService {
 
   ///
   static Future<Response> createSalesReturnOrder(
-      OrderInput orderItemInput, String invoiceNum, String total) async {
+      Order orderItemInput, String invoiceNum, String total) async {
     final userresponse = await UserService.me();
     final user = User.fromMap(userresponse.data['user']);
     print('${orderItemInput.orderItems![0].product?.sellingPrice}');

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/services/api_v1.dart';
 
 class SalesService {
@@ -7,7 +7,7 @@ class SalesService {
 
   ///
   static Future<Response> createSalesOrder(
-    OrderInput orderItemInput,
+    Order orderItemInput,
     String invoiceNum,
   ) async {
     print('${orderItemInput.orderItems![0].product?.sellingPrice}');

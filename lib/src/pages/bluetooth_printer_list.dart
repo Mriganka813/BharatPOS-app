@@ -50,9 +50,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     // });
 
     if (widget.args.billArgs == null) {
-      if (widget.args.bluetoothArgs!.orderInput.tableNo != "-1")
-        tableNoController.text = widget.args.bluetoothArgs!.orderInput.tableNo;
-      print(widget.args.bluetoothArgs!.orderInput.tableNo);
+      if (widget.args.bluetoothArgs!.order.tableNo != "-1")
+        tableNoController.text = widget.args.bluetoothArgs!.order.tableNo;
+      print(widget.args.bluetoothArgs!.order.tableNo);
     }
   }
 
@@ -66,7 +66,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     setState(() {});
     final bargs = widget.args.bluetoothArgs!;
     List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData(bargs.orderInput.id!);
+        await DatabaseHelper().getKotData(bargs.order.id!);
     print("Kot Data:");
     print(list);
   }
@@ -186,17 +186,17 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   //     ));
 
   //     for (var i = 0;
-  //         i < widget.bluetoothArgs.orderInput.orderItems!.length;
+  //         i < widget.bluetoothArgs.Order.orderItems!.length;
   //         i++) {
   //       list.add(LineText(
-  //         content: widget.bluetoothArgs.orderInput.orderItems![i].product!.name,
+  //         content: widget.bluetoothArgs.Order.orderItems![i].product!.name,
   //         type: LineText.TYPE_TEXT,
   //         weight: 0,
   //         align: LineText.ALIGN_LEFT,
   //       ));
 
   //       list.add(LineText(
-  //         content: widget.bluetoothArgs.orderInput.orderItems![i].quantity
+  //         content: widget.bluetoothArgs.Order.orderItems![i].quantity
   //             .toString(),
   //         type: LineText.TYPE_TEXT,
   //         weight: 0,
@@ -247,7 +247,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     final bargs = widget.args.bluetoothArgs!;
 
     List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData(bargs.orderInput.id!);
+        await DatabaseHelper().getKotData(bargs.order.id!);
 
     List<int> bytes = [];
     // Using default profile
@@ -521,10 +521,10 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       onWillPop: () async {
         if (isPrinted) {
           final bargs = widget.args.bluetoothArgs!;
-          await DatabaseHelper().updateKot(bargs.orderInput.id!);
+          await DatabaseHelper().updateKot(bargs.order.id!);
           await DatabaseHelper()
-              .updateTableNo(tableNoController.text, bargs.orderInput.id!);
-          widget.args.bluetoothArgs!.orderInput.tableNo =
+              .updateTableNo(tableNoController.text, bargs.order.id!);
+          widget.args.bluetoothArgs!.order.tableNo =
               tableNoController.text;
         }
 
@@ -543,7 +543,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                   child: CustomTextField2(
                     hintText: "Enter Table No (optional)",
                     controller: tableNoController,
-                    value: "${widget.args.bluetoothArgs!.orderInput.tableNo}",
+                    value: "${widget.args.bluetoothArgs!.order.tableNo}",
                     validator: (e) => null,
                   ),
                 ),

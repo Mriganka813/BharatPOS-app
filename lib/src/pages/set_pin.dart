@@ -79,6 +79,7 @@ class _SetPinPageState extends State<SetPinPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+    
       appBar: AppBar(leading: GestureDetector(
         
         onTap: (){
@@ -99,7 +100,7 @@ class _SetPinPageState extends State<SetPinPage> {
                 if (widget.isPinSet)
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                        EdgeInsets.symmetric( horizontal: 20),
                     child: Text(
                       'Enter old pin',
                       style:
@@ -108,20 +109,20 @@ class _SetPinPageState extends State<SetPinPage> {
                     ),
                   ),
                 SizedBox(
-                  height: height / 80,
+                  height: 10,
                 ),
                 if (widget.isPinSet)
                   Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
+                    
                         horizontal: 20,
                       ),
                       child: _pinfield(oldPinControlller)),
                 SizedBox(
-                  height: height / 40,
+                  height: 10
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                  padding: EdgeInsets.symmetric( horizontal: 20),
                   child: Text(
                     'Enter Your New Pin',
                     style: TextStyle( fontSize: 22),
@@ -129,16 +130,16 @@ class _SetPinPageState extends State<SetPinPage> {
                   ),
                 ),
                 SizedBox(
-                  height: height / 80,
+                  height: 10,
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
+                    
                       horizontal: 20,
                     ),
                     child: _pinfield(newPinController)),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Re-etype Your Pin',
                     style: TextStyle( fontSize: 22),
@@ -146,78 +147,58 @@ class _SetPinPageState extends State<SetPinPage> {
                   ),
                 ),
                 SizedBox(
-                  height: height / 80,
+                  height: 10,
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(
-                      vertical: 8.0,
+                   
                       horizontal: 20,
                     ),
                     child: _pinfield(rePinController)),
                 const SizedBox(
                   height: 20,
                 ),
-                const SizedBox(
-                  height: 29,
-                ),
-                Center(
-                  child: SizedBox(
-                    width: 300,
-                    child: CustomButton(
-                      
-                      
-                        title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
-                        onTap: () {
-                          setPin();
-                        },
-                        
-                        
-                        ),
-                      
-                  ),
-                ),
-                const SizedBox(
-                  height: 14,
-                ),
-                if (widget.isPinSet)
-                  Center(
-                    child: Text(
-                      'or',
-                      style: Theme.of(context).textTheme.headlineSmall,
+              
+                Row(
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: 170,
+                        child: CustomButton(
+                          
+                          
+                            title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
+                            onTap: () {
+                              setPin();
+                            },
+                            
+                            
+                            ),
+                          
+                      ),
                     ),
-                  ),
-                const SizedBox(
-                  height: 14,
-                ),
-                if (widget.isPinSet)
+
+                      if (widget.isPinSet)
                   Center(
                     child: SizedBox(
-                      width: width / 1.1,
-                      child: ElevatedButton(
-                        child: Text(
-                          'DELETE PIN',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline6!
-                              .copyWith(
-                                  color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () async {
+                      width:170,
+                      child: CustomButton(
+                     title: "DELETE PIN",
+                        onTap: () async {
                           bool? done = await _showPinDialog();
                           if (done != null && done) {
                             Navigator.pop(context);
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.all(10),
-                            backgroundColor: Colors.red),
+                     
                       ),
                     ),
                   )
+                  ],
+                ),
+              
+               
+              
               ],
             ),
           ),

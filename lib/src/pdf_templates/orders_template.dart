@@ -1,9 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 
 String reportsOrderTemplate({
-  required List<OrderInput> orders,
+  required List<Order> orders,
 }) {
   ///
   String headerRows() {
@@ -30,7 +30,7 @@ String reportsOrderTemplate({
   ///
   String itemRows() {
     return orders
-        .map((OrderInput e) {
+        .map((Order e) {
           return (e.orderItems ?? [])
               .map((OrderItemInput item) {
                 final date = DateFormat('dd MMM, yyyy')

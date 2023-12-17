@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:cookie_jar/cookie_jar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
@@ -9,21 +9,21 @@ import 'package:pdf/pdf.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shopos/src/models/expense.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/models/product.dart';
-import 'package:shopos/src/pages/checkout.dart';
+
 import 'package:shopos/src/pages/create_party.dart';
-import 'package:shopos/src/pages/reports.dart';
+
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xcel;
 
 class tableArg {
-  final List<OrderInput>? orders;
+  final List<Order>? orders;
   final List<Expense>? expenses;
   final List<Product>? products;
   final String type;
@@ -59,6 +59,7 @@ class _ReportTableState extends State<ReportTable> {
   List<String> mrplist = [];
   List<String> hsn = [];
   List<String> discountAmt = [];
+  List<String> invoiceNum = [];
   List<String> orginalbasePurchasePrice = [];
 
   String taxfileType = "initailized";
@@ -68,13 +69,11 @@ class _ReportTableState extends State<ReportTable> {
 
   ScreenshotController screenshotController = ScreenshotController();
   late Uint8List _imageFile;
-  late final TextEditingController _typeAheadController =
-      TextEditingController();
+  late final TextEditingController _typeAheadController = TextEditingController();
   @override
   void initState() {
     super.initState();
-    if (widget.args.type == "ReportType.sale" ||
-        widget.args.type == "ReportType.purchase") {
+    if (widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.purchase") {
       itemSPRows();
       datelist.add("");
       timelist.add("");
@@ -90,6 +89,7 @@ class _ReportTableState extends State<ReportTable> {
       moplist.add("");
       hsn.add("");
       discountAmt.add("");
+      invoiceNum.add("");
       orginalbasePurchasePrice.add("");
     }
   }
@@ -101,13 +101,14 @@ class _ReportTableState extends State<ReportTable> {
       'Party',
       'M.O.P.',
       'Product',
-      'Amount/Unit',
-      'GST Rate/Unit',
+      'Hsn',
+      "OB Selling Price",
+      "Discount",
+      "Taxable value", // 'Amount/Unit',
+          'GST Rate/Unit',
       'CGST/Unit',
       'SGST/Unit',
       'GST/Unit',
-      'Hsn',
-      "Discount Amount",
       'MRP/Unit',
       'Total',
     ];
@@ -121,21 +122,8 @@ class _ReportTableState extends State<ReportTable> {
       'MRP/Unit',
       'Total',
     ];
-    final headersExpense = [
-      'Date',
-      'Time',
-      'Header',
-      'Description',
-      'M.O.P',
-      'Amount'
-    ];
-    final headersStock = [
-      'Item Name',
-      'Stock Quantity',
-      'Sales Value',
-      'Purchase Value',
-      'profit margin'
-    ];
+    final headersExpense = ['Date', 'Time', 'Header', 'Description', 'M.O.P', 'Amount'];
+    final headersStock = ['Item Name', 'Stock Quantity', 'Sales Value', 'Purchase Value', 'profit margin'];
 
     if (widget.args.type == "ReportType.sale") {
       if (taxfileType == "quarterly") {
@@ -143,8 +131,7 @@ class _ReportTableState extends State<ReportTable> {
           headersQuaterly.length,
           (int index) => DataColumn(
             label: Container(
-              child: Text(headersQuaterly[index],
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+              child: Text(headersQuaterly[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
             ),
           ),
         );
@@ -153,8 +140,7 @@ class _ReportTableState extends State<ReportTable> {
           headersSP.length,
           (int index) => DataColumn(
             label: Container(
-              child: Text(headersSP[index],
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+              child: Text(headersSP[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
             ),
           ),
         );
@@ -164,8 +150,7 @@ class _ReportTableState extends State<ReportTable> {
         headersSP.length,
         (int index) => DataColumn(
           label: Container(
-            child: Text(headersSP[index],
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text(headersSP[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ),
         ),
       );
@@ -174,8 +159,7 @@ class _ReportTableState extends State<ReportTable> {
         headersExpense.length,
         (int index) => DataColumn(
           label: Container(
-            child: Text(headersExpense[index],
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text(headersExpense[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ),
         ),
       );
@@ -184,8 +168,7 @@ class _ReportTableState extends State<ReportTable> {
         headersStock.length,
         (int index) => DataColumn(
           label: Container(
-            child: Text(headersStock[index],
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+            child: Text(headersStock[index], style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
           ),
         ),
       );
@@ -214,18 +197,12 @@ class _ReportTableState extends State<ReportTable> {
 
       if (partynametoFilter != "")
         list.add(DataRow(cells: [
-          DataCell(Text(datelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(timelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(partynamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(productnamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(mrplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
+          DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text("hsssssssn", style: TextStyle(fontSize: 6))),
           DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
         ]));
@@ -259,97 +236,46 @@ class _ReportTableState extends State<ReportTable> {
           print(totalsplist[i]);
           print(moplist[i]);*/
 
-          if (i != datelist.length - 1 &&
-              totalsplist[i].length != 0 &&
-              totalsplist[i] != "null") total += double.parse(totalsplist[i]);
+          if (i != datelist.length - 1 && totalsplist[i].length != 0 && totalsplist[i] != "null") total += double.parse(totalsplist[i]);
 
-          if (i != datelist.length - 1 &&
-              basesplist[i].length != 0 &&
-              basesplist[i] != "N/A" &&
-              basesplist[i] != "null")
-            basesplitTotal += double.parse(basesplist[i].split(".")[0]);
-          if (i != datelist.length - 1 &&
-              gstratelist[i].length != 0 &&
-              gstratelist[i] != "N/A%" &&
-              gstratelist[i] != "null%")
-            gstrateTotal += double.parse(gstratelist[i].split("%")[0]);
-          if (i != datelist.length - 1 &&
-              cgstlist[i].length != 0 &&
-              cgstlist[i] != "N/A" &&
-              cgstlist[i] != "null")
-            cgstTotal += double.parse(cgstlist[i].split(".")[0]);
-          if (i != datelist.length - 1 &&
-              sgstlist[i].length != 0 &&
-              sgstlist[i] != "N/A" &&
-              sgstlist[i] != "null")
-            sgstTotal += double.parse(sgstlist[i].split(".")[0]);
-          if (i != datelist.length - 1 &&
-              igstlist[i].length != 0 &&
-              igstlist[i] != "N/A" &&
-              igstlist[i] != "null")
-            igstTotal += double.parse(igstlist[i].split(".")[0]);
-          if (i != datelist.length - 1 &&
-              mrplist[i].length != 0 &&
-              mrplist[i] != "N/A" &&
-              mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
+          if (i != datelist.length - 1 && basesplist[i].length != 0 && basesplist[i] != "N/A" && basesplist[i] != "null") basesplitTotal += double.parse(basesplist[i].split(".")[0]);
+          if (i != datelist.length - 1 && gstratelist[i].length != 0 && gstratelist[i] != "N/A%" && gstratelist[i] != "null%") gstrateTotal += double.parse(gstratelist[i].split("%")[0]);
+          if (i != datelist.length - 1 && cgstlist[i].length != 0 && cgstlist[i] != "N/A" && cgstlist[i] != "null") cgstTotal += double.parse(cgstlist[i].split(".")[0]);
+          if (i != datelist.length - 1 && sgstlist[i].length != 0 && sgstlist[i] != "N/A" && sgstlist[i] != "null") sgstTotal += double.parse(sgstlist[i].split(".")[0]);
+          if (i != datelist.length - 1 && igstlist[i].length != 0 && igstlist[i] != "N/A" && igstlist[i] != "null") igstTotal += double.parse(igstlist[i].split(".")[0]);
+          if (i != datelist.length - 1 && mrplist[i].length != 0 && mrplist[i] != "N/A" && mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
           list.add(DataRow(cells: [
             DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(moplist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1
-                    ? basesplitTotal.toString()
-                    : basesplist[i],
-                style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1
-                    ? gstrateTotal.toString()
-                    : gstratelist[i],
-                style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1 ? cgstTotal.toString() : cgstlist[i],
-                style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1 ? sgstTotal.toString() : sgstlist[i],
-                style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1 ? igstTotal.toString() : igstlist[i],
-                style: TextStyle(fontSize: 6))),
             DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(orginalbasePurchasePrice[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(discountAmt[i], style: TextStyle(fontSize: 6))),
-            DataCell(Text(
-                i == datelist.length - 1 ? mrpTotal.toString() : mrplist[i],
-                style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? basesplitTotal.toString() : basesplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? gstrateTotal.toString() : gstratelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? cgstTotal.toString() : cgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? sgstTotal.toString() : sgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? igstTotal.toString() : igstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? mrpTotal.toString() : mrplist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
           ]));
         }
       }
       if (partynametoFilter != "")
         list.add(DataRow(cells: [
-          DataCell(Text(datelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(timelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(partynamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(productnamelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(basesplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(gstratelist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(cgstlist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(sgstlist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(igstlist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(mrplist[datelist.length - 1],
-              style: TextStyle(fontSize: 6))),
+          DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(basesplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(cgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(sgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(igstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
         ]));
       return list;
@@ -368,41 +294,15 @@ class _ReportTableState extends State<ReportTable> {
     List<DataRow> list = [];
 
     for (int index = 0; index < datelist.length; index++) {
-      if (partynamelist[index] == partynametoFilter ||
-          partynametoFilter == "") {
-        if (index != datelist.length - 1 && totalsplist[index].length != 0)
-          total += int.parse(totalsplist[index].split(".")[0]);
+      if (partynamelist[index] == partynametoFilter || partynametoFilter == "") {
+        if (index != datelist.length - 1 && totalsplist[index].length != 0) total += int.parse(totalsplist[index].split(".")[0]);
 
-        if (index != datelist.length - 1 &&
-            basesplist[index].length != 0 &&
-            basesplist[index] != "N/A" &&
-            basesplist[index] != "null")
-          basesplitTotal += int.parse(basesplist[index].split(".")[0]);
-        if (index != datelist.length - 1 &&
-            gstratelist[index].length != 0 &&
-            gstratelist[index] != "N/A%" &&
-            basesplist[index] != "null")
-          gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
-        if (index != datelist.length - 1 &&
-            cgstlist[index].length != 0 &&
-            cgstlist[index] != "N/A" &&
-            basesplist[index] != "null")
-          cgstTotal += int.parse(cgstlist[index].split(".")[0]);
-        if (index != datelist.length - 1 &&
-            sgstlist[index].length != 0 &&
-            sgstlist[index] != "N/A" &&
-            basesplist[index] != "null")
-          sgstTotal += int.parse(sgstlist[index].split(".")[0]);
-        if (index != datelist.length - 1 &&
-            igstlist[index].length != 0 &&
-            igstlist[index] != "N/A" &&
-            basesplist[index] != "null")
-          igstTotal += int.parse(igstlist[index].split(".")[0]);
-        if (index != datelist.length - 1 &&
-            mrplist[index].length != 0 &&
-            mrplist[index] != "N/A" &&
-            basesplist[index] != "null")
-          mrpTotal += int.parse(mrplist[index].split(".")[0]);
+        if (index != datelist.length - 1 && basesplist[index].length != 0 && basesplist[index] != "N/A" && basesplist[index] != "null") basesplitTotal += int.parse(basesplist[index].split(".")[0]);
+        if (index != datelist.length - 1 && gstratelist[index].length != 0 && gstratelist[index] != "N/A%" && basesplist[index] != "null") gstrateTotal += int.parse(gstratelist[index].split("%")[0]);
+        if (index != datelist.length - 1 && cgstlist[index].length != 0 && cgstlist[index] != "N/A" && basesplist[index] != "null") cgstTotal += int.parse(cgstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 && sgstlist[index].length != 0 && sgstlist[index] != "N/A" && basesplist[index] != "null") sgstTotal += int.parse(sgstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 && igstlist[index].length != 0 && igstlist[index] != "N/A" && basesplist[index] != "null") igstTotal += int.parse(igstlist[index].split(".")[0]);
+        if (index != datelist.length - 1 && mrplist[index].length != 0 && mrplist[index] != "N/A" && basesplist[index] != "null") mrpTotal += int.parse(mrplist[index].split(".")[0]);
 
         list.add(DataRow(cells: [
           DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
@@ -410,38 +310,18 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(moplist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? basesplitTotal.toString()
-                  : basesplist[index],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? gstrateTotal.toString()
-                  : gstratelist[index],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? cgstTotal.toString()
-                  : cgstlist[index],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? sgstTotal.toString()
-                  : sgstlist[index],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? igstTotal.toString()
-                  : igstlist[index],
-              style: TextStyle(fontSize: 6))),
-          DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
+            DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
+            DataCell(Text(orginalbasePurchasePrice[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(discountAmt[index], style: TextStyle(fontSize: 6))),
-          DataCell(Text(
-              index == datelist.length - 1
-                  ? mrpTotal.toString()
-                  : mrplist[index],
-              style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? basesplitTotal.toString() : basesplist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? gstrateTotal.toString() : gstratelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? cgstTotal.toString() : cgstlist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? sgstTotal.toString() : sgstlist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? igstTotal.toString() : igstlist[index], style: TextStyle(fontSize: 6))),
+        
+       
+        
+          DataCell(Text(index == datelist.length - 1 ? mrpTotal.toString() : mrplist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
         ]));
       }
@@ -449,18 +329,12 @@ class _ReportTableState extends State<ReportTable> {
 
     if (partynametoFilter != "")
       list.add(DataRow(cells: [
-        DataCell(
-            Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-        DataCell(
-            Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-        DataCell(Text(partynamelist[datelist.length - 1],
-            style: TextStyle(fontSize: 6))),
-        DataCell(
-            Text(moplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-        DataCell(Text(productnamelist[datelist.length - 1],
-            style: TextStyle(fontSize: 6))),
-        DataCell(
-            Text(basesplitTotal.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(moplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(basesplitTotal.toString(), style: TextStyle(fontSize: 6))),
         DataCell(Text(gstrateTotal.toString(), style: TextStyle(fontSize: 6))),
         DataCell(Text(cgstTotal.toString(), style: TextStyle(fontSize: 6))),
         DataCell(Text(sgstTotal.toString(), style: TextStyle(fontSize: 6))),
@@ -487,8 +361,7 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text("$time", style: TextStyle(fontSize: 6))),
         DataCell(Text("${expense.header}", style: TextStyle(fontSize: 6))),
         DataCell(Text("${expense.description}", style: TextStyle(fontSize: 6))),
-        DataCell(
-            Text("${expense.modeOfPayment}", style: TextStyle(fontSize: 6))),
+        DataCell(Text("${expense.modeOfPayment}", style: TextStyle(fontSize: 6))),
         DataCell(Text("${expense.amount}", style: TextStyle(fontSize: 6))),
       ]));
     }
@@ -526,8 +399,7 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text("${product.quantity}", style: TextStyle(fontSize: 6))),
         DataCell(Text("$salesValue", style: TextStyle(fontSize: 6))),
         DataCell(Text("$purchaseValue", style: TextStyle(fontSize: 6))),
-        DataCell(Text("${salesValue - purchaseValue}",
-            style: TextStyle(fontSize: 6))),
+        DataCell(Text("${salesValue - purchaseValue}", style: TextStyle(fontSize: 6))),
       ]));
     }
 
@@ -546,13 +418,11 @@ class _ReportTableState extends State<ReportTable> {
   itemSPRows() {
     // print("discount ${widget.args.orders![0].discountAmt}");
 
-    return widget.args.orders!.map((OrderInput e) {
+    return widget.args.orders!.map((Order e) {
       return e.orderItems!.map((OrderItemInput item) {
         // print(e.user!.type);
         taxfileType = e.user!.type ?? "notdone";
-        if (breakruler !=
-            DateFormat('hh:mm a')
-                .format(DateTime.tryParse(e.createdAt.toString())!)) {
+        if (breakruler != DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!)) {
           datelist.add("");
           timelist.add("");
           partynamelist.add("");
@@ -565,52 +435,39 @@ class _ReportTableState extends State<ReportTable> {
           totalsplist.add("");
           mrplist.add("");
           hsn.add("");
+          invoiceNum.add("");
           discountAmt.add("");
+          orginalbasePurchasePrice.add("");
           moplist.add("");
         }
-        datelist.add(DateFormat('dd MMM, yyyy')
-            .format(DateTime.tryParse(e.createdAt.toString())!));
-        timelist.add(DateFormat('hh:mm a')
-            .format(DateTime.tryParse(e.createdAt.toString())!));
+        datelist.add(DateFormat('dd MMM, yyyy').format(DateTime.tryParse(e.createdAt.toString())!));
+        timelist.add(DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!));
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
-        gstratelist.add(
-            "${item.product?.gstRate == "null" ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");
+        gstratelist.add("${item.product?.gstRate == "null" ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");
         widget.args.type == "ReportType.sale"
             ? basesplist.add(
                 "${item.baseSellingPrice != "null" ? double.parse(item.baseSellingPrice!).toStringAsFixed(2) : (item.product?.baseSellingPriceGst != "null" ? item.product?.baseSellingPriceGst : "N/A")}")
-            : basesplist.add(
-                "${item.product?.basePurchasePriceGst == "null" ? "N/A" : item.product?.basePurchasePriceGst}");
+            : basesplist.add("${item.product?.basePurchasePriceGst == "null" ? "N/A" : item.product?.basePurchasePriceGst}");
         widget.args.type == "ReportType.sale"
-            ? cgstlist.add(
-                "${item.saleCGST != "null" ? double.parse(item.saleCGST!).toStringAsFixed(2) : (item.product?.salecgst != "null" ? item.product?.salecgst : "N/A")}")
-            : cgstlist.add(
-                "${item.product?.purchasecgst == "null" ? "N/A" : item.product?.purchasecgst}");
+            ? cgstlist.add("${item.saleCGST != "null" ? double.parse(item.saleCGST!).toStringAsFixed(2) : (item.product?.salecgst != "null" ? item.product?.salecgst : "N/A")}")
+            : cgstlist.add("${item.product?.purchasecgst == "null" ? "N/A" : item.product?.purchasecgst}");
         widget.args.type == "ReportType.sale"
-            ? sgstlist.add(
-                "${item.saleSGST != "null" ? double.parse(item.saleSGST!).toStringAsFixed(2) : (item.product?.salesgst != "null" ? item.product?.salesgst : "N/A")}")
-            : sgstlist.add(
-                "${item.product?.purchasesgst == "null" ? "N/A" : item.product?.purchasesgst}");
+            ? sgstlist.add("${item.saleSGST != "null" ? double.parse(item.saleSGST!).toStringAsFixed(2) : (item.product?.salesgst != "null" ? item.product?.salesgst : "N/A")}")
+            : sgstlist.add("${item.product?.purchasesgst == "null" ? "N/A" : item.product?.purchasesgst}");
         widget.args.type == "ReportType.sale"
-            ? igstlist.add(
-                "${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : (item.product?.saleigst != "null" ? item.product?.saleigst : "N/A")}")
-            : igstlist.add(
-                "${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
-        widget.args.type == "ReportType.sale"
-            ? mrplist.add("${item.price}")
-            : mrplist.add(
-                "${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
+            ? igstlist.add("${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : (item.product?.saleigst != "null" ? item.product?.saleigst : "N/A")}")
+            : igstlist.add("${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
+        widget.args.type == "ReportType.sale" ? mrplist.add("${item.price}") : mrplist.add("${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
         hsn.add("${item.product!.hsn == "null" ? "N/A" : item.product!.hsn}");
-        discountAmt
-            .add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
-        widget.args.type == "ReportType.sale"
-            ? totalsplist.add("${(item.quantity) * (item.price ?? 0)}")
-            : totalsplist
-                .add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
+        discountAmt.add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
+
+        invoiceNum.add("${e.invoiceNum == null ? "N/A" : e.invoiceNum}");
+        orginalbasePurchasePrice.add("${item.originalbaseSellingPrice}");
+        widget.args.type == "ReportType.sale" ? totalsplist.add("${(item.quantity) * (item.price ?? 0)}") : totalsplist.add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
 
         moplist.add("${e.modeOfPayment ?? "N/A"}");
-        breakruler = DateFormat('hh:mm a')
-            .format(DateTime.tryParse(e.createdAt.toString())!);
+        breakruler = DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!);
       }).toList();
     }).toList();
   }
@@ -779,9 +636,7 @@ class _ReportTableState extends State<ReportTable> {
 
     Share.shareFiles(
       [excelFileLocal.path],
-      mimeTypes: [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ],
+      mimeTypes: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
     );
 
     workbook.dispose();
@@ -842,23 +697,14 @@ class _ReportTableState extends State<ReportTable> {
 
     Share.shareFiles(
       [excelFileLocal.path],
-      mimeTypes: [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ],
+      mimeTypes: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
     );
 
     workbook.dispose();
   }
 
   ExpenseExcelReport() async {
-    final headersExpense = [
-      'Date',
-      'Time',
-      'Header',
-      'Description',
-      'M.O.P',
-      'Amount'
-    ];
+    final headersExpense = ['Date', 'Time', 'Header', 'Description', 'M.O.P', 'Amount'];
     final xcel.Workbook workbook = xcel.Workbook();
     final xcel.Worksheet sheet = workbook.worksheets[0];
 
@@ -887,22 +733,14 @@ class _ReportTableState extends State<ReportTable> {
 
     Share.shareFiles(
       [excelFileLocal.path],
-      mimeTypes: [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ],
+      mimeTypes: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
     );
 
     workbook.dispose();
   }
 
   STOCKExcelReport() async {
-    final headersStock = [
-      'Item Name',
-      'Stock Quantity',
-      'Sales Value',
-      'Purchase Value',
-      'profit margin'
-    ];
+    final headersStock = ['Item Name', 'Stock Quantity', 'Sales Value', 'Purchase Value', 'profit margin'];
 
     final xcel.Workbook workbook = xcel.Workbook();
     final xcel.Worksheet sheet = workbook.worksheets[0];
@@ -920,9 +758,7 @@ class _ReportTableState extends State<ReportTable> {
       sheet.getRangeByIndex(i + 2, 2).setText(product.quantity.toString());
       sheet.getRangeByIndex(i + 2, 3).setText(salesValue.toString());
       sheet.getRangeByIndex(i + 2, 4).setText(purchaseValue.toString());
-      sheet
-          .getRangeByIndex(i + 2, 5)
-          .setText((salesValue - purchaseValue).toString());
+      sheet.getRangeByIndex(i + 2, 5).setText((salesValue - purchaseValue).toString());
     }
 
     final List<int> bytes = workbook.saveAsStream();
@@ -932,9 +768,7 @@ class _ReportTableState extends State<ReportTable> {
 
     Share.shareFiles(
       [excelFileLocal.path],
-      mimeTypes: [
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      ],
+      mimeTypes: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
     );
 
     workbook.dispose();
@@ -977,8 +811,7 @@ class _ReportTableState extends State<ReportTable> {
                     ? Text("Expense Report")
                     : Text("Stock Report"),
         actions: [
-          if (widget.args.type != "ReportType.stock" &&
-              widget.args.type != "ReportType.expense")
+          if (widget.args.type != "ReportType.stock" && widget.args.type != "ReportType.expense")
             IconButton(
                 onPressed: () {
                   _showDialog();

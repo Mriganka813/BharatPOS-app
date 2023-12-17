@@ -25,8 +25,8 @@ class CreditPartiesListRender extends PartyState {
 }
 
 class OrdersListRender extends PartyState {
-  final List<OrderInput> salesOrders;
-  final List<OrderInput> purchaseOrders;
+  final List<Order> salesOrders;
+  final List<Order> purchaseOrders;
   OrdersListRender({
     required this.salesOrders,
     required this.purchaseOrders,

@@ -1,9 +1,9 @@
 import 'package:intl/intl.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 
 String kotTemplate({
-  required OrderInput order,
+  required Order order,
   required List<String> headers,
   required DateTime date,
 }) {

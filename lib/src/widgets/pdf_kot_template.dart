@@ -8,13 +8,13 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/user.dart';
 
 class PdfKotUI {
   static Future<void> generate57mmKot({
     required User user,
-    required OrderInput order,
+    required Order order,
     required List<String> headers,
     required DateTime date,
     required String invoiceNum,
@@ -103,7 +103,7 @@ class PdfKotUI {
 
   static Future<void> generate80mmKot({
     required User user,
-    required OrderInput order,
+    required Order order,
     required List<String> headers,
     required DateTime date,
     required String invoiceNum,

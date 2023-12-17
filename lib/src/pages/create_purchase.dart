@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -25,12 +25,12 @@ class CreatePurchase extends StatefulWidget {
 }
 
 class _CreatePurchaseState extends State<CreatePurchase> {
-  late OrderInput _orderInput;
+  late Order _Order;
 
   @override
   void initState() {
     super.initState();
-    _orderInput = OrderInput(
+    _Order = Order(
       orderItems: widget.args == null ? [] : widget.args!.editOrders,
     );
   }
@@ -43,7 +43,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
 
   @override
   Widget build(BuildContext context) {
-    final _orderItems = _orderInput.orderItems ?? [];
+    final _orderItems = _Order.orderItems ?? [];
     return Scaffold(
       appBar: AppBar(
         title: const Text('Purchase'),
@@ -76,7 +76,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                           onDelete: () {
                             setState(
                               () {
-                                _orderItem.quantity == 1 ? _orderInput.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
+                                _orderItem.quantity == 1 ? _Order.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
                               },
                             );
                           },
@@ -143,7 +143,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                 if (position == SlidableButtonPosition.end) {
                   final provider = Provider.of<Billing>(context, listen: false);
                   if (_orderItems.isNotEmpty) {
-                    provider.addPurchaseBill(_orderInput, widget.args?.orderId == null ? DateTime.now().toString() : widget.args!.orderId!);
+                    provider.addPurchaseBill(_Order, widget.args?.orderId == null ? DateTime.now().toString() : widget.args!.orderId!);
                   }
 
                   Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.purchase);
@@ -188,7 +188,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
     final result = await Navigator.pushNamed(
       context,
       SearchProductListScreen.routeName,
-      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.purchase, productlist: _orderInput.orderItems!),
+      arguments: ProductListPageArgs(isSelecting: true, orderType: OrderType.purchase, productlist: _Order.orderItems!),
     );
     if (result == null && result is! List<Product>) {
       return;
@@ -207,7 +207,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
             ))
         .toList();
 
-    var tempOrderitems = _orderInput.orderItems;
+    var tempOrderitems = _Order.orderItems;
 
     for (int i = 0; i < tempOrderitems!.length; i++) {
       for (int j = 0; j < orderItems.length; j++) {
@@ -219,10 +219,10 @@ class _CreatePurchaseState extends State<CreatePurchase> {
       }
     }
 
-    _orderInput.orderItems = tempOrderitems;
+    _Order.orderItems = tempOrderitems;
 
     setState(() {
-      _orderInput.orderItems?.addAll(orderItems);
+      _Order.orderItems?.addAll(orderItems);
     });
   }
 }

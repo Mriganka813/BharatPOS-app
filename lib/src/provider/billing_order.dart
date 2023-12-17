@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 class Billing with ChangeNotifier {
-  // List<OrderInput> _orderInput = [];
+  // List<Order> _Order = [];
   // List<OrderType> _ordertype = [];
 
-  Map<String, OrderInput> _salesBilling = {};
+  Map<String, Order> _salesBilling = {};
 
-  Map<String, OrderInput> get salesBilling {
+  Map<String, Order> get salesBilling {
     return {..._salesBilling};
   }
 
-  Map<String, OrderInput> _purchaseBilling = {};
+  Map<String, Order> _purchaseBilling = {};
 
-  Map<String, OrderInput> get purchaseBilling {
+  Map<String, Order> get purchaseBilling {
     return {..._purchaseBilling};
   }
 
-  void addSalesBill(OrderInput input, String orderId) {
+  void addSalesBill(Order input, String orderId) {
     if (_salesBilling.containsKey(orderId)) {
       //.... change quantity
       _salesBilling.update(
           orderId,
-          (existingOrder) => OrderInput(
+          (existingOrder) => Order(
               id: input.id,
               orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
@@ -34,7 +34,7 @@ class Billing with ChangeNotifier {
     } else {
       _salesBilling.putIfAbsent(
           orderId,
-          () => OrderInput(
+          () => Order(
               id: input.id,
               orderItems: input.orderItems,
               modeOfPayment: input.modeOfPayment,
@@ -47,12 +47,12 @@ class Billing with ChangeNotifier {
     notifyListeners();
   }
 
-  void addPurchaseBill(OrderInput input, String orderId) {
+  void addPurchaseBill(Order input, String orderId) {
     if (_purchaseBilling.containsKey(orderId)) {
       //.... change quantity
       _purchaseBilling.update(
           orderId,
-          (existingOrder) => OrderInput(
+          (existingOrder) => Order(
               orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
               party: existingOrder.party,
@@ -60,7 +60,7 @@ class Billing with ChangeNotifier {
     } else {
       _purchaseBilling.putIfAbsent(
           orderId,
-          () => OrderInput(
+          () => Order(
                 orderItems: input.orderItems,
                 modeOfPayment: input.modeOfPayment,
                 party: input.party,
@@ -85,22 +85,22 @@ class Billing with ChangeNotifier {
     _purchaseBilling.clear();
     notifyListeners();
   }
-  // void addOrderInputItem(OrderInput input, OrderType orderType) {
-  //   _orderInput.add(input);
+  // void addOrderItem(Order input, OrderType orderType) {
+  //   _Order.add(input);
   //   _ordertype.add(orderType);
   //   notifyListeners();
   // }
 
-  // void removeBill(OrderInput input, OrderType orderType) {
-  //   int inputIdx = _orderInput.indexWhere((element) => element == input);
+  // void removeBill(Order input, OrderType orderType) {
+  //   int inputIdx = _Order.indexWhere((element) => element == input);
 
-  //   _orderInput.removeAt(inputIdx);
+  //   _Order.removeAt(inputIdx);
   //   _ordertype.removeAt(inputIdx);
   //   notifyListeners();
   // }
 
-  // List<OrderInput> getAllOrderInput() {
-  //   return _orderInput.reversed.toList();
+  // List<Order> getAllOrder() {
+  //   return _Order.reversed.toList();
   // }
 
   // List<OrderType> getAllOrderType() {

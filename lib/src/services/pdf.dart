@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shopos/src/models/expense.dart';
-import 'package:shopos/src/models/input/order_input.dart';
+import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/pdf_templates/expense_template.dart';
 import 'package:shopos/src/pdf_templates/orders_template.dart';
@@ -16,7 +16,7 @@ class PdfService {
     return await _genPdfFile(content, 'expenses');
   }
 
-  Future<File> generateOrdersPdfFile(List<OrderInput> orders) async {
+  Future<File> generateOrdersPdfFile(List<Order> orders) async {
     final content = reportsOrderTemplate(orders: orders);
     return await _genPdfFile(content, 'orders');
   }

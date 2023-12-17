@@ -61,12 +61,15 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
     print(widget.isSelecting);
     return GestureDetector(
       onTap: () {
+        //This entire logi below is written add the functionality of
+        //this logic is done becasue when we press the card only the (+-) button should show and should add item
+        //then when we again press the card the opposite should happen
+
         widget.onTap(itemQuantity);
         if (tapflag) if (itemQuantity == 1) itemQuantity = 0;
 
         if (!tapflag) if (itemQuantity == 0) {
-          if (widget.product.quantity! >= 99000 &&
-              widget.type == OrderType.purchase) {
+          if (widget.product.quantity! >= 99000 && widget.type == OrderType.purchase) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 backgroundColor: Colors.red,
@@ -145,10 +148,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                         children: [
                           Text('Available'),
                           Text(
-                            widget.product.quantity == null ||
-                                    widget.product.quantity! > 9999
-                                ? 'Unlimited'
-                                : '${widget.product.quantity}',
+                            widget.product.quantity == null || widget.product.quantity! > 9999 ? 'Unlimited' : '${widget.product.quantity}',
                           ),
                         ],
                       ),
@@ -170,7 +170,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('GST @${widget.product.gstRate}%'),
-                                Text('₹ ${widget.product.saleigst=="null"?"0":double.parse(widget.product.saleigst!).toStringAsFixed(2)}'),
+                                Text('₹ ${widget.product.saleigst == "null" ? "0" : double.parse(widget.product.saleigst!).toStringAsFixed(2)}'),
                               ],
                             ),
                           ],
@@ -233,15 +233,13 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               onPressed: () {
                                 bool flag = true;
                                 bool flag2 = true;
-                                if (widget.product.quantity! >= 99000 &&
-                                    widget.type == OrderType.purchase) {
+                                if (widget.product.quantity! >= 99000 && widget.type == OrderType.purchase) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: Colors.red,
                                       content: Text(
                                         "Total quantity can't exceed 99999",
-                                        style: const TextStyle(
-                                            color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
                                       ),
                                     ),
                                   );
@@ -251,15 +249,13 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                   flag = false;
                                 }
 
-                                if (itemQuantity >= 999 &&
-                                    widget.type == OrderType.purchase) {
+                                if (itemQuantity >= 999 && widget.type == OrderType.purchase) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: Colors.red,
                                       content: Text(
                                         "Total quantity can't exceed 999",
-                                        style: const TextStyle(
-                                            color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
                                       ),
                                     ),
                                   );
@@ -275,8 +271,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                   widget.onAdd();
                                 }
                               },
-                              icon:
-                                  const Icon(Icons.add_circle_outline_rounded),
+                              icon: const Icon(Icons.add_circle_outline_rounded),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(3.0),
@@ -296,8 +291,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 });
                                 widget.onRemove();
                               },
-                              icon: const Icon(
-                                  Icons.remove_circle_outline_rounded),
+                              icon: const Icon(Icons.remove_circle_outline_rounded),
                             ),
                           ],
                         ),
@@ -416,15 +410,7 @@ class ProductCardPurchase extends StatelessWidget {
   final VoidCallback onDelete;
   final String? type;
   String discount;
-  ProductCardPurchase(
-      {Key? key,
-      required this.product,
-      required this.onAdd,
-      required this.productQuantity,
-      required this.onDelete,
-      this.discount = "",
-      this.type})
-      : super(key: key);
+  ProductCardPurchase({Key? key, required this.product, required this.onAdd, required this.productQuantity, required this.onDelete, this.discount = "", this.type}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -438,35 +424,21 @@ class ProductCardPurchase extends StatelessWidget {
 
     if (type == "sale") {
       if (product.gstRate != "null") {
-        baseSellingPrice = double.parse(
-            (double.parse(product.baseSellingPriceGst!) * productQuantity)
-                .toStringAsFixed(2));
-        Sellinggstvalue = double.parse(
-            (double.parse(product.saleigst!) * productQuantity)
-                .toStringAsFixed(2));
+        baseSellingPrice = double.parse((double.parse(product.baseSellingPriceGst!) * productQuantity).toStringAsFixed(2));
+        Sellinggstvalue = double.parse((double.parse(product.saleigst!) * productQuantity).toStringAsFixed(2));
       }
       if (product.gstRate == "null") {
-        baseSellingPrice = double.parse(
-            (product.sellingPrice! * productQuantity)
-                .toDouble()
-                .toStringAsFixed(2));
+        baseSellingPrice = double.parse((product.sellingPrice! * productQuantity).toDouble().toStringAsFixed(2));
       }
       SellingPrice = (product.sellingPrice! * productQuantity);
     }
 
     if (type == "purchase") {
       if (product.purchasePrice != 0 && product.gstRate != "null") {
-        basePurchasePrice = double.parse(
-            (double.parse(product.basePurchasePriceGst!) * productQuantity)
-                .toStringAsFixed(2));
-        Purchasegstvalue = double.parse(
-            (double.parse(product.purchaseigst!) * productQuantity)
-                .toStringAsFixed(2));
+        basePurchasePrice = double.parse((double.parse(product.basePurchasePriceGst!) * productQuantity).toStringAsFixed(2));
+        Purchasegstvalue = double.parse((double.parse(product.purchaseigst!) * productQuantity).toStringAsFixed(2));
       } else {
-        basePurchasePrice = double.parse(
-            (product.purchasePrice * productQuantity)
-                .toDouble()
-                .toStringAsFixed(2));
+        basePurchasePrice = double.parse((product.purchasePrice * productQuantity).toDouble().toStringAsFixed(2));
       }
       PurchasePrice = product.purchasePrice * productQuantity;
     }
@@ -560,10 +532,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('TaxableValue'),
-                        type == "sale"
-                            ? Text(
-                                '₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}')
-                            : Text('₹ ${basePurchasePrice}'),
+                        type == "sale" ? Text('₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -579,20 +548,15 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Item Subtotal'),
-                        type == "sale"
-                            ? Text('₹ ${baseSellingPrice}')
-                            : Text('₹ ${basePurchasePrice}'),
+                        type == "sale" ? Text('₹ ${baseSellingPrice}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
                     const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                            'Tax GST @${product.gstRate == "null" ? "0" : product.gstRate}%'),
-                        type == "sale"
-                            ? Text('₹ ${Sellinggstvalue}')
-                            : Text('₹ ${Purchasegstvalue}'),
+                        Text('Tax GST @${product.gstRate == "null" ? "0" : product.gstRate}%'),
+                        type == "sale" ? Text('₹ ${Sellinggstvalue}') : Text('₹ ${Purchasegstvalue}'),
                       ],
                     ),
                     const SizedBox(height: 5),
