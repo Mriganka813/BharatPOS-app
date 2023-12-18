@@ -2,7 +2,7 @@ class Const {
   const Const();
 
   ///
-  static const apiUrl = 'http://65.0.7.20:8001';
+  static const apiUrl = 'https://a520-49-37-99-215.ngrok-free.app';
 
   // static const apiUrl = 'http://192.168.1.109:8001';
 

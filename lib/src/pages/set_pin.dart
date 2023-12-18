@@ -44,19 +44,16 @@ class _SetPinPageState extends State<SetPinPage> {
     print(repin);
 
     if (newpin.length < 6 || repin.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red, content: Text('Invalid pin')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Invalid pin')));
       return;
     }
     if (widget.isPinSet && oldpin == '') {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(backgroundColor: Colors.red, content: Text('Invalid pin')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Invalid pin')));
       return;
     }
 
     if (newpin != repin) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.red, content: Text('Pin does not match')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text('Pin does not match')));
       return;
     }
 
@@ -64,12 +61,10 @@ class _SetPinPageState extends State<SetPinPage> {
       // print(int.parse(oldpin));
       // print(int.parse(newpin));
       await pinService.changePin(int.parse(oldpin), int.parse(newpin));
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Pin lock has changed.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pin lock has changed.')));
     } else {
       await pinService.setPin(int.parse(newpin));
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Pin lock has activated.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pin lock has activated.')));
     }
     Navigator.of(context).pop();
   }
@@ -79,32 +74,36 @@ class _SetPinPageState extends State<SetPinPage> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-    
-      appBar: AppBar(leading: GestureDetector(
-        
-        onTap: (){
-          Navigator.of(context).pop();
-        },
-        child: Icon(Icons.arrow_back)),title: Text("Set /Change Pin"),centerTitle: true,),
+      appBar: AppBar(
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Icon(Icons.arrow_back)),
+        title: Text("Set /Change Pin"),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: GestureDetector(
           onTap: () {},
           child: SizedBox(
-            height: height-100,
+            height: height - 100,
             width: width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SvgPicture.asset('assets/images/changepin.svg',height: 200,width: 200,),
+                SvgPicture.asset(
+                  'assets/images/changepin.svg',
+                  height: 200,
+                  width: 200,
+                ),
                 if (widget.isPinSet)
                   Padding(
-                    padding:
-                        EdgeInsets.symmetric( horizontal: 20),
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       'Enter old pin',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -114,18 +113,15 @@ class _SetPinPageState extends State<SetPinPage> {
                 if (widget.isPinSet)
                   Padding(
                       padding: const EdgeInsets.symmetric(
-                    
                         horizontal: 20,
                       ),
                       child: _pinfield(oldPinControlller)),
-                SizedBox(
-                  height: 10
-                ),
+                SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.symmetric( horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Enter Your New Pin',
-                    style: TextStyle( fontSize: 22),
+                    style: TextStyle(fontSize: 22),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -134,7 +130,6 @@ class _SetPinPageState extends State<SetPinPage> {
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(
-                    
                       horizontal: 20,
                     ),
                     child: _pinfield(newPinController)),
@@ -142,7 +137,7 @@ class _SetPinPageState extends State<SetPinPage> {
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     'Re-etype Your Pin',
-                    style: TextStyle( fontSize: 22),
+                    style: TextStyle(fontSize: 22),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -151,54 +146,43 @@ class _SetPinPageState extends State<SetPinPage> {
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(
-                   
                       horizontal: 20,
                     ),
                     child: _pinfield(rePinController)),
                 const SizedBox(
                   height: 20,
                 ),
-              
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Center(
                       child: SizedBox(
-                        width: 170,
+                        width: !(widget.isPinSet)? 300:170,
                         child: CustomButton(
-                          
-                          
-                            title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
-                            onTap: () {
-                              setPin();
+                          title: !(widget.isPinSet) ? 'SET PIN' : 'CHANGE PIN',
+                          onTap: () {
+                            setPin();
+                          },
+                        ),
+                      ),
+                    ),
+                    if (widget.isPinSet)
+                      Center(
+                        child: SizedBox(
+                          width: 170,
+                          child: CustomButton(
+                            title: "DELETE PIN",
+                            onTap: () async {
+                              bool? done = await _showPinDialog();
+                              if (done != null && done) {
+                                Navigator.pop(context);
+                              }
                             },
-                            
-                            
-                            ),
-                          
-                      ),
-                    ),
-
-                      if (widget.isPinSet)
-                  Center(
-                    child: SizedBox(
-                      width:170,
-                      child: CustomButton(
-                     title: "DELETE PIN",
-                        onTap: () async {
-                          bool? done = await _showPinDialog();
-                          if (done != null && done) {
-                            Navigator.pop(context);
-                          }
-                        },
-                     
-                      ),
-                    ),
-                  )
+                          ),
+                        ),
+                      )
                   ],
                 ),
-              
-               
-              
               ],
             ),
           ),
@@ -224,7 +208,7 @@ class _SetPinPageState extends State<SetPinPage> {
         }
         return null;
       },
-   
+
       pinTheme: PinTheme(
         shape: PinCodeFieldShape.box,
         borderRadius: BorderRadius.circular(5),
@@ -302,19 +286,14 @@ class _SetPinPageState extends State<SetPinPage> {
                     child: CustomButton(
                         title: 'Delete',
                         onTap: () async {
-                          final String deletePin =
-                              deletePinController.text.trim().toString();
-                          bool status =
-                              await pinService.verifyPin(int.parse(deletePin));
+                          final String deletePin = deletePinController.text.trim().toString();
+                          bool status = await pinService.verifyPin(int.parse(deletePin));
                           if (status) {
                             try {
                               await pinService.deletePin(int.parse(deletePin));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text('Pin lock has deleted.')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Pin lock has deleted.')));
                             } catch (e) {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text('pin is not deleted'),
                                 backgroundColor: Colors.red,
                               ));

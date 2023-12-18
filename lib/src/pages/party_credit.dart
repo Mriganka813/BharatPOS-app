@@ -75,10 +75,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     for (int i = 0; i < o.length; i++) {
       for (int j = i + 1; j < o.length; j++) {
         String dateString = o[i].createdAt.toString();
+      //  print("Date1:");
+      //  print(dateString);
 
         DateTime dateTimei = DateTime.parse(dateString);
 
         String dateStringj = o[j].createdAt.toString();
+      //  print("Date2:");
+     //   print(dateStringj);
 
         DateTime dateTimej = DateTime.parse(dateStringj);
 
@@ -157,7 +161,13 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
               bloc: _specificpartyCubit,
               builder: (context, state) {
                 if (state is SpecificPartyListRender) {
-                  final orders = state.specificparty;
+                  var  orders = state.specificparty;
+               
+                   sort(orders);
+                  
+                  
+
+                
 
                   return ListView.builder(
                     physics: const BouncingScrollPhysics(),
@@ -165,9 +175,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     reverse: true,
                     itemCount: orders.length,
                     itemBuilder: (BuildContext context, int index) {
-                      sort(orders);
                       final order = orders[index];
-
                       return Column(
                         children: [
                           Center(

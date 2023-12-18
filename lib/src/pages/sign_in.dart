@@ -36,26 +36,19 @@ class _SignInPageState extends State<SignInPage> {
     getDataFromDatabase();
   }
 
-   getDataFromDatabase() async {
+  getDataFromDatabase() async {
+    try {
+      final provider = Provider.of<Billing>(context);
+      var data = await DatabaseHelper().getOrderItems();
+      print("kkkkkk=");
 
-    try{
+      provider.removeAll();
 
-    
-    final provider = Provider.of<Billing>(
-context
-    );
-    var data = await DatabaseHelper().getOrderItems();
-    print("kkkkkk=");
-  
-    provider.removeAll();
-
-    data.forEach((element) {
-      provider.addSalesBill(element, element.id.toString());
-    });
-    }
-    catch(e)
-    {
-   showRestartAppDialouge();
+      data.forEach((element) {
+        provider.addSalesBill(element, element.id.toString());
+      });
+    } catch (e) {
+      showRestartAppDialouge();
     }
   }
 
@@ -63,8 +56,7 @@ context
     final newVersion = NewVersion(androidId: "com.shopos.magicstep");
     final status = await newVersion.getVersionStatus();
     if (status!.canUpdate) {
-      newVersion.showUpdateDialog(
-          context: context, versionStatus: status, allowDismissal: false);
+      newVersion.showUpdateDialog(context: context, versionStatus: status, allowDismissal: false);
     }
   }
 
@@ -73,9 +65,6 @@ context
     _authCubit.close();
     super.dispose();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -126,9 +115,7 @@ context
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                 
-                     
-                /*    Align(
+                    /*    Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Log in",
@@ -146,22 +133,22 @@ context
                       ),
                     ),*/
 
-                    Image.asset("assets/images/bharat2.png",height: 200,),
+                    Image.asset(
+                      "assets/images/bharat2.png",
+                      height: 200,
+                    ),
                     const SizedBox(height: 60),
                     CustomTextField2(
                       controller: TextEditingController(),
-                 
                       hintText: 'name@company.com',
                       onSave: (e) {
                         _email = e!;
                       },
                     ),
                     const Divider(color: Colors.transparent),
-               
                     const SizedBox(height: 5),
                     CustomTextField2(
                       controller: TextEditingController(),
-                      
                       hintText: "Password",
                       onSave: (e) {
                         _password = e!;
@@ -169,18 +156,17 @@ context
                       obsecureText: true,
                     ),
                     const SizedBox(height: 5),
-                         Row(
+                    Row(
                       children: [
                         Text(
                           "      ",
-                          style:
-                              Theme.of(context).textTheme.headline6?.copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                          style: Theme.of(context).textTheme.headline6?.copyWith(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                              ),
                         ),
                         const Spacer(),
-                       /* GestureDetector(
+                        /* GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
                               context,
@@ -198,8 +184,10 @@ context
                         ),*/
                       ],
                     ),
-                    SizedBox(height: 50,),
-                 /*   Row(
+                    SizedBox(
+                      height: 50,
+                    ),
+                    /*   Row(
                       children: [
                         Checkbox(
                           value: _rememberMe,
@@ -236,18 +224,16 @@ context
                     CustomButton(
                       onTap: () {
                         _formKey.currentState?.save();
-                        final isValid =
-                            _formKey.currentState?.validate() ?? false;
+                        final isValid = _formKey.currentState?.validate() ?? false;
                         if (!isValid) {
                           return;
                         }
                         _authCubit.signIn(_email, _password, _rememberMe);
-                      
                       },
                       title: 'Login',
                     ),
                     const SizedBox(height: 15),
-                  /*   const Divider(
+                    /*   const Divider(
                       color: Colors.black,
                     ),
                     const SizedBox(height: 15),
@@ -278,7 +264,7 @@ context
     );
   }
 
-   Future<bool?> showRestartAppDialouge() {
+  Future<bool?> showRestartAppDialouge() {
     return showDialog(
         context: context,
         barrierDismissible: false,
@@ -290,11 +276,8 @@ context
                     child: CustomButton(
                         title: 'ok',
                         onTap: () async {
-                             Navigator.of(context).pop();
-                        await  DatabaseHelper().deleteTHEDatabase();
-                      
-                          
-                       
+                          Navigator.of(context).pop();
+                          await DatabaseHelper().deleteTHEDatabase();
                         }))
               ],
             ));

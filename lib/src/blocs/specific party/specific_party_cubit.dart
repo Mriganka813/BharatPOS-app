@@ -26,6 +26,8 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
       _specificsaleParties.clear();
       _specificpurchaseParties.clear();
       _specificsaleParties.addAll(sales);
+
+    
       emit(
         SpecificPartyListRender(
           specificparty: sales,
