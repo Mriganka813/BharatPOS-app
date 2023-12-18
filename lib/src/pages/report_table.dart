@@ -105,7 +105,7 @@ class _ReportTableState extends State<ReportTable> {
       "OB Selling Price",
       "Discount",
       "Taxable value", // 'Amount/Unit',
-          'GST Rate/Unit',
+   'GST Rate/Unit',
       'CGST/Unit',
       'SGST/Unit',
       'GST/Unit',

@@ -217,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
 
-                    /*  ListTile(
+                      ListTile(
                         leading: Image.asset(
                           "assets/images/lock.png",
                           height: 30,
@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                           await Navigator.pushNamed(context, 'changepassword', arguments: state.user);
                           Navigator.pop(context);
                         },
-                      ),*/
+                      ),
                       ListTile(
                         leading: Image.asset(
                           "assets/images/about.png",

@@ -180,7 +180,7 @@ context
                                   ),
                         ),
                         const Spacer(),
-                        GestureDetector(
+                       /* GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
                               context,
@@ -195,7 +195,7 @@ context
                                       fontWeight: FontWeight.normal,
                                     ),
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                     SizedBox(height: 50,),
