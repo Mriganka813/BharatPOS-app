@@ -98,9 +98,9 @@ class _CreateSaleState extends State<CreateSale> {
                             shrinkWrap: true,
                             itemCount: _orderItems.length,
                             itemBuilder: (context, index) {
-                              final basesellingprice = 0.0;
+                              var basesellingprice = 0.0;
                               if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null")
-                                final basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst ?? "0.0");
+                               basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
 
                               return GestureDetector(
                                 onLongPress: () {
@@ -371,7 +371,7 @@ class _CreateSaleState extends State<CreateSale> {
 
 
         orderItems.forEach((element) {
-      sellingPriceListForShowinDiscountTextBOX.add(element.product!.baseSellingPriceGst!);
+      sellingPriceListForShowinDiscountTextBOX.add(element.product!.sellingPrice!.toString());
     });
 
     var tempOrderitems = _Order.orderItems;
@@ -396,6 +396,7 @@ class _CreateSaleState extends State<CreateSale> {
 
   void showaddDiscountDialouge(double basesellingprice, List<OrderItemInput> _orderItems, int index) {
     final _orderItem = _orderItems[index];
+  
 
     double discount = double.parse(_orderItem.discountAmt);
     final product = _orderItems[index].product!;
