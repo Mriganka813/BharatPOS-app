@@ -368,7 +368,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
 
         
         orderItems.forEach((element) {
-      sellingPriceListForShowinDiscountTextBOX.add(element.product!.baseSellingPriceGst!);
+      sellingPriceListForShowinDiscountTextBOX.add(element.product!.sellingPrice.toString());
     });
 
 
