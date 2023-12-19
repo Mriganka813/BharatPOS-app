@@ -531,7 +531,7 @@ class ProductCardPurchase extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('TaxableValue'),
+                        Text('Amount'),
                         type == "sale" ? Text('₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
