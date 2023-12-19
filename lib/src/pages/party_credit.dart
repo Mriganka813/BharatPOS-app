@@ -192,7 +192,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                               child: GestureDetector(
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
-                                  await openEditModal(order.id.toString(), /*order.total!*/ 100, order.createdAt.toString(), order.modeOfPayment!, context);
+                                  await openEditModal(order.id.toString(), order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
                                 },
                                 child: Card(
                                   clipBehavior: Clip.hardEdge,
@@ -522,7 +522,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
 // update settle and credit model
-  modelOpenUpdate(context, String id, int amount, String type) {
+  modelOpenUpdate(context, String id, String amount, String type) {
     String newtotal = amount.toString();
     return showModalBottomSheet(
         barrierColor: Colors.transparent,
@@ -549,7 +549,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         child: TextFormField(
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
-                            initialValue: amount.toString(),
+                            initialValue: amount,
                             decoration: const InputDecoration(
                               hintText: "₹",
                             ),
@@ -580,7 +580,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
 // edit credit or settle
-  openEditModal(String id, int total, String createdAt, String type, context) {
+  openEditModal(String id, String total, String createdAt, String type, context) {
     Alert(
         style: const AlertStyle(
           animationType: AnimationType.grow,

@@ -66,7 +66,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     setState(() {});
     final bargs = widget.args.bluetoothArgs!;
     List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData(bargs.order.id!);
+        await DatabaseHelper().getKotData( int.parse(bargs.order.id!)  );
     print("Kot Data:");
     print(list);
   }
@@ -247,7 +247,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     final bargs = widget.args.bluetoothArgs!;
 
     List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData(bargs.order.id!);
+        await DatabaseHelper().getKotData(int.parse( bargs.order.id!));
 
     List<int> bytes = [];
     // Using default profile
@@ -521,9 +521,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       onWillPop: () async {
         if (isPrinted) {
           final bargs = widget.args.bluetoothArgs!;
-          await DatabaseHelper().updateKot(bargs.order.id!);
+          await DatabaseHelper().updateKot(int.parse(bargs.order.id!) );
           await DatabaseHelper()
-              .updateTableNo(tableNoController.text, bargs.order.id!);
+              .updateTableNo(tableNoController.text, int.parse(bargs.order.id!) );
           widget.args.bluetoothArgs!.order.tableNo =
               tableNoController.text;
         }

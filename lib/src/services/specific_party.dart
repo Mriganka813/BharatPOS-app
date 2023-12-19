@@ -67,6 +67,9 @@ class SpecificPartyService {
 
   ///
   Future<Response> updatesaleAmount(Party party) async {
+    print("party edit:");
+    print(party.id);
+    print(party.total);
     return await ApiV1Service.putRequest(
       '/upd/salesOrder/${party.id}',
       data: {"total": party.total},

@@ -6,7 +6,7 @@ import '../user.dart';
 
 class Order {
   Order(
-      {this.id = -1,
+      {this.id =" -1",
       this.orderItems,
       this.total,
       this.modeOfPayment,
@@ -20,7 +20,7 @@ class Order {
       this.invoiceNum,
       this.tableNo = "-1"});
 
-  int? id;
+  String? id;
   List<OrderItemInput>? orderItems;
   String? total;
   String? modeOfPayment;
@@ -41,7 +41,7 @@ class Order {
           ),
         ),
         modeOfPayment: json["modeOfPayment"] ?? "",
-        id: 1,
+        id: json["_id"],
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"] == null ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
