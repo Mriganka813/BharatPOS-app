@@ -6,7 +6,7 @@ import '../user.dart';
 
 class Order {
   Order(
-      {this.id =" -1",
+      {this.id = -1,
       this.orderItems,
       this.total,
       this.modeOfPayment,
@@ -20,7 +20,7 @@ class Order {
       this.invoiceNum,
       this.tableNo = "-1"});
 
-  String? id;
+  int? id;
   List<OrderItemInput>? orderItems;
   String? total;
   String? modeOfPayment;
@@ -41,12 +41,31 @@ class Order {
           ),
         ),
         modeOfPayment: json["modeOfPayment"] ?? "",
-        id: json["_id"],
+        id: json['id'],
         party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"] == null ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
         total: json['total'].toString() ?? " ",
       );
+
+  factory Order.fromMapForParty(Map<String, dynamic> json) {
+
+    print("  ${json["_id"]} and ${json["party"]}  ");
+    
+    
+    return Order(
+        orderItems: List<OrderItemInput>.from(
+          json["orderItems"].map(
+            (x) => OrderItemInput.fromMap(x),
+          ),
+        ),
+        modeOfPayment: json["modeOfPayment"] ?? "",
+        id: 1,
+        party: Party(id: json['_id']),
+        user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
+        createdAt: json["createdAt"] == null ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
+        total: json['total'].toString() ?? " ",
+      );}
 
   Map<String, dynamic> toMap(OrderType type) => {
         "id": id,
@@ -85,7 +104,8 @@ class OrderItemInput {
       baseSellingPrice: json["baseSellingPrice"].toString(),
       saleIGST: json["saleIGST"].toString(),
       discountAmt: json['discountAmt'].toString(),
-      originalbaseSellingPrice: json["originalbaseSellingPrice"] == null || json["originalbaseSellingPrice"] == "null" ? "0.0" : double.parse(json["originalbaseSellingPrice"].toString()).toStringAsFixed(2) );
+      originalbaseSellingPrice:
+          json["originalbaseSellingPrice"] == null || json["originalbaseSellingPrice"] == "null" ? "0.0" : double.parse(json["originalbaseSellingPrice"].toString()).toStringAsFixed(2));
 
   factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json) => OrderItemInput(
         price: double.parse(json['price'].toString()) ?? 0,

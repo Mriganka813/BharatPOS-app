@@ -55,7 +55,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
     // );
 
     _Order = Order(
-      id: "0",
+      id:0,
       orderItems: [],
     );
 

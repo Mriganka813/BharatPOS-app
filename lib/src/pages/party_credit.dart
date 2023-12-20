@@ -75,14 +75,14 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
     for (int i = 0; i < o.length; i++) {
       for (int j = i + 1; j < o.length; j++) {
         String dateString = o[i].createdAt.toString();
-      //  print("Date1:");
-      //  print(dateString);
+        //  print("Date1:");
+        //  print(dateString);
 
         DateTime dateTimei = DateTime.parse(dateString);
 
         String dateStringj = o[j].createdAt.toString();
-      //  print("Date2:");
-     //   print(dateStringj);
+        //  print("Date2:");
+        //   print(dateStringj);
 
         DateTime dateTimej = DateTime.parse(dateStringj);
 
@@ -161,13 +161,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
               bloc: _specificpartyCubit,
               builder: (context, state) {
                 if (state is SpecificPartyListRender) {
-                  var  orders = state.specificparty;
-               
-                   sort(orders);
-                  
-                  
+                  var orders = state.specificparty;
 
-                
+                  sort(orders);
 
                   return ListView.builder(
                     physics: const BouncingScrollPhysics(),
@@ -192,7 +188,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                               child: GestureDetector(
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
-                                  await openEditModal(order.id.toString(), order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
+                                  await openEditModal(order.party!.id!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
                                 },
                                 child: Card(
                                   clipBehavior: Clip.hardEdge,

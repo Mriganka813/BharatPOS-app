@@ -182,16 +182,21 @@ class DatabaseHelper {
     int highestId;
 
     //get Highest id that meanse id of the last entered item to store that in OrderitemInput as OIID
+     
     if (input.id == -1) {
       highestId = result.first['maxId'] == null ? 0 : result.first['maxId'] as int;
-      input.id = highestId.toString();
+      input.id = highestId;
+       print("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+      print(input.id);
+    
+
       provider.addSalesBill(
         input,
         input.id.toString(),
       );
     } else {
       //if we udpating alreay existing item
-      highestId = int.parse(input.id!);
+      highestId = input.id!;
     }
 
     insertOrderItemsInput(input.orderItems!, newAddeditems, highestId);

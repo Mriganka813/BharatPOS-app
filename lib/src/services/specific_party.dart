@@ -11,10 +11,10 @@ class SpecificPartyService {
     final response = await ApiV1Service.getRequest('/sales/credit-history/$id');
     print("CreditData");
 
-    (response.data['data'] as List).forEach((element) {print(element);});
+ 
     
     return (response.data['data'] as List)
-        .map((e) => Order.fromMap(e as Map<String, dynamic>))
+        .map((e) => Order.fromMapForParty(e as Map<String, dynamic>))
         .toList();
   }
 
