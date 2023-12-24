@@ -62,8 +62,12 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
     final cj = await const ApiV1Service().initCookiesManager();
+    // print(cj.toString());
     final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
+    // print("--cookies in line 66---");
+    // print(cookies.toString());
     final isAuthenticated = cookies.isNotEmpty;
+    // print(isAuthenticated);
     Future.delayed(
       const Duration(milliseconds: 3000),
       () => Navigator.pushReplacement(
@@ -110,25 +114,25 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Future<bool?> showRestartAppDialouge() {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-              content: Text('App needed to restart'),
-              title: Text('Alert'),
-              actions: [
-                Center(
-                    child: CustomButton(
-                        title: 'ok',
-                        onTap: () async {
-                             Navigator.of(context).pop();
-                        await  DatabaseHelper().deleteTHEDatabase();
-                      
-                          
-                       
-                        }))
-              ],
-            ));
-  }
+  // Future<bool?> showRestartAppDialouge() {
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (ctx) => AlertDialog(
+  //             content: Text('App needed to restart'),
+  //             title: Text('Alert'),
+  //             actions: [
+  //               Center(
+  //                   child: CustomButton(
+  //                       title: 'ok',
+  //                       onTap: () async {
+  //                            Navigator.of(context).pop();
+  //                       await  DatabaseHelper().deleteTHEDatabase();
+  //
+  //
+  //
+  //                       }))
+  //             ],
+  //           ));
+  // }
 }

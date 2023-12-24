@@ -1,7 +1,9 @@
 // import 'api_v1.dart';
 import 'package:shopos/src/services/api_v1.dart';
+import 'package:shopos/src/services/user.dart';
 
 import '../models/product.dart';
+import '../models/user.dart';
 
 class SearchProductServices {
   Future<List<Product>> searchproduct(String catagory) async {
@@ -23,8 +25,11 @@ class SearchProductServices {
   }
 
   Future<List<Product>> searchByExpiry(int days) async {
+    final responseData = await UserService.me();
+    final user = User.fromMap(responseData.data['user']);
+    final userid = user.id;
     final response = await ApiV1Service.getRequest(
-        '/inventory/64da35c9f2805549788a4fc6/expiring/$days');
+        '/inventory/$userid/expiring/$days');
     print('search=${response.data}');
     return response.data["expiringItems"] != null
         ? (response.data["expiringItems"] as List)
