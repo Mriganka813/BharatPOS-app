@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               SearchProductListScreen.routeName,
-                              arguments: ProductListPageArgs(isSelecting: false, orderType: OrderType.sale, productlist: []),
+                              arguments: ProductListPageArgs(isSelecting: false, orderType: OrderType.none, productlist: []),
                             );
                           },
                         ),
@@ -439,25 +439,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<bool?> showRestartAppDialouge() {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-              content: Text('App needed to restart'),
-              title: Text('Alert'),
-              actions: [
-                Center(
-                    child: CustomButton(
-                        title: 'ok',
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          //await DatabaseHelper().deleteTHEDatabase();
-                          // runApp(MyApp());
-                        }))
-              ],
-            ));
-  }
+  // Future<bool?> showRestartAppDialouge() {
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (ctx) => AlertDialog(
+  //             content: Text('App needed to restart'),
+  //             title: Text('Alert'),
+  //             actions: [
+  //               Center(
+  //                   child: CustomButton(
+  //                       title: 'ok',
+  //                       onTap: () async {
+  //                         Navigator.of(context).pop();
+  //                         //await DatabaseHelper().deleteTHEDatabase();
+  //                         // runApp(MyApp());
+  //                       }))
+  //             ],
+  //           ));
+  // }
 }
 
 class HomeCard extends StatelessWidget {

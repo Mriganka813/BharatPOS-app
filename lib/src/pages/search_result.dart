@@ -296,7 +296,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             itemCheckedFlag = false;
                                             if (widget.args!.orderType == OrderType.sale) {
                                               prodList[index].quantity = prodList[index].quantity! + 1;
-                                            } else {
+                                            } else if(widget.args!.orderType == OrderType.none){
+
+                                            }else{
                                               prodList[index].quantity = prodList[index].quantity! - 1;
                                             }
                                           } else if (q == 0) {
@@ -304,6 +306,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             itemCheckedFlag = true;
                                             if (widget.args!.orderType == OrderType.sale) {
                                               prodList[index].quantity = prodList[index].quantity! - 1;
+                                            } else if(widget.args!.orderType == OrderType.none){
+
                                             } else {
                                               prodList[index].quantity = prodList[index].quantity! + 1;
                                             }
@@ -413,7 +417,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                       }
                     }
                   }
-                  print(_products);
+                  // print(_products);
 
                   print("searchbar running");
                   setState(() {});

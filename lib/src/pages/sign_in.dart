@@ -50,7 +50,6 @@ class _SignInPageState extends State<SignInPage> {
       });
     } catch (e) {
       // showRestartAppDialouge();
-      await DatabaseHelper().deleteTHEDatabase();
     }
   }
 
@@ -266,22 +265,22 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
-  Future<bool?> showRestartAppDialouge() {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-              content: Text('App needed to restart'),
-              title: Text('Alert'),
-              actions: [
-                Center(
-                    child: CustomButton(
-                        title: 'ok',
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          await DatabaseHelper().deleteTHEDatabase();
-                        }))
-              ],
-            ));
-  }
+  // Future<bool?> showRestartAppDialouge() {
+  //   return showDialog(
+  //       context: context,
+  //       barrierDismissible: false,
+  //       builder: (ctx) => AlertDialog(
+  //             content: Text('App needed to restart'),
+  //             title: Text('Alert'),
+  //             actions: [
+  //               Center(
+  //                   child: CustomButton(
+  //                       title: 'ok',
+  //                       onTap: () async {
+  //                         Navigator.of(context).pop();
+  //                         await DatabaseHelper().deleteTHEDatabase();
+  //                       }))
+  //             ],
+  //           ));
+  // }
 }
