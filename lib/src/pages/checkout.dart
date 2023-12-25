@@ -38,7 +38,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/party.dart';
 
-enum OrderType { purchase, sale,saleReturn }
+enum OrderType { purchase, sale,saleReturn, none }
 
 class PrintBillArgs {
   final billType type;

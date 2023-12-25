@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               SearchProductListScreen.routeName,
-                              arguments: ProductListPageArgs(isSelecting: false, orderType: OrderType.sale, productlist: []),
+                              arguments: ProductListPageArgs(isSelecting: false, orderType: OrderType.none, productlist: []),
                             );
                           },
                         ),
