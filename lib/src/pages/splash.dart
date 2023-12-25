@@ -124,9 +124,9 @@ class _SplashScreenState extends State<SplashScreen> {
                         onTap: () async {
                              Navigator.of(context).pop();
                         await  DatabaseHelper().deleteTHEDatabase();
-                      
-                          
-                       
+
+
+
                         }))
               ],
             ));

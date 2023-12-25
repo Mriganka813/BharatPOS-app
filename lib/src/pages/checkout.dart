@@ -687,7 +687,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "${widget.args.order.orderItems?.fold<int>(0, (acc, item) => item.quantity + acc)} products",
+          "${widget.args.order.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} products",
         ),
         actions: [
           Padding(

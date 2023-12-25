@@ -42,13 +42,15 @@ class _SignInPageState extends State<SignInPage> {
       var data = await DatabaseHelper().getOrderItems();
       print("kkkkkk=");
 
+
       provider.removeAll();
 
       data.forEach((element) {
         provider.addSalesBill(element, element.id.toString());
       });
     } catch (e) {
-      showRestartAppDialouge();
+      // showRestartAppDialouge();
+      await DatabaseHelper().deleteTHEDatabase();
     }
   }
 

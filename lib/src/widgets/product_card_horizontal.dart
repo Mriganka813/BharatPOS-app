@@ -405,7 +405,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
 
 class ProductCardPurchase extends StatelessWidget {
   final Product product;
-  final int productQuantity;
+  final double productQuantity;
   final VoidCallback onAdd;
   final VoidCallback onDelete;
   final String? type;

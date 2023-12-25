@@ -364,7 +364,7 @@ class _CreateSaleState extends State<CreateSale> {
     final orderItems = temp
         .map((e) => OrderItemInput(
               product: e,
-              quantity: tempMap["${e.id}"],
+              quantity: tempMap["${e.id}"].toDouble(),
               price: 0,
             ))
         .toList();

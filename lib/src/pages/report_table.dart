@@ -375,7 +375,7 @@ class _ReportTableState extends State<ReportTable> {
   }
 
   showStockRow() {
-    int productQTYTotal = 0;
+    double productQTYTotal = 0;
     int salesValueTotal = 0;
     double purchaseValueTotal = 0;
     int marginValueTotal = 0;

@@ -31,7 +31,7 @@ class Product {
   String? name;
   double? sellingPrice;
   String? barCode;
-  int? quantity=0;
+  double? quantity=0;
   String? user;
   String? image;
   String? id;
@@ -71,7 +71,8 @@ class Product {
       name: json["name"],
       sellingPrice:json["sellingPrice"]==null?0.0: double.parse(json["sellingPrice"].toString()) ,
       barCode: json["barCode"],
-      quantity:  json['quantity']??0,
+      // quantity:  json['quantity']??0,
+      quantity:  json['quantity']!= null? json['quantity'].toDouble() : 0.0,
       purchasePrice:json['purchasePrice']==null?0.0: double.parse(json['purchasePrice'].toString()),
       user: json["user"],
       image: json['image'],

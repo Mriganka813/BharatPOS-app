@@ -86,7 +86,7 @@ class OrderItemInput {
   OrderItemInput({this.price = 0, this.quantity = 0, this.product, this.saleSGST, this.saleCGST, this.baseSellingPrice, this.saleIGST, this.discountAmt = "0", this.originalbaseSellingPrice = ""});
 
   double? price;
-  int quantity;
+  double quantity;
   Product? product;
   String? saleSGST;
   String? saleCGST;
@@ -97,7 +97,7 @@ class OrderItemInput {
 
   factory OrderItemInput.fromMap(Map<String, dynamic> json) => OrderItemInput(
       price: double.parse(json['price'].toString()) ?? 0,
-      quantity: json["quantity"],
+      quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
       product: json["product"] is Map ? Product.fromMap(json["product"]) : null,
       saleCGST: json["saleCGST"].toString(),
       saleSGST: json["saleSGST"].toString(),
@@ -109,7 +109,7 @@ class OrderItemInput {
 
   factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json) => OrderItemInput(
         price: double.parse(json['price'].toString()) ?? 0,
-        quantity: json["quantity"],
+        quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
         product: json["product"],
         saleCGST: json["saleCGST"].toString(),
         saleSGST: json["saleSGST"].toString(),
