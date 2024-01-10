@@ -25,6 +25,7 @@ class  ProductFormInput {
     this.expiryDate,
     this.batchNumber,
     this.hsn,
+    this.mrp,
     this.GSTincluded=true
   });
 
@@ -43,6 +44,7 @@ class  ProductFormInput {
   String? baseSellingPriceGst;
   String? basePurchasePriceGst;
   String? barCode;
+  String? mrp;
   String? quantity;
   String? image;
   String? sellerName;
@@ -81,6 +83,7 @@ class  ProductFormInput {
         "available": available ?? true,
         if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded, 
         if (batchNumber != null) "batchNumber": batchNumber,
+        "mrp": mrp,
         "subProducts":[{
          "product":"653a6406e881cfb206bee15f",
          "quantity":0.5
@@ -107,6 +110,7 @@ class  ProductFormInput {
       saleigst: map['saleIGST'].toString(),
       salesgst: map['saleSGST'].toString(),
       hsn: map['hsn'].toString(),
+      mrp: map['mrp'].toString(),
       purchasecgst: map['purchaseCGST'].toString(),
       purchaseigst: map['purchaseIGST'].toString(),
       purchasesgst: map['purchaseSGST'].toString(),

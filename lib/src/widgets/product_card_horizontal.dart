@@ -231,9 +231,11 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                           children: [
                             IconButton(
                               onPressed: () {
+                                print("--line 234 in product card horizontal.dart");
                                 bool flag = true;
                                 bool flag2 = true;
                                 if (widget.product.quantity! >= 99000 && widget.type == OrderType.purchase) {
+                                  print("--line 238 in product card horizontal.dart");
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: Colors.red,
@@ -250,6 +252,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 }
 
                                 if (itemQuantity >= 999 && widget.type == OrderType.purchase) {
+                                  print("--line 255 in product card horizontal.dart");
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       backgroundColor: Colors.red,
@@ -265,6 +268,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 }
 
                                 if (flag && flag2) {
+                                  print("--line 271 in product card horizontal.dart");
                                   setState(() {
                                     itemQuantity++;
                                   });
@@ -422,7 +426,8 @@ class ProductCardPurchase extends StatelessWidget {
     double Purchasegstvalue = 0;
     double PurchasePrice = 0;
 
-    if (type == "sale") {
+    if (type == "sale" || type == "estimate") {
+      print("line 430 in product card horizontal");
       if (product.gstRate != "null") {
         baseSellingPrice = double.parse((double.parse(product.baseSellingPriceGst!) * productQuantity).toStringAsFixed(2));
         Sellinggstvalue = double.parse((double.parse(product.saleigst!) * productQuantity).toStringAsFixed(2));
@@ -474,6 +479,7 @@ class ProductCardPurchase extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () {
+                          print("--line 481 in product card horizontal");
                           onAdd();
                         },
                         icon: const Icon(Icons.add_circle_outline_rounded),
@@ -532,7 +538,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Amount'),
-                        type == "sale" ? Text('₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
+                        (type == "sale" ||type == "estimate") ? Text('₹ ${(baseSellingPrice + double.parse(discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -548,7 +554,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Item Subtotal'),
-                        type == "sale" ? Text('₹ ${baseSellingPrice}') : Text('₹ ${basePurchasePrice}'),
+                        (type == "sale" ||type == "estimate") ? Text('₹ ${baseSellingPrice}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -556,7 +562,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Tax GST @${product.gstRate == "null" ? "0" : product.gstRate}%'),
-                        type == "sale" ? Text('₹ ${Sellinggstvalue}') : Text('₹ ${Purchasegstvalue}'),
+                        (type == "sale" ||type == "estimate") ? Text('₹ ${Sellinggstvalue}') : Text('₹ ${Purchasegstvalue}'),
                       ],
                     ),
                     const SizedBox(height: 5),
@@ -569,7 +575,7 @@ class ProductCardPurchase extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Item Total'),
-                        type == "sale"
+                        (type == "sale" ||type == "estimate")
                             ? Text(
                                 '₹ ${SellingPrice.toStringAsFixed(2)}',
                                 style: TextStyle(fontWeight: FontWeight.bold),

@@ -26,7 +26,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 4,
       onCreate: (db, version) {
         db.execute('''
           CREATE TABLE  Product(
@@ -56,7 +56,8 @@ class DatabaseHelper {
             sellerName TEXT,
             batchNumber TEXT,
             expiryDate TEXT,
-            hsn TEXT
+            hsn TEXT,
+            mrp REAL
           )
         ''');
 
@@ -88,7 +89,8 @@ class DatabaseHelper {
             sellerName TEXT,
             batchNumber TEXT,
             expiryDate TEXT,
-            hsn TEXT
+            hsn TEXT,
+            mrp REAL
           )
         ''');
 
@@ -99,6 +101,7 @@ class DatabaseHelper {
             price INTEGER ,
             quantity INTEGER,
             product TEXT,
+            mrp REAL,
             saleSGST TEXT,
             saleCGST TEXT,
             baseSellingPrice TEXT,
@@ -139,6 +142,7 @@ class DatabaseHelper {
   }
 
   Future<int> InsertOrder(Order input, Billing provider, List<OrderItemInput> newAddeditems) async {
+    print("--inserting order in local database");
     final response = await UserService.me();
     final user = User.fromMap(response.data['user']);
 
@@ -146,6 +150,7 @@ class DatabaseHelper {
     final db = await dbHelper.database;
 
     var map = input.toMap(OrderType.sale);
+    print(map.toString());
 
     //As we cant edit the data fetched from database because it is immutable we made a tempMap
     Map<String, dynamic> tempMap = {};
@@ -162,6 +167,8 @@ class DatabaseHelper {
 
     //to change the actual null to string null to remove problems related to null
     tempMap.forEach((key, value) {
+      print("key = $key");
+      print("value = $value");
       if (value == -1) {
         tempMap[key] = "null";
       }
@@ -211,6 +218,8 @@ class DatabaseHelper {
     data = newOrderItemsData.isEmpty ? data : newOrderItemsData;
 
     for (int i = 0; i < data.length; i++) {
+      print("line 221 in localdatabase");
+      print(data[i].product);
       var map = data[i].toSaleMap();
       map['product'] = data[i].product!.id;
       map['OIID'] = id;
@@ -280,6 +289,8 @@ class DatabaseHelper {
     final db = await dbHelper.database;
 
     final List<Map<String, dynamic>> OrderItemInputData = await db.query('OrderItemInput');
+    print("line 290 in localdatabase");
+    print(OrderItemInputData);
     final List<Map<String, dynamic>> OrderData = await db.query('OrderInput', where: 'userId=?', whereArgs: [user.id]);
     print("From database");
     List<Order> list = [];
@@ -334,6 +345,8 @@ class DatabaseHelper {
         t["expiryDate"] = null;
       }
       if (ele['_id'] == Otemp['product']) {
+        print("line 348 in local database");
+        print(t);
         Otemp['product'] = Product.fromMap(t);
       }
     });

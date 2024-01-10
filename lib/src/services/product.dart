@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:shopos/src/models/input/product_input.dart';
 import 'package:shopos/src/models/product.dart';
@@ -9,19 +11,37 @@ class ProductService {
   Future<Response> createProduct(ProductFormInput input) async {
     // print('exp=${input.expiryDate}');
     final inputMap = FormData.fromMap(input.toMap());
+    // inputMap.fields.add(MapEntry('subProducts', subProducts));
     final filePath = input.imageFile?.path ?? "";
     if (filePath.isNotEmpty) {
       final image = MapEntry("image", await MultipartFile.fromFile(filePath));
       inputMap.files.add(image);
     }
-    print("input");
-    print(input.toMap());
+    print("line 18 in product.dart");
+    print(inputMap);
+    // Convert FormData to a Map
+    final inputMapAsMap = inputMap.fields.fold<Map<String, dynamic>>(
+      {},
+          (acc, entry) => acc..[entry.key] = entry.value,
+    );
+
+    print("line 18 in product.dart");
+    print("InputMap as Map: $inputMapAsMap");
+    // var subProducts = MapEntry("subProducts", input.subProducts.toString());
+    // inputMap.fields.add(subProducts);
+    // final subProductsJson = jsonEncode(input.subProducts);
+
+    // inputMap.fields.add(MapEntry('subProducts', subProductsJson));
+    print("input---line 17 in product.dart");
+    // print(input.toMap());
     print("FormInput:");
-    print(inputMap.fields[0]);
+    // print(inputMap.fields[0]);
+    // print(inputMap.fields[inputMap.length-1]);
 
     print(input.available);
     final response =
         await ApiV1Service.postRequest('/inventory/new', formData: inputMap);
+    print("line 25 in product.dart");
     print(response.data);
     print(response.toString());
     return response;

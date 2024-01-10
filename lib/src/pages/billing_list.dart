@@ -155,6 +155,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   ///
   String? totalbasePrice(int index, Billing provider) {
+    print("line 158 in billing list");
+    print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
     return widget.orderType == OrderType.sale
         ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
             0,
@@ -450,6 +452,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 ListTile(
                                   onTap: () {
+                                    print("line 453 in billing list");
+                                    // print(" id is: ${provider.salesBilling.values
+                                    //     .toList()[index]
+                                    //     .id}");
                                     widget.orderType == OrderType.sale
                                         ? Navigator.pushNamed(context, CreateSale.routeName,
                                             arguments: BillingPageArgs(

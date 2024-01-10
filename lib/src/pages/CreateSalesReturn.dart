@@ -167,9 +167,9 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                             shrinkWrap: true,
                             itemCount: _orderItems.length,
                             itemBuilder: (context, index) {
-                              final basesellingprice = 0.0;
+                              var basesellingprice = 0.0;
                               if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null")
-                                final basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst ?? "0.0");
+                                basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
 
                               return GestureDetector(
                                 onLongPress: () {
@@ -244,17 +244,20 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                       if (position == SlidableButtonPosition.end) {
                         if (_orderItems.isNotEmpty) {
                           // insertToDatabase(provider);
-                          provider.addSalesBill(
-                            _Order,
-                            _Order.id.toString(),
+                          // provider.addSalesReturnBill(
+                          //   _Order,
+                          //   _Order.id.toString(),
+                          // );
+                          Navigator.pushNamed(
+                            context,
+                            CheckoutPage.routeName,
+                            arguments: CheckoutPageArgs(invoiceType: OrderType.saleReturn, orderId: "0", order: _Order),
                           );
+                        }else{
+                          locator<GlobalServices>().errorSnackBar("No Products added");
                         }
 
-                        Navigator.pushNamed(
-                          context,
-                          CheckoutPage.routeName,
-                          arguments: CheckoutPageArgs(invoiceType: OrderType.saleReturn, orderId: "0", order: _Order),
-                        );
+
                       }
                     },
                   ),
@@ -360,7 +363,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
     final orderItems = temp
         .map((e) => OrderItemInput(
               product: e,
-              quantity: tempMap["${e.id}"],
+              quantity: tempMap["${e.id}"].toDouble(),
               price: 0,
             ))
         .toList();
@@ -424,12 +427,14 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                       onChanged: (val) {
                         localSellingPrice = val;
                       },
-                      hintText: 'Enter Taxable Value   (${basesellingprice + discount})',
-                    ),
+                        hintText: 'Enter Taxable Value   (${_orderItem.product!.baseSellingPriceGst !="null" ?
+                        basesellingprice + discount : sellingPriceListForShowinDiscountTextBOX[index]})'),
+                    _orderItem.product!.baseSellingPriceGst != "null" ?
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('or'),
-                    ),
+                    ) : SizedBox.shrink(),
+                    _orderItem.product!.baseSellingPriceGst != "null" ?
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
@@ -442,7 +447,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                         }
                         return null;
                       },
-                    ),
+                    ) : SizedBox.shrink(),
                   ],
                 ),
                 actions: [
@@ -453,9 +458,11 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                           if (localSellingPrice != null) {
                             print(localSellingPrice);
                             print(discountedPrice);
-
-                            discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - int.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
-
+                            if(_orderItem.product!.baseSellingPriceGst =="null"){
+                              discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                            }else{
+                              discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                            }
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);
                             setState(() {});
                           }

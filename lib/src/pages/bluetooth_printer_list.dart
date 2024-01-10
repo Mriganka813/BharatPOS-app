@@ -64,11 +64,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       String mac = bluetooth.macAdress;
     });
     setState(() {});
-    final bargs = widget.args.bluetoothArgs!;
-    List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData( bargs.order.id!  );
-    print("Kot Data:");
-    print(list);
+    if(widget.args.bluetoothArgs!=null){
+      final bargs = widget.args.bluetoothArgs!;
+      List<Map<String, dynamic>> list =
+      await DatabaseHelper().getKotData( bargs.order.id!  );
+      print("Kot Data:");
+      print(list);
+    }
   }
 
   // Future<void> initPrinter() async {
@@ -426,9 +428,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         styles: PosStyles(height: PosTextSize.size1),
       ),
     ]);
-
-    bytes += generator.text(
-      '${args.invoiceNum.substring(8, 10)}:${args.invoiceNum.substring(10, 12)}',
+    String time = DateTime.now().toString();
+    bytes += generator.text(//time
+      '${time.substring(11,16)}',
       styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.right),
       linesAfter: 2,
     );

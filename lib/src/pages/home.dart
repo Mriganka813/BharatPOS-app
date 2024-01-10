@@ -10,6 +10,7 @@ import 'package:shopos/src/pages/AboutOptionPage.dart';
 import 'package:shopos/src/pages/CreateSalesReturn.dart';
 import 'package:shopos/src/pages/SwitchAccountPage.dart';
 import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_estimate.dart';
 import 'package:shopos/src/pages/create_purchase.dart';
 import 'package:shopos/src/pages/create_sale.dart';
 import 'package:shopos/src/pages/expense.dart';
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
       provider.removeAll();
 
       data.forEach((element) {
-        print("element:${element.orderItems![0].product!.name} and ${element.id}");
+        // print("element:${element.orderItems![0].product!.name} and ${element.id}");
         provider.addSalesBill(element, element.id.toString());
       });
  
@@ -203,6 +204,17 @@ class _HomePageState extends State<HomePage> {
                         ),
                         onTap: () async {
                           Navigator.pushNamed(context, SwitchAccountPage.rountName); //
+                        },
+                      ),
+                      ListTile(
+                        leading: Image.asset(
+                          "assets/images/calcicon.jpeg",
+                          height: 38,
+                        ),
+                        title: Title(color: Colors.black, child: Text("Estimates")),
+                        onTap: () async {
+                          Navigator.of(context).pushNamed(CreateEstimate.routeName);
+                          //TODO: implement estimates
                         },
                       ),
                       ListTile(

@@ -61,6 +61,7 @@ class _CustomDropDownFieldState extends State<CustomDropDownField> {
         ),
         hintText: widget.hintText,
       ),
+      iconEnabledColor: Colors.white,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:shopos/src/models/input/order.dart';
 
@@ -8,9 +10,12 @@ class SpecificPartyService {
   ///
 
   Future<List<Order>> getSalesCreditHistory(String id) async {
+    print("--line 11 in specific party");
+    print(id);
     final response = await ApiV1Service.getRequest('/sales/credit-history/$id');
     print("CreditData");
-
+    print(response.data);
+    print("----");
  
     
     return (response.data['data'] as List)
@@ -29,6 +34,8 @@ class SpecificPartyService {
 
   ///
   Future<Response> updateSalesCredit(Party party) async {
+    print("line 37 in specific party");
+    print(jsonEncode(party.toMap()).toString());
     return await ApiV1Service.postRequest(
       '/sales/credit-history/${party.id}',
       data: party.toMap(),
@@ -52,8 +59,9 @@ class SpecificPartyService {
 
   ///
   Future<Party> getCreditSaleParty(String id) async {
+    print("line 60 in specific party");
     final response = await ApiV1Service.getRequest('/party/sale/credit/$id');
-    // print(response.toString());
+    print("line 62 in specific party");
     return Party.fromMap(response.data['data'] as Map<String, dynamic>);
   }
 

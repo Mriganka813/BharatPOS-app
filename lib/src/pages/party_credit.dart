@@ -57,7 +57,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
   void fetchdata() async {
+    print("line 60 in party_credit");
     widget.args.tabbarNo == 0 ? _specificpartyCubit.getInitialCreditHistory(widget.args.partyId) : _specificpartyCubit.getInitialpurchasedHistory(widget.args.partyId);
+    print("line 62 in party_credit");
 
     final response = await UserService.me();
     user = User.fromMap(response.data['user']);
@@ -86,7 +88,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
         DateTime dateTimej = DateTime.parse(dateStringj);
 
-        if (dateTimej.isBefore(dateTimei)) {
+        if (dateTimej.isAfter(dateTimei)) {
           var temp = o[i];
           o[i] = o[j];
           o[j] = temp;
@@ -172,37 +174,40 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     itemCount: orders.length,
                     itemBuilder: (BuildContext context, int index) {
                       final order = orders[index];
+                      print("line 177 in party credit");
+                      print(order.createdAt);
                       return Column(
                         children: [
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(top: 15, bottom: 15),
-                              child: currentdate(order.createdAt.toString()),
+                              child: currentdate(order.createdAt!),
                             ),
                           ),
                           Align(
-                            alignment: order.modeOfPayment == "Settle" ? Alignment.centerLeft : Alignment.centerRight,
+                            alignment: order.modeOfPayment?[0]["mode"] == "Settle" ? Alignment.centerLeft : Alignment.centerRight,
                             child: SizedBox(
                               height: 50,
                               width: 111,
                               child: GestureDetector(
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
+                                  print("line 193 in party_credit");
                                   await openEditModal(order.party!.id!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
                                 },
                                 child: Card(
                                   clipBehavior: Clip.hardEdge,
                                   shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: order.modeOfPayment == "Settle" ? Colors.green : Colors.red, width: 0.5),
+                                    side: BorderSide(color: order.modeOfPayment?[0]['mode'] == "Settle" ? Colors.green : Colors.red, width: 0.5),
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
                                   elevation: 0,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
-                                      " ₹ ${order.total}",
+                                      " ₹ ${order.modeOfPayment?.firstWhere((mode) => mode['mode'] == 'Credit', orElse: () => {'amount': order.total})['amount']}",
                                       style: TextStyle(
-                                        color: order.modeOfPayment == "Settle" ? Colors.green : Colors.red,
+                                        color: order.modeOfPayment?[0]['mode'] == "Settle" ? Colors.green : Colors.red,
                                         fontSize: 20,
                                       ),
                                       textAlign: TextAlign.center,
@@ -489,7 +494,9 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                       child: CustomButton(
                         onTap: () {
                           setState(() {
+                            print("line 494 in party credit");
                             _specificPartyInput.modeOfPayment = modeofPayment;
+                            print("modeofPayment in line 497 is $modeofPayment");
                             _specificPartyInput.total = double.parse(value.text);
                             _specificPartyInput.id = widget.args.partyId;
                             _specificPartyInput.createdAt = DateTime.now();
@@ -497,8 +504,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             value.clear();
                           });
                           if (widget.args.tabbarNo == 0) {
+                            print("line 502 in party credit");
                             _specificpartyCubit.updateCreditHistory(_specificPartyInput);
                           } else {
+                            print("line 505 in party credit");
                             _specificpartyCubit.updatepurchaseHistory(_specificPartyInput);
                           }
                           Navigator.pop(context);
@@ -518,7 +527,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
 // update settle and credit model
-  modelOpenUpdate(context, String id, String amount, String type) {
+  modelOpenUpdate(context, String id, String amount, List<Map<String,dynamic>> type) {
     String newtotal = amount.toString();
     return showModalBottomSheet(
         barrierColor: Colors.transparent,
@@ -576,7 +585,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
   }
 
 // edit credit or settle
-  openEditModal(String id, String total, String createdAt, String type, context) {
+  openEditModal(String id, String total, String createdAt, List<Map<String, dynamic>> type, context) {
     Alert(
         style: const AlertStyle(
           animationType: AnimationType.grow,
@@ -625,11 +634,10 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
         )).show();
   }
 
-  currentdate(String dates) {
-    DateTime d = DateTime.parse(dates);
-    var datereq = DateFormat.MMMM().format(d);
+  Widget currentdate(DateTime createdAt) {
+    var datereq = DateFormat.MMMM().format(createdAt);
 
-    final String _inputTime = '${d.hour}:${d.minute}';
+    final String _inputTime = '${createdAt.hour}:${createdAt.minute}';
     final DateFormat _inputFormat = DateFormat('HH:mm');
     final DateFormat _outputFormat = DateFormat('h:mm a');
 
@@ -638,16 +646,17 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
     String pmAmFlag = "AM";
 
-    if (d.hour >= 13) {
+    if (createdAt.hour >= 13) {
       pmAmFlag = "PM";
     } else {
       pmAmFlag = "AM";
     }
     return Text(
-      d.day.toString() + "." + d.month.toString() + "." + d.year.toString() + " | " + outputTime,
+      '${createdAt.day.toString()}.${createdAt.month.toString()}.${createdAt.year.toString()} | $outputTime',
       style: const TextStyle(color: Colors.black45, fontSize: 13),
     );
   }
+
 
   Future<bool?> _showPinDialog() {
     return showDialog(

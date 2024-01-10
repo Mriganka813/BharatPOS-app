@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -7,6 +8,8 @@ import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/models/party.dart';
 import 'package:shopos/src/services/specific_party.dart';
+
+import '../../pages/checkout.dart';
 
 class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   final List<Order> _specificsaleParties = [];
@@ -21,7 +24,10 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
     try {
       print('oo');
       final sales = await _partyService.getSalesCreditHistory(id);
+      print("line 27 in specific party cubit");
       _partyDetails = await _partyService.getCreditSaleParty(id);
+      print("line 31 in specific party cubit");
+      print(_partyDetails.toMap().toString());
       print('okk');
       _specificsaleParties.clear();
       _specificpurchaseParties.clear();
@@ -44,6 +50,7 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   void getInitialpurchasedHistory(String id) async {
     emit(SpecificPartyLoading());
     try {
+      print("line 47 in specitparty");
       final purchase = await _partyService.getpurchaseCreditHistory(id);
       _partyDetails = await _partyService.getCreditPurchaseParty(id);
       _specificsaleParties.clear();
@@ -62,6 +69,8 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   ///
   void updateCreditHistory(Party p) async {
     final response = await _partyService.updateSalesCredit(p);
+    print(response.data);
+    print("line 66 in specific party cubit");
     final sales = await _partyService.getSalesCreditHistory(p.id!);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));

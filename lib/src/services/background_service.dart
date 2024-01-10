@@ -71,7 +71,7 @@ Future<void> onStart(ServiceInstance service) async {
             .where((element) =>
                 element.items![0].status == "PENDING".toLowerCase())
             .toList();
-        print(pendingData.length);
+        // print(pendingData.length);
         if (pendingData.length > 0) {
           scheduleAlarm('New order is available',
               'Order id - ' + pendingData[0].orderId.toString());

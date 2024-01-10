@@ -12,6 +12,7 @@ import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/bluetooth_printer_list.dart';
 import 'package:shopos/src/pages/change_password.dart';
 import 'package:shopos/src/pages/checkout.dart';
+import 'package:shopos/src/pages/create_estimate.dart';
 import 'package:shopos/src/pages/create_expense.dart';
 import 'package:shopos/src/pages/create_party.dart';
 import 'package:shopos/src/pages/create_product.dart';
@@ -116,6 +117,10 @@ class _MyAppState extends State<MyApp> {
               case CreateSale.routeName:
                 return CreateSale(
                   args: settings.arguments as BillingPageArgs?,
+                );
+              case CreateEstimate.routeName:
+                return CreateEstimate(
+                  args: settings.arguments as EstimateBillingPageArgs?,
                 );
               case CreatePurchase.routeName:
                 return CreatePurchase(

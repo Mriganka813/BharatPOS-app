@@ -275,6 +275,7 @@ class _PartiesListViewState extends State<PartiesListView> {
                   style: TextStyle(color: Colors.green),
                 ), //here when api will be fixed then we will get the correct value
           onTap: () async {
+            print("line 278 in partylist");
             await Navigator.pushNamed(context, PartyCreditPage.routeName,
                 arguments: ScreenArguments(
                     party.id!, party.name!, party.phoneNumber!, widget.tabno));

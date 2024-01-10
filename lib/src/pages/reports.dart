@@ -12,7 +12,7 @@ import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_date_picker.dart';
 
-enum ReportType { sale, purchase, expense, stock }
+enum ReportType { sale, purchase, expense, stock, estimate, saleReturn }
 
 class ReportsPage extends StatefulWidget {
   static const String routeName = '/reports_page';
@@ -62,11 +62,13 @@ class _ReportsPageState extends State<ReportsPage> {
               expenses: state.expenses, type: _reportInput.type.toString()));
     }
     if (state.orders != null) {
+      print("line 65 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
               orders: state.orders, type: _reportInput.type.toString()));
     }
     if (state.product != null) {
+      print("linen 71 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
               products: state.product, type: _reportInput.type.toString()));
@@ -120,6 +122,19 @@ class _ReportsPageState extends State<ReportsPage> {
                 ),
                 CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.leading,
+                  value: _reportInput.type == ReportType.saleReturn,
+                  activeColor: ColorsConst.primaryColor,
+                  checkboxShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  contentPadding: const EdgeInsets.all(0),
+                  onChanged: (value) {
+                    _toggleReportType(ReportType.saleReturn);
+                  },
+                  title: const Text("Sale Return Report"),
+                ),
+                CheckboxListTile(
+                  controlAffinity: ListTileControlAffinity.leading,
                   value: _reportInput.type == ReportType.purchase,
                   activeColor: ColorsConst.primaryColor,
                   checkboxShape: RoundedRectangleBorder(
@@ -156,6 +171,19 @@ class _ReportsPageState extends State<ReportsPage> {
                     _toggleReportType(ReportType.stock);
                   },
                   title: const Text("Stock Report"),
+                ),
+                CheckboxListTile(
+                  contentPadding: const EdgeInsets.all(0),
+                  activeColor: ColorsConst.primaryColor,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _reportInput.type == ReportType.estimate,
+                  checkboxShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  onChanged: (value) {
+                    _toggleReportType(ReportType.estimate);
+                  },
+                  title: const Text("Estimate Report"),
                 ),
                 const SizedBox(height: 40),
                 CustomDatePicker(

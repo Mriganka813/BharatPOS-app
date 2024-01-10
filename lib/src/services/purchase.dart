@@ -24,6 +24,11 @@ class PurchaseService {
     return response;
   }
 
+  static Future<Map<String, dynamic>> getNumberOfPurchases() async {
+    final response = await ApiV1Service.getRequest('/purchasesNum');
+    return response.data;
+  }
+
   ///
   static Future<Response> getAllSalesOrders() async {
     final response = await ApiV1Service.getRequest('/purchaseOrders/me');

@@ -70,6 +70,7 @@ class _CreateProductState extends State<CreateProduct> {
     }
     try {
       final response = await const ProductService().getProduct(widget.id!);
+      print("fetching product data in line 73 in createproduct");
       print(response.toString());
       productInput = ProductFormInput.fromMap(response.data['inventory']);
     } on DioError catch (err) {
@@ -636,6 +637,16 @@ class _CreateProductState extends State<CreateProduct> {
                       value: _formInput.hsn == "null" ? " " : _formInput.hsn,
                       onChanged: (e) {
                         _formInput.hsn = e;
+                      },
+                      validator: (e) => null,
+                    ),
+                    const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "MRP",
+                      value: _formInput.mrp == "null" ? " " : _formInput.mrp,
+                      inputType: TextInputType.numberWithOptions(signed: false, decimal: true),
+                      onChanged: (e) {
+                        _formInput.mrp = e;
                       },
                       validator: (e) => null,
                     ),

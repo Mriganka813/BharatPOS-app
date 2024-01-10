@@ -290,13 +290,14 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
 
                                           //this logic is done becasue when we press the card only the (+-) button should show and should add item
                                           //then when we again press the card the opposite should happen
-
                                           if (q == 1) {
                                             decreaseTheQuantity(prodList[index]);
                                             itemCheckedFlag = false;
                                             if (widget.args!.orderType == OrderType.sale) {
                                               prodList[index].quantity = prodList[index].quantity! + 1;
                                             } else if(widget.args!.orderType == OrderType.none){
+
+                                            }else if(widget.args!.orderType == OrderType.estimate){
 
                                             }else{
                                               prodList[index].quantity = prodList[index].quantity! - 1;
@@ -307,6 +308,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             if (widget.args!.orderType == OrderType.sale) {
                                               prodList[index].quantity = prodList[index].quantity! - 1;
                                             } else if(widget.args!.orderType == OrderType.none){
+
+                                            } else if(widget.args!.orderType == OrderType.estimate){
 
                                             } else {
                                               prodList[index].quantity = prodList[index].quantity! + 1;
@@ -319,7 +322,9 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           increaseTheQuantity(prodList[index]);
                                           if (widget.args!.orderType == OrderType.sale) {
                                             prodList[index].quantity = prodList[index].quantity! - 1;
-                                          } else {
+                                          }else if(widget.args!.orderType == OrderType.estimate){
+
+                                          }else {
                                             prodList[index].quantity = prodList[index].quantity! + 1;
                                           }
                                           setState(() {});
@@ -329,6 +334,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           itemCheckedFlag = false;
                                           if (widget.args!.orderType == OrderType.sale) {
                                             prodList[index].quantity = prodList[index].quantity! + 1;
+                                          } else if(widget.args!.orderType == OrderType.estimate){
+
                                           } else {
                                             prodList[index].quantity = prodList[index].quantity! - 1;
                                           }

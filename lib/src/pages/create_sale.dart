@@ -427,12 +427,15 @@ class _CreateSaleState extends State<CreateSale> {
                       onChanged: (val) {
                         localSellingPrice = val;
                       },
-                      hintText: 'Enter Taxable Value   (${basesellingprice + discount})',
+                      hintText: 'Enter Taxable Value   (${_orderItem.product!.baseSellingPriceGst !="null" ?
+                      basesellingprice + discount : sellingPriceListForShowinDiscountTextBOX[index]})'
                     ),
+                    _orderItem.product!.baseSellingPriceGst != "null" ?
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('or'),
-                    ),
+                    ) : SizedBox.shrink(),
+                    _orderItem.product!.baseSellingPriceGst != "null" ?
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
@@ -445,7 +448,7 @@ class _CreateSaleState extends State<CreateSale> {
                         }
                         return null;
                       },
-                    ),
+                    ) : SizedBox.shrink(),
                   ],
                 ),
                 actions: [
@@ -456,24 +459,35 @@ class _CreateSaleState extends State<CreateSale> {
                           if (localSellingPrice != null) {
                             print(localSellingPrice);
                             print(discountedPrice);
+                            print("----line 463---in createsale.dart");
+                            print(basesellingprice);
+                            print(_orderItem.product!.baseSellingPriceGst!);
+                            if(_orderItem.product!.baseSellingPriceGst =="null"){
+                              print("---line 467 in createsale.dart");
+                              discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
 
-                            discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - int.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                            }else{
+                              print("---line 470 in createsale.dart");
+                              discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                            }
 
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);
                             setState(() {});
                           }
 
                           if (localSellingPrice != null && localSellingPrice!.isNotEmpty) {
+                            print("line 479 in create_sale.dart");
                             _onSubtotalChange(product, localSellingPrice);
                             setState(() {});
                           } else if (discountedPrice != null) {
+                            print("line 483 in create_sale.dart");
                             print('s$discountedPrice');
 
                             double realBaseSellingPrice = double.parse(_orderItem.product!.baseSellingPriceGst!);
 
                             _onTotalChange(product, discountedPrice);
-                            print("realbase selling price=${realBaseSellingPrice}");
-                            print("discount=${discount}");
+                            // print("realbase selling price=${realBaseSellingPrice}");
+                            // print("discount=${discount}");
                             discount = (realBaseSellingPrice + discount - double.parse(_orderItem.product!.baseSellingPriceGst!)) * _orderItem.quantity;
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);
 
