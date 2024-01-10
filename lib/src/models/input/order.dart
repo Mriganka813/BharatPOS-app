@@ -96,12 +96,12 @@ class Order {
 }
 
 class OrderItemInput {
-  OrderItemInput({this.price = 0, this.quantity = 0, this.product, this.saleSGST, this.saleCGST, this.baseSellingPrice, this.saleIGST, this.discountAmt = "0", this.originalbaseSellingPrice = "", this.mrp=0});
+  OrderItemInput({this.price = 0, this.quantity = 0, this.product, this.saleSGST, this.saleCGST, this.baseSellingPrice, this.saleIGST, this.discountAmt = "0", this.originalbaseSellingPrice = ""});
 
   double? price;
   double quantity;
   Product? product;
-  double mrp;
+  // double mrp;
   String? saleSGST;
   String? saleCGST;
   String? baseSellingPrice;
@@ -112,7 +112,7 @@ class OrderItemInput {
   factory OrderItemInput.fromMap(Map<String, dynamic> json) => OrderItemInput(
       price: double.parse(json['price'].toString()) ?? 0,
       quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
-      mrp: json['mrp']!= null && json['mrp']!="null"? double.parse(json['mrp']) : 0.0,
+      // mrp: json['mrp']!= null && json['mrp']!="null"? double.parse(json['mrp']) : 0.0,
       product: json["product"] is Map ? Product.fromMap(json["product"]) : null,
       saleCGST: json["saleCGST"].toString(),
       saleSGST: json["saleSGST"].toString(),
@@ -125,7 +125,7 @@ class OrderItemInput {
   factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json) => OrderItemInput(
         price: double.parse(json['price'].toString()) ?? 0,
         quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
-        mrp: json['mrp']!= "null" && json['mrp']!=null ? json['mrp'] : 0.0,
+        // mrp: json['mrp']!= "null" && json['mrp']!=null ? json['mrp'] : 0.0,
         product: json["product"]is Map ? Product.fromMap(json["product"]) : null,
         saleCGST: json["saleCGST"].toString(),
         saleSGST: json["saleSGST"].toString(),
@@ -139,7 +139,6 @@ class OrderItemInput {
         print(product);
     Map<String,dynamic> map= {"price": (product?.sellingPrice ?? 1),
     "quantity": quantity,
-    "mrp": product?.mrp,
     "product": product?.id,
     "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
     "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,

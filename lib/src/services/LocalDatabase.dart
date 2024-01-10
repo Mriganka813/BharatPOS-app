@@ -101,7 +101,6 @@ class DatabaseHelper {
             price INTEGER ,
             quantity INTEGER,
             product TEXT,
-            mrp REAL,
             saleSGST TEXT,
             saleCGST TEXT,
             baseSellingPrice TEXT,
