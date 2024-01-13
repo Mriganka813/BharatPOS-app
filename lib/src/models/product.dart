@@ -67,9 +67,9 @@ class Product {
       // print("${json["name"]} have double quantity(${json['quantity']})");
     }
     // print('hsn =${json['hsn']}');
-    print("line 70 in product.dart");
-    print(json);
-    print(json['mrp'].toString());
+    // print("line 70 in product.dart");
+    // print(json);
+    // print(json['mrp'].toString());
     return Product(
       name: json["name"],
       sellingPrice:json["sellingPrice"]==null?0.0: double.parse(json["sellingPrice"].toString()) ,

@@ -98,13 +98,16 @@ class _CreateSaleState extends State<CreateSale> {
                             shrinkWrap: true,
                             itemCount: _orderItems.length,
                             itemBuilder: (context, index) {
-                              var basesellingprice = 0.0;
-                              if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null")
+                              double? basesellingprice = 0.0;
+                              if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null"){
                                basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
+                              }
+                              print("line 109 in create sale");
+                              print(basesellingprice);
 
                               return GestureDetector(
                                 onLongPress: () {
-                                  showaddDiscountDialouge(basesellingprice, _orderItems, index);
+                                  showaddDiscountDialouge(basesellingprice!, _orderItems, index);
                                 },
                                 child: ProductCardPurchase(
                                   type: "sale",
@@ -155,12 +158,12 @@ class _CreateSaleState extends State<CreateSale> {
                     dismissible: false,
                     label: const Center(
                         child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.black,
-                      ),
-                    )),
+                          backgroundColor: Colors.white,
+                          child: Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.black,
+                          ),
+                        )),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -394,9 +397,15 @@ class _CreateSaleState extends State<CreateSale> {
     });
   }
 
-  void showaddDiscountDialouge(double basesellingprice, List<OrderItemInput> _orderItems, int index) {
+  void showaddDiscountDialouge(double basesellingprice, List<OrderItemInput> _orderItems, int index) async {
     final _orderItem = _orderItems[index];
-  
+    final tappedProduct = await ProductService().getProduct(_orderItems[index].product!.id!);
+    final productJson = Product.fromMap(tappedProduct.data['inventory']);
+    // print("line 404");
+    // print(productJson.baseSellingPriceGst);
+    // print(productJson.sellingPrice);
+    final baseSellingPriceToShow = productJson.baseSellingPriceGst;
+    final sellingPriceToShow = productJson.sellingPrice;
 
     double discount = double.parse(_orderItem.discountAmt);
     final product = _orderItems[index].product!;
@@ -427,21 +436,21 @@ class _CreateSaleState extends State<CreateSale> {
                       onChanged: (val) {
                         localSellingPrice = val;
                       },
-                      hintText: 'Enter Taxable Value   (${_orderItem.product!.baseSellingPriceGst !="null" ?
-                      basesellingprice + discount : sellingPriceListForShowinDiscountTextBOX[index]})'
+                      hintText: 'Enter Taxable Value   (${_orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="" ?
+                      baseSellingPriceToShow : sellingPriceToShow})'
                     ),
-                    _orderItem.product!.baseSellingPriceGst != "null" ?
+                    _orderItem.product!.gstRate != "null" && _orderItem.product!.gstRate!=""?
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('or'),
                     ) : SizedBox.shrink(),
-                    _orderItem.product!.baseSellingPriceGst != "null" ?
+                    _orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="" ?
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
                         discountedPrice = val;
                       },
-                      hintText: 'Enter total value   (${sellingPriceListForShowinDiscountTextBOX[index]})',
+                      hintText: 'Enter total value   (${sellingPriceToShow})',
                       validator: (val) {
                         if (val!.isNotEmpty && localSellingPrice!.isNotEmpty) {
                           return 'Do not fill both fields';

@@ -71,6 +71,7 @@ class _HomePageState extends State<HomePage> {
 
       data.forEach((element) {
         // print("element:${element.orderItems![0].product!.name} and ${element.id}");
+        // print("element:${element.orderItems![0].product!.sellingPrice} and ${element.id}");
         provider.addSalesBill(element, element.id.toString());
       });
  

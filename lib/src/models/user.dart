@@ -14,6 +14,7 @@ class User {
     this.type,
     this.upi_id,
     this.GstIN,
+    this.dlNum
   });
 
   String? email;
@@ -30,6 +31,7 @@ class User {
   String? type;
   String? upi_id;
   String? GstIN;
+  String? dlNum;
 
   factory User.fromMap(Map<String, dynamic> json) => User(
         email: json["email"],
@@ -46,6 +48,7 @@ class User {
         type: json["taxFile"],
         upi_id: json["upi_id"],
         GstIN: json["GstIN"],
+        dlNum: json['dlNum']
       );
 
   // extracting taxfile detail from json
@@ -66,5 +69,6 @@ class User {
         "__v": v,
         "upi_id": upi_id,
         "GstIN": GstIN,
+        "dlNum":dlNum
       };
 }

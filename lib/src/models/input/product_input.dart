@@ -58,6 +58,8 @@ class  ProductFormInput {
 
   Map<String, dynamic> toMap() { 
         print('included =$GSTincluded');
+        print(mrp.runtimeType);
+        print(mrp);
     return 
     {
         "name": name,
@@ -83,7 +85,7 @@ class  ProductFormInput {
         "available": available ?? true,
         if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded, 
         if (batchNumber != null) "batchNumber": batchNumber,
-        "mrp": mrp,
+        "mrp": mrp=="null" || mrp==null? "": mrp,
         "subProducts":[{
          "product":"653a6406e881cfb206bee15f",
          "quantity":0.5

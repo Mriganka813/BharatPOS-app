@@ -109,6 +109,7 @@ String invoiceTemplatewithGST({
 
   bool expirydateAvailableFlag = false;
   bool hsnAvailableFlag = false;
+  bool mrpAvailableFlag=false;
   order.orderItems!.forEach((element) {
     if (element.product!.expiryDate != null &&
         element.product!.expiryDate != "null" &&
@@ -119,6 +120,11 @@ String invoiceTemplatewithGST({
         element.product!.hsn != "null" &&
         element.product!.hsn != "") {
       hsnAvailableFlag = true;
+    }
+    if (element.product!.mrp != null &&
+        element.product!.mrp != "null" &&
+        element.product!.mrp != "") {
+      mrpAvailableFlag = true;
     }
   });
 
@@ -152,6 +158,11 @@ String invoiceTemplatewithGST({
                           ? '<td class="left"> ${orderItem.product!.hsn}</td>'
                           : '<td class="left"></td>'
                       : '') +
+                  (mrpAvailableFlag
+                      ? orderItem.product!.mrp != null
+                        ? '<td class="left"> ${orderItem.product!.mrp!="null"?orderItem.product!.mrp :''}</td>'
+                        : '<td class="left"></td>'
+                      : '') +
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                       '<td class="left">${orderItem.product?.saleigst}<p style="text-align:left"><small>(${gstrate}%)</small></p></td>'
                       '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)}</td>'
@@ -172,6 +183,11 @@ String invoiceTemplatewithGST({
                       ? orderItem.product!.hsn != null
                           ? '<td class="left"> ${orderItem.product!.hsn}</td>'
                           : '<td class="left"></td>'
+                      : '') +
+                  (mrpAvailableFlag
+                      ? orderItem.product!.mrp != null
+                      ? '<td class="left"> ${orderItem.product!.mrp!="null"?orderItem.product!.mrp :''}</td>'
+                      : '<td class="left"></td>'
                       : '') +
                        '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>' +
                   '<td class="left">NA<p style="text-align:left"><small>(NA%)</small></p></td>'
@@ -200,6 +216,7 @@ String invoiceTemplatewithGST({
               return '<tr>'
                   '<td class="left product-name">${orderItem.product?.name}</td>'
                   '<td class="left">${orderItem.quantity}</td>'
+                  '<td class="left">${mrpAvailableFlag? orderItem.product?.mrp : ''}</td>'
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                   '<td class="left">${orderItem.product?.purchaseigst}<p style="text-align:left"><small>(${gstrate}%)</small></p></td>'
                   '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)}</td>'
@@ -208,6 +225,7 @@ String invoiceTemplatewithGST({
               return '<tr>'
                   '<td class="left product-name">${orderItem.product?.name}</td>'
                   '<td class="left">${orderItem.quantity}</td>'
+                  '<td class="left">${mrpAvailableFlag?orderItem.product?.mrp : ''}</td>'
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                   '<td class="left">NA<p style="text-align:left"><small>(NA%)</small></p></td>'
                   '<td class="left">₹ 0</td>'
@@ -216,6 +234,7 @@ String invoiceTemplatewithGST({
               return '<tr>'
                   '<td class="left product-name">${orderItem.product?.name}</td>'
                   '<td class="left">${orderItem.quantity}</td>'
+                  '<td class="left">${mrpAvailableFlag? orderItem.product?.mrp:''}</td>'
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                   '<td class="left">NA<p style="text-align:left"><small>(NA%)</small></p></td>'
                   '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)}</td>'
@@ -242,6 +261,9 @@ String invoiceTemplatewithGST({
       }
       .table th, .table td {
         white-space: nowrap;
+      }
+      tbody {
+        font-size: 13px;
       }
       .receiver {
               width: 250px;
@@ -275,6 +297,7 @@ String invoiceTemplatewithGST({
               ${addressRows()}
               <div>Email: ${user.email ?? ""}</div>
               <div>Phone: ${user.phoneNumber}</div>
+              <div>DL Number: ${user.dlNum}</div>
             </div>
             <div class="receiver">
              ${billedTo()}

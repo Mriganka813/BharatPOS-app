@@ -18,7 +18,7 @@ class Billing with ChangeNotifier {
   }
 
   void addSalesBill(Order input, String orderId) {
-      print("line 22 billing order");
+      // print("line 22 billing order");
       // print(input.orderItems?[0].product);
     if (_salesBilling.containsKey(orderId)) {
       //.... change quantity
@@ -34,6 +34,7 @@ class Billing with ChangeNotifier {
               gst: input.gst
               ));
     } else {
+      print("line 37 in billing order");
       _salesBilling.putIfAbsent(
           orderId,
           () => Order(

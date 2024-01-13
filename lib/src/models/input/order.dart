@@ -122,31 +122,37 @@ class OrderItemInput {
       originalbaseSellingPrice:
           json["originalbaseSellingPrice"] == null || json["originalbaseSellingPrice"] == "null" ? "0.0" : double.parse(json["originalbaseSellingPrice"].toString()).toStringAsFixed(2));
 
-  factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json) => OrderItemInput(
-        price: double.parse(json['price'].toString()) ?? 0,
-        quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
-        // mrp: json['mrp']!= "null" && json['mrp']!=null ? json['mrp'] : 0.0,
-        product: json["product"]is Map ? Product.fromMap(json["product"]) : null,
-        saleCGST: json["saleCGST"].toString(),
-        saleSGST: json["saleSGST"].toString(),
-        baseSellingPrice: json["baseSellingPrice"].toString(),
-        saleIGST: json["saleIGST"].toString(),
-        discountAmt: json['discountAmt'].toString(),
-      );
+  factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json){
+    print("line 126 in order.dart");
+    // print(json);
+    // print(json["product"] is Map);
+    return OrderItemInput(
+      price: double.parse(json['price'].toString()) ?? 0,
+      quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
+      // mrp: json['mrp']!= "null" && json['mrp']!=null ? json['mrp'] : 0.0,
+      product: json["product"] is Map ? Product.fromMap(json["product"]) : null,
+      saleCGST: json["saleCGST"].toString(),
+      saleSGST: json["saleSGST"].toString(),
+      baseSellingPrice: json["baseSellingPrice"].toString(),
+      saleIGST: json["saleIGST"].toString(),
+      discountAmt: json['discountAmt'].toString(),
+    );
+  }
 
   Map<String, dynamic> toSaleMap() {
         print("line 138 in order.dart tosalemap ");
         print(product);
-    Map<String,dynamic> map= {"price": (product?.sellingPrice ?? 1),
-    "quantity": quantity,
-    "product": product?.id,
-    "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
-    "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
-    "baseSellingPrice": product?.baseSellingPriceGst == 'null' ? '0' : product!.baseSellingPriceGst,
-    "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
-    "discountAmt": discountAmt,
-    "originalbaseSellingPrice": (double.parse(product!.baseSellingPriceGst! == "null" ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt!)).toString()};
-    return map;
+    Map<String,dynamic> map= {
+      "price": (product?.sellingPrice ?? 1),
+      "quantity": quantity,
+      "product": product?.id,
+      "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
+      "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
+      "baseSellingPrice": product?.baseSellingPriceGst == 'null' ? '0' : product!.baseSellingPriceGst,
+      "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
+      "discountAmt": discountAmt,
+      "originalbaseSellingPrice": (double.parse(product!.baseSellingPriceGst! == "null" ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt!)).toString()};
+      return map;
   }
 
   Map<String, dynamic> toSaleReturnMap() => {

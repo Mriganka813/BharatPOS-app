@@ -349,7 +349,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                           widget.args.order.modeOfPayment,
                                           totalbasePrice(),
                                           totalgstPrice(),
-                                          "0.00",
+                                          totalDiscount(),
                                           widget.args.order.orderItems);
                                   },
                                   child: Text("Yes")),
@@ -369,6 +369,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _viewPdf() async {
     bool expirydateAvailableFlag = false;
     bool hsnAvailableFlag = false;
+    bool mrpAvailableFlag = false;
 
     widget.args.order.orderItems!.forEach((element) {
       if (element.product!.expiryDate != null &&
@@ -381,14 +382,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
           element.product!.hsn != "") {
         hsnAvailableFlag = true;
       }
+      if (element.product!.mrp != null &&
+          element.product!.mrp != "null" &&
+          element.product!.mrp != "") {
+        mrpAvailableFlag = true;
+      }
     });
 
     var headerList = ["Name", "Qty", "Taxable value", "GST", "Amount"];
-
-    if (hsnAvailableFlag == true) {
+    if(mrpAvailableFlag){
+      headerList.insert(2, "MRP");
+    }
+    if (hsnAvailableFlag && widget.args.invoiceType!=OrderType.purchase) {
       headerList.insert(2, "HSN");
     }
-    if (expirydateAvailableFlag == true) {
+    if (expirydateAvailableFlag  && widget.args.invoiceType!=OrderType.purchase) {
       headerList.insert(2, "Expiry");
     }
     final targetPath = await getExternalCacheDirectories();
@@ -604,7 +612,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
       },
     ).toStringAsFixed(2);
   }
-
+  String? totalDiscount(){
+    return widget.args.order.orderItems?.fold<double>(
+        0,
+            (acc, curr){
+          return double.parse(curr.discountAmt)+acc;
+        }
+    ).toStringAsFixed(2);
+  }
   ///
   String? totalgstPrice() {
     return widget.args.order.orderItems?.fold<double>(
@@ -914,7 +929,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text('Discount'),
-                                      Text('₹ 0'),
+                                      Text('₹ ${totalDiscount()}'),
                                     ],
                                   ),
                                   const SizedBox(height: 5),
@@ -1560,7 +1575,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (_formKey.currentState?.validate() ?? false) {
       print("1452 in checkout");
 
-      print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
+      // print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
       print(widget.args.order);
       print(totalPrice());
       print(totalbasePrice());

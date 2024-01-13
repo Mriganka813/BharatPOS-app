@@ -149,6 +149,7 @@ class DatabaseHelper {
     final db = await dbHelper.database;
 
     var map = input.toMap(OrderType.sale);
+    print("line 152 in local database in insert order");
     print(map.toString());
 
     //As we cant edit the data fetched from database because it is immutable we made a tempMap
@@ -166,8 +167,6 @@ class DatabaseHelper {
 
     //to change the actual null to string null to remove problems related to null
     tempMap.forEach((key, value) {
-      print("key = $key");
-      print("value = $value");
       if (value == -1) {
         tempMap[key] = "null";
       }
@@ -346,13 +345,18 @@ class DatabaseHelper {
       if (ele['_id'] == Otemp['product']) {
         print("line 348 in local database");
         print(t);
-        Otemp['product'] = Product.fromMap(t);
+        // print("line 347 in local database${Product.fromMap(t)}");
+        Otemp['product'] = Product.fromMap(t).toMap();
+        print("line 349 in local database");
+        print(Otemp['product']);
       }
     });
 
     Otemp.remove("OIID");
 
     list.add(OrderItemInput.fromMapForLocalDatabase(Otemp));
+    print("line 354 in localdataabase");
+    // print(list[0].product);
 
     return list;
   }

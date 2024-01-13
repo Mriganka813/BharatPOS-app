@@ -82,7 +82,7 @@ class ProductService {
   ///
   Future<Response> getProduct(String id) async {
     final response = await ApiV1Service.getRequest('/inventory/$id');
-    print(response);
+    // print(response);
     return response;
   }
 

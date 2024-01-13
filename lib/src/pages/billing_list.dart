@@ -152,7 +152,17 @@ class _BillingListScreenState extends State<BillingListScreen> {
             },
           ).toStringAsFixed(2);
   }
-
+  String? totalDiscount(int index, Billing provider){
+    // print("in total discount");
+    return provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
+      0,
+        (acc, curr){
+          // print(acc);
+          // print(curr.discountAmt);
+          return double.parse(curr.discountAmt)+acc;
+        }
+    ).toStringAsFixed(2);
+  }
   ///
   String? totalbasePrice(int index, Billing provider) {
     print("line 158 in billing list");
@@ -655,7 +665,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Discount'),
-                                Text('₹ 0'),
+                                // Text('₹ ${provider.salesBilling.values.toList()[index].orderItems}'),
+                                Text('₹ ${totalDiscount(index, provider)}'),
                               ],
                             ),
                             const SizedBox(height: 5),
