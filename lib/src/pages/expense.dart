@@ -72,6 +72,9 @@ class _ExpensePageState extends State<ExpensePage> {
             bloc: _expenseCubit,
             builder: (context, state) {
               if (state is ExpenseListRender) {
+                // print("line 76 in expense page");
+                // print(state.expense.toString());
+                state.expense.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
                   itemCount: state.expense.length,

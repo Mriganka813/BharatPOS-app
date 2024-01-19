@@ -49,9 +49,9 @@ class ReportCubit extends Cubit<ReportState> {
       print(input.type);
 
       final res = await _reportService.getAllReport(input);
-      print("----line 44 in report_cubit----");
-      print(res.data['sales']);
-      print("--------------");
+      // print("----line 44 in report_cubit----");
+      // print(res.data['sales']);
+      // print("--------------");
       _emitSalesReport(res);
     }
     if (input.type == ReportType.purchase) {
@@ -94,12 +94,12 @@ class ReportCubit extends Cubit<ReportState> {
         : ReportsView(orders: orders));
   }
   _emitSalesReport(Response res, [bool isDownload = false]) {
-    print("---line 93 in report_cubit.dart");
+    // print("---line 93 in report_cubit.dart");
     final data = res.data['sales'];
-    print(data);
-    print("---------------------");
+    // print(data);
+    // print("---------------------");
     final orders = data.map<Order>((item) {
-      print("line 68 in");
+      // print("line 68 in");
       print(Order.fromMap(item));
       return Order.fromMap(item);
     }).toList();

@@ -16,10 +16,26 @@ class ExpenseCardHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime? timestamp = expense.createdAt?.toLocal();
-    String date =
-        timestamp == null ? '--' : DateFormat('dd-MM-yyyy').format(timestamp);
-    String time =
-        timestamp == null ? '--' : DateFormat('jm').format(timestamp.toUtc());
+    print("line 19 in expense card horizontal");
+    print(expense.header);
+    print(expense.createdAt);
+    // print(timestamp?.toIso8601String());
+    String date = timestamp == null ? '--' : DateFormat('dd-MM-yyyy').format(timestamp);
+    // print("condision is ${expense.createdAt?.toString().endsWith('Z')}");
+
+    String time;
+    if (timestamp != null) {
+      if (expense.createdAt!.toString().endsWith('Z')) {
+        time = DateFormat('jm').format(timestamp.toUtc());
+      } else {
+        time = DateFormat('jm').format(timestamp.toLocal());
+      }
+    } else {
+      time = '--';
+    }
+
+    print(time);
+
 
     return Card(
       elevation: 5,

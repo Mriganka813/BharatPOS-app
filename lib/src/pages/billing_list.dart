@@ -154,6 +154,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
   }
   String? totalDiscount(int index, Billing provider){
     // print("in total discount");
+    // print("line 157 in billing list");
+    // print(index);
+    // print(provider.salesBilling.values.toList());
+
     return provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
       0,
         (acc, curr){
@@ -166,7 +170,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   ///
   String? totalbasePrice(int index, Billing provider) {
     print("line 158 in billing list");
-    print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
+    // print(provider.salesBilling.values.toList()[index].toMap(OrderType.sale));
     return widget.orderType == OrderType.sale
         ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
             0,
@@ -225,6 +229,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   ///
   String? totalgstPrice(int index, Billing provider) {
+    // print("line 230 in billing list");
+    // print(provider.salesBilling.values.toList());
     return widget.orderType == OrderType.sale
         ? provider.salesBilling.values.toList()[index].orderItems?.fold<double>(
             0,
@@ -666,7 +672,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               children: [
                                 Text('Discount'),
                                 // Text('₹ ${provider.salesBilling.values.toList()[index].orderItems}'),
-                                Text('₹ ${totalDiscount(index, provider)}'),
+                                widget.orderType!=OrderType.purchase ? Text('₹ ${totalDiscount(index, provider)}'):Text('₹ 0'),
                               ],
                             ),
                             const SizedBox(height: 5),

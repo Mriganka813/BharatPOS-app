@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                       ListTile(
                         leading: Image.asset(
                           "assets/images/shop.png",
-                          height: 30,
+                          height: 32,
                         ),
                         title: Title(
                           color: Colors.black,
@@ -209,8 +209,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ListTile(
                         leading: Image.asset(
-                          "assets/images/calcicon.jpeg",
-                          height: 38,
+                          "assets/images/calcicon3.jpeg",
+                          height: 36,
                         ),
                         title: Title(color: Colors.black, child: Text("Estimates")),
                         onTap: () async {
@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                       ListTile(
                         leading: Image.asset(
                           "assets/images/keyy.png",
-                          height: 30,
+                          height: 28,
                         ),
                         title: Title(color: Colors.black, child: Text("Set/Change pin")),
                         onTap: () async {

@@ -15,7 +15,8 @@ class ExpenseCubit extends Cubit<ExpenseState> {
   void getExpense() async {
     emit(ExpenseLoading());
     final response = await _expenseService.getAllExpense();
-    // print(response);
+    print("getting expense in expense cubit");
+    print(response);
     if ((response.statusCode ?? 400) > 300) {
       emit(ExpenseError('Failed to get expenses'));
       return;

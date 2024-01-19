@@ -6,6 +6,9 @@ class ExpenseService {
   const ExpenseService();
 
   Future<Response> createExpense(ExpenseFormInput input) async {
+    print("creating expense");
+    print(input.toMap());
+
     final response =
         await ApiV1Service.postRequest('/add/expense', data: input.toMap());
     return response;

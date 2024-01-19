@@ -20,7 +20,7 @@ class ExpenseFormInput {
         "modeOfPayment": modeOfPayment,
         "amount": amount,
         "id": id,
-        "createdAt": createdAt?.toIso8601String()
+        "date": createdAt?.toIso8601String()
       };
   factory ExpenseFormInput.fromMap(map) => ExpenseFormInput(
         header: map['header'],
