@@ -43,7 +43,7 @@ String reportsExpenseTemplate({
   ///
   String total() {
     return expenses
-        .fold<int>(0, (acc, ele) => acc + (ele.amount ?? 0))
+        .fold<double>(0, (acc, ele) => acc + (ele.amount ?? 0))
         .toString();
   }
 

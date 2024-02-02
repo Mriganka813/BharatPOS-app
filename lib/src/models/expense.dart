@@ -10,7 +10,7 @@ class Expense {
   });
 
   String? header;
-  int? amount;
+  double? amount;
   String? description;
   String? modeOfPayment;
   String? id;
@@ -28,7 +28,7 @@ class Expense {
     // }
    return Expense(
      header: json["header"],
-     amount: json["amount"],
+     amount: json["amount"].toDouble(),
      description: json["description"],
      modeOfPayment: json["modeOfPayment"],
      id: json["_id"],

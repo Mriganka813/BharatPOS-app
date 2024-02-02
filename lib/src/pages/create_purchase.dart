@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shopos/src/models/input/order.dart';
@@ -13,6 +15,9 @@ import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/product_card_horizontal.dart';
 import 'package:slidable_button/slidable_button.dart';
+
+import '../services/global.dart';
+import '../services/locator.dart';
 
 class CreatePurchase extends StatefulWidget {
   static const routeName = '/create_purchase';
@@ -34,10 +39,32 @@ class _CreatePurchaseState extends State<CreatePurchase> {
       orderItems: widget.args == null ? [] : widget.args!.editOrders,
     );
   }
-
+  double roundToDecimalPlaces(double value, int decimalPlaces) {
+    final factor = pow(10, decimalPlaces).toDouble();
+    return (value * factor).round() / factor;
+  }
   void _onAdd(OrderItemInput orderItem) {
     setState(() {
-      orderItem.quantity += 1;
+      orderItem.quantity = orderItem.quantity + 1;
+      orderItem.quantity = roundToDecimalPlaces(orderItem.quantity, 4);
+      orderItem.product?.quantityToBeSold = orderItem.quantity;
+    });
+  }
+  void setQuantityToBeSold(OrderItemInput orderItem, double value,int index){
+    if (value < 0) {
+      locator<GlobalServices>().infoSnackBar("Quantity cannot be negative");
+      return;
+    }
+
+    setState(() {
+      if(value <=0 ){
+        orderItem.quantity = 0;
+        _Order.orderItems?[index].product?.quantityToBeSold = 0;
+        _Order.orderItems?.removeAt(index);
+      }else{
+        orderItem.quantity = value;
+        orderItem.product?.quantityToBeSold = value;
+      }
     });
   }
 
@@ -70,15 +97,23 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                         return ProductCardPurchase(
                           type: "purchase",
                           product: product,
+                          onQuantityFieldChange: (double value){
+                            setQuantityToBeSold(_orderItems[index], value, index);
+                          },
                           onAdd: () {
                             _onAdd(_orderItem);
                           },
                           onDelete: () {
-                            setState(
-                              () {
-                                _orderItem.quantity == 1 ? _Order.orderItems?.removeAt(index) : _orderItem.quantity -= 1;
-                              },
-                            );
+                              if(_orderItem.quantity <= 1){
+                                _orderItem.quantity = 0;
+                                _Order.orderItems?[index].product?.quantityToBeSold = 0;
+                                _Order.orderItems?.removeAt(index);
+                              }else{
+                                _orderItem.quantity = _orderItem.quantity - 1;
+                                _orderItem.quantity = roundToDecimalPlaces(_orderItem.quantity, 4);
+                                _orderItem.product?.quantityToBeSold = _orderItem.quantity;
+                              }
+                            setState(() {});
                           },
                           productQuantity: _orderItem.quantity,
                         );
@@ -162,13 +197,14 @@ class _CreatePurchaseState extends State<CreatePurchase> {
     for (int i = 0; i < temp.length; i++) {
       int count = 1;
       if (!tempMap.containsKey("${temp[i].id}")) {
-        for (int j = i + 1; j < temp.length; j++) {
-          if (temp[i].id == temp[j].id) {
-            count++;
-            print("count =$count");
-          }
-        }
-        tempMap["${temp[i].id}"] = count;
+        // for (int j = i + 1; j < temp.length; j++) {
+        //   if (temp[i].id == temp[j].id) {
+        //     count++;
+        //     print("count =$count");
+        //   }
+        // }
+        temp[i].quantityToBeSold = roundToDecimalPlaces(temp[i].quantityToBeSold!, 4);
+        tempMap["${temp[i].id}"] = temp[i].quantityToBeSold;
       }
     }
 
@@ -207,19 +243,22 @@ class _CreatePurchaseState extends State<CreatePurchase> {
             ))
         .toList();
 
-    var tempOrderitems = _Order.orderItems;
+    var tempOrderItems = _Order.orderItems;
 
-    for (int i = 0; i < tempOrderitems!.length; i++) {
+    for (int i = 0; i < tempOrderItems!.length; i++) {
       for (int j = 0; j < orderItems.length; j++) {
-        if (tempOrderitems[i].product!.id == orderItems[j].product!.id) {
-          tempOrderitems[i].product!.quantity = tempOrderitems[i].product!.quantity! + orderItems[j].quantity;
-          tempOrderitems[i].quantity = tempOrderitems[i].quantity + orderItems[j].quantity;
+        if (tempOrderItems[i].product!.id == orderItems[j].product!.id) {
+          // tempOrderItems[i].product!.quantity = tempOrderItems[i].product!.quantity! + orderItems[j].quantity;
+          tempOrderItems[i].quantity = tempOrderItems[i].quantity + orderItems[j].quantity;
+          tempOrderItems[i].quantity = roundToDecimalPlaces(tempOrderItems[i].quantity, 4);
+          tempOrderItems[i].product?.quantityToBeSold = (tempOrderItems[i].product?.quantityToBeSold ?? 0) + (orderItems[j].product?.quantityToBeSold ?? 0);
+          tempOrderItems[i].product?.quantityToBeSold = roundToDecimalPlaces(tempOrderItems[i].product!.quantityToBeSold!, 4);
           orderItems.removeAt(j);
         }
       }
     }
 
-    _Order.orderItems = tempOrderitems;
+    _Order.orderItems = tempOrderItems;
 
     setState(() {
       _Order.orderItems?.addAll(orderItems);

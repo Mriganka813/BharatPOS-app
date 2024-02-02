@@ -132,7 +132,7 @@ class DatabaseHelper {
           CREATE TABLE Kot(
             orderId INTEGER,
             name Text,
-            qty INTEGER,
+            qty REAL,
             isPrinted Text
           )
         ''');
@@ -320,7 +320,7 @@ class DatabaseHelper {
       list.add(OrderObject);
     }
 
-    print(list);
+    print("list returning from localdatabase.getorderitems ${list[0].tableNo}");
 
     return list;
   }
@@ -362,8 +362,10 @@ class DatabaseHelper {
   }
 
   deleteOrderItemInput(Order input) async {
+    print("input.id in delete order item input: ${input.id}");
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
+    await db.delete("Kot", where: "orderId = ?", whereArgs: [input.id]);
     await db.delete("OrderInput", where: "id = ?", whereArgs: [input.id]);
     await db.delete("OrderItemInput", where: "OIID = ?", whereArgs: [input.id]);
   }
@@ -384,7 +386,7 @@ class DatabaseHelper {
       print(result);
 
       if (result.isNotEmpty) {
-        int qty = result.first['qty'];
+        double qty = result.first['qty'];
         db.execute("update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
         print("check qty");
         print(list);
@@ -413,7 +415,7 @@ class DatabaseHelper {
 
     final List<Map<String, dynamic>> data = await db.query("Kot", where: 'isPrinted=? AND orderId=?', whereArgs: ["no", id]);
 
-    print(data);
+    print("data got from kot: $data");
 
     return data;
   }
@@ -432,10 +434,10 @@ class DatabaseHelper {
       where: 'orderId =? AND isPrinted=? AND name=?',
       whereArgs: [id, "no", itemName],
     );
+    print("--result.first['qty'] ${result.first['qty']}");
+    double qty = result.first['qty'].toDouble();
 
-    int qty = result.first['qty'] as int;
-
-    if (qty > 1) {
+    if (qty > 0) {//TODO: this was qty>1 before
       qty = qty - 1;
       db.execute("update Kot set qty=$qty where orderId=$id and isPrinted='no' and name='$itemName'");
     } else {

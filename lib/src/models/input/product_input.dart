@@ -1,5 +1,31 @@
-import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 
+import 'package:image_picker/image_picker.dart';
+class SubProduct{
+  SubProduct({
+    this.name,
+    this.quantity,
+    this.inventoryId
+  });
+  String? name;
+  String? inventoryId;
+  double? quantity;
+
+  Map<String, dynamic> toMap(){
+    return {
+      "name": name,
+      "inventoryId": inventoryId,
+      "quantity": quantity
+    };
+  }
+  factory SubProduct.fromMap(map){
+    return SubProduct(
+      name: map['name'],
+      inventoryId: map['inventoryId'],
+      quantity: map['quantity'].toDouble()
+    );
+  }
+}
 class  ProductFormInput {
   ProductFormInput({
     this.name,
@@ -26,7 +52,8 @@ class  ProductFormInput {
     this.batchNumber,
     this.hsn,
     this.mrp,
-    this.GSTincluded=true
+    this.GSTincluded=true,
+    this.subProducts
   });
 
   String? name;
@@ -52,15 +79,20 @@ class  ProductFormInput {
   DateTime? expiryDate;
   String? batchNumber;
   bool ?GSTincluded=true;
-
+  List<SubProduct>? subProducts = [];
   bool gst;
   XFile? imageFile;
 
-  Map<String, dynamic> toMap() { 
-        print('included =$GSTincluded');
-        print(mrp.runtimeType);
-        print(mrp);
-    return 
+
+
+  Map<String, dynamic> toMap() {
+        // print('included =$GSTincluded');
+        // print(mrp.runtimeType);
+        // print(mrp);
+        print("in to map");
+        print(subProducts.runtimeType);
+        print(subProducts);
+    return
     {
         "name": name,
         if (purchasePrice != "" && purchasePrice != 'null')
@@ -70,7 +102,7 @@ class  ProductFormInput {
         "quantity": quantity,
         "hsn":hsn,
         "id": id,
-        if (expiryDate != null) 'expiryDate': expiryDate,
+        if (expiryDate != null) 'expiryDate': expiryDate?.toIso8601String(),
         if (gst) "GSTRate": gstRate,
         if (gst) "saleSGST": salesgst,
         if (gst) "saleCGST": salecgst,
@@ -83,49 +115,59 @@ class  ProductFormInput {
         if (gst) "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
         "available": available ?? true,
-        if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded, 
+        if(gst) "GSTincluded":GSTincluded==null?true:GSTincluded,
         if (batchNumber != null) "batchNumber": batchNumber,
         "mrp": mrp=="null" || mrp==null? "": mrp,
-        "subProducts":[{
-         "product":"653a6406e881cfb206bee15f",
-         "quantity":0.5
-        },
-        {
-         "product":"653a6a2ce881cfb206bf06ca",
-         "quantity":2
-        }
-        ],
+        "subProducts": subProducts?.map((e)=> e.toMap()).toList(),
+        // "subProducts":[{
+        //  "product":"653a6406e881cfb206bee15f",
+        //  "quantity":0.5
+        // },
+        // {
+        //  "product":"653a6a2ce881cfb206bf06ca",
+        //  "quantity":2
+        // }
+        // ],
         "unit":"hhhhh"
       };
   }
 
-  factory ProductFormInput.fromMap(map) => ProductFormInput(
-      name: map['name'],
-      purchasePrice: map['purchasePrice'].toString(),
-      sellingPrice: map['sellingPrice'].toString(),
-      barCode: map['barCode'].toString(),
-      quantity: map['quantity'].toString(),
-      image: map['image'].toString(),
-      id: map['_id'].toString(),
-      gstRate: map['GSTRate'].toString(),
-      salecgst: map['saleCGST'].toString(),
-      saleigst: map['saleIGST'].toString(),
-      salesgst: map['saleSGST'].toString(),
-      hsn: map['hsn'].toString(),
-      mrp: map['mrp'].toString(),
-      purchasecgst: map['purchaseCGST'].toString(),
-      purchaseigst: map['purchaseIGST'].toString(),
-      purchasesgst: map['purchaseSGST'].toString(),
-      baseSellingPriceGst: map['baseSellingPrice'].toString(),
-      basePurchasePriceGst: map['basePurchasePrice'].toString(),
-      sellerName: map['sellerName'].toString(),
-      available: map['available'] ?? true,
-      batchNumber: map['batchNumber'] != null ? map['batchNumber'] : null,
-      expiryDate: map['expiryDate'] != null
-          ? DateTime.parse((map['expiryDate']).toString().substring(0, 10))
-          : null,
-          
-          GSTincluded: map['GSTincluded']
-          );
-      
+  factory ProductFormInput.fromMap(map) {
+    print("line 107 in product_input");
+    print(map['subProducts']);
+
+    return ProductFormInput(
+        name: map['name'],
+        purchasePrice: map['purchasePrice'].toString(),
+        sellingPrice: map['sellingPrice'].toString(),
+        barCode: map['barCode'].toString(),
+        quantity: map['quantity'].toString(),
+        image: map['image'].toString(),
+        id: map['_id'].toString(),
+        gstRate: map['GSTRate'].toString(),
+        salecgst: map['saleCGST'].toString(),
+        saleigst: map['saleIGST'].toString(),
+        salesgst: map['saleSGST'].toString(),
+        hsn: map['hsn'].toString(),
+        mrp: map['mrp'].toString(),
+        purchasecgst: map['purchaseCGST'].toString(),
+        purchaseigst: map['purchaseIGST'].toString(),
+        purchasesgst: map['purchaseSGST'].toString(),
+        baseSellingPriceGst: map['baseSellingPrice'].toString(),
+        basePurchasePriceGst: map['basePurchasePrice'].toString(),
+        sellerName: map['sellerName'].toString(),
+        available: map['available'] ?? true,
+        batchNumber: map['batchNumber'] != null ? map['batchNumber'] : null,
+        expiryDate: map['expiryDate'] != null
+            ? DateTime.parse((map['expiryDate']).toString().substring(0, 10))
+            : null,
+
+        GSTincluded: map['GSTincluded'],
+        subProducts: List<SubProduct>.from(
+          map["subProducts"].map(
+              (e)=> SubProduct.fromMap(e)
+          )
+        )
+    );
+  }
 }

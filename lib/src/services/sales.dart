@@ -10,14 +10,14 @@ class SalesService {
     Order orderItemInput,
     String invoiceNum,
   ) async {
-    print('${orderItemInput.orderItems![0].product?.sellingPrice}');
-    print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
-    print('${orderItemInput.orderItems![0].product?.saleigst}');
+    // print('${orderItemInput.orderItems![0].product?.sellingPrice}');
+    // print('${orderItemInput.orderItems![0].product?.baseSellingPriceGst}');
+    // print('${orderItemInput.orderItems![0].product?.saleigst}');
     print("---line 16 in sales.dart");
     print(orderItemInput.orderItems);
-    print(orderItemInput.modeOfPayment);
-    print(orderItemInput.party);
-    print(orderItemInput.invoiceNum);
+    // print(orderItemInput.modeOfPayment);
+    // print(orderItemInput.party);
+    // print(orderItemInput.invoiceNum);
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
       data: {

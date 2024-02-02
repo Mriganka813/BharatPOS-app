@@ -7,8 +7,8 @@ class CustomInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) async {
     print("---in line 8 of dio_interceptor--");
     // print(err.message);
-    // print("err.response: ");
-    // print(err.response);
+    print("err.response: ");
+    print(err.response);
     print(err.response?.data);
     // print(err.response?.data['message']);
 

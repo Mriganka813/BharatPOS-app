@@ -110,11 +110,12 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     for (int i = 0; i < widget.args!.productlist.length; i++) {
       for (int j = 0; j < prodList.length; j++) {
         if (widget.args!.productlist[i].product!.id == prodList[j].id) {
-          prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+          // prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+          prodList[j].quantityToBeSold = widget.args!.productlist[i].product?.quantityToBeSold ?? 0;
         }
       }
     }
-    print("searched products: $prodList");
+    // print("searched products: $prodList");
     setState(() {});
   }
 
@@ -142,33 +143,137 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
       locator<GlobalServices>().infoSnackBar('Item not available');
       return;
     }
+    double prevAdded = 0;
+    for(int i = 0; i<widget.args!.productlist.length;i++){
+      if(product.id == widget.args?.productlist[i].product?.id){
+        prevAdded = widget.args?.productlist[i].quantity ?? 0;
+      }
+    }
 
-    setState(() {
+    var availableQty = product.quantity ?? 0;
+    print("prevAdded while selecting the product is ${prevAdded}");
+    if(isSale && (prevAdded>=availableQty)){
+      locator<GlobalServices>().infoSnackBar('Item not available');
+      return;
+    }else{
+      // if(product.quantityToBeSold == null){
+      product.quantityToBeSold=1;
+      // }else{
+      //   product.quantityToBeSold = product.quantityToBeSold! + 1;
+      // }
+      print("adding product in _products list");
+      // print("-----product name is ${product.name} and quantity to be sold is ${product.quantityToBeSold!}");
       _products.add(product);
+    }
+    setState(() {});
+  }
+
+  void increaseTheQuantity(Product product, double value) {
+    final canSelect = widget.args?.isSelecting ?? false;
+    if (!canSelect) {
+      return;
+    }
+    final isSale = widget.args?.orderType == OrderType.sale;
+    final isEstimate = widget.args?.orderType == OrderType.estimate;
+    var availableQty = product.quantity ?? 0;
+
+    double prevAdded = 0;
+    for(int i = 0; i<widget.args!.productlist.length;i++){
+      if(product.id == widget.args?.productlist[i].product?.id){
+        prevAdded = widget.args?.productlist[i].quantity ?? 0;
+      }
+    }
+      print("value = $value and availableQty $availableQty");
+      print("product.quantityToBeSold is ${product.quantityToBeSold}");
+    if ((isSale || isEstimate) && (value+prevAdded > availableQty)) {
+      print("value = $value and availableQty $availableQty");
+      locator<GlobalServices>().infoSnackBar('Item not available');
+      return;
+    }
+    setState(() {
+      print("increasing quantity to be sold");
+      for(int i = 0;i< _products.length;i++){
+        if(_products[i].id == product.id){
+          _products[i].quantityToBeSold = _products[i].quantityToBeSold! + 1;
+          product.quantityToBeSold = _products[i].quantityToBeSold;
+          // print("-----product name is ${_products[i].name} and quantity to be sold is ${_products[i].quantityToBeSold!}");
+        }
+      }
     });
   }
-
-  void increaseTheQuantity(Product product) {
-    _selectProduct(product);
+  void setQuantityToBeSold(Product product, double value){
+    double prevAdded = 0;
+    for(int i = 0; i<widget.args!.productlist.length;i++){
+      if(product.id == widget.args?.productlist[i].product?.id){
+        prevAdded = widget.args?.productlist[i].quantity ?? 0;
+      }
+    }
+    var availableQty = product.quantity ?? 0;
+    if ((value+prevAdded > availableQty) || value < 0) {
+      if(widget.args?.orderType == OrderType.purchase && (value+prevAdded) > 99000){
+        locator<GlobalServices>().infoSnackBar("Total quantity can't exceed 99999");
+        return;
+      }else if(widget.args?.orderType != OrderType.purchase){
+        locator<GlobalServices>().infoSnackBar("Quantity not available");
+        return;
+      }
+      return;
+    }
+    for(int i = 0; i< _products.length; i++){
+      if(_products[i].id == product.id){
+        if(value <= 0){
+          _products[i].quantityToBeSold = value;
+          _products.removeAt(i);
+        }else{
+          _products[i].quantityToBeSold = value;
+        }
+      }
+    }
+    setState(() {});
   }
-
-  void decreaseTheQuantity(Product product) {
+  void decreaseTheQuantity(Product product, double value) {
+    double prevAdded = 0;
+    for(int i = 0; i<widget.args!.productlist.length;i++){
+      if(product.id == widget.args?.productlist[i].product?.id){
+        prevAdded = widget.args?.productlist[i].quantity ?? 0;
+      }
+    }
+    var availableQty = product.quantity ?? 0;
+    if ( (value+prevAdded > availableQty) && widget.args?.orderType != OrderType.purchase) {
+      locator<GlobalServices>().infoSnackBar("Quantity not available");
+      return;
+    }
     for (int j = 0; j < _products.length; j++) {
       if (_products[j].id == product.id) {
-        _products.removeAt(j);
-        break;
+        if(_products[j].quantityToBeSold! <= 1){
+          _products[j].quantityToBeSold = 0;
+          _products.removeAt(j);
+        }else{
+          _products[j].quantityToBeSold = _products[j].quantityToBeSold! - 1;
+        }
       }
     }
     setState(() {});
   }
 
-  int countNoOfQuatityInArray(Product product) {
-    int count = 0;
-    _products.forEach((element) {
-      if (element.id == product.id) count++;
-    });
-
-    return count;
+  double countNoOfQuatityInArray(Product product) {
+    // int count = 0;
+    // _products.forEach((element) {
+    //   if (element.id == product.id) count++;
+    // });
+    double quantityTobeSold = 0;
+    // print("_products.length is ${_products.length}");
+    print("in count no of quantity in array method");
+    for(int i = 0;i<_products.length;i++){
+      if(_products[i].id == product.id){
+        print("_products[i].quantityToBeSold = ${_products[i].quantityToBeSold}");
+        print("product.quantityToBeSold = ${product.quantityToBeSold}");
+        quantityTobeSold = _products[i].quantityToBeSold ?? 0;
+        // quantityTobeSold = product.quantityToBeSold ?? 0;
+        print("in count no of quantity in array product name = ${product.name} and quantity to be sold is ${quantityTobeSold}");
+      }
+    }
+    return quantityTobeSold;
   }
 
   @override
@@ -290,55 +395,59 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
 
                                           //this logic is done becasue when we press the card only the (+-) button should show and should add item
                                           //then when we again press the card the opposite should happen
-                                          if (q == 1) {
-                                            decreaseTheQuantity(prodList[index]);
-                                            itemCheckedFlag = false;
-                                            if (widget.args!.orderType == OrderType.sale) {
-                                              prodList[index].quantity = prodList[index].quantity! + 1;
-                                            } else if(widget.args!.orderType == OrderType.none){
-
-                                            }else if(widget.args!.orderType == OrderType.estimate){
-
-                                            }else{
-                                              prodList[index].quantity = prodList[index].quantity! - 1;
-                                            }
-                                          } else if (q == 0) {
+                                          print("value of q $q");//q represents item quantity
+                                          if (q == 0) {
+                                            print("if part q==0");
                                             _selectProduct(prodList[index]);
                                             itemCheckedFlag = true;
-                                            if (widget.args!.orderType == OrderType.sale) {
-                                              prodList[index].quantity = prodList[index].quantity! - 1;
-                                            } else if(widget.args!.orderType == OrderType.none){
-
-                                            } else if(widget.args!.orderType == OrderType.estimate){
-
-                                            } else {
-                                              prodList[index].quantity = prodList[index].quantity! + 1;
-                                            }
+                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                            //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                            // } else if(widget.args!.orderType == OrderType.none){
+                                            //
+                                            // } else if(widget.args!.orderType == OrderType.estimate){
+                                            //
+                                            // } else {
+                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                            // }
+                                          } else if (q <= 1) {
+                                            print("if part q<=1");
+                                            decreaseTheQuantity(prodList[index], q);
+                                            itemCheckedFlag = false;
+                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                            // } else if(widget.args!.orderType == OrderType.none){
+                                            //
+                                            // }else if(widget.args!.orderType == OrderType.estimate){
+                                            //
+                                            // }else{
+                                            //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                            // }
                                           }
 
                                           setState(() {});
                                         },
-                                        onAdd: () {
-                                          increaseTheQuantity(prodList[index]);
-                                          if (widget.args!.orderType == OrderType.sale) {
-                                            prodList[index].quantity = prodList[index].quantity! - 1;
-                                          }else if(widget.args!.orderType == OrderType.estimate){
 
-                                          }else {
-                                            prodList[index].quantity = prodList[index].quantity! + 1;
-                                          }
+                                        onAdd: (double value) {
+                                          increaseTheQuantity(prodList[index], value);
+                                          // if (widget.args!.orderType == OrderType.sale) {
+                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                          // }else if(widget.args!.orderType == OrderType.estimate){
+                                          //
+                                          // }else {
+                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                          // }
                                           setState(() {});
                                         },
-                                        onRemove: () {
-                                          decreaseTheQuantity(prodList[index]);
+                                        onRemove: (double value) {
+                                          decreaseTheQuantity(prodList[index], value);
                                           itemCheckedFlag = false;
-                                          if (widget.args!.orderType == OrderType.sale) {
-                                            prodList[index].quantity = prodList[index].quantity! + 1;
-                                          } else if(widget.args!.orderType == OrderType.estimate){
-
-                                          } else {
-                                            prodList[index].quantity = prodList[index].quantity! - 1;
-                                          }
+                                          // if (widget.args!.orderType == OrderType.sale) {
+                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                          // } else if(widget.args!.orderType == OrderType.estimate){
+                                          //
+                                          // } else {
+                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                          // }
                                           setState(() {});
                                         },
                                         product: prodList[index],
@@ -350,7 +459,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             result = await _showPinDialog() as bool;
                                           }
 
-                                          if (result!) {
+                                          if (result) {
                                             _productCubit.deleteProduct(prodList[index], _currentPage, _limit);
                                             setState(() {
                                               prodList.removeAt(index);
@@ -373,6 +482,11 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             _productCubit.getProducts(_currentPage, _limit);
                                             pinController.clear();
                                           }
+                                        },
+                                        onQuantityFieldChange: (double value){
+                                          print("line 412 in serch result: value coming is $value");
+                                          setQuantityToBeSold(prodList[index], value);
+
                                         },
                                       ),
                                       if (countNoOfQuatityInArray(prodList[index]) > 0)
@@ -420,7 +534,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                   for (int i = 0; i < widget.args!.productlist.length; i++) {
                     for (int j = 0; j < prodList.length; j++) {
                       if (widget.args!.productlist[i].product!.id == prodList[j].id) {
-                        prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+                        // prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+                        prodList[j].quantityToBeSold = widget.args!.productlist[i].product?.quantityToBeSold ?? 0;
                       }
                     }
                   }

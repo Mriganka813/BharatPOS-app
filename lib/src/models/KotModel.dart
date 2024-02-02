@@ -5,7 +5,7 @@ class KotModel
 
  int orderId;
  String name;
- int qty;
+ double qty;
  String isPrinted;
 
  KotModel(this.orderId,this.name,this.qty,this.isPrinted);

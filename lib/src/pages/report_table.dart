@@ -437,7 +437,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(sgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(igstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-          DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+          DataCell(Text(total.toStringAsFixed(2), style: TextStyle(fontSize: 6))),
         ]));
       }
       return list;
@@ -479,7 +479,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(i == datelist.length - 1 ? cgstTotal.toString() : cgstlist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(i == datelist.length - 1 ? sgstTotal.toString() : sgstlist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(i == datelist.length - 1 ? igstTotal.toString() : igstlist[i], style: TextStyle(fontSize: 6))),
-          DataCell(Text(i == datelist.length - 1 ? mrpTotal.toString() : mrplist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
         ]));
       }
@@ -665,13 +665,13 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text(mrplist[datelist.length-1], style: TextStyle(fontSize: 6))),
         DataCell(Text("", style: TextStyle(fontSize: 6))),
         DataCell(Text(" ", style: TextStyle(fontSize: 6))),
-        DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+        DataCell(Text(total.toStringAsFixed(2), style: TextStyle(fontSize: 6))),
       ]));
     return list;
   }
 
   showExpenseRow() {
-    int total = 0;
+    double total = 0;
     List<DataRow> list = [];
 
     for (int index = 0; index < widget.args.expenses!.length; index++) {
@@ -785,7 +785,7 @@ class _ReportTableState extends State<ReportTable> {
             ? igstlist.add("${item.saleIGST != "null" ? double.parse(item.saleIGST!).toStringAsFixed(2) : (item.product?.saleigst != "null" ? item.product?.saleigst : "N/A")}")
             : igstlist.add("${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
-            ? mrplist.add("${item.price}") : mrplist.add("${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
+            ? mrplist.add("${item.price?.toStringAsFixed(2)}") : mrplist.add("${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
         hsn.add("${item.product?.hsn == "null" ? "N/A" : item.product?.hsn}");
         discountAmt.add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
 
@@ -795,7 +795,7 @@ class _ReportTableState extends State<ReportTable> {
         estimateNum.add("${e.estimateNum == null? "N/A": e.estimateNum}");
         orginalbasePurchasePrice.add("${item.originalbaseSellingPrice}");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
-            ? totalsplist.add("${(item.quantity) * (item.price ?? 0)}") : totalsplist.add("${(item.quantity) * (item.product?.purchasePrice ?? 0)}");
+            ? totalsplist.add("${((item.quantity) * (item.price ?? 0)).toStringAsFixed(2)}") : totalsplist.add("${((item.quantity) * (item.product?.purchasePrice ?? 0)).toStringAsFixed(2)}");
 
         moplist.add(e.modeOfPayment ?? [{"N/A":0}]);
         breakruler = DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!);
@@ -822,7 +822,7 @@ class _ReportTableState extends State<ReportTable> {
       },
     );
     print(sum);
-    return sum.toString();
+    return sum.toStringAsFixed(2);
   }
 
   Future<void> sharePDF() async {

@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopos/src/models/input/product_input.dart';
@@ -23,6 +24,8 @@ import 'package:shopos/src/widgets/custom_date_picker.dart';
 // import 'package:intl/intl.dart';
 
 import '../blocs/product/product_cubit.dart';
+import '../models/product.dart';
+import '../services/search_service.dart';
 
 class CreateProduct extends StatefulWidget {
   static const String routeName = '/create-product';
@@ -41,13 +44,37 @@ class _CreateProductState extends State<CreateProduct> {
   late final ImagePicker _picker;
   bool _showLoader = false;
   bool gstSwitch = false;
-
+  List<SubProduct> subProductList=[];
   TextEditingController sellingPriceController = TextEditingController();
   TextEditingController purchasePriceController = TextEditingController();
   TextEditingController gstratePriceController = TextEditingController();
   TextEditingController baseSellingPriceController = TextEditingController();
 
+  final List<TextEditingController> _subProductNames = [];
+  final List<TextEditingController> _subProductQuantities = [];
+  final List<GlobalKey> _keys = [];
+  final ScrollController _scrollController = ScrollController();
+  final SearchProductServices searchProductServices = SearchProductServices();
   int includedExcludedRadioButton = 1;
+
+  _addSubProductField() {
+    setState(() {
+      _subProductNames.add(TextEditingController());
+      _subProductQuantities.add(TextEditingController());
+      _keys.add(GlobalKey());
+      print("----line 62 in create_product---");
+      print(_subProductNames.length);
+      print(_subProductQuantities.length);
+    });
+  }
+
+  _removeSubProductField(i) {
+    setState(() {
+      _subProductNames.removeAt(i);
+      _subProductQuantities.removeAt(i);
+      _keys.removeAt(i);
+    });
+  }
 
   ///
   @override
@@ -56,6 +83,7 @@ class _CreateProductState extends State<CreateProduct> {
     _formInput = ProductFormInput();
     _productCubit = ProductCubit();
     _picker = ImagePicker();
+    _formInput.subProducts =[];
     // _audioCache = AudioCache(
     //   fixedPlayer: AudioPlayer()..setReleaseMode(ReleaseMode.STOP),
     // );
@@ -128,6 +156,15 @@ class _CreateProductState extends State<CreateProduct> {
       purchasePriceController.text = "0";
       _formInput.purchasePrice = "0";
       setState(() {});
+    }
+
+    for(int i = 0;i < _formInput.subProducts!.length;i++){
+
+      _subProductNames.add(TextEditingController());
+      _subProductQuantities.add(TextEditingController());
+      _keys.add(GlobalKey());
+      _subProductNames[i].text= _formInput.subProducts?[i].name ?? "";
+      _subProductQuantities[i].text = _formInput.subProducts?[i].quantity.toString() ?? "";
     }
 
     calculate();
@@ -301,6 +338,7 @@ class _CreateProductState extends State<CreateProduct> {
           centerTitle: true,
         ),
         body: SingleChildScrollView(
+            controller: _scrollController,
             padding: const EdgeInsets.all(10.0),
             child: Form(
                 key: _formKey,
@@ -697,9 +735,152 @@ class _CreateProductState extends State<CreateProduct> {
                       ],
                     ),
                     const Divider(color: Colors.transparent, height: 40),
+                    Column(
+                      children: [
+                        for (int i = 0; i < _subProductNames.length; i++)
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, bottom: 8),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text("Sub Product ${i + 1}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.copyWith(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      IconButton(
+                                        onPressed: () => _removeSubProductField(i),
+                                        icon: Icon(Icons.delete),
+                                        color: Colors.red,
+                                      ),
+                                    ],
+                                  ),
+                                  TypeAheadFormField<Product>(
+                                    key: _keys[i],
+                                    textFieldConfiguration: TextFieldConfiguration(
+                                      controller: _subProductNames[i],
+                                      decoration: InputDecoration(
+                                          label: Text("Name"),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.circular(10))),
+                                    ),
+                                    suggestionsCallback: (String pattern) {
+                                      Scrollable.ensureVisible(_keys[i].currentContext!, duration: Duration(microseconds: 500),curve: Curves.easeInOut,);
+                                      if (int.tryParse(pattern.trim()) != null) {
+                                        return Future.value([]);
+                                      }
+                                      return _searchSubProducts(pattern);
+                                    },
+                                    itemBuilder: (context, subProduct) {
+                                      return ListTile(
+                                        leading: const Icon(Icons.shopping_cart),
+                                        title: Text(subProduct.name ?? ""),
+                                        onTap: () {
+                                          _subProductNames[i].text = subProduct.name!;
+                                          FocusScope.of(context).unfocus();
+                                        },
+                                      );
+                                    },
+                                    onSuggestionSelected: (Product subProduct) {
+
+                                      _subProductNames[i].text = subProduct.name!;
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextFormField(
+                                    controller: _subProductQuantities[i],
+                                    keyboardType:
+                                    TextInputType.numberWithOptions(
+                                        signed: false, decimal: true),
+                                    decoration: InputDecoration(
+                                        label: Text("Quantity"),
+                                        border: OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.circular(10))),
+                                    validator: (e) {
+                                      if (e!.contains(",")) {
+                                        return '(,) character are not allowed';
+                                      }
+                                      if (e.isNotEmpty) if (double.parse(e) >
+                                          99999.0) {
+                                        return 'Maximum value is 99999';
+                                      }
+                                      return null;
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                      ],
+                    ),
+                    const Divider(color: Colors.transparent),
+                    //Add subProduct button
+                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                      InkWell(
+                        onTap: (){
+                          setState(() {
+                            _addSubProductField();
+                            _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 200),
+                              curve: Curves.easeInOut,
+                            );
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                              left: 18, right: 20, top: 8, bottom: 8),
+                          decoration: ShapeDecoration(
+                            // color: const Color(0xFF1E232C),
+                            color: Colors.grey[100],
+                            shape: RoundedRectangleBorder(
+                                side: const BorderSide(color: Colors.black),
+                                borderRadius: BorderRadius.circular(18)),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add,
+                                color: Colors.black,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Sub Products',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'Urbanist',
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ]),
+                    const Divider(color: Colors.transparent, height: 40),
                     CustomButton(
                       title: "Save",
-                      onTap: () {
+                      onTap: () async {
                         _formKey.currentState?.save();
 
                         print(_formInput.purchasePrice);
@@ -710,11 +891,39 @@ class _CreateProductState extends State<CreateProduct> {
                           _formInput.purchasePrice = "0";
                         }
 
+                        for (int i = 0; i < _subProductNames.length; i++){
+                          List<Product> prodList = await searchProductServices.searchproduct(_subProductNames[i].text.toString());
+                          for(int j = 0;j<prodList.length;j++){
+                            SubProduct subProduct = SubProduct();
+                            print("executing line 877----");
+                            if(prodList.elementAt(j).name==_subProductNames[i].text.toString()){
+                              subProduct.name = prodList.elementAt(j).name.toString();
+                              subProduct.inventoryId = prodList.elementAt(j).id.toString();
+                              subProduct.quantity = double.parse(_subProductQuantities[i].text);
+                              print("line 901 in create product");
+                              print(subProduct.name);
+                              print(subProduct.inventoryId);
+                              print(subProduct.quantity);
+                              // var newSubProduct = {"inventoryId": prodList.elementAt(j).id.toString(),
+                              //   "name": prodList.elementAt(j).name.toString(),
+                              //   "quantity": _subProductQuantities[i].text.toString()};
+                              // print(newSubProduct);
+                              subProductList.add(subProduct);
+                              _formInput.subProducts = (subProductList);
+                            }
+                          }
+
+                          // _formInput.subProducts?["quantity"] = _subProductQuantities[i];
+                        }
+                        print(subProductList);
+                        print("line 887");
+                        print(_formInput.subProducts);
                         if (_formKey.currentState?.validate() ?? false) {
                           print(_formInput.available);
                           print(_formInput.expiryDate);
                           print(_formInput.batchNumber);
-
+                          print("line 889 in createProduct.dart----");
+                          print(_formInput.subProducts.toString());
                           _productCubit.createProduct(_formInput);
                           print("Barcode:");
                           print(_formInput.barCode);
@@ -742,5 +951,12 @@ class _CreateProductState extends State<CreateProduct> {
     setState(() {
       _formInput.barCode = res;
     });
+  }
+  Future<Iterable<Product>> _searchSubProducts(String pattern) async {
+    if (pattern.isEmpty) {
+      return [];
+    }
+    List<Product> prodList = await searchProductServices.searchproduct(pattern);
+    return prodList;
   }
 }

@@ -215,7 +215,6 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("Estimates")),
                         onTap: () async {
                           Navigator.of(context).pushNamed(CreateEstimate.routeName);
-                          //TODO: implement estimates
                         },
                       ),
                       ListTile(
