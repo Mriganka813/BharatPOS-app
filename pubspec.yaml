@@ -30,8 +30,9 @@ dependencies:
   # flutter_secure_storage: ^5.0.2
   flutter_typeahead: 
   flutter_vibrate: 
-  get_it: 
-  image_picker: 
+  get_it:
+  image_picker: ^0.8.5
+  image_cropper: ^1.5.1
   in_app_update: 
   intl: 
   path_provider: 

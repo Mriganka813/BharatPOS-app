@@ -53,7 +53,8 @@ class  ProductFormInput {
     this.hsn,
     this.mrp,
     this.GSTincluded=true,
-    this.subProducts
+    this.subProducts,
+    this.unit
   });
 
   String? name;
@@ -82,7 +83,7 @@ class  ProductFormInput {
   List<SubProduct>? subProducts = [];
   bool gst;
   XFile? imageFile;
-
+  String? unit;
 
 
   Map<String, dynamic> toMap() {
@@ -128,7 +129,7 @@ class  ProductFormInput {
         //  "quantity":2
         // }
         // ],
-        "unit":"hhhhh"
+        "unit" : unit
       };
   }
 
@@ -161,7 +162,7 @@ class  ProductFormInput {
         expiryDate: map['expiryDate'] != null
             ? DateTime.parse((map['expiryDate']).toString().substring(0, 10))
             : null,
-
+        unit: map['unit'] ?? "",
         GSTincluded: map['GSTincluded'],
         subProducts: List<SubProduct>.from(
           map["subProducts"].map(

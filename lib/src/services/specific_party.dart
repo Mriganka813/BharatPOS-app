@@ -74,7 +74,7 @@ class SpecificPartyService {
   }
 
   ///
-  Future<Response> updatesaleAmount(Party party) async {
+  Future<Response> updateSaleAmount(Party party) async {
     print("party edit:");
     print(party.id);
     print(party.total);

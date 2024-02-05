@@ -72,7 +72,6 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     }
   }
   Future<void> createSalesOrder(Order input, String invoiceNum) async {
-    print("--line 45 in checkout");
     emit(CheckoutLoading());
     try {
       await SalesService.createSalesOrder(input, invoiceNum);

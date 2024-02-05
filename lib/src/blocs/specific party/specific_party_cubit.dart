@@ -100,13 +100,20 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
 
   ///
   void updateAmountCustomer(Party p, String partyId) async {
-    final response = await _partyService.updatesaleAmount(p);
+    print("updating amount customer");
+    print("p is: ${p.toMap().toString()}");
+    final response = await _partyService.updateSaleAmount(p);
+    print("response.data is ${response.data}");
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
       return;
     }
+    print("party id: ${partyId}");
     final sales = await _partyService.getSalesCreditHistory(partyId);
     final _partyDetail = await _partyService.getCreditSaleParty(partyId);
+    print("sales is ${sales}");
+    print("_partyDetail is ${_partyDetail.toMap().toString()}");
+
     return emit(SpecificPartyListRender(
         partyDetails: _partyDetail, specificparty: sales));
   }

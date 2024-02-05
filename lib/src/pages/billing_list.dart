@@ -66,11 +66,17 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   String date = '';
   bool showOption = false;
+  late SharedPreferences prefs;
 
   @override
   void initState() {
     super.initState();
     fetchNTPTime();
+    init();
+  }
+  init() async {
+    prefs =
+    await SharedPreferences.getInstance();
   }
 
   Future<void> fetchNTPTime() async {
@@ -430,7 +436,6 @@ class _BillingListScreenState extends State<BillingListScreen> {
     final provider = Provider.of<Billing>(
       context,
     );
-
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context)
@@ -473,7 +478,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                     //     .toList()[index]
                                     //     .id}");
                                     widget.orderType == OrderType.sale
-                                        ? Navigator.pushNamed(context, CreateSale.routeName,
+                                        ? Navigator.pushNamed(
+                                            context, CreateSale.routeName,
                                             arguments: BillingPageArgs(
                                                 orderId: provider.salesBilling.keys
                                                     .toList()[index],
@@ -513,7 +519,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                 //     )),
 
                                 ListTile(
-                                    onTap: () async {
+                                    onTap: () {
                                       // _viewSmallKot(
                                       //     provider.salesBilling.values
                                       //         .toList()[index],
@@ -524,9 +530,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                       //         .toList()[index],
                                       //     index,
                                       //     provider);
+                                      print("ontap kot");
 
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
 
                                       String? defaultFormat =
                                           prefs.getString('default');
@@ -547,6 +552,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                               .toList()[index],
                                         );
                                       }
+
                                     },
                                     title: Text(
                                       'KOT',
@@ -634,10 +640,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                             const SizedBox(height: 10),
                             if(provider.salesBilling.values
                                     .toList().isNotEmpty)
-                            if (provider.salesBilling.values
-                                    .toList()[index]
-                                    .tableNo !=
-                                "-1")
+                            if (provider.salesBilling.values.toList()[index].tableNo !="-1" &&
+                                provider.salesBilling.values.toList()[index].tableNo !="" )
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

@@ -9,6 +9,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopos/src/models/input/product_input.dart';
 import 'package:shopos/src/services/global.dart';
@@ -166,7 +167,7 @@ class _CreateProductState extends State<CreateProduct> {
       _subProductNames[i].text= _formInput.subProducts?[i].name ?? "";
       _subProductQuantities[i].text = _formInput.subProducts?[i].quantity.toString() ?? "";
     }
-
+    print("end of fetch product data and _forminput.image is ${_formInput.image} and runtime type is ${_formInput.image.runtimeType}");
     calculate();
   }
 
@@ -244,13 +245,29 @@ class _CreateProductState extends State<CreateProduct> {
   }
 
   void _pickImage(ImageSource source) async {
-    final XFile? image =
-        await _picker.pickImage(source: source, imageQuality: 20);
-    if (image == null) {
-      return;
-    }
+    final XFile? image = await _picker.pickImage(source: source, imageQuality: 20);
+    if (image == null) return; //if photo is null then it will return else---
+    File? croppedFile = await ImageCropper().cropImage(//Image Cropper
+      sourcePath: image.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        // CropAspectRatioPreset.ratio3x2,
+        // CropAspectRatioPreset.original,
+        // CropAspectRatioPreset.ratio4x3,
+        // CropAspectRatioPreset.ratio16x9
+      ],
+
+      androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Crop Your Photo',
+          toolbarColor: Colors.white,
+          toolbarWidgetColor: Colors.black,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+
+    );
+
     setState(() {
-      _formInput.imageFile = image;
+      _formInput.imageFile = XFile(croppedFile!.path);
     });
   }
 
@@ -365,10 +382,15 @@ class _CreateProductState extends State<CreateProduct> {
                             children: [
                               _formInput.image != "null" &&
                                       _formInput.image != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: _formInput.image!,
-                                      fit: BoxFit.fill,
-                                    )
+                                  ? _formInput.imageFile == null
+                                      ? CachedNetworkImage(
+                                         imageUrl: _formInput.image!,
+                                         fit: BoxFit.fill,
+                                       )
+                                      : Image.file(
+                                          File(_formInput.imageFile!.path),
+                                          fit: BoxFit.contain,
+                                        )
                                   : _formInput.imageFile == null
                                       ? Image.asset(
                                           'assets/images/image_placeholder.png',
@@ -709,6 +731,14 @@ class _CreateProductState extends State<CreateProduct> {
                       },
                     ),
                     const Divider(color: Colors.transparent),
+                    CustomTextField(
+                      label: "Unit",
+                      value: _formInput.unit,
+                      onChanged: (e){
+                        _formInput.unit = e;
+                      },
+                    ),
+                    const Divider(color: Colors.transparent),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -890,7 +920,7 @@ class _CreateProductState extends State<CreateProduct> {
                             _formInput.purchasePrice == "") {
                           _formInput.purchasePrice = "0";
                         }
-
+                        print("saving the product and _subProduct.length is ${_subProductNames.length}");
                         for (int i = 0; i < _subProductNames.length; i++){
                           List<Product> prodList = await searchProductServices.searchproduct(_subProductNames[i].text.toString());
                           for(int j = 0;j<prodList.length;j++){
@@ -912,10 +942,9 @@ class _CreateProductState extends State<CreateProduct> {
                               _formInput.subProducts = (subProductList);
                             }
                           }
-
-                          // _formInput.subProducts?["quantity"] = _subProductQuantities[i];
                         }
                         print(subProductList);
+                        _formInput.subProducts = (subProductList);
                         print("line 887");
                         print(_formInput.subProducts);
                         if (_formKey.currentState?.validate() ?? false) {

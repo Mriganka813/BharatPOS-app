@@ -700,7 +700,7 @@ class _ReportTableState extends State<ReportTable> {
     return list;
   }
 
-  showStockRow() {
+    showStockRow() {
     double productQTYTotal = 0;
     int salesValueTotal = 0;
     double purchaseValueTotal = 0;
@@ -719,10 +719,10 @@ class _ReportTableState extends State<ReportTable> {
       marginValueTotal += (salesValue - purchaseValue).toInt();
       list.add(DataRow(cells: [
         DataCell(Text("${product.name}", style: TextStyle(fontSize: 6))),
-        DataCell(Text("${product.quantity}", style: TextStyle(fontSize: 6))),
-        DataCell(Text("$salesValue", style: TextStyle(fontSize: 6))),
+        DataCell(Text("${product.quantity?.toStringAsFixed(2)}", style: TextStyle(fontSize: 6))),
+        DataCell(Text("${salesValue.toStringAsFixed(2)}", style: TextStyle(fontSize: 6))),
         DataCell(Text("$purchaseValue", style: TextStyle(fontSize: 6))),
-        DataCell(Text("${salesValue - purchaseValue}", style: TextStyle(fontSize: 6))),
+        DataCell(Text("${(salesValue - purchaseValue).toStringAsFixed(2)}", style: TextStyle(fontSize: 6))),
       ]));
     }
 

@@ -6,11 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
+import 'package:provider/provider.dart';
 
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/widgets/custom_text_field2.dart';
+
+import '../provider/billing_order.dart';
 
 class CombineArgs {
   BluetoothArgs? bluetoothArgs;
@@ -521,14 +524,20 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (isPrinted) {
-          final bargs = widget.args.bluetoothArgs!;
-          await DatabaseHelper().updateKot(bargs.order.id! );
-          await DatabaseHelper()
-              .updateTableNo(tableNoController.text,bargs.order.id! );
-          widget.args.bluetoothArgs!.order.tableNo =
-              tableNoController.text;
-        }
+        // if (isPrinted) {
+          if(widget.args.bluetoothArgs != null){
+            final bargs = widget.args.bluetoothArgs!;
+            await DatabaseHelper().updateKot(bargs.order.id! );
+            await DatabaseHelper()
+                .updateTableNo(tableNoController.text,bargs.order.id! );
+            widget.args.bluetoothArgs!.order.tableNo =
+                tableNoController.text;
+            final provider = Provider.of<Billing>(context,listen: false);
+            print("widget.args.bluetoothArgs!.order.id ${widget.args.bluetoothArgs!.order.id.toString()}");
+            provider.updateTableNoInSalesBill(widget.args.bluetoothArgs!.order.id.toString(),widget.args.bluetoothArgs!.order.tableNo);
+            print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
+          }
+        // }
 
         return true;
       },

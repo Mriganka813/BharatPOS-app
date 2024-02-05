@@ -174,8 +174,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     itemCount: orders.length,
                     itemBuilder: (BuildContext context, int index) {
                       final order = orders[index];
-                      print("line 177 in party credit");
-                      print(order.createdAt);
+                      // print("line 177 in party credit");
+                      // print(order.createdAt);
                       return Column(
                         children: [
                           Center(
@@ -439,7 +439,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
 
   Future<void> _launchUrl(String name, String mobile) async {
     String Message =
-        "Dear customer, your credit balance with ${name} is rupees ${double.parse(balanceToShareOnWhatsapp).abs()}. Please pay the amount as soon as possible. Thank you for your business.%0A%0A*Powered by BharatPOS*";
+        "Dear customer, your credit balance with ${name} is rupees ${double.parse(balanceToShareOnWhatsapp).abs().toStringAsFixed(2)}. Please pay the amount as soon as possible. Thank you for your business.%0A%0A*Powered by BharatPOS*";
 
     final Uri _url = Uri.parse('https://wa.me/${mobile}?text=$Message');
 
@@ -568,6 +568,7 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                     CustomButton(
                       onTap: () {
                         double amountnew = double.parse(newtotal);
+
                         widget.args.tabbarNo == 0
                             ? _specificpartyCubit.updateAmountCustomer(Party(id: id, total: amountnew), widget.args.partyId)
                             : _specificpartyCubit.updateAmountSupplier(Party(id: id, total: amountnew), widget.args.partyId);

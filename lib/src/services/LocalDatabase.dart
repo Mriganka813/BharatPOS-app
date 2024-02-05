@@ -265,11 +265,11 @@ class DatabaseHelper {
     }
   }
 
-  insertProductItems(Product data) async {
+  insertProductItems(Product product) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
 
-    var map = data.toMap();
+    var map = product.toMap();
     map['createdAt'] = map["createdAt"].toString();
     map['expiryDate'] = map["expiryDate"].toString();
 
@@ -320,7 +320,7 @@ class DatabaseHelper {
       list.add(OrderObject);
     }
 
-    print("list returning from localdatabase.getorderitems ${list[0].tableNo}");
+    // print("list returning from localdatabase.getorderitems ${list[0].tableNo}");
 
     return list;
   }
@@ -345,7 +345,7 @@ class DatabaseHelper {
       if (ele['_id'] == Otemp['product']) {
         print("line 348 in local database");
         print(t);
-        // print("line 347 in local database${Product.fromMap(t)}");
+
         Otemp['product'] = Product.fromMap(t).toMap();
         print("line 349 in local database");
         print(Otemp['product']);

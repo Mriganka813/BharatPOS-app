@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order.dart';
+import 'package:shopos/src/models/input/product_input.dart';
 
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/billing_list.dart';
@@ -27,6 +28,7 @@ import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/party.dart';
+import 'package:shopos/src/services/product.dart';
 import 'package:shopos/src/services/sales.dart';
 import 'package:shopos/src/services/user.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
@@ -38,6 +40,7 @@ import 'package:upi_payment_qrcode_generator/upi_payment_qrcode_generator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/party.dart';
+import '../models/product.dart';
 
 enum OrderType { purchase, sale, saleReturn, estimate, none }
 
@@ -1122,9 +1125,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         // qr code image
                                         Column(
                                           children: [
-                                            for (int i = 1;
-                                                i < _amountControllers.length;
-                                                i++)
+                                            for (int i = 1; i < _amountControllers.length; i++)
                                               Column(
                                                 children: [
                                                   Row(
@@ -1140,14 +1141,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                             setState(() {});
                                                           },
                                                           validator: (e) {
-                                                            if ((e ?? "")
-                                                                .isEmpty) {
+                                                            if ((e ?? "").isEmpty) {
                                                               return 'Please select a mode of payment';
                                                             }
                                                             return null;
                                                           },
-                                                          hintText:
-                                                              "Payment Mode",
+                                                          hintText:"Payment Mode",
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -1155,23 +1154,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                       ),
                                                       Expanded(
                                                           child: TextFormField(
-                                                        controller:
-                                                            _amountControllers[
-                                                                i],
-                                                        keyboardType: TextInputType
-                                                            .numberWithOptions(
-                                                                signed: false,
-                                                                decimal: true),
+                                                        controller:_amountControllers[i],
+                                                        keyboardType: TextInputType.numberWithOptions(signed: false,decimal: true),
                                                         decoration: InputDecoration(
-                                                            contentPadding:
-                                                                EdgeInsets
-                                                                    .symmetric(
-                                                                        vertical:
-                                                                            5,
-                                                                        horizontal:
-                                                                            7),
-                                                            label:
-                                                                Text("Amount"),
+                                                            contentPadding:EdgeInsets.symmetric(vertical: 5,horizontal:7),
+                                                            label:Text("Amount"),
                                                             border: OutlineInputBorder(
                                                                 borderRadius:
                                                                     BorderRadius
@@ -1573,8 +1560,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onTapSubmit() async {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
-      print("1452 in checkout");
-
       // print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
       print(widget.args.order);
       print(totalPrice());
@@ -1583,30 +1568,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
       widget.args.order.modeOfPayment = [];
 
       if (_singlePayMode) {
-        print("line 1276 in checkout.dart");
         _amountControllers[0].text = totalPrice()!;
-        print(_amountControllers[0].text);
         var defaultPayment = {
           "mode": _modeOfPayControllers[0].text,
           "amount": double.parse(_amountControllers[0].text)
         };
         widget.args.order.modeOfPayment?.add(defaultPayment);
-        print(widget.args.order.modeOfPayment.toString());
       } else {
-        print("line 1284 in checkout.dart");
         for (int i = 0; i < _modeOfPayControllers.length; i++) {
           if (_modeOfPayControllers[i].text.isNotEmpty) {
             var newPayment = {
               "mode": _modeOfPayControllers[i].text,
               "amount": 0
             };
-            // widget.args.order.modeOfPayment?[i]["mode"] = _modeOfPayControllers[i].text;
             if (_amountControllers[i].text.isNotEmpty) {
-              // widget.args.order.modeOfPayment?[i]["amount"] = _amountControllers[i].text;
               newPayment["amount"] = double.parse(_amountControllers[i].text);
             } else {
               newPayment["amount"] = "0";
-              // widget.args.order.modeOfPayment?[i]["amount"] = "0";
             }
             widget.args.order.modeOfPayment?.add(newPayment);
           }
@@ -1630,10 +1608,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       } else if (widget.args.invoiceType == OrderType.estimate) {
         if (widget.args.order.estimateNum != null) {
           //update estimate
-          print("line 1422 in checkout.dart");
-          print(widget.args.order.estimateNum.runtimeType);
           if (convertToSale) {
-            print("line 1500 in checkout");
             if(checkAmounts()){
               _checkoutCubit.convertEstimateToSales(
                   widget.args.order, (salesInvoiceNo + 1).toString());
@@ -1653,16 +1628,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
               widget.args.order, (salesInvoiceNo + 1).toString());
         }
       }
-      // widget.args.invoiceType == OrderType.purchase
-      //     ? _checkoutCubit.createPurchaseOrder(
-      //         widget.args.order, (purchasesInvoiceNo + 1).toString())
-      //     : widget.args.invoiceType == OrderType.saleReturn
-      //         ? _checkoutCubit.createSalesReturn(
-      //             widget.args.order, date, totalPrice()!)
-      //         : widget.args.invoiceType == OrderType.estimate
-      //             ? _checkoutCubit.createEstimateOrder(widget.args.order, (estimateNo+1).toString())
-      //             : _checkoutCubit.createSalesOrder(
-      //                 widget.args.order, (salesInvoiceNo + 1).toString());
 
       final provider = Provider.of<Billing>(context, listen: false);
       if (widget.args.invoiceType == OrderType.sale ||
