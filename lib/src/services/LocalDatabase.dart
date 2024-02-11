@@ -26,7 +26,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, version) {
         db.execute('''
           CREATE TABLE  Product(
@@ -57,7 +57,8 @@ class DatabaseHelper {
             batchNumber TEXT,
             expiryDate TEXT,
             hsn TEXT,
-            mrp REAL
+            mrp REAL,
+            quantityToBeSold REAL
           )
         ''');
 
@@ -212,8 +213,59 @@ class DatabaseHelper {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     var curr = data;
-
+    print("insert order items input in local database and data is ${data} and newOrderItemsData is ${newOrderItemsData}");
     data = newOrderItemsData.isEmpty ? data : newOrderItemsData;
+
+    //to handle those items which are in database but user wants to delete them
+    //comparing data with prevData from database
+    var prevData = await DatabaseHelper().getOrderItems();//prevData is all the orders which are stored in database
+
+    late Order orderFromPrevData;
+    bool orderPresentInDatabase = false;
+    prevData.forEach((order) {
+      if(order.id == id){
+        orderFromPrevData = order;
+        orderPresentInDatabase = true;
+      }
+    });
+    if(orderPresentInDatabase){//if order is not present in database that means it is new sale order.
+      print("data items");
+
+      print("printing the products which were present in database for order id: ${id}");
+      List<OrderItemInput>? orderItemsInDatabase = orderFromPrevData.orderItems;
+      orderItemsInDatabase?.forEach((orderItem) {
+        //check if this order item is present in 'data'.
+        //if it is not present in data then delete from local database
+        print(orderItem.product?.name);
+        print(orderItem.product?.id);
+        bool isPresent = false;
+        String productIdToBeDeleted="";
+        curr.forEach((element) {
+          if(orderItem.product?.id == element.product?.id){
+            isPresent = true;
+          }
+          productIdToBeDeleted = orderItem.product!.id!;
+        });
+        if(!isPresent){//orderItem is not present in 'data'
+          bool isPresentInNewItems = false;
+          //also we need to check the orderItem belongs to newOrderItems or not
+          //if it belongs to new order items then we will not delete it
+          newOrderItemsData.forEach((element) {
+            if(element.product?.id == productIdToBeDeleted){
+              isPresentInNewItems = true;
+            }
+          });
+          if(!isPresentInNewItems){
+            print("deleting an orderItemInput");
+            db.delete(
+                'OrderItemInput',
+                where: "product = ? AND OIID = ?",
+                whereArgs: [productIdToBeDeleted,id]);
+          }
+        }
+      });
+
+    }
 
     for (int i = 0; i < data.length; i++) {
       print("line 221 in localdatabase");
@@ -385,7 +437,7 @@ class DatabaseHelper {
       print("result");
       print(result);
 
-      if (result.isNotEmpty) {
+      if (result.isNotEmpty) {//updates those KOTs which are not printed
         double qty = result.first['qty'];
         db.execute("update Kot set qty=${qty + list[i].qty} where orderId=${list[i].orderId} and isPrinted='no' and name='${list[i].name}'");
         print("check qty");
@@ -420,28 +472,36 @@ class DatabaseHelper {
     return data;
   }
 
-  deleteKot(
-    int id,
-    String itemName,
-  ) async {
+  deleteKot(int id, String itemName) async {
+    final dbHelper = DatabaseHelper();
+    final db = await dbHelper.database;
+    print("deleting kot because it was not in _Order but it was on _currOrder");
+    db.execute("delete from Kot where orderId=$id and isPrinted='no' and name='$itemName'");
+  }
+
+  updateKotQuantity(int id, String itemName, double itemQuantity) async {
     final dbHelper = DatabaseHelper();
     final db = await dbHelper.database;
     print("${id} and $itemName");
 
-    List<Map<String, dynamic>> result = await db.query(
-      'Kot',
-      columns: ['qty'],
-      where: 'orderId =? AND isPrinted=? AND name=?',
-      whereArgs: [id, "no", itemName],
-    );
-    print("--result.first['qty'] ${result.first['qty']}");
-    double qty = result.first['qty'].toDouble();
+    // List<Map<String, dynamic>> result = await db.query(
+    //   'Kot',
+    //   columns: ['qty'],
+    //   where: 'orderId =? AND isPrinted=? AND name=?',
+    //   whereArgs: [id, "no", itemName],
+    // );
+    // print("result.length is ${result.length}");
+    // print("--result.first['name'] ${result.first['name']}");
+    // print("--result.first['qty'] ${result.first['qty']}");
+    //
+    // double qty = result.first['qty'].toDouble();
 
-    if (qty > 0) {//TODO: this was qty>1 before
-      qty = qty - 1;
-      db.execute("update Kot set qty=$qty where orderId=$id and isPrinted='no' and name='$itemName'");
-    } else {
-      db.execute("delete from Kot  where orderId=$id and isPrinted='no' and name='$itemName'");
+    if (itemQuantity > 0) {//TODO: this was qty>1 before
+      print("updating kot with qty = ${itemQuantity}");
+      db.execute("update Kot set qty=$itemQuantity where orderId=$id and isPrinted='no' and name='$itemName'");
+    } else {//the control will not go to the else part as of current logic
+      print("deleting kot because itemQuantity was 0");
+      db.execute("delete from Kot where orderId=$id and isPrinted='no' and name='$itemName'");
     }
   }
 

@@ -44,6 +44,7 @@ class CreateSale extends StatefulWidget {
 
 class _CreateSaleState extends State<CreateSale> {
   late Order _Order;
+  late final Order _currOrder;
 
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
@@ -57,7 +58,9 @@ class _CreateSaleState extends State<CreateSale> {
       id: widget.args!.id,
       orderItems: widget.args == null ? [] : widget.args?.editOrders,
     );
-
+    //for comparing purpose
+    _currOrder = Order.fromMap(_Order.toMapForCopy());
+    print("_currOrder length is ${_currOrder.orderItems?.length}");
   }
 
   @override
@@ -71,123 +74,123 @@ class _CreateSaleState extends State<CreateSale> {
       ),
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            )
+            child: CircularProgressIndicator(
+              color: Colors.blue,
+            ),
+          )
           : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: _orderItems.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No products added yet',
-                            ),
-                          )
-                        : ListView.separated(
-                            physics: const ClampingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: _orderItems.length,
-                            itemBuilder: (context, index) {
-                              double? basesellingprice = 0.0;
-                              if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null"){
-                               basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
-                              }
-                              // print("line 109 in create sale");
-                              // print(basesellingprice);
-
-                              return GestureDetector(
-                                onLongPress: () {
-                                  showaddDiscountDialouge(basesellingprice!, _orderItems, index);
-                                },
-                                child: ProductCardPurchase(
-                                  type: "sale",
-                                  product: _orderItems[index].product!,
-                                  discount: _orderItems[index].discountAmt,
-                                  onQuantityFieldChange: (double value){
-                                    setQuantityToBeSold(_orderItems[index], value, index);
-                                  },
-                                  onAdd: () {
-                                    Kotlist.add(_Order.orderItems![index].product!);
-                                    _onAdd(_orderItems[index]);
-                                    print("on add quantity is ${_orderItems[index].quantity}");
-                                    print("on add quantity to be sold is ${_orderItems[index].product?.quantityToBeSold!}");
-
-                                  },
-                                  onDelete: () {
-                                    OnDelete(_orderItems[index], index);
-                                  },
-                                  productQuantity: _orderItems[index].quantity,
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return const Divider(color: Colors.transparent);
-                            },
-                          ),
-                  ),
-                  const Divider(color: Colors.transparent),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      CustomButton(
-                        title: "Add manually",
-                        onTap: () async {
-                          _onAddManually(context);
-                        },
-                      ),
-                      CustomButton(
-                        title: "Scan barcode",
-                        onTap: () async {
-                          _searchProductByBarcode();
-                        },
-                        type: ButtonType.outlined,
-                      ),
-                    ],
-                  ),
-                  const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
-                  HorizontalSlidableButton(
-                    width: double.maxFinite,
-                    buttonWidth: 50,
-                    color: Colors.green,
-                    isRestart: true,
-                    buttonColor: Colors.green,
-                    dismissible: false,
-                    label: const Center(
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            color: Colors.black,
-                          ),
-                        )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Swipe to continue",
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: _orderItems.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No products added yet',
                         ),
-                      ],
-                    ),
-                    height: 50,
-                    onChanged: (position) {
-                      if (position == SlidableButtonPosition.end) {
-                        if (_orderItems.isNotEmpty) {
-                          print('orderid: ${widget.args?.orderId}');
-
-                          insertToDatabase(provider);
-                        }
-
-                        Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                      )
+                  : ListView.separated(
+                    physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: _orderItems.length,
+                    itemBuilder: (context, index) {
+                      double? basesellingprice = 0.0;
+                      if (_orderItems[index].product!.baseSellingPriceGst != null && _orderItems[index].product!.baseSellingPriceGst != "null"){
+                        basesellingprice = double.parse(_orderItems[index].product!.baseSellingPriceGst!);
                       }
+                  // print("line 109 in create sale");
+                  // print(basesellingprice);
+
+                  return GestureDetector(
+                    onLongPress: () {
+                      showaddDiscountDialouge(basesellingprice!, _orderItems, index);
                     },
+                    child: ProductCardPurchase(
+                      type: "sale",
+                      product: _orderItems[index].product!,
+                      discount: _orderItems[index].discountAmt,
+                      onQuantityFieldChange: (double value){
+                        setQuantityToBeSold(_orderItems[index], value, index);
+                      },
+                      onAdd: () {
+                        Kotlist.add(_Order.orderItems![index].product!);
+                        _onAdd(_orderItems[index]);
+                        print("on add quantity is ${_orderItems[index].quantity}");
+                        print("on add quantity to be sold is ${_orderItems[index].product?.quantityToBeSold!}");
+
+                      },
+                      onDelete: () {
+                        OnDelete(_orderItems[index], index);
+                      },
+                      productQuantity: _orderItems[index].quantity,
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const Divider(color: Colors.transparent);
+                },
+              ),
+            ),
+            const Divider(color: Colors.transparent),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                CustomButton(
+                  title: "Add manually",
+                  onTap: () async {
+                    _onAddManually(context);
+                  },
+                ),
+                CustomButton(
+                  title: "Scan barcode",
+                  onTap: () async {
+                    _searchProductByBarcode();
+                  },
+                  type: ButtonType.outlined,
+                ),
+              ],
+            ),
+            const Divider(color: Color.fromRGBO(0, 0, 0, 0)),
+            HorizontalSlidableButton(
+              width: double.maxFinite,
+              buttonWidth: 50,
+              color: Colors.green,
+              isRestart: true,
+              buttonColor: Colors.green,
+              dismissible: false,
+              label: const Center(
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.black,
+                    ),
+                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Swipe to continue",
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                   ),
                 ],
               ),
+              height: 50,
+              onChanged: (position) {
+                if (position == SlidableButtonPosition.end) {
+                  if (_orderItems.isNotEmpty) {
+                    print('orderid: ${widget.args?.orderId}');
+
+                    insertToDatabase(provider);
+                  }
+
+                  Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                }
+              },
             ),
+          ],
+        ),
+      )
     );
   }
 
@@ -223,6 +226,10 @@ class _CreateSaleState extends State<CreateSale> {
       }else{
         orderItem.quantity = value;
         orderItem.product?.quantityToBeSold = value;
+        //check kotList if the product is not present then add it
+        if(!Kotlist.any((element) => orderItem.product?.id == element.id)){
+          Kotlist.add(orderItem.product!);
+        }
       }
     });
   }
@@ -269,6 +276,55 @@ class _CreateSaleState extends State<CreateSale> {
   void insertToDatabase(Billing provider) async {
     int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
+    //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
+    print("_currOrder length in line 326 is ${_currOrder.orderItems?.length}");
+    if(_currOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
+      print("clearing kot list");
+      Kotlist.clear();
+    }
+    for(int i = 0; i < _Order.orderItems!.length; i++){
+      Product? product = _Order.orderItems?[i].product;
+      print("product name is ${product!.name}");
+      String? productId = _Order.orderItems?[i].product?.id;
+      print("product id is ${productId}");
+      if(_currOrder.orderItems!.any((element) => element.product!.id == productId)){//checks if product(with id 'productId') is present in _currOrder.orderItems or not
+        //check quantity
+        //if increased then find how much quantity is increased and add that value
+        //if decreased don't add it
+        print("in if part line 344");
+        double quantityBefore = 0;
+        for(int i = 0;i<_currOrder.orderItems!.length;i++){
+          if(_currOrder.orderItems?[i].product?.id == productId){
+            quantityBefore = _currOrder.orderItems![i].quantity;
+            print("quantity before is ${quantityBefore}");
+            print("product!.quantityToBeSold! is ${product!.quantityToBeSold!}");
+          }
+        }
+        if((product!.quantityToBeSold! - quantityBefore)>0){//this means user have increased quantity of this product
+          product.quantityToBeSold = product.quantityToBeSold! - quantityBefore;
+          print("adding in kot list");
+          Kotlist.add(product);
+        }else if ((product.quantityToBeSold! - quantityBefore)<0){//means user have decreased the quantity
+          print("else part in line 360 ${product.name} and ${product.quantityToBeSold}");
+          DatabaseHelper().updateKotQuantity(widget.args!.id!, product.name!,product.quantityToBeSold!);
+        }
+      }else{
+        //add the product as it is because it is new product added
+        print("adding in kot list");
+        Kotlist.add(_Order.orderItems![i].product!);
+      }
+    }
+
+    //if user is editing the order and have removed any products
+    //checks from Previously saved Order and compares
+    for(int i = 0;i<_currOrder.orderItems!.length;i++){
+      if(!_Order.orderItems!.any((element) => element.product?.id == _currOrder.orderItems?[i].product?.id)){
+        print("deleting in line 370 name is ${_currOrder.orderItems![i].product!.name!}");
+        DatabaseHelper().deleteKot(widget.args!.id!, _currOrder.orderItems![i].product!.name!);
+      }
+    }
+
+
     var tempMap = CountNoOfitemIsList(Kotlist);
     print("inserting to database");
     print("temp map is $tempMap");
@@ -358,8 +414,6 @@ class _CreateSaleState extends State<CreateSale> {
   }
 
   void OnDelete(OrderItemInput _orderItem, index) {
-    DatabaseHelper().deleteKot(widget.args!.id!, _Order.orderItems![index].product!.name!);//TODO: not to delete kot
-
     double discountForOneItem = double.parse(_orderItem.discountAmt) / _orderItem.quantity;
     _orderItem.discountAmt = (double.parse(_orderItem.discountAmt) - discountForOneItem).toStringAsFixed(2);
 

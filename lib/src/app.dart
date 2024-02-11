@@ -102,7 +102,7 @@ class _MyAppState extends State<MyApp> {
                   args: settings.arguments as ProductListPageArgs?,
                 );
               case CreateProduct.routeName:
-                return CreateProduct(id: settings.arguments as String?);
+                return CreateProduct(args: settings.arguments as CreateProductArgs);
               case PartyListPage.routeName:
                 return const PartyListPage();
               case ReportsPage.routeName:
