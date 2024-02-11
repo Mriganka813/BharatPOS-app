@@ -527,7 +527,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         // if (isPrinted) {
           if(widget.args.bluetoothArgs != null){
             final bargs = widget.args.bluetoothArgs!;
-            await DatabaseHelper().updateKot(bargs.order.id! );
+            if(isPrinted){
+              await DatabaseHelper().updateKot(bargs.order.id! );
+            }
             await DatabaseHelper()
                 .updateTableNo(tableNoController.text,bargs.order.id! );
             widget.args.bluetoothArgs!.order.tableNo =

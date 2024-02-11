@@ -193,7 +193,13 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
                                   print("line 193 in party_credit");
-                                  await openEditModal(order.party!.id!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
+                                  if(order.orderItems!.isEmpty){
+                                    print("order.objId is ${order.objId}");
+                                    print("order.party!.id! ${order.party!.id!}");
+                                    await openEditModal(order.objId!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
+                                  }else{
+                                    locator<GlobalServices>().infoSnackBar("You cannot edit sale order");
+                                  }
                                 },
                                 child: Card(
                                   clipBehavior: Clip.hardEdge,
@@ -570,8 +576,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                         double amountnew = double.parse(newtotal);
 
                         widget.args.tabbarNo == 0
-                            ? _specificpartyCubit.updateAmountCustomer(Party(id: id, total: amountnew), widget.args.partyId)
-                            : _specificpartyCubit.updateAmountSupplier(Party(id: id, total: amountnew), widget.args.partyId);
+                            ? _specificpartyCubit.updateAmountCustomer(id, amountnew, widget.args.partyId)
+                            : _specificpartyCubit.updateAmountSupplier(id, amountnew, widget.args.partyId);
 
                         Navigator.pop(context);
                       },
@@ -622,8 +628,8 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                 }
                 if (result!) {
                   widget.args.tabbarNo == 0
-                      ? _specificpartyCubit.deleteCustomerExpense(Party(id: id), widget.args.partyId)
-                      : _specificpartyCubit.deleteSupplierExpense(Party(id: id), widget.args.partyId);
+                      ? _specificpartyCubit.deleteCustomerExpense(id, widget.args.partyId)
+                      : _specificpartyCubit.deleteSupplierExpense(id, widget.args.partyId);
                   Navigator.pop(context);
                 } else {
                   Navigator.pop(context);

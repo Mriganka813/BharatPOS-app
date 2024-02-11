@@ -12,7 +12,7 @@ class EstimateService{
 
   static Future<Response> createEstimateOrder(Order orderItemInput, String estimateNum) async {
     print("line 12 in estimate.dart");
-    print(orderItemInput.toMap(OrderType.estimate).toString());
+    // print(orderItemInput.toMap(OrderType.estimate).toString());
     print("end---");
     final response = await ApiV1Service.postRequest(
       '/estimate/new',

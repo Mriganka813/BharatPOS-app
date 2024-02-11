@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/checkout.dart';
 
@@ -52,7 +54,7 @@ class Order {
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         invoiceNum: json["invoiceNum"],
         estimateNum: json["estimateNum"].toString(),
-        createdAt: json["createdAt"] == null ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
+        createdAt: json["createdAt"] == null || json["createdAt"] == "null" ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
         total: json['total'].toString() ?? " ",
         businessName: json['businessName'] ?? "",
         businessAddress: json['businessAddress'] ?? "",
@@ -67,14 +69,14 @@ class Order {
     
     
     return Order(
-        objId: json["objId"].toString(),
+        objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
             (x) => OrderItemInput.fromMap(x),
           ),
         ),
         modeOfPayment: (json["modeOfPayment"] as List?)?.cast<Map<String, dynamic>>() ?? [],
-        id: 1,
+        id: json["id"],
         party: Party(id: json['_id']),
         user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
         createdAt: json["createdAt"] == null ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),
@@ -94,6 +96,19 @@ class Order {
         "gst": gst,
         "tableNo": tableNo
       };
+  Map<String, dynamic> toMapForCopy() => {//for making copy of Order
+    "id": id,
+    "orderItems": orderItems?.map((e) => e.toMapCopy()).toList(),
+    "modeOfPayment": modeOfPayment,
+    "party": party?.id,
+    "user": user?.id,
+    "createdAt": createdAt.toString(),
+    "reciverName": reciverName,
+    "businessName": businessName,
+    "businessAddress": businessAddress,
+    "gst": gst,
+    "tableNo": tableNo
+  };
 }
 
 class OrderItemInput {
@@ -126,7 +141,7 @@ class OrderItemInput {
   factory OrderItemInput.fromMapForLocalDatabase(Map<String, dynamic> json){
     print("line 126 in order.dart");
     // print(json);
-    // print(json["product"] is Map);
+    print(json["product"] is Map);
     return OrderItemInput(
       price: double.parse(json['price'].toString()) ?? 0,
       quantity: json['quantity']!= null? json['quantity'].toDouble() : 0.0,
@@ -140,6 +155,20 @@ class OrderItemInput {
     );
   }
 
+  Map<String, dynamic> toMapCopy(){//for making copy of OrderItemInput
+    Map<String,dynamic> map= {
+      "price": (product?.sellingPrice ?? 1),
+      "quantity": quantity,
+      "product": product!.toMap(),
+      "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
+      "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
+      "baseSellingPrice": product?.baseSellingPriceGst == 'null' ? '0' : product!.baseSellingPriceGst,
+      "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
+      "discountAmt": discountAmt,
+      "originalbaseSellingPrice": (double.parse(product!.baseSellingPriceGst! == "null" ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt!)).toString()};
+
+    return map;
+  }
   Map<String, dynamic> toSaleMap() {
         print("line 138 in order.dart tosalemap ");
         print(product);

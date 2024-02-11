@@ -66,7 +66,8 @@ class _HomePageState extends State<HomePage> {
         widget.context,
       );
       var data = await DatabaseHelper().getOrderItems();
-
+      print("data form database");
+      // print(data[0].orderItems?[0].product?.quantityToBeSold!);
       provider.removeAll();
 
       data.forEach((element) {
@@ -339,7 +340,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    /*  OnlineStoreWidget(
+                     /*OnlineStoreWidget(
                       activeOrders: 5,
                       onTap: () {
                         Navigator.pushNamed(context, ReportsPage.routeName);

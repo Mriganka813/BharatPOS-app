@@ -472,13 +472,14 @@ class _BillingListScreenState extends State<BillingListScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 ListTile(
-                                  onTap: () {
+                                  onTap: () async {
                                     print("line 453 in billing list");
                                     // print(" id is: ${provider.salesBilling.values
                                     //     .toList()[index]
                                     //     .id}");
+                                    print(provider.salesBilling.values.toList()[index]);
                                     widget.orderType == OrderType.sale
-                                        ? Navigator.pushNamed(
+                                        ? await Navigator.pushNamed(
                                             context, CreateSale.routeName,
                                             arguments: BillingPageArgs(
                                                 orderId: provider.salesBilling.keys
@@ -489,7 +490,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                 id: provider.salesBilling.values
                                                     .toList()[index]
                                                     .id))
-                                        : Navigator.pushNamed(
+                                        : await Navigator.pushNamed(
                                             context, CreatePurchase.routeName,
                                             arguments: BillingPageArgs(
                                                 orderId: provider.purchaseBilling.keys
@@ -497,6 +498,16 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                 editOrders: provider.purchaseBilling.values
                                                     .toList()[index]
                                                     .orderItems));
+
+                                    var data = await DatabaseHelper().getOrderItems();
+
+                                    provider.removeAll();
+
+                                    data.forEach((element) {
+                                      print("adding sales bill");
+                                      provider.addSalesBill(element, element.id.toString());
+                                    });
+
                                   },
                                   title: Text('Edit',
                                       style: TextStyle(
@@ -642,11 +653,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                     .toList().isNotEmpty)
                             if (provider.salesBilling.values.toList()[index].tableNo !="-1" &&
                                 provider.salesBilling.values.toList()[index].tableNo !="" )
+                              if(widget.orderType == OrderType.sale)
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Table No',style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text(''
+                                      'Table No',style: TextStyle(fontWeight: FontWeight.bold)),
                                   Text(
                                     '${provider.salesBilling.values.toList()[index].tableNo}',
                                   style: TextStyle(fontWeight: FontWeight.bold)),

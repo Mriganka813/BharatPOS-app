@@ -157,7 +157,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
       return;
     }else{
       // if(product.quantityToBeSold == null){
-      product.quantityToBeSold=1;
+        product.quantityToBeSold=1;
       // }else{
       //   product.quantityToBeSold = product.quantityToBeSold! + 1;
       // }
@@ -263,7 +263,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
     // });
     double quantityTobeSold = 0;
     // print("_products.length is ${_products.length}");
-    print("in count no of quantity in array method");
+    // print("in count no of quantity in array method");
     for(int i = 0;i<_products.length;i++){
       if(_products[i].id == product.id){
         print("_products[i].quantityToBeSold = ${_products[i].quantityToBeSold}");
@@ -338,7 +338,11 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                 onPressed: () async {
                   _productCubit.getProducts(_currentPage, _limit);
 
-                  await Navigator.pushNamed(context, '/create-product');
+                  await Navigator.pushNamed(
+                      context,
+                      '/create-product',
+                      arguments: CreateProductArgs()
+                  );
                   _productCubit.getProducts(_currentPage, _limit);
                 },
                 backgroundColor: Colors.green,
@@ -476,11 +480,28 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                             await Navigator.pushNamed(
                                               context,
                                               CreateProduct.routeName,
-                                              arguments: prodList[index].id,
+                                              arguments: CreateProductArgs(id: prodList[index].id),
                                             );
 
                                             _productCubit.getProducts(_currentPage, _limit);
                                             pinController.clear();
+                                          }
+                                        },
+                                        onCopy:() async {
+                                          var result = true;
+
+                                          if (await _pinService.pinStatus() == true) {
+                                            result = await _showPinDialog() as bool;
+                                          }
+                                          if (result) {
+                                          await Navigator.pushNamed(
+                                            context,
+                                            CreateProduct.routeName,
+                                            arguments: CreateProductArgs(id: prodList[index].id, isCopy: true),
+                                          );
+
+                                          // _productCubit.getProducts(_currentPage, _limit);
+                                          pinController.clear();
                                           }
                                         },
                                         onQuantityFieldChange: (double value){

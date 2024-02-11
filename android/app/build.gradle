@@ -56,8 +56,8 @@ android {
         minSdkVersion 26
         // minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 65
-        versionName '1.4.4'
+        versionCode 66
+        versionName '1.4.5'
         multiDexEnabled true
     }
 

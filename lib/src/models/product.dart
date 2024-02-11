@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shopos/src/models/input/product_input.dart';
 
 class Product {
   Product({
@@ -26,8 +29,7 @@ class Product {
     this.batchNumber,
     this.expiryDate,
     this.mrp,
-    this.quantityToBeSold
-    
+    this.quantityToBeSold,
   });
 
   String? name;
@@ -55,7 +57,6 @@ class Product {
   String? batchNumber;
   DateTime? expiryDate;
   double? quantityToBeSold;
-
   num i=0;
   
   factory Product.fromMap(Map<String, dynamic> json){ 
@@ -96,9 +97,14 @@ class Product {
       purchaseigst: json['purchaseIGST'].toString(),
       purchasesgst: json['purchaseSGST'].toString(),
       basePurchasePriceGst: json['basePurchasePrice'].toString(),
-     
+      // subProducts: List<SubProduct>.from(
+      //     jsonDecode(json["subProducts"]).map(
+      //             (e)=> SubProduct.fromMap(e)
+      //     )
+      // ),
       sellerName: json['sellerName'].toString(),
       batchNumber: json['batchNumber'] ?? null,
+      quantityToBeSold: json['quantityToBeSold'],
       expiryDate: json['expiryDate'] != null
           ? DateTime.parse((json['expiryDate']).toString().substring(0, 10))
           : null);
@@ -136,8 +142,16 @@ class Product {
         "sellerName": sellerName,
         "batchNumber": batchNumber,
         "expiryDate": expiryDate,
-        
+        "quantityToBeSold": quantityToBeSold
+        // "subProducts": subProducts?.map((e) => e.toMap()).toList(),
       };
 
   }
+  // String toJson(){
+  //   return jsonEncode(subProducts);
+  // }
+  // static List<SubProduct> fromJson(String json) {
+  //   List<dynamic> decoded = jsonDecode(json);
+  //   return decoded.map((map) => SubProduct.fromMap(map)).toList();
+  // }
 }

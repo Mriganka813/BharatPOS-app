@@ -99,10 +99,10 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   }
 
   ///
-  void updateAmountCustomer(Party p, String partyId) async {
+  void updateAmountCustomer(String id, double total, String partyId) async {
     print("updating amount customer");
-    print("p is: ${p.toMap().toString()}");
-    final response = await _partyService.updateSaleAmount(p);
+    // print("p is: ${p.toMap().toString()}");
+    final response = await _partyService.updateSaleAmount(id, total);
     print("response.data is ${response.data}");
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
@@ -119,8 +119,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   }
 
   ///
-  void updateAmountSupplier(Party p, String partyId) async {
-    final response = await _partyService.updatepurchasedAmount(p);
+  void updateAmountSupplier(String id, double amount, String partyId) async {
+    print("partyId: $partyId");
+    final response = await _partyService.updatepurchasedAmount(id, amount);
     if ((response.statusCode ?? 400) > 300) {
       emit(SpecificPartyError("Error updating party"));
       return;
@@ -132,9 +133,9 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   }
 
   ///
-  void deleteCustomerExpense(Party p, String partyId) async {
+  void deleteCustomerExpense(String id, String partyId) async {
     try {
-      final response = await _partyService.deletesaleAmount(p.id.toString());
+      final response = await _partyService.deletesaleAmount(id);
       if ((response.statusCode ?? 400) > 300) {
         emit(SpecificPartyError(response.data['message']));
         return;
@@ -149,10 +150,10 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
   }
 
   ///
-  void deleteSupplierExpense(Party p, String partyId) async {
+  void deleteSupplierExpense(String id, String partyId) async {
     try {
       final response =
-          await _partyService.deletepurchaseAmount(p.id.toString());
+          await _partyService.deletepurchaseAmount(id);
       if ((response.statusCode ?? 400) > 300) {
         emit(SpecificPartyError(response.data['message']));
         return;

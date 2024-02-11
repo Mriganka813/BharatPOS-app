@@ -75,68 +75,75 @@ class _CreatePartyPageState extends State<CreatePartyPage> {
               key: _formKey,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      label: 'Name',
-                      isLoading: isLoading,
-                      initialValue: widget.args.partName,
-                      onSave: (e) {
-                        _partyInput.name = e;
-                      },
-                      validator: (e) {
-                        if (e!.length <= 3) {
-                          return "Minimum 3 character";
-                        }
-                      },
+                child: SingleChildScrollView(
+
+                  child: SizedBox(
+                    height: 700,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 20),
+                        CustomTextField(
+                          label: 'Name',
+                          isLoading: isLoading,
+                          initialValue: widget.args.partName,
+                          onSave: (e) {
+                            _partyInput.name = e;
+                          },
+                          validator: (e) {
+                            if (e!.length <= 3) {
+                              return "Minimum 3 character";
+                            }
+                          },
+                        ),
+                        const Divider(color: Colors.transparent),
+                        CustomTextField(
+                          isLoading: isLoading,
+                          inputType: TextInputType.phone,
+                          initialValue: widget.args.partyContactNo,
+                          inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                          label: 'Phone Number',
+                          onSave: (e) {
+                            _partyInput.phoneNumber = e;
+                          },
+                          validator: (e) {
+                            if (e!.length < 10) {
+                              return "Minimum 10-digit";
+                            }
+                          },
+                        ),
+                        const Divider(color: Colors.transparent),
+                        
+                        CustomTextField(
+                          maxLines: 8,
+                          validator: (e) => null,
+                          isLoading: isLoading,
+                          initialValue: widget.args.partyAddress,
+                          label: 'Address',
+                       
+                          
+                          onSave: (e) {
+                            _partyInput.address = e;
+                          },
+                        ),
+                        const Spacer(),
+                        CustomButton(
+                          title: "Save",
+                          isLoading: isLoading,
+                          onTap: () {
+                            _formKey.currentState?.save();
+                            if (_formKey.currentState?.validate() ?? false) {
+                              _partyInput.id == ""
+                                  ? _partyCubit.createParty(_partyInput)
+                                  : _partyCubit.updateParty(_partyInput);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 40),
+                      ],
                     ),
-                    const Divider(color: Colors.transparent),
-                    CustomTextField(
-                      isLoading: isLoading,
-                      inputType: TextInputType.phone,
-                      initialValue: widget.args.partyContactNo,
-                      inputFormatters: [LengthLimitingTextInputFormatter(10)],
-                      label: 'Phone Number',
-                      onSave: (e) {
-                        _partyInput.phoneNumber = e;
-                      },
-                      validator: (e) {
-                        if (e!.length < 10) {
-                          return "Minimum 10-digit";
-                        }
-                      },
-                    ),
-                    const Divider(color: Colors.transparent),
-                    
-                    CustomTextField(
-                      maxLines: 8,
-                      validator: (e) => null,
-                      isLoading: isLoading,
-                      initialValue: widget.args.partyAddress,
-                      label: 'Address',
-                   
-                      
-                      onSave: (e) {
-                        _partyInput.address = e;
-                      },
-                    ),
-                    const Spacer(),
-                    CustomButton(
-                      title: "Save",
-                      isLoading: isLoading,
-                      onTap: () {
-                        _formKey.currentState?.save();
-                        if (_formKey.currentState?.validate() ?? false) {
-                          _partyInput.id == ""
-                              ? _partyCubit.createParty(_partyInput)
-                              : _partyCubit.updateParty(_partyInput);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                  ],
+                  ),
                 ),
               ),
             );
