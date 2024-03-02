@@ -235,7 +235,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                               children: [
                                 Text('Available'),
                                 Text(
-                                  widget.product.quantity == null || widget.product.quantity! > 9999 ? 'Unlimited' : '${widget.product.quantity}',
+                                  widget.product.quantity == null || widget.product.quantity! > 9999 ? 'Unlimited' : '${widget.product.quantity?.toStringAsFixed(3)}',
                                 ),
                               ],
                             ),

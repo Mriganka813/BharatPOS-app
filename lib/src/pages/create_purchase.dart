@@ -141,7 +141,7 @@ class _CreatePurchaseState extends State<CreatePurchase> {
                   CustomButton(
                     title: "Create Product",
                     onTap: () {
-                      Navigator.pushNamed(context, CreateProduct.routeName);
+                      Navigator.pushNamed(context, CreateProduct.routeName, arguments: CreateProductArgs());
                     },
                     type: ButtonType.outlined,
                   ),
@@ -176,12 +176,22 @@ class _CreatePurchaseState extends State<CreatePurchase> {
               height: 50,
               onChanged: (position) {
                 if (position == SlidableButtonPosition.end) {
-                  final provider = Provider.of<Billing>(context, listen: false);
-                  if (_orderItems.isNotEmpty) {
-                    provider.addPurchaseBill(_Order, widget.args?.orderId == null ? DateTime.now().toString() : widget.args!.orderId!);
-                  }
+                  // final provider = Provider.of<Billing>(context, listen: false);
+                  // if (_orderItems.isNotEmpty) {
+                  //   provider.addPurchaseBill(_Order, widget.args?.orderId == null ? DateTime.now().toString() : widget.args!.orderId!);
+                  // }
 
-                  Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.purchase);
+                  if(_orderItems.isNotEmpty){
+                    Navigator.pushNamed(
+                        context, CheckoutPage.routeName,
+                        arguments: CheckoutPageArgs(
+                          invoiceType: OrderType.purchase,
+                          order: _Order,
+                        )
+                    );
+                  }else{
+                    locator<GlobalServices>().errorSnackBar("No Products added");
+                  }
                 }
               },
             ),

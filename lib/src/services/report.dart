@@ -5,6 +5,10 @@ import 'package:shopos/src/services/api_v1.dart';
 class ReportService {
   const ReportService();
 
+  Future<String> getCurrentDate() async {
+    final response = await ApiV1Service.getRequest('/current-date');
+    return response.data['date'];
+  }
   ///
   Future<Response> getAllReport(ReportInput input) async {
     print(input.type);

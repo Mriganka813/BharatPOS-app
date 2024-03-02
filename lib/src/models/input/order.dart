@@ -9,6 +9,7 @@ import '../user.dart';
 class Order {
   Order(
       {this.id = -1,
+        this.kotId,
        this.objId,
       this.orderItems,
       this.total,
@@ -24,12 +25,12 @@ class Order {
         this.estimateNum,
       this.tableNo = "-1"});
 
+  String? kotId;
   int? id;
   String? objId;
   List<OrderItemInput>? orderItems;
   String? total;
   List<Map<String,dynamic>>? modeOfPayment;
-  // String? modeOfPayment;
   Party? party;
   User? user;
   DateTime? createdAt;
@@ -42,6 +43,7 @@ class Order {
   String tableNo;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
+        kotId: json["kotId"].toString(),
         objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
@@ -60,7 +62,7 @@ class Order {
         businessAddress: json['businessAddress'] ?? "",
         reciverName: json['reciverName'] ?? "",
         gst: json['gst'] ?? "",
-        tableNo: json['tableNo'] ?? ""
+        tableNo: json['tableNo'].toString() ?? ""
       );
 
   factory Order.fromMapForParty(Map<String, dynamic> json) {
@@ -84,6 +86,7 @@ class Order {
       );}
 
   Map<String, dynamic> toMap(OrderType type) => {
+        "kotId": kotId,
         "id": id,
         "orderItems": orderItems?.map((e) => type == OrderType.sale ? e.toSaleMap() : e.toPurchaseMap()).toList(),
         "modeOfPayment": modeOfPayment,
@@ -98,11 +101,12 @@ class Order {
       };
   Map<String, dynamic> toMapForCopy() => {//for making copy of Order
     "id": id,
+    "kotId": kotId,
     "orderItems": orderItems?.map((e) => e.toMapCopy()).toList(),
     "modeOfPayment": modeOfPayment,
     "party": party?.id,
-    "user": user?.id,
-    "createdAt": createdAt.toString(),
+    // "user": user?.id,
+    // "createdAt": createdAt ?? DateTime.now().toString(),
     "reciverName": reciverName,
     "businessName": businessName,
     "businessAddress": businessAddress,
@@ -159,7 +163,7 @@ class OrderItemInput {
     Map<String,dynamic> map= {
       "price": (product?.sellingPrice ?? 1),
       "quantity": quantity,
-      "product": product!.toMap(),
+      "product": product!.toMapForBilling(),
       "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
       "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
       "baseSellingPrice": product?.baseSellingPriceGst == 'null' ? '0' : product!.baseSellingPriceGst,

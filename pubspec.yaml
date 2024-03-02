@@ -23,6 +23,7 @@ dependencies:
     sdk: flutter
   firebase_messaging:
   firebase_analytics:
+  lottie:
   flutter_barcode_scanner: 
   flutter_bloc: 
   flutter_html_to_pdf: 
@@ -94,6 +95,7 @@ flutter:
     - assets/images/
     - assets/audio/
     - assets/icon/
+    - assets/anims/
   fonts:
     - family: CustomIcons
       fonts:

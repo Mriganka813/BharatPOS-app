@@ -20,6 +20,7 @@ class Billing with ChangeNotifier {
   void updateTableNoInSalesBill(String orderId, String tableNum){
     if(_salesBilling.containsKey(orderId)){
       _salesBilling.update(orderId, (existingOrder) => Order(
+        kotId: existingOrder.kotId,
         id: existingOrder.id,
         orderItems: existingOrder.orderItems,
           modeOfPayment: existingOrder.modeOfPayment,
@@ -39,6 +40,7 @@ class Billing with ChangeNotifier {
       _salesBilling.update(
           orderId,
           (existingOrder) => Order(
+            kotId: existingOrder.kotId,
               id: input.id,
               orderItems: existingOrder.orderItems,
               modeOfPayment: existingOrder.modeOfPayment,
@@ -52,6 +54,7 @@ class Billing with ChangeNotifier {
       _salesBilling.putIfAbsent(
           orderId,
           () => Order(
+            kotId: input.kotId,
               id: input.id,
               orderItems: input.orderItems,
               modeOfPayment: input.modeOfPayment,

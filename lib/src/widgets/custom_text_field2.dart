@@ -17,6 +17,8 @@ class CustomTextField2 extends StatefulWidget {
   final bool obsecureText;
   final bool readonly;
   final bool bypassValidator;
+  final double enabledBorderWidth;
+  final double focusedBorderWidth;
   TextEditingController controller;
 
   final Function(String?)? onsubmitted;
@@ -38,7 +40,8 @@ class CustomTextField2 extends StatefulWidget {
       this.readonly = false,
       this.bypassValidator = false,
      required this.controller,
-   
+        this.enabledBorderWidth=1.5,
+        this.focusedBorderWidth=2,
       this.onsubmitted})
       : super(key: key);
 
@@ -114,6 +117,14 @@ class _CustomTextFieldState extends State<CustomTextField2> {
               horizontal: 10,
             ),
             border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder( // Border when enabled
+              borderSide: BorderSide(color: Colors.grey, width: widget.enabledBorderWidth),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder( // Border when focused
+              borderSide: BorderSide(color: Colors.blue, width: widget.focusedBorderWidth),
               borderRadius: BorderRadius.circular(10),
             ),
           ),

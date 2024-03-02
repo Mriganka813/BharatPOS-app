@@ -251,7 +251,7 @@ class _CreateSaleReturnState extends State<CreateSaleReturn> {
                           Navigator.pushNamed(
                             context,
                             CheckoutPage.routeName,
-                            arguments: CheckoutPageArgs(invoiceType: OrderType.saleReturn, orderId: "0", order: _Order),
+                            arguments: CheckoutPageArgs(invoiceType: OrderType.saleReturn, order: _Order),
                           );
                         }else{
                           locator<GlobalServices>().errorSnackBar("No Products added");

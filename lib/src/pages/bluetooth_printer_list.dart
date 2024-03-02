@@ -11,9 +11,12 @@ import 'package:provider/provider.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
+import 'package:shopos/src/services/billing_service.dart';
 import 'package:shopos/src/widgets/custom_text_field2.dart';
 
+import '../models/input/kot_model.dart';
 import '../provider/billing_order.dart';
+import '../services/kot_services.dart';
 
 class CombineArgs {
   BluetoothArgs? bluetoothArgs;
@@ -54,8 +57,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
     if (widget.args.billArgs == null) {
       if (widget.args.bluetoothArgs!.order.tableNo != "-1")
+        if(widget.args.bluetoothArgs!.order.tableNo!='null')
         tableNoController.text = widget.args.bluetoothArgs!.order.tableNo;
-      print(widget.args.bluetoothArgs!.order.tableNo);
+      // print(widget.args.bluetoothArgs!.order.tableNo);
     }
   }
 
@@ -69,11 +73,16 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     setState(() {});
     if(widget.args.bluetoothArgs!=null){
       final bargs = widget.args.bluetoothArgs!;
-      List<Map<String, dynamic>> list =
-      await DatabaseHelper().getKotData( bargs.order.id!  );
-      print("Kot Data:");
-      print(list);
+      // List<Map<String, dynamic>> list =
+      // await DatabaseHelper().getKotData( bargs.order.id!  );
+      // print("Kot Data:");
+      // print(list);
     }
+    // if(widget.args.bluetoothArgs!=null){
+    //   final bargs = widget.args.bluetoothArgs!;
+    //   List<Map<String, dynamic>> list =
+    // }
+
   }
 
   // Future<void> initPrinter() async {
@@ -247,12 +256,45 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       //no connected
     }
   }
+  Future<List<Map<String, dynamic>>> getKotData(String kotId) async {
+    Map<String, dynamic> kotHistory = await KOTService.getKot(kotId);
+    Kot kot = Kot.fromMap(kotHistory['kot']);
+    print("kot.items ${kotHistory['kot']['item']}");
+    List<Map<String, dynamic>> itemList = [];
 
+// Iterate through kot.items in reverse order
+    for (int i = kot.items!.length - 1; i >= 0; i--) {
+      Map<String, dynamic> item = kotHistory['kot']['item'][i];
+
+      // Check if the item name is "Printed"
+      if (item['name'] == 'Printed') {
+        break; // Stop the loop if "Printed" is encountered
+      }
+
+      // Check if the item name already exists in itemList
+      int index = itemList.indexWhere((element) => element['name'] == item['name']);
+
+      if (index != -1) {
+        // If the item already exists, update its quantity
+        itemList[index]['qty'] += item['quantity'];
+      } else {
+        // If the item doesn't exist, add it to itemList
+        itemList.add({
+          'name': item['name'],
+          'qty': item['quantity'],
+        });
+      }
+    }
+    itemList.removeWhere((item) => item['qty'] <= 0);
+      return itemList;
+    // print("ITEM LIST IS $itemList");
+  }
   Future<List<int>> kotTicket() async {
     final bargs = widget.args.bluetoothArgs!;
 
-    List<Map<String, dynamic>> list =
-        await DatabaseHelper().getKotData(bargs.order.id!);
+    // List<Map<String, dynamic>> list =
+    //     await DatabaseHelper().getKotData(bargs.order.id!);
+    List<Map<String, dynamic>> list = await getKotData(bargs.order.kotId!);
 
     List<int> bytes = [];
     // Using default profile
@@ -524,22 +566,31 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // if (isPrinted) {
+
           if(widget.args.bluetoothArgs != null){
             final bargs = widget.args.bluetoothArgs!;
             if(isPrinted){
-              await DatabaseHelper().updateKot(bargs.order.id! );
+            //   await DatabaseHelper().updateKot(bargs.order.id! );
+              Kot _kot = Kot(kotId: bargs.order.kotId!,items: []);
+              List<Item> kotItems = [];
+              Item item = Item(name: "Printed", quantity: 0, createdAt: DateTime.now());
+              kotItems.add(item);
+              _kot.items = kotItems;
+              await KOTService.updateKot(_kot);
             }
-            await DatabaseHelper()
-                .updateTableNo(tableNoController.text,bargs.order.id! );
+            // await DatabaseHelper()
+            //     .updateTableNo(tableNoController.text,bargs.order.id! );
+            print("widget.args.bluetoothArgs!.order.tableNo is ${widget.args.bluetoothArgs!.order.tableNo} and runtype is ${widget.args.bluetoothArgs!.order.tableNo.runtimeType}");
             widget.args.bluetoothArgs!.order.tableNo =
                 tableNoController.text;
-            final provider = Provider.of<Billing>(context,listen: false);
-            print("widget.args.bluetoothArgs!.order.id ${widget.args.bluetoothArgs!.order.id.toString()}");
-            provider.updateTableNoInSalesBill(widget.args.bluetoothArgs!.order.id.toString(),widget.args.bluetoothArgs!.order.tableNo);
-            print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
+            if(widget.args.bluetoothArgs!.order.tableNo != "null" && widget.args.bluetoothArgs!.order.tableNo != "")
+                await BillingService().updateBillingOrder(widget.args.bluetoothArgs!.order);//for updating table No
+            // final provider = Provider.of<Billing>(context,listen: false);
+            // print("widget.args.bluetoothArgs!.order.id ${widget.args.bluetoothArgs!.order.id.toString()}");
+            // provider.updateTableNoInSalesBill(widget.args.bluetoothArgs!.order.id.toString(),widget.args.bluetoothArgs!.order.tableNo);
+            // print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
           }
-        // }
+
 
         return true;
       },
@@ -556,7 +607,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                   child: CustomTextField2(
                     hintText: "Enter Table No (optional)",
                     controller: tableNoController,
-                    value: "${widget.args.bluetoothArgs!.order.tableNo}",
+                    value: "${widget.args.bluetoothArgs!.order.tableNo == 'null' ? "" : widget.args.bluetoothArgs!.order.tableNo}",
                     validator: (e) => null,
                   ),
                 ),

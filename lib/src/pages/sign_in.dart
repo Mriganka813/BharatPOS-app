@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,7 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
     // _checkUpdate();
     _authCubit = AuthCubit();
-    getDataFromDatabase();
+    // getDataFromDatabase();
   }
 
   getDataFromDatabase() async {
@@ -134,12 +135,18 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),*/
 
-                    Image.asset(
-                      "assets/images/bharat2.png",
-                      height: 200,
-                    ),
+                    const SizedBox(height: 100),
+                    Container(
+                      width: 200,
+                        height: 100,
+                        child: SvgPicture.asset(
+                            "assets/icon/BharatPos.svg",
+                          fit: BoxFit.cover,
+                        )),
                     const SizedBox(height: 60),
                     CustomTextField2(
+                      enabledBorderWidth: 0.3,
+                      focusedBorderWidth: 1,
                       controller: TextEditingController(),
                       hintText: 'name@company.com',
                       onSave: (e) {
@@ -149,6 +156,8 @@ class _SignInPageState extends State<SignInPage> {
                     const Divider(color: Colors.transparent),
                     const SizedBox(height: 5),
                     CustomTextField2(
+                      enabledBorderWidth: 0.3,
+                      focusedBorderWidth: 1,
                       controller: TextEditingController(),
                       hintText: "Password",
                       onSave: (e) {

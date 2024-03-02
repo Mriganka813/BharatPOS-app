@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ntp/ntp.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,7 @@ import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopos/src/blocs/billing/billing_cubit.dart';
 import 'package:shopos/src/blocs/checkout/checkout_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/models/input/order.dart';
@@ -71,13 +73,14 @@ class PrintBillArgs {
 class CheckoutPageArgs {
   final OrderType invoiceType;
   final Order order;
-  final String orderId;
-  final bool?
-      canEdit; //used for: checkout from sale report(stopping user to edit sale
+  // final String orderId;
+  ///canEdit flag is used for: checkout from sale report(stopping user to edit sale
+  ///if canEdit is set to false while go to sale is executed from report page
+  final bool? canEdit;
   CheckoutPageArgs({
     required this.invoiceType,
     required this.order,
-    required this.orderId,
+    // required this.orderId,
     this.canEdit,
   });
 }
@@ -123,11 +126,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final List<TextEditingController> _amountControllers = [];
   final List<TextEditingController> _modeOfPayControllers = [];
 
+  bool shareButtonPref = false;
+  bool _loadingShareButton = false;
+  late SharedPreferences prefs;
+  
   ///
   @override
   void initState() {
     super.initState();
     print("init state of checkout");
+    init();
     // String date = DateTime.now().toString();
     // print(date);
     // print(date.substring(11,16));
@@ -161,6 +169,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
   }
 
+  void init() async {
+    _loadingShareButton = true;
+    prefs = await SharedPreferences.getInstance();
+    shareButtonPref = (await prefs.getBool('share-button-preference'))!;
+    _loadingShareButton = false;
+  }
   _removePaymentMethodField(i) {
     setState(() {
       _amountControllers.removeAt(i);
@@ -260,116 +274,200 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   ///
-  openShareModal(context, user) {
+  openShareModal(context, user, bool popAll) {
+    final String successMsg = widget.args.invoiceType == OrderType.estimate
+        ? widget.args.order.estimateNum != null
+        ? convertToSale
+        ? 'Estimate converted to Sale'
+        : 'Estimate updated successfully'
+        : 'Estimate created successfully'
+        : 'Order created successfully';
     Alert(
+      title: widget.args.canEdit==false || popAll == false ? "Share Invoice" : "",
         style: const AlertStyle(
           animationType: AnimationType.grow,
+          // isCloseButton: false,,
+          isOverlayTapDismiss: false,
           isButtonVisible: false,
         ),
         context: context,
-        title: "Share Invoice",
-        content: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            ListTile(
-              title: const Text("Print"),
-              onTap: () async {
-                // _onTapShare(2);
-                if (widget.args.invoiceType != OrderType.estimate) {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? defaultBill = prefs.getString('defaultBill');
+        closeFunction: (){
+          if(popAll){
+            Future.delayed(const Duration(milliseconds: 50), () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            });
+          }else{
+            Navigator.pop(context);
+          }
+        },
 
-                  if (defaultBill == null) {
-                    _showNewDialog(widget.args.order);
-                  } else if (defaultBill == '57mm') {
-                    _view57mmBill(widget.args.order);
-                    // _viewPdf();
-                  } else if (defaultBill == '80mm') {
-                    _view80mmBill(widget.args.order);
-                  } else if (defaultBill == 'A4') {
-                    _viewPdf();
-                  }
-                } else {
-                  _viewPdf();
-                }
-              },
-            ),
-            // ListTile(
-            //   title: const Text("With GST"),
-            //   onTap: () {
-            //     _onTapShare(0);
-            //   },
-            // ),
-            // ListTile(
-            //   title: const Text("Without GST"),
-            //   onTap: () {
-            //     _onTapShare(1);
-            //   },
-            // ),
-            ListTile(
-                title: const Text("Whatsapp Message"),
-                onTap: () {
-                  TextEditingController t = TextEditingController();
-                  showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius:
+        content: WillPopScope(
+          onWillPop: () async {
+            if(popAll){
+              Future.delayed(const Duration(milliseconds: 50), () {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              });
+            }else{
+              Navigator.pop(context);
+            }
+            return true;
+          },
+          child: Column(
+            children: [
+              SizedBox(height: 10,),
+              // if(widget.args.canEdit != false && popAll == true)
+              if(popAll == true)
+              Lottie.asset('assets/anims/check3.json',
+                  width: 150,
+                  height: 150,
+                  repeat: false,
+                  fit: BoxFit.contain),
+              // widget.args.canEdit != false ? SizedBox(height: 20,): SizedBox.shrink(),
+              // widget.args.canEdit != false ? Text("$successMsg",style: TextStyle(fontSize: 14),): SizedBox.shrink(),
+              // widget.args.canEdit != false ? SizedBox(height: 60,): SizedBox(height: 20,),
+              popAll ? SizedBox(height: 20,): SizedBox.shrink(),
+              popAll ? Text("$successMsg",style: TextStyle(fontSize: 14),): SizedBox.shrink(),
+              popAll ? SizedBox(height: 60,): SizedBox(height: 20,),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      // titleAlignment: ListTileTitleAlignment.center,
+                      // tileColor: Colors.red[500],
+                      // textColor: Colors.white,
+                      // shape: RoundedRectangleBorder(
+                      //   borderRadius: BorderRadius.all(Radius.circular(20)),
+                      // ),
+                      paddingOutside: 5,
+                      title: "Print",
+                      type: ButtonType.outlined,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 10,
+                      ),
+                      onTap: () async {
+                        // _onTapShare(2);
+                        if (widget.args.invoiceType != OrderType.estimate) {
+                          SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                          String? defaultBill = prefs.getString('defaultBill');
+
+                          if (defaultBill == null) {
+                            _showNewDialog(widget.args.order, popAll);
+                          } else if (defaultBill == '57mm') {
+                            await _view57mmBill(widget.args.order, popAll);
+                          } else if (defaultBill == '80mm') {
+                            await _view80mmBill(widget.args.order, popAll);
+                          } else if (defaultBill == 'A4') {
+                            await _viewPdf(popAll);
+                            if(popAll){
+                              Future.delayed(const Duration(milliseconds: 400), () {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              });
+                            }
+                          }
+                        } else {
+                          await _viewPdf(popAll);
+                          if(popAll){
+                            Future.delayed(const Duration(milliseconds: 400), () {
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            });
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                  // ListTile(
+                  //   title: const Text("With GST"),
+                  //   onTap: () {
+                  //     _onTapShare(0);
+                  //   },
+                  // ),
+                  // ListTile(
+                  //   title: const Text("Without GST"),
+                  //   onTap: () {
+                  //     _onTapShare(1);
+                  //   },
+                  // ),
+
+                  Expanded(
+                    child: CustomButton(
+                        // titleAlignment: ListTileTitleAlignment.center,
+                        // tileColor: Colors.green,
+                        // textColor: Colors.white,
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.all(Radius.circular(20)),
+                        // ),
+                        paddingOutside: 5,
+                        type: ButtonType.outlined,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 10,
+                        ),
+                        title: "WhatsApp",
+                        onTap: () {
+                          TextEditingController t = TextEditingController();
+                          showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
                                     BorderRadius.all(Radius.circular(20))),
-                            backgroundColor: Colors.white,
-                            title: Column(children: [
-                              Text(
-                                "Enter Whatsapp numer\n(10-digit number only)",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: "Poppins-Regular",
-                                    color: Colors.black),
-                              )
-                            ]),
-                            content: TextField(
-                              autofocus: true,
-                              controller: t,
-                              decoration: InputDecoration(
-                                hintText: "Enter 10-digit number",
-                                enabledBorder: OutlineInputBorder(),
-                                focusedBorder: OutlineInputBorder(),
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    if (int.tryParse(t.text.trim()) != null &&
-                                        t.text.length == 10)
-                                      includePayments();
-                                      _launchUrl(
-                                          t.text.trim(),
-                                          user,
-                                          widget.args.order.modeOfPayment,
-                                          totalbasePrice(),
-                                          totalgstPrice(),
-                                          totalDiscount(),
-                                          widget.args.order.orderItems);
-                                  },
-                                  child: Text("Yes")),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Cancel"))
-                            ],
-                          ));
-                })
-          ],
+                                backgroundColor: Colors.white,
+                                title: Column(children: [
+                                  Text(
+                                    "Enter Whatsapp number\n(10-digit number only)",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 17.0,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Poppins-Regular",
+                                        color: Colors.black),
+                                  )
+                                ]),
+                                content: TextField(
+                                  autofocus: true,
+                                  controller: t,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter 10-digit number",
+                                    enabledBorder: OutlineInputBorder(),
+                                    focusedBorder: OutlineInputBorder(),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        if (int.tryParse(t.text.trim()) != null &&
+                                            t.text.length == 10)
+                                          includePayments();
+                                        _launchUrl(
+                                            t.text.trim(),
+                                            user,
+                                            widget.args.order.modeOfPayment,
+                                            totalbasePrice(),
+                                            totalgstPrice(),
+                                            totalDiscount(),
+                                            widget.args.order.orderItems);
+                                      },
+                                      child: Text("Yes")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Cancel"))
+                                ],
+                              ));
+                        }),
+                  ),
+                ],
+              )
+            ],
+          ),
         )).show();
   }
 
   ///
-  void _viewPdf() async {
+  _viewPdf(bool popAll) async {
     bool expirydateAvailableFlag = false;
     bool hsnAvailableFlag = false;
     bool mrpAvailableFlag = false;
@@ -407,13 +505,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
     purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
     estimateNo = await _checkoutCubit.getEstimateNum() as int;
-    estimateNo++; //for showing in the pdf
-    salesInvoiceNo++;
-    purchasesInvoiceNo++;
+    if(!popAll){
+      estimateNo++; //for showing in the pdf
+      salesInvoiceNo++;
+      purchasesInvoiceNo++;
+    }
     print("line 392 in checkout.dart");
     print(widget.args.order.invoiceNum.runtimeType);
     // print(salesInvoiceNo);
     // print(widget.args.order.createdAt);
+    print("total price is ${totalPrice()}");
     final htmlContent = invoiceTemplatewithGST(
       type: widget.args.invoiceType.toString(),
       date: widget.args.order.createdAt.toString() ?? "",
@@ -450,6 +551,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     } catch (e) {
       print(e);
     }
+    print("last line of _view pdf");
   }
 
   ///
@@ -652,7 +754,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     ).toStringAsFixed(2);
   }
 
-  void _view80mmBill(Order Order) async {
+  _view80mmBill(Order Order, bool popAll) async {
     // PdfUI.generate80mmPdf(
     //   user: userData,
     //   order: Order,
@@ -682,27 +784,41 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // );
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
     purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
-    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-        arguments: CombineArgs(
-            bluetoothArgs: null,
-            billArgs: PrintBillArgs(
-              type: billType.is80mm,
-              user: userData,
-              order: Order,
-              headers: [
-                "Invoice 0000000",
-                "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-              ],
-              dateTime: DateTime.now(),
-              invoiceNum: widget.args.invoiceType == OrderType.sale
-                  ? widget.args.order.invoiceNum != ''&& widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null"
-                      ? widget.args.order.invoiceNum!
-                      : salesInvoiceNo.toString()
-                  : purchasesInvoiceNo.toString(),
-              totalPrice: totalPrice() ?? '',
-              subtotalPrice: totalbasePrice() ?? '',
-              gsttotalPrice: totalgstPrice() ?? '',
-            )));
+    if(!popAll){
+      salesInvoiceNo++;
+      purchasesInvoiceNo++;
+    }
+    var combineArgs = CombineArgs(
+        bluetoothArgs: null,
+        billArgs: PrintBillArgs(
+          type: billType.is80mm,
+          user: userData,
+          order: Order,
+          headers: [
+            "Invoice 0000000",
+            "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+          ],
+          dateTime: DateTime.now(),
+          invoiceNum: widget.args.invoiceType == OrderType.sale
+              ? widget.args.order.invoiceNum != ''&& widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null"
+              ? widget.args.order.invoiceNum!
+              : salesInvoiceNo.toString()
+              : purchasesInvoiceNo.toString(),
+          totalPrice: totalPrice() ?? '',
+          subtotalPrice: totalbasePrice() ?? '',
+          gsttotalPrice: totalgstPrice() ?? '',
+        ));
+    if(popAll){
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          BluetoothPrinterList.routeName,
+          ((route)=>route.isFirst),
+          arguments: combineArgs);
+    }else{
+      Navigator.of(context).pushNamed(
+        BluetoothPrinterList.routeName,
+        arguments: combineArgs
+      );
+    }
 
     // for open pdf
     // try {
@@ -712,7 +828,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // }
   }
 
-  void _view57mmBill(Order Order) async {
+  _view57mmBill(Order Order, bool popAll) async {
     // PdfUI.generate57mmPdf(
     //   user: userData,
     //   order: Order,
@@ -733,35 +849,48 @@ class _CheckoutPageState extends State<CheckoutPage> {
     //         : 0);
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
     purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
-    salesInvoiceNo++;
-    purchasesInvoiceNo++;
-    Navigator.of(context).pushNamed(BluetoothPrinterList.routeName,
-        arguments: CombineArgs(
-            bluetoothArgs: null,
-            billArgs: PrintBillArgs(
-              type: billType.is57mm,
-              user: userData,
-              order: Order,
-              headers: [
-                "Invoice 0000000",
-                "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
-              ],
-              dateTime: DateTime.now(),
-              invoiceNum: widget.args.invoiceType == OrderType.sale
-                  ? widget.args.order.invoiceNum != '' &&
-                          widget.args.order.invoiceNum != null &&
-                          widget.args.order.invoiceNum != "null"
-                      ? widget.args.order.invoiceNum!
-                      : salesInvoiceNo.toString()
-                  : purchasesInvoiceNo.toString(),
-              totalPrice: totalPrice() ?? '',
-              subtotalPrice: totalbasePrice() ?? '',
-              gsttotalPrice: totalgstPrice() ?? '',
-            )));
+    if(!popAll){
+      salesInvoiceNo++;
+      purchasesInvoiceNo++;
+    }
+    var combineArgs = CombineArgs(
+        bluetoothArgs: null,
+        billArgs: PrintBillArgs(
+          type: billType.is57mm,
+          user: userData,
+          order: Order,
+          headers: [
+            "Invoice 0000000",
+            "${DateFormat('dd/MM/yyyy').format(DateTime.now())}"
+          ],
+          dateTime: DateTime.now(),
+          invoiceNum: widget.args.invoiceType == OrderType.sale
+              ? widget.args.order.invoiceNum != '' &&
+              widget.args.order.invoiceNum != null &&
+              widget.args.order.invoiceNum != "null"
+              ? widget.args.order.invoiceNum!
+              : salesInvoiceNo.toString()
+              : purchasesInvoiceNo.toString(),
+          totalPrice: totalPrice() ?? '',
+          subtotalPrice: totalbasePrice() ?? '',
+          gsttotalPrice: totalgstPrice() ?? '',
+        ));
+
+    if(popAll){
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          BluetoothPrinterList.routeName,
+          ((route)=>route.isFirst),
+          arguments: combineArgs);
+    }else{
+      Navigator.of(context).pushNamed(
+        BluetoothPrinterList.routeName,
+        arguments: combineArgs
+      );
+    }
   }
 
   _showNewDialog(
-    Order order,
+    Order order, bool popAll
   ) async {
     return showDialog(
       context: context,
@@ -773,8 +902,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setString('defaultBill', '57mm');
-                _view57mmBill(order);
-                Navigator.of(ctx).pop();
+                await _view57mmBill(order, popAll);
               },
               title: Text('58mm'),
             ),
@@ -782,8 +910,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setString('defaultBill', '80mm');
-                _view80mmBill(order);
-                Navigator.of(ctx).pop();
+                await _view80mmBill(order, popAll);
               },
               title: Text('80mm'),
             ),
@@ -791,8 +918,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 await prefs.setString('defaultBill', 'A4');
-                _viewPdf();
-                Navigator.of(ctx).pop();
+                await _viewPdf(popAll);
+                if(popAll){
+                  Future.delayed(const Duration(milliseconds: 400), () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  });
+                }
               },
               title: Text('A4'),
             )
@@ -824,19 +955,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
-          "${widget.args.order.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} Products",
+          // "${widget.args.order.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} Products",
+          "Checkout",
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: Center(
-              child: Text(
-                "₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}",
-                style: Theme.of(context).appBarTheme.titleTextStyle,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 15.0),
+          //   child: Center(
+          //     child: Text(
+          //       "₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}",
+          //       style: Theme.of(context).appBarTheme.titleTextStyle,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       body: _isLoading
@@ -846,7 +979,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           : SingleChildScrollView(
               child: BlocListener<CheckoutCubit, CheckoutState>(
                 bloc: _checkoutCubit,
-                listener: (context, state) {
+                listener: (context, state) async{
                   if (state is CheckoutSuccess) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -863,9 +996,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         ),
                       ),
                     );
-                    Future.delayed(const Duration(milliseconds: 400), () {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    });
+                    // Future.delayed(const Duration(milliseconds: 400), () {
+                    //   Navigator.of(context).popUntil((route) => route.isFirst);
+                    // });
+                    try {
+                      final res = await UserService.me();
+                      if ((res.statusCode ?? 400) < 300) {
+                        final user = User.fromMap(res.data['user']);
+                        openShareModal(context, user, true);
+                      }
+                    } catch (_) {}
                   }
                 },
                 child: BlocBuilder<CheckoutCubit, CheckoutState>(
@@ -895,65 +1035,70 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             // const Divider(color: Colors.transparent),
                             // const Divider(color: Colors.transparent, height: 30),
                             Card(
-                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              elevation: 4,
                               color: Theme.of(context).scaffoldBackgroundColor,
-                              child: Column(
-                                children: [
-                                  // Divider(color: Colors.black54),
-                                  // Text(
-                                  //   "INVOICE",
-                                  //   style: TextStyle(
-                                  //       fontSize: 30, fontWeight: FontWeight.w500),
-                                  // ),
-                                  // Divider(color: Colors.black54),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Sub Total'),
-                                      Text('₹ ${totalbasePrice()}'),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Tax GST'),
-                                      Text('₹ ${totalgstPrice()}'),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Discount'),
-                                      Text('₹ ${totalDiscount()}'),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Divider(color: Colors.black54),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Grand Total'),
-                                      Text(
-                                        '₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 5),
-                                  // Divider(color: Colors.black54),
-                                  // const Divider(color: Colors.transparent),
-                                ],
+                              child: Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Column(
+                                  children: [
+                                    // Divider(color: Colors.black54),
+                                    // Text(
+                                    //   "INVOICE",
+                                    //   style: TextStyle(
+                                    //       fontSize: 30, fontWeight: FontWeight.w500),
+                                    // ),
+                                    // Divider(color: Colors.black54),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Sub Total'),
+                                        Text('₹ ${totalbasePrice()}'),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Tax GST'),
+                                        Text('₹ ${totalgstPrice()}'),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Discount'),
+                                        Text('₹ ${totalDiscount()}'),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Divider(color: Colors.black54),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Grand Total'),
+                                        Text(
+                                          '₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    // Divider(color: Colors.black54),
+                                    // const Divider(color: Colors.transparent),
+                                  ],
+                                ),
                               ),
                             ),
                             const Divider(color: Colors.transparent),
@@ -1434,73 +1579,63 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: Row(
           children: [
             if(convertToSale)
-              Container(
-                width: MediaQuery.of(context).size.width*0.8,
-                child: CustomButton(
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(color: Colors.white, fontSize: 18),
-                    title: "              Submit              ",
-                    onTap: (){
-                  _onTapSubmit();
-                }),
+              Expanded(
+                child: Container(
+                  width: MediaQuery.of(context).size.width*0.8,
+                  child: CustomButton(
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          ?.copyWith(color: Colors.white, fontSize: 18),
+                      title: "Submit",
+                      onTap: (){
+                    _onTapSubmit();
+                  }),
+                ),
               ),
-            if(!convertToSale)
-            CustomButton(
-              title: "Share",
-              onTap: () async {
-                try {
-                  final res = await UserService.me();
-                  if ((res.statusCode ?? 400) < 300) {
-                    final user = User.fromMap(res.data['user']);
+            if((shareButtonPref == true && convertToSale == false) || (shareButtonPref == false && widget.args.canEdit == false))
+            Visibility(
+              visible: !_loadingShareButton,
+              child: Expanded(
+                child: CustomButton(
+                  title: "Share",
+                  onTap: () async {
+                    try {
+                      final res = await UserService.me();
+                      if ((res.statusCode ?? 400) < 300) {
+                        final user = User.fromMap(res.data['user']);
 
-                    openShareModal(context, user);
-                  }
-                } catch (_) {}
-              },
-              type: ButtonType.outlined,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 10,
+                        openShareModal(context, user, false);
+                      }
+                    } catch (_) {}
+                  },
+                  type: ButtonType.outlined,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 10,
+                  ),
+                ),
               ),
             ),
-            const Spacer(),
+
             if (widget.args.canEdit != false)
               if(!convertToSale)
-              TextButton(
-                onPressed: () {
-                  _onTapSubmit();
-                },
-                style: TextButton.styleFrom(
-                  backgroundColor: ColorsConst.primaryColor,
-                  shape: const CircleBorder(),
-                ),
-                child: const Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 40,
-                  color: Colors.white,
+              Expanded(
+                child: CustomButton(
+                  onTap: () {
+                    _onTapSubmit();
+                  },
+                  title: 'Save',
+                  style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    ?.copyWith(color: Colors.white, fontSize: 16)
                 ),
               )
           ],
         ),
       ),
     );
-  }
-
-  void _onTapShare(int type) async {
-    locator<GlobalServices>().showBottomSheetLoader();
-    // try {
-    //   // final res = await UserService.me();
-    //   // if ((res.statusCode ?? 400) < 300) {
-    //     // final user = User.fromMap(res.data['user']);
-    //     // if (type == 0) _viewPdfwithgst(user);
-    //     // if (type == 1) _viewPdfwithoutgst(user);
-
-    //   }
-    // } catch (_) {}
-    if (type == 2) _viewPdf();
-    Navigator.pop(context);
   }
 
   bool checkAmounts() {
@@ -1561,7 +1696,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
       // print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
-      print(widget.args.order);
+      print("widget.args.order ${widget.args.order}");
+      print("widget.args.order ${widget.args.order.kotId}");
       print(totalPrice());
       print(totalbasePrice());
       print(totalgstPrice());
@@ -1610,6 +1746,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           //update estimate
           if (convertToSale) {
             if(checkAmounts()){
+              //TODO: implement sub Product availability validation
               _checkoutCubit.convertEstimateToSales(
                   widget.args.order, (salesInvoiceNo + 1).toString());
             }
@@ -1617,30 +1754,54 @@ class _CheckoutPageState extends State<CheckoutPage> {
             _checkoutCubit.updateEstimateOrder(widget.args.order);
           }
         } else {
-          print("line 1424 in checkout.dart");
-          print(widget.args.order.estimateNum.runtimeType);
+          //TODO: implement sub Product availability validation
           _checkoutCubit.createEstimateOrder(
               widget.args.order, (estimateNo + 1).toString());
         }
       } else if (widget.args.invoiceType == OrderType.sale) {
         if(checkAmounts()){
+          //TODO: implement sub Product availability validation
           _checkoutCubit.createSalesOrder(
-              widget.args.order, (salesInvoiceNo + 1).toString());
+              widget.args.order,(salesInvoiceNo + 1).toString());
         }
       }
 
-      final provider = Provider.of<Billing>(context, listen: false);
+      // final provider = Provider.of<Billing>(context, listen: false);
       if (widget.args.invoiceType == OrderType.sale ||
           widget.args.invoiceType == OrderType.purchase) {
-        DatabaseHelper().deleteOrderItemInput(widget.args.order);
-        if (widget.args.invoiceType == OrderType.purchase) {
-          provider.removePurchaseBillItems(widget.args.orderId);
-        } else {
-          provider.removeSalesBillItems(widget.args.orderId);
+        if(widget.args.invoiceType == OrderType.sale){
+          BillingCubit().deleteBillingOrder(widget.args.order.kotId!);
         }
+        // DatabaseHelper().deleteOrderItemInput(widget.args.order);
+        // if (widget.args.invoiceType == OrderType.purchase) {
+          // provider.removePurchaseBillItems(widget.args.orderId);
+        // } else {
+          // provider.removeSalesBillItems(widget.args.orderId);
+        // }
       }
     }
   }
+
+  ///for validation of availability of Sub Product quantity
+  // _validateSubProductQuantity() {
+  //   widget.args.order.orderItems?.forEach((orderItem) async {
+  //     //fetch product
+  //     var resp = await ProductService().getProduct(orderItem.product!.id!);
+  //     final product = Product.fromMap(resp.data['inventory']);
+  //     print("productJson : ${product.subProducts?[0].inventoryId}");
+  //     product.subProducts?.forEach((subProduct) async {
+  //       var resp = await ProductService().getProduct(subProduct.inventoryId!);
+  //       final subProductFetched = Product.fromMap(resp.data['inventory']);
+  //       print("subProduct quantity: ${subProductFetched.quantity}");
+  //       print("orderItem quantity: ${orderItem.quantity}");
+  //       double quantityToBeSold = orderItem.quantity*subProduct.quantity!.toDouble();
+  //       print(quantityToBeSold);
+  //
+  //       // if(subProductFetched.quantity)
+  //
+  //     });
+  //   });
+  // }
 }
 
 Future<void> _launchUrl(mobNum, user,List<Map<String, dynamic>>? paymethod, sub, tax, dis, items) async {

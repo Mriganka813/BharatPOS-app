@@ -165,7 +165,7 @@ String invoiceTemplatewithGST({
                       : '') +
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                       '<td class="left">${orderItem.product?.saleigst}<p style="text-align:left"><small>(${gstrate}%)</small></p></td>'
-                      '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)}</td>'
+                      '<td class="left">₹ ${((orderItem.quantity) * (orderItem.product?.sellingPrice ?? 0)).toStringAsFixed(2)}</td>'
                       '</tr>';
             else {
               print("llll");
@@ -191,7 +191,7 @@ String invoiceTemplatewithGST({
                       : '') +
                        '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>' +
                   '<td class="left">NA<p style="text-align:left"><small>(NA%)</small></p></td>'
-                      '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)}</td>'
+                      '<td class="left">₹ ${((orderItem.quantity) * (orderItem.product?.sellingPrice ?? 1)).toStringAsFixed(2)}</td>'
                       '</tr>';
             }
           } else {
@@ -219,7 +219,7 @@ String invoiceTemplatewithGST({
                   '<td class="left">${mrpAvailableFlag? orderItem.product?.mrp : ''}</td>'
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                   '<td class="left">${orderItem.product?.purchaseigst}<p style="text-align:left"><small>(${gstrate}%)</small></p></td>'
-                  '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)}</td>'
+                  '<td class="left">₹ ${((orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)).toStringAsFixed(2)}</td>'
                   '</tr>';
             } else if (gstrate != "NA" && baseprice == 0) {
               return '<tr>'
@@ -237,7 +237,7 @@ String invoiceTemplatewithGST({
                   '<td class="left">${mrpAvailableFlag? orderItem.product?.mrp:''}</td>'
                   '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
                   '<td class="left">NA<p style="text-align:left"><small>(NA%)</small></p></td>'
-                  '<td class="left">₹ ${(orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)}</td>'
+                  '<td class="left">₹ ${((orderItem.quantity) * (orderItem.product?.purchasePrice ?? 0)).toStringAsFixed(2)}</td>'
                   '</tr>';
             }
           }

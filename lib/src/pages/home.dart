@@ -17,6 +17,7 @@ import 'package:shopos/src/pages/expense.dart';
 import 'package:shopos/src/pages/online_order_list.dart';
 
 import 'package:shopos/src/pages/party_list.dart';
+import 'package:shopos/src/pages/preferences_page.dart';
 
 import 'package:shopos/src/pages/reports.dart';
 import 'package:shopos/src/pages/search_result.dart';
@@ -30,6 +31,7 @@ import 'package:shopos/src/services/background_service.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
 
 import 'package:shopos/src/widgets/custom_button.dart';
+import 'package:shopos/src/widgets/pin_validation.dart';
 
 class HomePage extends StatefulWidget {
   BuildContext context;
@@ -54,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
-    getDataFromDatabase();
+    // getDataFromDatabase();
   }
 
   //LocalDatabase
@@ -94,6 +96,7 @@ class _HomePageState extends State<HomePage> {
           if (state is HomeRender) {
             return Scaffold(
               appBar: AppBar(
+                centerTitle: true,
                 // toolbarHeight: MediaQuery.of(context).size.height * 0.07,
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,24 +106,28 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Text("Hi ${state.user.businessName ?? ""}!"),
                         SizedBox(
-                          width: 5,
+                          width: 35,
                         ),
-                        Image.asset(
-                          "assets/images/handwave.png",
-                          height: 25,
-                        )
                       ],
                     ),
-                    Text(
-                      "Welcome back",
-                      style: TextStyle(fontSize: 15, color: Colors.grey),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Welcome back",
+                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                        ),
+                        SizedBox(
+                          width: 35,
+                        ),
+                      ],
                     )
                   ],
                 ),
-                actions: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                // actions: [
+                //   Column(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
                       /*  Container(
                         height: 30,
                         child: Switch(
@@ -139,21 +146,21 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 14,
                             fontWeight: FontWeight.w600),
                       ),*/
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: GestureDetector(
-                          onTap: (){
-                           
-                          },
-                          child: Image.asset(
-                            "assets/images/bell.png",
-                            height: 30,
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ],
+                  //     Padding(
+                  //       padding: const EdgeInsets.all(10),
+                  //       child: GestureDetector(
+                  //         onTap: (){
+                  //
+                  //         },
+                  //         child: Image.asset(
+                  //           "assets/images/bell.png",
+                  //           height: 30,
+                  //         ),
+                  //       ),
+                  //     )
+                  //   ],
+                  // )
+              //   ],
               ),
               drawer: Drawer(
                 backgroundColor: Colors.white,
@@ -228,6 +235,23 @@ class _HomePageState extends State<HomePage> {
                           bool status = await _pinService.pinStatus();
                           print(status);
                           Navigator.of(context).pushNamed(SetPinPage.routeName, arguments: status);
+                        },
+                      ),
+                      ListTile(
+                        leading: Image.asset(
+                          "assets/icon/preferences_icon.png",
+                          height: 28,
+                        ),
+                        title: Title(color: Colors.black, child: Text("Preferences")),
+                        onTap: () async {
+                          var result = true;
+
+                          if (await _pinService.pinStatus() == true) {
+                            result = await PinValidation.showPinDialog(context) as bool;
+                          }
+                          if(result){
+                            Navigator.of(context).pushNamed(DefaultPreferences.routeName);
+                          }
                         },
                       ),
 
@@ -399,7 +423,7 @@ class _HomePageState extends State<HomePage> {
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(context, CreateSale.routeName, arguments: BillingPageArgs(id: -1, orderId: "", editOrders: []));
+                              Navigator.pushNamed(context, CreateSale.routeName, arguments: BillingPageArgs(editOrders: []));
                             },
                             onLongPress: () {
                               Navigator.pushNamed(

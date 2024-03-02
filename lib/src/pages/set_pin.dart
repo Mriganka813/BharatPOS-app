@@ -136,7 +136,7 @@ class _SetPinPageState extends State<SetPinPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Re-etype Your Pin',
+                    'Re-type Your Pin',
                     style: TextStyle(fontSize: 22),
                     textAlign: TextAlign.center,
                   ),

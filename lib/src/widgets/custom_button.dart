@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
   final bool isLoading;
   final TextStyle? style;
   final ButtonType type;
+  final double? paddingOutside;
   const CustomButton({
     Key? key,
     required this.title,
@@ -20,12 +21,13 @@ class CustomButton extends StatelessWidget {
     this.style,
     this.padding = const EdgeInsets.all(10),
     this.type = ButtonType.normal,
+    this.paddingOutside = 20.0
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(paddingOutside!),
       child: TextButton(
         
         style: type == ButtonType.outlined

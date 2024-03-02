@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 // import 'package:shopos/src/models/input/order_input.dart';
 // import 'package:shopos/src/models/order.dart';
@@ -27,6 +28,7 @@ import 'package:shopos/src/pages/online_order_list.dart';
 import 'package:shopos/src/pages/party_credit.dart';
 import 'package:shopos/src/pages/party_list.dart';
 import 'package:shopos/src/pages/pdf_preview.dart';
+import 'package:shopos/src/pages/preferences_page.dart';
 import 'package:shopos/src/pages/privacy_policy.dart';
 // import 'package:shopos/src/pages/products_list.dart';
 import 'package:shopos/src/pages/reports.dart';
@@ -56,6 +58,35 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    getpermission();
+  }
+  void getpermission() async {
+    try {
+      await Permission.bluetoothScan.request();
+      // if (await Permission.bluetoothScan.isDenied) {
+      //   Navigator.of(context).pop();
+      // }
+
+      await Permission.bluetoothAdvertise.request();
+
+      await Permission.ignoreBatteryOptimizations;
+
+      // if (await Permission.bluetooth.request().isDenied) {
+      //   Navigator.of(context).pop();
+      // }
+
+      await Permission.bluetoothConnect.request();
+      // if (await Permission.bluetooth.status.isDenied) {
+      //   Navigator.of(context).pop();
+      // }
+
+      await Permission.locationWhenInUse.request();
+      // if (await Permission.location.status.isDenied) {
+      //   Navigator.of(context).pop();
+      // }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -109,6 +140,8 @@ class _MyAppState extends State<MyApp> {
                 return const ReportsPage();
               case ExpensePage.routeName:
                 return const ExpensePage();
+                case DefaultPreferences.routeName:
+                return const DefaultPreferences();
               case CreateExpensePage.routeName:
                 return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:

@@ -8,6 +8,7 @@ import 'package:shopos/src/pages/report_table.dart';
 import 'package:shopos/src/services/global.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/services/pdf.dart';
+import 'package:shopos/src/services/report.dart';
 import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_date_picker.dart';
@@ -267,7 +268,14 @@ class _ReportsPageState extends State<ReportsPage> {
       // });
       // locator<GlobalServices>().showBottomSheetLoader();
       bool status = await _pinService.pinStatus();
-      if (!status) {
+      bool todayFlag = false;
+      String current_date = await ReportService().getCurrentDate();
+      //if input date is today's date
+      if(current_date.substring(0,10) == _reportInput.startDate.toString().substring(0,10) &&
+          current_date.substring(0,10) == _reportInput.endDate.toString().substring(0,10)){
+        todayFlag = true;
+      }
+      if ((!status) || todayFlag) {
         _reportCubit.getReport(_reportInput);
       } else {
         bool? checkPin = await _showPinDialog();

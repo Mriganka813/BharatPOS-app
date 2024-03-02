@@ -42,7 +42,7 @@ class Product {
   DateTime? createdAt;
   int? v;
   String? hsn;
-  String? mrp;
+  double? mrp;
   double purchasePrice;
   String? gstRate;
   String? salesgst;
@@ -85,7 +85,7 @@ class Product {
       image: json['image'],
       id: json["_id"],
       hsn: json["hsn"],
-      mrp: json["mrp"].toString(),
+      mrp: json["mrp"] == null ? 0.0 : json["mrp"].toDouble(),
       createdAt: DateTime.parse(json["createdAt"]),
       v: json["__v"],
       gstRate: json['GSTRate'].toString(),
@@ -104,7 +104,7 @@ class Product {
       // ),
       sellerName: json['sellerName'].toString(),
       batchNumber: json['batchNumber'] ?? null,
-      quantityToBeSold: json['quantityToBeSold'],
+      quantityToBeSold: json['quantityToBeSold'] is int ? json['quantityToBeSold'].toDouble() : json['quantityToBeSold'] ,
       expiryDate: json['expiryDate'] != null
           ? DateTime.parse((json['expiryDate']).toString().substring(0, 10))
           : null);
@@ -115,6 +115,7 @@ class Product {
   Map<String, dynamic> toMap() { 
         print('hsn =$hsn');
         print('line 107 mrp is $mrp');
+        print("created at in line 118 is ${createdAt?.toIso8601String()}");
     return
     {
         
@@ -143,6 +144,76 @@ class Product {
         "batchNumber": batchNumber,
         "expiryDate": expiryDate,
         "quantityToBeSold": quantityToBeSold
+        // "subProducts": subProducts?.map((e) => e.toMap()).toList(),
+      };
+
+  }
+  // Map<String, dynamic> toMapForBilling() {
+  //       print('hsn =$hsn');
+  //       print('line 107 mrp is $mrp');
+  //       print("created at in line 154 is ${baseSellingPriceGst} and ${baseSellingPriceGst.runtimeType}");
+  //   return
+  //   {
+  //
+  //     "name": name,
+  //     "sellingPrice": sellingPrice,
+  //     "barCode": barCode,
+  //     "image": image,
+  //     "quantity": quantity,
+  //     "user": user,
+  //     "hsn":hsn,
+  //     if(mrp != null) "mrp":mrp,
+  //     "_id": id,
+  //     'purchasePrice': purchasePrice,
+  //     "createdAt": createdAt?.toString(),
+  //     "__v": v,
+  //     "GSTRate": (gstRate == null || gstRate == "null") ? "0" : gstRate,
+  //     "saleSGST": (salesgst == null || salesgst == "null") ? "0" : salesgst,
+  //     "saleCGST":(salecgst == null || salecgst == "null") ? "0" : salecgst,
+  //     "saleIGST": (saleigst == null || saleigst == "null") ? "0" : saleigst,
+  //     "baseSellingPrice": (baseSellingPriceGst == null || baseSellingPriceGst == "null") ? "0" : baseSellingPriceGst,
+  //     "purchaseSGST": (purchasesgst == null || purchasesgst == "null") ? "0" : purchasesgst,
+  //     "purchaseCGST":(purchasecgst == null || purchasecgst == "null") ? "0" : purchasecgst,
+  //     "purchaseIGST":(purchaseigst == null || purchaseigst == "null") ? "0" : purchaseigst,
+  //     "basePurchasePrice": (baseSellingPriceGst == null || baseSellingPriceGst == "null") ? "0" : basePurchasePriceGst,
+  //     "sellerName": sellerName,
+  //     "batchNumber": batchNumber,
+  //     "quantityToBeSold": quantityToBeSold
+  //       // "subProducts": subProducts?.map((e) => e.toMap()).toList(),
+  //     };
+  //
+  // }
+  Map<String, dynamic> toMapForBilling() {
+        print('hsn =$hsn');
+        print('line 107 mrp is $mrp');
+        print("created at in line 154 is ${baseSellingPriceGst} and ${baseSellingPriceGst.runtimeType}");
+    return
+    {
+
+      "name": name,
+      "sellingPrice": sellingPrice,
+      "barCode": barCode,
+      "image": image,
+      "quantity": quantity,
+      "user": user,
+      "hsn":hsn,
+      if(mrp != null && mrp!="null") "mrp":mrp,
+      "_id": id,
+      'purchasePrice': purchasePrice,
+      "createdAt": createdAt?.toString(),
+      "__v": v,
+      if(gstRate != null && gstRate != "null") "GSTRate": gstRate,
+      if(salesgst != null && salesgst != "null") "saleSGST": salesgst,
+      if(salecgst != null && salecgst != "null") "saleCGST": salecgst,
+      if(saleigst != null && saleigst != "null") "saleIGST": saleigst,
+      if(baseSellingPriceGst != null && baseSellingPriceGst != "null") "baseSellingPrice": baseSellingPriceGst,
+      if (purchasesgst != null && purchasesgst != "null") "purchaseSGST": purchasesgst,
+      if (purchasecgst != null && purchasecgst != "null") "purchaseCGST": purchasecgst,
+      if (purchaseigst != null && purchaseigst != "null") "purchaseIGST": purchaseigst,
+      if (basePurchasePriceGst != null && basePurchasePriceGst != "null") "basePurchasePrice": basePurchasePriceGst,
+      "sellerName": sellerName,
+      "batchNumber": batchNumber,
+      "quantityToBeSold": quantityToBeSold
         // "subProducts": subProducts?.map((e) => e.toMap()).toList(),
       };
 

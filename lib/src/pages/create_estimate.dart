@@ -508,7 +508,6 @@ class _CreateEstimateState extends State<CreateEstimate> {
                               CheckoutPage.routeName,
                               arguments: CheckoutPageArgs(
                                   invoiceType: OrderType.estimate,
-                                  orderId: "0",
                                   order: _Order),
                             );
                           } else {

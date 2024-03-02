@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopos/src/blocs/billing/billing_cubit.dart';
 import 'package:shopos/src/models/KotModel.dart';
+import 'package:shopos/src/models/input/kot_model.dart';
 import 'package:shopos/src/models/input/order.dart';
 
 import 'package:shopos/src/models/product.dart';
@@ -15,7 +18,9 @@ import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/pages/search_result.dart';
 import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
+import 'package:shopos/src/services/billing_service.dart';
 import 'package:shopos/src/services/global.dart';
+import 'package:shopos/src/services/kot_services.dart';
 import 'package:shopos/src/services/locator.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
@@ -25,11 +30,12 @@ import 'package:slidable_button/slidable_button.dart';
 import '../services/product.dart';
 
 class BillingPageArgs {
-  final String? orderId;
+  // final String? orderId;
   final List<OrderItemInput>? editOrders;
-  final id;
-
-  BillingPageArgs({this.orderId, this.editOrders, this.id});
+  // final id;
+  final String? kotId;
+  final String? tableNo;
+  BillingPageArgs({this.editOrders, this.kotId, this.tableNo});
 }
 
 class CreateSale extends StatefulWidget {
@@ -44,24 +50,92 @@ class CreateSale extends StatefulWidget {
 
 class _CreateSaleState extends State<CreateSale> {
   late Order _Order;
-  late final Order _currOrder;
+  late final Order _prevOrder;
 
   List<OrderItemInput>? newAddedItems = [];
   List<Product> Kotlist = [];
   bool isLoading = false;
+  late SharedPreferences prefs;
+  bool skipPendingOrdersPref = false;
+  bool barcodePref = true;
 
   @override
   void initState() {
     super.initState();
 
+    //making a copy of order items coming from another screen so that any changes made didn't affect them
+    List<OrderItemInput>? orderItems = [];
+    if(widget.args != null){
+      widget.args?.editOrders?.forEach((element) {
+        orderItems.add(OrderItemInput.fromMap(element.toMapCopy()));
+      });
+    }
     _Order = Order(
-      id: widget.args!.id,
-      orderItems: widget.args == null ? [] : widget.args?.editOrders,
+      kotId: widget.args!.kotId ?? "",
+      orderItems: widget.args == null ? [] : orderItems,
+      // orderItems: widget.args == null ? [] : widget.args?.editOrders,
+      tableNo: (widget.args!.tableNo == null || widget.args!.tableNo=='null') ? "" : widget.args!.tableNo!
     );
     //for comparing purpose
-    _currOrder = Order.fromMap(_Order.toMapForCopy());
-    print("_currOrder length is ${_currOrder.orderItems?.length}");
+    _prevOrder = Order.fromMap(_Order.toMapForCopy());
+
+    init();
   }
+  void init() async {
+    prefs = await SharedPreferences.getInstance();
+    skipPendingOrdersPref = (await prefs.getBool('pending-orders-preference'))!;
+    barcodePref = (await prefs.getBool('barcode-button-preference'))!;
+    if(!barcodePref && widget.args!.editOrders!.isEmpty){
+      _onAddManually(context);
+    }
+
+  }
+  // Future<bool> _onWillPop() async {
+  //   bool isOrderEdited = false;
+  //     print("is Order Edited false in line 65");
+  //   if(_Order.orderItems?.length != _prevOrder.orderItems?.length){
+  //     print("is Order Edited true in line 66");
+  //     isOrderEdited = true;
+  //   }
+  //   if(newAddedItems!.isNotEmpty){
+  //     print("is Order Edited true in line 70");
+  //     isOrderEdited = true;
+  //   }
+  //   _prevOrder.orderItems?.forEach((orderItem) {
+  //     _Order.orderItems?.forEach((element) {
+  //       if(orderItem.product?.id == element.product?.id){
+  //         print("id matched");
+  //         if(orderItem.quantity != element.quantity){
+  //           print("is Order Edited true in line 78");
+  //           print("not equal quantity");
+  //           isOrderEdited = true;
+  //         }
+  //       }
+  //     });
+  //   });
+  //   if(isOrderEdited){
+  //     return await showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Text('Confirmation'),
+  //         content: Text('Are you sure you want to exit? Your changes will not be saved.'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context, false), // Stay on page
+  //             child: Text('No'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context, true), // Pop page
+  //             child: Text('Yes'),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }else{
+  //     return true;
+  //   }
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -176,15 +250,24 @@ class _CreateSaleState extends State<CreateSale> {
                 ],
               ),
               height: 50,
-              onChanged: (position) {
+              onChanged: (position) async {
                 if (position == SlidableButtonPosition.end) {
-                  if (_orderItems.isNotEmpty) {
-                    print('orderid: ${widget.args?.orderId}');
-
-                    insertToDatabase(provider);
+                  if (_orderItems.isNotEmpty && skipPendingOrdersPref==false) {
+                    // print('orderid: ${widget.args?.orderId}');
+                    await insertToDatabase(provider);
+                    Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                  }else if(_orderItems.isEmpty && skipPendingOrdersPref==false){
+                    Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
+                  }else if(_orderItems.isNotEmpty && skipPendingOrdersPref){
+                    Navigator.pushNamed(
+                      context,
+                      CheckoutPage.routeName,
+                      arguments: CheckoutPageArgs(invoiceType: OrderType.sale, order: _Order)
+                    );
+                  }else{
+                    locator<GlobalServices>().errorSnackBar('No products added !');
                   }
 
-                  Navigator.pushNamed(context, BillingListScreen.routeName, arguments: OrderType.sale);
                 }
               },
             ),
@@ -273,40 +356,50 @@ class _CreateSaleState extends State<CreateSale> {
   }
 
   //local Database
-  void insertToDatabase(Billing provider) async {
-    int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
+  insertToDatabase(Billing provider) async {
+    String kotId = DateTime.now().toString();
+    if(widget.args!.kotId == null){//means it is a new order
+      _Order.kotId = kotId;//so assigning new kot id
+    }
+    Kot _kot = Kot(kotId: _Order.kotId,items: []);
+    List<Item> kotItems = [];
+    // int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
     List<KotModel> kotItemlist = [];
+
     //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
-    print("_currOrder length in line 326 is ${_currOrder.orderItems?.length}");
-    if(_currOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
+    print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
+    // if(_prevOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
       print("clearing kot list");
       Kotlist.clear();
-    }
+    // }
     for(int i = 0; i < _Order.orderItems!.length; i++){
       Product? product = _Order.orderItems?[i].product;
-      print("product name is ${product!.name}");
+      product?.quantityToBeSold = _Order.orderItems?[i].quantity;
+      // print("product name is ${product!.name} and quantity to be sold is ${product.quantityToBeSold}");
       String? productId = _Order.orderItems?[i].product?.id;
-      print("product id is ${productId}");
-      if(_currOrder.orderItems!.any((element) => element.product!.id == productId)){//checks if product(with id 'productId') is present in _currOrder.orderItems or not
+      //todo: all the working will be done by orderItems.quantity
+      if(_prevOrder.orderItems!.any((element) => element.product!.id == productId)){//checks if product(with id 'productId') is present in _prevOrder.orderItems or not
         //check quantity
         //if increased then find how much quantity is increased and add that value
-        //if decreased don't add it
+        //if decreased update it
         print("in if part line 344");
         double quantityBefore = 0;
-        for(int i = 0;i<_currOrder.orderItems!.length;i++){
-          if(_currOrder.orderItems?[i].product?.id == productId){
-            quantityBefore = _currOrder.orderItems![i].quantity;
-            print("quantity before is ${quantityBefore}");
-            print("product!.quantityToBeSold! is ${product!.quantityToBeSold!}");
+        for(int i = 0;i<_prevOrder.orderItems!.length;i++){//loop for getting what was the quantity before
+          if(_prevOrder.orderItems?[i].product?.id == productId){
+            quantityBefore = _prevOrder.orderItems![i].quantity;
           }
         }
+
         if((product!.quantityToBeSold! - quantityBefore)>0){//this means user have increased quantity of this product
           product.quantityToBeSold = product.quantityToBeSold! - quantityBefore;
           print("adding in kot list");
           Kotlist.add(product);
         }else if ((product.quantityToBeSold! - quantityBefore)<0){//means user have decreased the quantity
-          print("else part in line 360 ${product.name} and ${product.quantityToBeSold}");
-          DatabaseHelper().updateKotQuantity(widget.args!.id!, product.name!,product.quantityToBeSold!);
+          print("else part in line 360 ${product.name} and ${product.quantityToBeSold} and quantity before is ${quantityBefore}");
+          // DatabaseHelper().updateKotQuantity(widget.args!.id!, product.name!,product.quantityToBeSold!);
+          //todo: user decreased the quantity here
+          Item item = Item(name: product.name!, quantity: (product.quantityToBeSold! - quantityBefore), createdAt: DateTime.now());
+          kotItems.add(item);
         }
       }else{
         //add the product as it is because it is new product added
@@ -317,10 +410,12 @@ class _CreateSaleState extends State<CreateSale> {
 
     //if user is editing the order and have removed any products
     //checks from Previously saved Order and compares
-    for(int i = 0;i<_currOrder.orderItems!.length;i++){
-      if(!_Order.orderItems!.any((element) => element.product?.id == _currOrder.orderItems?[i].product?.id)){
-        print("deleting in line 370 name is ${_currOrder.orderItems![i].product!.name!}");
-        DatabaseHelper().deleteKot(widget.args!.id!, _currOrder.orderItems![i].product!.name!);
+    for(int i = 0;i<_prevOrder.orderItems!.length;i++){
+      if(!_Order.orderItems!.any((element) => element.product?.id == _prevOrder.orderItems?[i].product?.id)){
+        print("deleting in line 370 name is ${_prevOrder.orderItems![i].product!.name!}");
+        Item item = Item(name: _prevOrder.orderItems![i].product!.name!, quantity: -_prevOrder.orderItems![i].quantity, createdAt: DateTime.now());
+        kotItems.add(item);
+        // DatabaseHelper().deleteKot(widget.args!.id!, _prevOrder.orderItems![i].product!.name!);
       }
     }
 
@@ -330,14 +425,31 @@ class _CreateSaleState extends State<CreateSale> {
     print("temp map is $tempMap");
     print("kotlist length is ${Kotlist.length} and kotlist is $Kotlist");
     Kotlist.forEach((element) {
+      print("---kotList for each loop running---");
       if(tempMap['${element.id}'] > 0){//to remove those items which has 0 quantity in kotList
         print("kot model name: ${element.name!}, qtycount :${tempMap['${element.id}']}");
-        var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");
-        kotItemlist.add(model);
+        //Making Item object for kot api
+        Item item = Item(name: element.name, quantity: tempMap['${element.id}'], createdAt: DateTime.now());
+        kotItems.add(item);
+
+        // var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");//for local database
+        // kotItemlist.add(model);//for local database
       }
     });
 
-    DatabaseHelper().insertKot(kotItemlist);
+    BillingCubit billingCubit = BillingCubit();
+    //adding items to _kot object
+    _kot.items = kotItems;
+    if(widget.args!.kotId == null){
+      await KOTService.createKot(_kot);
+      await billingCubit.createBillingOrder(_Order);
+    }else{
+      await KOTService.updateKot(_kot);
+      await billingCubit.updateBillingOrder(_Order);
+    }
+    // billingCubit.getBillingOrders();
+    // print(resp);
+    // DatabaseHelper().insertKot(kotItemlist);
   }
 
   ///
@@ -440,7 +552,7 @@ class _CreateSaleState extends State<CreateSale> {
       },);
 
 
-    if (widget.args!.orderId == null) setState(() {});
+    // if (widget.args!.orderId == null) setState(() {});
   }
   void _removeOrderItemFromKotList(int index){
     for (int i = 0; i < Kotlist.length; i++) {

@@ -26,7 +26,7 @@ class DatabaseHelper {
 
     return openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: (db, version) {
         db.execute('''
           CREATE TABLE  Product(
@@ -116,7 +116,7 @@ class DatabaseHelper {
           CREATE TABLE OrderInput(
             id INTEGER PRIMARY KEY,
             userId Text,
-             
+             kotId Text,
              modeOfPayment Text,
              party Text,
              user Text,
@@ -330,6 +330,17 @@ class DatabaseHelper {
       map,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    // if (product.subProducts != null && product.subProducts!.isNotEmpty) {
+    //   for (SubProduct subProduct in product.subProducts!) {
+    //     await db.insert(
+    //       'SubProduct',
+    //       {
+    //         ...subProduct.toMap(),
+    //       },
+    //       conflictAlgorithm: ConflictAlgorithm.replace,
+    //     );
+    //   }
+    // }
   }
 
   Future<List<Order>> getOrderItems() async {
@@ -404,11 +415,24 @@ class DatabaseHelper {
       }
     });
 
-    Otemp.remove("OIID");
+    // Convert the stored JSON back to a list of SubProduct
+    // print(Otemp['product']['subProducts']);
+    // Otemp['product']['subProducts'] = Otemp['product']['subProducts'];
 
+    // // Check if the 'subProducts' field is present in the data
+    // if (Otemp.containsKey('subProducts')) {
+    //   // If 'subProducts' is present, convert it to a list of SubProduct
+    //   Otemp['product'].subProducts = (Otemp['product']['subProducts'] as List<dynamic>)
+    //       .map((map) => SubProduct.fromMap(map))
+    //       .toList();
+    // } else {
+    //   // If 'subProducts' is not present, initialize it as an empty list
+    //   Otemp['product'].subProducts = [];
+    // }
+    // print("Otemp['product'] in line 436 ${Otemp["product"]['quantity']}");
     list.add(OrderItemInput.fromMapForLocalDatabase(Otemp));
-    print("line 354 in localdataabase");
-    // print(list[0].product);
+    // print("line 354 in localdataabase");
+    // print(list[0].product?.quantityToBeSold!);
 
     return list;
   }
@@ -434,8 +458,8 @@ class DatabaseHelper {
       );
       print(list[i].name);
 
-      print("result");
-      print(result);
+      // print("result");
+      // print(result);
 
       if (result.isNotEmpty) {//updates those KOTs which are not printed
         double qty = result.first['qty'];
