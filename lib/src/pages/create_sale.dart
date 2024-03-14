@@ -364,7 +364,7 @@ class _CreateSaleState extends State<CreateSale> {
     Kot _kot = Kot(kotId: _Order.kotId,items: []);
     List<Item> kotItems = [];
     // int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
-    List<KotModel> kotItemlist = [];
+
 
     //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
     print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
@@ -493,12 +493,6 @@ class _CreateSaleState extends State<CreateSale> {
     var tempMap = {};
 
     for (int i = 0; i < temp.length; i++) {
-      // int count = 1;
-      print("---countNoofItemisLlist---");
-      print(temp[i].name);
-      print(temp[i].id);
-      print(temp[i].quantityToBeSold);
-      print(temp[i].quantity);
       if (!tempMap.containsKey("${temp[i].id}")) {
         // for (int j = i + 1; j < temp.length; j++) {
         //   if (temp[i].id == temp[j].id) {
@@ -557,7 +551,6 @@ class _CreateSaleState extends State<CreateSale> {
   void _removeOrderItemFromKotList(int index){
     for (int i = 0; i < Kotlist.length; i++) {
       if (Kotlist[i].id == _Order.orderItems![index].product!.id) {
-        print("_Order.orderItems![index].product!.quantityToBeSold : ${_Order.orderItems![index].product!.quantityToBeSold}");
         if(_Order.orderItems![index].product!.quantityToBeSold! <= 0){
           print("removing kot from kotlist");
           Kotlist.removeAt(i);

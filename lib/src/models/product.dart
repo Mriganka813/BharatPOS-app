@@ -85,7 +85,7 @@ class Product {
       image: json['image'],
       id: json["_id"],
       hsn: json["hsn"],
-      mrp: json["mrp"] == null ? 0.0 : json["mrp"].toDouble(),
+      mrp: json["mrp"] == null ? null : json["mrp"].toDouble(),
       createdAt: DateTime.parse(json["createdAt"]),
       v: json["__v"],
       gstRate: json['GSTRate'].toString(),

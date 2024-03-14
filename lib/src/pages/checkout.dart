@@ -148,8 +148,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     fetchNTPTime();
     _amountControllers.add(TextEditingController());
     _modeOfPayControllers.add(TextEditingController());
-    print("line 130 in checkout");
-    print(widget.args.order.businessName);
+
     if (widget.args.order.reciverName != null &&
         widget.args.order.reciverName != "") {
       isBillTo = true;
@@ -158,8 +157,21 @@ class _CheckoutPageState extends State<CheckoutPage> {
       businessAddressController.text = widget.args.order.businessAddress!;
       gstController.text = widget.args.order.gst!;
     }
+
+    if(widget.args.canEdit==false)
+      calculate();
   }
 
+  ///to show proper data (when coming from reports page)
+  calculate(){
+    for (int i = 0; i < widget.args.order.orderItems!.length; i++) {
+      OrderItemInput orderItem = widget.args.order.orderItems![i];
+      double? totalInputAmount = widget.args.order.modeOfPayment?.fold<double>(0, (acc, curr) {
+        return curr['amount'] + acc;
+      });
+      _onTotalChange(orderItem.product!, orderItem.price?.toStringAsFixed(2));
+    }
+  }
   _addPaymentMethodField() {
     setState(() {
       _amountControllers.add(TextEditingController());
@@ -189,7 +201,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
       // }
     });
   }
-
+  _onTotalChange(Product product, String? discountedPrice) {
+    product.sellingPrice = double.parse(discountedPrice!);
+    double newBasePrice = (product.sellingPrice! * 100.0) / (100.0 + double.parse(product.gstRate == 'null' ? '0.0' : product.gstRate!));
+    product.baseSellingPriceGst = newBasePrice.toString();
+    double newGst = product.sellingPrice! - newBasePrice;
+    product.saleigst = newGst.toStringAsFixed(2);
+    product.salecgst = (newGst / 2).toStringAsFixed(2);
+    product.salesgst = (newGst / 2).toStringAsFixed(2);
+  }
   Future<void> fetchNTPTime() async {
     DateTime currentTime;
 
@@ -960,17 +980,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
           // "${widget.args.order.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} Products",
           "Checkout",
         ),
-        actions: [
-          // Padding(
-          //   padding: const EdgeInsets.only(right: 15.0),
-          //   child: Center(
-          //     child: Text(
-          //       "₹ ${double.parse(totalPrice()!).toStringAsFixed(2)}",
-          //       style: Theme.of(context).appBarTheme.titleTextStyle,
-          //     ),
-          //   ),
-          // ),
-        ],
       ),
       body: _isLoading
           ? Center(
@@ -1021,12 +1030,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       );
                     }
                     return Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10.0,
-                        bottom: 20,
-                        left: 20,
-                        right: 30,
-                      ),
+                      padding: const EdgeInsets.only(top: 10.0, bottom: 20,left: 20, right: 30,),
                       child: Form(
                         key: _formKey,
                         child: Column(
@@ -1035,8 +1039,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             // const Divider(color: Colors.transparent),
                             // const Divider(color: Colors.transparent, height: 30),
                             Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                               elevation: 4,
                               color: Theme.of(context).scaffoldBackgroundColor,
                               child: Padding(
@@ -1304,50 +1307,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                         decoration: InputDecoration(
                                                             contentPadding:EdgeInsets.symmetric(vertical: 5,horizontal:7),
                                                             label:Text("Amount"),
-                                                            border: OutlineInputBorder(
-                                                                borderRadius:
+                                                            border: OutlineInputBorder(borderRadius:
                                                                     BorderRadius
                                                                         .circular(
                                                                             10))),
                                                         validator: (e) {
-                                                          if (e!
-                                                              .contains(",")) {
+                                                          if (e!.contains(",")) {
                                                             return '(,) character are not allowed';
                                                           }
-                                                          if (e
-                                                              .isNotEmpty) if (double
-                                                                  .parse(e) >
-                                                              99999.0) {
+                                                          if (e.isNotEmpty) if (double.parse(e) > 99999.0) {
                                                             return 'Amount not correct';
                                                           }
                                                           return null;
                                                         },
                                                       )),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      i ==
-                                                              _modeOfPayControllers
-                                                                      .length -
-                                                                  1
+                                                      SizedBox(width: 5,),
+                                                      i == _modeOfPayControllers.length - 1
                                                           ? InkWell(
-                                                              onTap: () =>
-                                                                  _removePaymentMethodField(
-                                                                      i),
+                                                              onTap: () => _removePaymentMethodField(i),
                                                               child: Container(
-                                                                width:
-                                                                    25, // Adjust the width as needed
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .remove_circle,
-                                                                  color: Colors
-                                                                      .red,
+                                                                width: 25, // Adjust the width as needed
+                                                                child: Icon(Icons.remove_circle,
+                                                                  color: Colors.red,
                                                                 ),
                                                               ),
                                                             )
-                                                          : SizedBox(
-                                                              width: 25,
-                                                            )
+                                                          : SizedBox(width: 25,)
                                                     ],
                                                   ),
                                                   SizedBox(
@@ -1359,51 +1344,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         ),
                                         Row(
                                             //add payment mode button
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
                                               InkWell(
                                                 onTap: () {
-                                                  if (_modeOfPayControllers
-                                                          .length <
-                                                      4) {
+                                                  if (_modeOfPayControllers.length < 4) {
                                                     _addPaymentMethodField();
                                                   }
                                                 },
                                                 child: Container(
                                                   padding:
-                                                      const EdgeInsets.only(
-                                                          left: 18,
-                                                          right: 20,
-                                                          top: 8,
-                                                          bottom: 8),
+                                                      const EdgeInsets.only(left: 18, right: 20, top: 8, bottom: 8),
                                                   decoration: ShapeDecoration(
                                                     // color: const Color(0xFF1E232C),
                                                     color: Colors.grey[100],
                                                     shape: RoundedRectangleBorder(
-                                                        side: const BorderSide(
-                                                            color:
-                                                                Colors.black),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(18)),
+                                                        side: const BorderSide(color:Colors.black),
+                                                        borderRadius: BorderRadius.circular(18)),
                                                   ),
                                                   child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
                                                     children: [
                                                       Icon(
                                                         Icons.add_circle,
-                                                        color:
-                                                            _modeOfPayControllers
-                                                                        .length >=
-                                                                    4
+                                                        color: _modeOfPayControllers.length >= 4
                                                                 ? Colors.grey
                                                                 : Colors.green,
                                                       ),
@@ -1413,9 +1379,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                       Text(
                                                         'Payment Mode',
                                                         style: TextStyle(
-                                                          color: _modeOfPayControllers
-                                                                      .length >=
-                                                                  4
+                                                          color: _modeOfPayControllers.length >= 4
                                                               ? Colors.grey
                                                               : Colors.black,
                                                           fontSize: 14,

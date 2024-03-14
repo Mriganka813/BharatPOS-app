@@ -422,7 +422,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
   Future<List<int>> billTicket() async {
     final args = widget.args.billArgs!;
-
+    bool atLeastOneItemHasGst = false;
+    for(int i = 0;i< args.order.orderItems!.length;i++){
+      if(args.order.orderItems?[i].product?.gstRate != 'null'){
+        atLeastOneItemHasGst = true;
+        break;
+      }
+    }
     List<int> bytes = [];
     // Using default profile
     final profile = await CapabilityProfile.load();
@@ -444,19 +450,16 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         .toList();
 
     bytes += generator.text('${args.user.businessName}',
-        styles: PosStyles(height: PosTextSize.size5, align: PosAlign.center));
+        styles: PosStyles(height: PosTextSize.size3, align: PosAlign.center));
 
     for (int i = 0; i < addressRows()!.length; i++) {
       bytes += generator.text('${addressRows()!.elementAt(i)}',
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
   
-
-      if (i == 0 &&
-          args.user.GstIN.toString() != "null" )
-        bytes += generator.text('GSTIN ${args.user.GstIN}',
-            styles:
-                PosStyles(height: PosTextSize.size1, align: PosAlign.center));
+      if(atLeastOneItemHasGst)
+      if (i == 0 && args.user.GstIN.toString() != "null" )
+        bytes += generator.text('GSTIN ${args.user.GstIN}', styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
     }
     bytes += generator.text('${args.user.phoneNumber}',
         styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
@@ -495,7 +498,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           text:
               ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null' ? args.order.orderItems![i].product!.sellingPrice : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
           width: 3,
-          styles: PosStyles(height: PosTextSize.size1),
+          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
         ),
       ]);
     }
@@ -515,6 +518,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       ),
     ]);
 
+    if(atLeastOneItemHasGst)
     bytes += generator.row([
       PosColumn(
         text: 'GST',

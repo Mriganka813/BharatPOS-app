@@ -88,15 +88,15 @@ class _SignInPageState extends State<SignInPage> {
             );
           }
           if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.red,
-                content: Text(
-                  state.message,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-            );
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(
+            //     backgroundColor: Colors.red,
+            //     content: Text(
+            //       state.message,
+            //       style: const TextStyle(color: Colors.white),
+            //     ),
+            //   ),
+            // );
           }
         },
         child: BlocBuilder<AuthCubit, AuthState>(

@@ -17,7 +17,10 @@ class CustomInterceptor extends Interceptor {
     //     : err.message;
     final errorMessage = err.response?.data['message'];
     const message = "Something went wrong";
-    // locator<GlobalServices>().errorSnackBar(errorMessage ?? message);
+    // print("errorMEsg = $errorMessage");
+    // if(errorMessage == 'Your subscription is not active')
+    if(errorMessage!=null)
+      locator<GlobalServices>().errorSnackBar(errorMessage ?? message);
     return super.onError(err, handler);
   }
 }

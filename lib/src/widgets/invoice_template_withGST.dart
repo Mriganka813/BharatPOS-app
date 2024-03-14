@@ -90,10 +90,10 @@ String invoiceTemplatewithGST({
     return '';
   }
 
+  bool atleastOneItemhaveGST = false;
   String shopkeepergstin() {
 
 
-         bool atleastOneItemhaveGST = false;
       print("Value OF GST");
       order.orderItems!.forEach((element) {
         print(element.product!.gstRate);
@@ -334,16 +334,14 @@ String invoiceTemplatewithGST({
                   <td class="left">
                     <strong>Sub Total</strong>
                     <br>
-                    <strong>GST Total</strong>
-                    <br>
+                    ${atleastOneItemhaveGST ? "<strong>GST Total</strong><br>" : ""}
                     <strong>Net Total</strong>
                   </td>
                   <td class="right">
-                    ₹ $subtotal
-                    <br>
-                    ₹ $gsttotal
-                    <br>
-                    ₹ $total
+                     ₹ $subtotal
+                      <br>
+                      ${atleastOneItemhaveGST ? "₹ $gsttotal<br>" : ""}
+                      ₹ $total
                   </td>
                 </tr>
               </tbody>

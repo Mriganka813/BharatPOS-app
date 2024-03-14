@@ -21,8 +21,10 @@ class EstimateBillingPageArgs {
   final Order? order;
   // final List<OrderItemInput>? editOrders;
   // final id;
+  ///edit flag will be true if coming from report page executing go to estimate
+  final bool? editFlag;
 
-  EstimateBillingPageArgs({this.order});
+  EstimateBillingPageArgs({this.order, this.editFlag = false});
 }
 class CreateEstimate extends StatefulWidget {
   CreateEstimate({Key? key, this.args}) : super(key: key);
@@ -54,8 +56,19 @@ class _CreateEstimateState extends State<CreateEstimate> {
     print("line 53 in create estimate.dart");
     print(_Order.businessName);
     // print(_Order.orderItems?[0].product?.name);
+    if(widget.args!.editFlag!)
+      calculate();
+
   }
 
+  ///to show proper data (when coming from reports page)
+  calculate(){
+    for (int i = 0; i < widget.args!.order!.orderItems!.length; i++) {
+      OrderItemInput orderItem = widget.args!.order!.orderItems![i];
+
+      _onTotalChange(orderItem.product!, orderItem.price?.toStringAsFixed(2));
+    }
+  }
 
   void _onAdd(OrderItemInput orderItem) {
     final qty = orderItem.quantity + 1;

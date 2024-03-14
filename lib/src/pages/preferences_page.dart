@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../widgets/custom_drop_down.dart';
+
 class DefaultPreferences extends StatefulWidget {
   static const routeName = 'default-preferences';
 
@@ -15,6 +17,9 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool shareButtonSwitch = false;
   bool barcodeButtonSwitch = false;
   bool skipPendingOrderSwitch = false;
+  // bool multiplePaymentModeSwitch = false;
+  String? defaultBillSize;
+  String? defaultKotBillSize;
   late SharedPreferences prefs;
   @override
   void initState() {
@@ -43,6 +48,21 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
     }else{//by default it will be true
       await prefs.setBool('pending-orders-preference', false);
       skipPendingOrderSwitch = false;
+    }
+
+    // if(prefs.containsKey('payment-mode-preference')){
+    //   multiplePaymentModeSwitch = (await prefs.getBool('payment-mode-preference'))!;
+    // }else{//by default it will be true
+    //   await prefs.setBool('payment-mode-preference', true);
+    //   multiplePaymentModeSwitch = true;
+    // }
+
+    if(prefs.containsKey('defaultBill')){
+      defaultBillSize = (await prefs.getString('defaultBill'))!;
+    }
+
+    if(prefs.containsKey('default')){
+      defaultKotBillSize = (await prefs.getString('default'))!;
     }
 
     setState(() {});
@@ -113,6 +133,76 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                               });
                               await prefs.setBool('pending-orders-preference', value);
                             }),
+                      ),
+                    ),
+                    // Divider(thickness: 1,),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: ListTile(
+                    //     title: Text('Multiple payment mode'),
+                    //     subtitle: Text('You can add more payment methods in checkout'),
+                    //     trailing:  Switch(
+                    //         value: multiplePaymentModeSwitch,
+                    //         onChanged: (value) async {
+                    //           setState(() {
+                    //             multiplePaymentModeSwitch = value;
+                    //           });
+                    //           await prefs.setBool('payment-mode-preference', value);
+                    //         }),
+                    //   ),
+                    // ),
+                    Divider(thickness: 1,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Default bill size'),
+                        subtitle:  Text('Select which type of bill you want to print in checkout'),
+                        trailing:  SizedBox(
+                          width: 90,
+                          child: CustomDropDownField(
+                            items: const <String> ["57mm","80mm","A4"],
+                            initialValue: defaultBillSize,
+                            onSelected: (e) async {
+                              defaultBillSize = e;
+                              await prefs.setString('defaultBill', e);
+                              setState(() {});
+                            },
+                            // validator: (e) {
+                            //   if ((e ?? "").isEmpty) {
+                            //     return 'Please select a mode of payment';
+                            //   }
+                            //   return null;
+                            // },
+                            hintText: "select",
+                          ),
+                        ),
+                      ),
+                    ),
+                    Divider(thickness: 1,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Default kot bill size'),
+                        subtitle:  Text('Select which type of bill you want to print in kot'),
+                        trailing:  SizedBox(
+                          width: 90,
+                          child: CustomDropDownField(
+                            items: const <String> ["57mm","80mm"],
+                            initialValue: defaultKotBillSize,
+                            onSelected: (e) async {
+                              defaultKotBillSize = e;
+                              await prefs.setString('default', e);
+                              setState(() {});
+                            },
+                            // validator: (e) {
+                            //   if ((e ?? "").isEmpty) {
+                            //     return 'Please select a mode of payment';
+                            //   }
+                            //   return null;
+                            // },
+                            hintText: "select",
+                          ),
+                        ),
                       ),
                     ),
                     // Divider(thickness: 1,),

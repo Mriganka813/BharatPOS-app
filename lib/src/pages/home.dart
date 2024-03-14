@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
@@ -33,6 +34,8 @@ import 'package:shopos/src/services/set_or_change_pin.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/pin_validation.dart';
 
+import '../models/input/order.dart';
+
 class HomePage extends StatefulWidget {
   BuildContext context;
   HomePage(this.context, {Key? key}) : super(key: key);
@@ -43,7 +46,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final HomeCubit _homeCubit;
-
+  bool shareButtonSwitch = false;
+  bool barcodeButtonSwitch = false;
+  bool skipPendingOrderSwitch = false;
+  // bool multiplePaymentModeSwitch = false;
+  String? defaultBillSize;
+  String? defaultKotBillSize;
+  late SharedPreferences prefs;
   bool shopOpen = true;
 
   final PinService _pinService = PinService();
@@ -56,9 +65,50 @@ class _HomePageState extends State<HomePage> {
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
     initializeService();
+    init();
     // getDataFromDatabase();
   }
 
+  void init() async {
+    prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey('share-button-preference')){
+      shareButtonSwitch = (await prefs.getBool('share-button-preference'))!;
+    }else{//by default it will be false
+      await prefs.setBool('share-button-preference', false);
+      shareButtonSwitch = false;
+    }
+
+    if(prefs.containsKey('barcode-button-preference')){
+      barcodeButtonSwitch = (await prefs.getBool('barcode-button-preference'))!;
+    }else{//by default it will be true
+      await prefs.setBool('barcode-button-preference', true);
+      barcodeButtonSwitch = true;
+    }
+
+    if(prefs.containsKey('pending-orders-preference')){
+      skipPendingOrderSwitch = (await prefs.getBool('pending-orders-preference'))!;
+    }else{//by default it will be true
+      await prefs.setBool('pending-orders-preference', false);
+      skipPendingOrderSwitch = false;
+    }
+
+    // if(prefs.containsKey('payment-mode-preference')){
+    //   multiplePaymentModeSwitch = (await prefs.getBool('payment-mode-preference'))!;
+    // }else{//by default it will be true
+    //   await prefs.setBool('payment-mode-preference', true);
+    //   multiplePaymentModeSwitch = true;
+    // }
+
+    if(prefs.containsKey('defaultBill')){
+      defaultBillSize = (await prefs.getString('defaultBill'))!;
+    }
+
+    if(prefs.containsKey('default')){
+      defaultKotBillSize = (await prefs.getString('default'))!;
+    }
+
+    setState(() {});
+  }
   //LocalDatabase
   getDataFromDatabase() async {
     print("sssssssss");
@@ -222,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         title: Title(color: Colors.black, child: Text("Estimates")),
                         onTap: () async {
-                          Navigator.of(context).pushNamed(CreateEstimate.routeName);
+                          Navigator.of(context).pushNamed(CreateEstimate.routeName, arguments: EstimateBillingPageArgs(order: Order(orderItems: [])));
                         },
                       ),
                       ListTile(

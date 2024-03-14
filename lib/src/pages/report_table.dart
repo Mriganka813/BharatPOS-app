@@ -763,7 +763,7 @@ class _ReportTableState extends State<ReportTable> {
         timelist.add(DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!));
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
-        gstratelist.add("${item.product?.gstRate == "null" ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");
+        gstratelist.add("${item.product?.gstRate == "null" || item.product?.gstRate == null ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
             ? basesplist.add(
             "${item.baseSellingPrice != "null" ? (double.parse(item.baseSellingPrice!) * item.quantity).toStringAsFixed(2) : (item.product?.baseSellingPriceGst != "null" && item.product?.baseSellingPriceGst != null ? (double.parse(item.product!.baseSellingPriceGst!) * item.quantity).toStringAsFixed(2) : "N/A")}")
@@ -778,15 +778,13 @@ class _ReportTableState extends State<ReportTable> {
             ? igstlist.add("${item.saleIGST != "null" ? (double.parse(item.saleIGST!) * (item.quantity)).toStringAsFixed(2) : (item.product?.saleigst != "null" && item.product?.saleigst != null ? (double.parse(item.product!.saleigst!)*(item.quantity)) : "N/A")}")
             : igstlist.add("${item.product?.purchaseigst == "null" ? "N/A" : item.product?.purchaseigst}");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
-            ? mrplist.add("${item.price?.toStringAsFixed(2)}") : mrplist.add("${item.product?.purchasePrice == "null" ? "N/A" : item.product?.purchasePrice}");
-        hsn.add("${item.product?.hsn == "null" ? "N/A" : item.product?.hsn}");
+            ? mrplist.add("${item.price?.toStringAsFixed(2)}") : mrplist.add("${item.product?.purchasePrice == "null" || item.product?.purchasePrice == null ? "N/A" : item.product?.purchasePrice}");
+        hsn.add("${item.product?.hsn == "null" || item.product?.hsn == null ? "N/A" : item.product?.hsn}");
         discountAmt.add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
 
         invoiceNum.add("${e.invoiceNum == null ? "N/A" : e.invoiceNum}");
-        print("line 560 in report table.dart");
-        print(e.estimateNum);
         estimateNum.add("${e.estimateNum == null? "N/A": e.estimateNum}");
-        orginalbasePurchasePrice.add("${item.product?.sellingPrice}");
+        orginalbasePurchasePrice.add(item.product?.sellingPrice=="null" || item.product?.sellingPrice==null ? "N/A" : "${item.product?.sellingPrice}");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
             ? totalsplist.add("${((item.quantity) * (item.price ?? 0)).toStringAsFixed(2)}") : totalsplist.add("${((item.quantity) * (item.product?.purchasePrice ?? 0)).toStringAsFixed(2)}");
 
@@ -1590,7 +1588,7 @@ class _ReportTableState extends State<ReportTable> {
       print("line 1106 in report table");
       print(estimateResponse['estimate']['_id']);
       Order orders = Order.fromMap(estimateResponse['estimate']);
-      Navigator.pushNamed(context, CreateEstimate.routeName,arguments: EstimateBillingPageArgs(order: orders));
+      Navigator.pushNamed(context, CreateEstimate.routeName,arguments: EstimateBillingPageArgs(order: orders, editFlag: true));
     }else if(widget.args.type == "ReportType.sale"){
       Map<String, dynamic> salesResponse = await SalesService.getSingleSaleOrder(estimateNumController.text);
       Order order = Order.fromMap(salesResponse['salesOrder']);

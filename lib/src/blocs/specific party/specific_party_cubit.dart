@@ -110,8 +110,8 @@ class SpecificPartyCubit extends Cubit<SpecificPartyState> {
     }
     print("party id: ${partyId}");
     final sales = await _partyService.getSalesCreditHistory(partyId);
-    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
     print("sales is ${sales}");
+    final _partyDetail = await _partyService.getCreditSaleParty(partyId);
     print("_partyDetail is ${_partyDetail.toMap().toString()}");
 
     return emit(SpecificPartyListRender(
