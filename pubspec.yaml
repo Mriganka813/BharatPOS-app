@@ -10,8 +10,7 @@ environment:
   sdk: ">=2.16.2 <3.0.0"
 
 dependencies:
-  flutter_html: 
-  audioplayers: 
+  flutter_html:
   cached_network_image: 
   cookie_jar: 
   # date_time_picker: 
@@ -63,7 +62,7 @@ dependencies:
   pinput: ^3.0.1
   open_file_plus: ^3.4.1
   print_bluetooth_thermal: ^1.0.9
-  esc_pos_utils_plus: ^2.0.2
+  esc_pos_utils: ^1.1.0
   # excel: ^2.1.0
   syncfusion_flutter_xlsio: ^23.1.40
   sqflite:

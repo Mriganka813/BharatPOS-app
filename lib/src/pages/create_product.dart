@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +45,7 @@ class _CreateProductState extends State<CreateProduct> {
   late final ProductCubit _productCubit;
   final _formKey = GlobalKey<FormState>();
   late ProductFormInput _formInput;
-  final AudioCache _audioCache = AudioCache();
+  // final AudioCache _audioCache = AudioCache();
   late final ImagePicker _picker;
   bool _showLoader = false;
   bool gstSwitch = false;
@@ -186,7 +186,7 @@ class _CreateProductState extends State<CreateProduct> {
   @override
   void dispose() {
     _productCubit.close();
-    _audioCache.clearAll();
+    // _audioCache.clearAll();
     super.dispose();
   }
 
