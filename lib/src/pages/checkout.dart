@@ -491,6 +491,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     bool expirydateAvailableFlag = false;
     bool hsnAvailableFlag = false;
     bool mrpAvailableFlag = false;
+    bool atleastOneItemhaveGST = false;
 
     widget.args.order.orderItems!.forEach((element) {
       if (element.product!.expiryDate != null &&
@@ -508,9 +509,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
           element.product!.mrp != "") {
         mrpAvailableFlag = true;
       }
+      if (element.product!.gstRate != "null") {
+        atleastOneItemhaveGST = true;
+      }
     });
 
-    var headerList = ["Name", "Qty", "Taxable value", "GST", "Amount"];
+    var headerList = ["Name", "Qty", "Amount"];
+    if(atleastOneItemhaveGST){
+      headerList.insert(2, "GST");
+      headerList.insert(2, "Taxable value");
+    }
     if(mrpAvailableFlag){
       headerList.insert(2, "MRP");
     }

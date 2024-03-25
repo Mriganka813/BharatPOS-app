@@ -143,6 +143,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
       locator<GlobalServices>().infoSnackBar('Item not available');
       return;
     }
+
+    //to check availability, checking how much quantity has already been added to cart
     double prevAdded = 0;
     for(int i = 0; i<widget.args!.productlist.length;i++){
       if(product.id == widget.args?.productlist[i].product?.id){

@@ -188,7 +188,6 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                             alignment: order.modeOfPayment?[0]["mode"] == "Settle" ? Alignment.centerLeft : Alignment.centerRight,
                             child: SizedBox(
                               height: 50,
-                              width: 111,
                               child: GestureDetector(
                                 onLongPress: () async {
                                   HapticFeedback.vibrate();
