@@ -19,7 +19,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Text("""This Privacy Policy outlines how Magicstep Solutions Private Limited ("we," "us," or "our") collects, uses, and safeguards the information provided by users ("you" or "your") while using the CUBE mobile application ("the App"). By using the App, you agree to the terms of this Privacy Policy."""),
+              Text("""This Privacy Policy outlines how Magicstep Solutions Private Limited ("we," "us," or "our") collects, uses, and safeguards the information provided by users ("you" or "your") while using the BharatPOS mobile application ("the App"). By using the App, you agree to the terms of this Privacy Policy."""),
               SizedBox(height: 50,),
               Text(
                 "1. Information Collection:",

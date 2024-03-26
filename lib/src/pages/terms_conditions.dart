@@ -16,7 +16,7 @@ class TermsAndConditionsPage extends StatelessWidget {
           child: Text(
             """
 
-These Terms and Conditions ("Terms") govern your use of the CUBE mobile application ("the App") provided by Magicstep Solutions Private Limited ("we," "us," or "our"). By using the App, you agree to comply with these Terms. If you do not agree with any part of these Terms, please refrain from using the App.
+These Terms and Conditions ("Terms") govern your use of the BharatPOS mobile application ("the App") provided by Magicstep Solutions Private Limited ("we," "us," or "our"). By using the App, you agree to comply with these Terms. If you do not agree with any part of these Terms, please refrain from using the App.
 
 App Usage:
 a. You may use the App for personal, non-commercial purposes only. Any commercial use or unauthorized distribution of the App is strictly prohibited.

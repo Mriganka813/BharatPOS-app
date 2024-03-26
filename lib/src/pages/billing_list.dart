@@ -103,7 +103,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   void startTimer() {
     print("timer started");
-    timer = Timer.periodic(Duration(seconds: 10), (_) => refreshPage());
+    timer = Timer.periodic(Duration(seconds: 30), (_) => refreshPage());
   }
 
   void refreshPage() {
@@ -500,6 +500,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
           actions: [
             IconButton(onPressed: (){
               _billingCubit.getBillingOrders();
+              //if is in search bar and presses refresh button then timer will restart
+              timer?.cancel;
+              if(autoRefreshPref) startTimer();
               locator<GlobalServices>().successSnackBar("Bills Refreshed");
             }, icon: Icon(Icons.refresh))
           ],
