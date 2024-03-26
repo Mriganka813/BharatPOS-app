@@ -555,7 +555,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                              child: _allBills.length==0
                                  ? Center(
                                    child: Text(
-                                     'No bills to show',
+                                     'No pending orders to show',
                                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                                    ))
                                  : ListView.builder(
