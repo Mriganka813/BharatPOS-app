@@ -5,6 +5,7 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
   final Function(String?)? onSave;
   final Function(String?)? validator;
+  final Function()? onTap;
   final bool isLoading;
   final String? initialValue;
   final Widget? prefixIcon;
@@ -26,6 +27,7 @@ class CustomTextField extends StatefulWidget {
       this.onSave,
       this.value,
       this.validator,
+        this.onTap,
       this.hintText,
       this.label,
       this.isLoading = false,
@@ -70,7 +72,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.label != null) const SizedBox(height: 5),
         TextFormField(
             maxLines:  widget.maxLines,
-            
+            onTap: widget.onTap != null? widget.onTap! : null,
             readOnly: widget.readonly,
             obscureText: widget.obsecureText,
             inputFormatters: widget.inputFormatters,

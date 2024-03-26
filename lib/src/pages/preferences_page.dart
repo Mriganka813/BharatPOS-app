@@ -17,6 +17,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool shareButtonSwitch = false;
   bool barcodeButtonSwitch = false;
   bool skipPendingOrderSwitch = false;
+  bool autoRefreshPendingOrdersSwitch = false;
   // bool multiplePaymentModeSwitch = false;
   String? defaultBillSize;
   String? defaultKotBillSize;
@@ -45,9 +46,15 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
 
     if(prefs.containsKey('pending-orders-preference')){
       skipPendingOrderSwitch = (await prefs.getBool('pending-orders-preference'))!;
-    }else{//by default it will be true
+    }else{//by default it will be false
       await prefs.setBool('pending-orders-preference', false);
       skipPendingOrderSwitch = false;
+    }
+    if(prefs.containsKey('refresh-pending-orders-preference')){
+      autoRefreshPendingOrdersSwitch = (await prefs.getBool('refresh-pending-orders-preference'))!;
+    }else{//by default it will be false
+      await prefs.setBool('refresh-pending-orders-preference', false);
+      autoRefreshPendingOrdersSwitch = false;
     }
 
     // if(prefs.containsKey('payment-mode-preference')){
@@ -132,6 +139,22 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                                 skipPendingOrderSwitch = value;
                               });
                               await prefs.setBool('pending-orders-preference', value);
+                            }),
+                      ),
+                    ),
+                    Divider(thickness: 1,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Auto refresh pending orders'),
+                        subtitle: Text('Pending orders page will be refreshed in the interval of 10 seconds'),
+                        trailing:  Switch(
+                            value: autoRefreshPendingOrdersSwitch,
+                            onChanged: (value) async {
+                              setState(() {
+                                autoRefreshPendingOrdersSwitch = value;
+                              });
+                              await prefs.setBool('refresh-pending-orders-preference', value);
                             }),
                       ),
                     ),

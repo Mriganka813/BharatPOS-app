@@ -56,8 +56,8 @@ android {
         minSdkVersion 21
         // minSdkVersion localProperties.getProperty('flutter.minSdkVersion').toInteger()
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 72
-        versionName '1.5.1'
+        versionCode 74
+        versionName '1.5.3'
         multiDexEnabled true
     }
 
@@ -90,4 +90,5 @@ flutter {
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.android.recaptcha:recaptcha:18.4.0'
 }

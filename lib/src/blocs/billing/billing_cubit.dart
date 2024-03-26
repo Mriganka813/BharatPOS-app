@@ -13,6 +13,21 @@ class BillingCubit extends Cubit<BillingState> {
   BillingCubit() : super(BillingInitial());
   final BillingService _billingService = const BillingService();
 
+  searchByTableNo(String tableNum) async {
+    // emit(BillingLoading());
+    List<Order> _allBills = [];
+    List<dynamic> allBillingOrders = await _billingService.getAllBillingOrder();
+    allBillingOrders.forEach((element) {
+      _allBills.add(Order.fromMap(element));
+    });
+    List<Order> searchedOrders = [];
+    _allBills.forEach((element) {
+      if(element.tableNo.trim() == tableNum.trim()){
+        searchedOrders.add(element);
+      }
+    });
+    emit(BillingListRender(bills: searchedOrders));
+  }
   Future<Response> createBillingOrder(Order order) async {
     emit(BillingLoading());
 
