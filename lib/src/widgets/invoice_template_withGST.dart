@@ -16,6 +16,8 @@ String invoiceTemplatewithGST({
   required String type,
   String? invoiceNum,
 }) {
+  print(gsttotal);
+  print(" = GSTTOTAL");
   ///
   // String dateFormat() => '${date.day}/${date.month}/${date.year}';
   String dateFormat(){
@@ -40,7 +42,11 @@ String invoiceTemplatewithGST({
   ///
   String headerRows() => List.generate(
         headers.length,
-        (int index) => '<th class="left">${headers[index]}</th>',
+        (int index) {
+          return
+          (gsttotal == "0.00"  && (headers[index] == "GST" || headers[index] == "Taxable value")) ? '<th class="left"> </th>':
+          '<th class="left">${headers[index]}</th>';
+        }
       ).join(' ');
 
   ///
@@ -77,7 +83,7 @@ String invoiceTemplatewithGST({
 
   String usergstin() {
 
-   
+
     if (order.gst != null && order.gst!.isNotEmpty) {
       return '<div><strong>GSTIN: </strong>${order.gst!.toUpperCase()}</div>';
     }

@@ -459,6 +459,8 @@ class _CreateProductState extends State<CreateProduct> {
                       children: [
                         Expanded(
                           child: CustomTextField2(
+                            enabledBorderWidth: 0.3,
+                            focusedBorderWidth: 1,
                             readonly:
                                 includedExcludedRadioButton == 2 ? true : false,
                             controller: sellingPriceController,
@@ -486,6 +488,8 @@ class _CreateProductState extends State<CreateProduct> {
                         const VerticalDivider(color: Colors.transparent),
                         Expanded(
                           child: CustomTextField2(
+                            enabledBorderWidth: 0.3,
+                            focusedBorderWidth: 1,
                             controller: purchasePriceController,
                             label: "Purchase Price",
                             value: _formInput.purchasePrice != "null" &&

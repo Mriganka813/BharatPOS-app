@@ -25,7 +25,10 @@ String invoiceTemplatewithouGST({
   ///
   String headerRows() => List.generate(
         headers.length,
-        (int index) => '<th class="left">${headers[index]}</th>',
+        (int index) {
+          (headers[index] != "GST") ? '<th class="left">${headers[index]}</th>' : '<th class="left"> </th>'
+          ;
+        }
       ).join(' ');
 
   ///

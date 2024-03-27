@@ -610,6 +610,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: CustomTextField2(
+                            enabledBorderWidth: 0.3,
+                            focusedBorderWidth: 1,
                     hintText: "Enter Table No (optional)",
                     controller: tableNoController,
                     value: "${widget.args.bluetoothArgs!.order.tableNo == 'null' ? "" : widget.args.bluetoothArgs!.order.tableNo}",
