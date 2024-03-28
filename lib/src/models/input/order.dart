@@ -23,7 +23,8 @@ class Order {
       this.gst,
       this.invoiceNum,
         this.estimateNum,
-      this.tableNo = "-1"});
+      this.tableNo = "-1",
+      this.orderReady});
 
   String? kotId;
   int? id;
@@ -41,8 +42,10 @@ class Order {
   String? invoiceNum;
   String? estimateNum;
   String tableNo;
+  bool? orderReady;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
+    orderReady: json["orderReady"] ?? false,
         kotId: json["kotId"].toString(),
         objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
@@ -71,6 +74,7 @@ class Order {
     
     
     return Order(
+        orderReady: json["orderReady"] ?? false,
         objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
@@ -86,6 +90,7 @@ class Order {
       );}
 
   Map<String, dynamic> toMap(OrderType type) => {
+        "orderReady": orderReady,
         "kotId": kotId,
         "id": id,
         "orderItems": orderItems?.map((e) => type == OrderType.sale ? e.toSaleMap() : e.toPurchaseMap()).toList(),
@@ -100,6 +105,7 @@ class Order {
         "tableNo": tableNo
       };
   Map<String, dynamic> toMapForCopy() => {//for making copy of Order
+    "orderReady": orderReady,
     "id": id,
     "kotId": kotId,
     "orderItems": orderItems?.map((e) => e.toMapCopy()).toList(),

@@ -20,6 +20,7 @@ import 'package:shopos/src/provider/billing_order.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
 import 'package:shopos/src/services/billing_service.dart';
 import 'package:shopos/src/services/kot_services.dart';
+import 'package:shopos/src/services/api_v1.dart';
 
 import '../config/colors.dart';
 import '../services/global.dart';
@@ -83,6 +84,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   Timer? timer; //we cancel timer when pending order delete dialog shows up, and user is searching using table nu
   String date = '';
   bool autoRefreshPref = false;
+  bool showReadySwitch = false;
   late SharedPreferences prefs;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
@@ -94,7 +96,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
     fetchNTPTime();
     init();
     _billingCubit = BillingCubit()..getBillingOrders();
+
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -113,6 +117,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   init() async {
     prefs = await SharedPreferences.getInstance();
     autoRefreshPref = (await prefs.getBool('refresh-pending-orders-preference'))!;
+    showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
     if(autoRefreshPref)
       startTimer();
   }
@@ -793,6 +798,80 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                    }, icon: Icon(Icons.print, color: Colors.blue[400],)),
                                                  ],
                                                ),
+                                               showReadySwitch ?
+                                               InkWell(
+                                                 onTap: () async {
+                                                   // Show AlertDialog
+                                                   (_allBills[index].orderReady == false) ?
+                                                   showDialog(
+                                                     context: context,
+                                                     builder: (context) => AlertDialog(
+                                                       title: Text('Confirmation'),
+                                                       content: Text('Are you sure?'),
+                                                       actions: <Widget>[
+                                                         TextButton(
+                                                           onPressed: () {
+                                                             Navigator.of(context).pop(); // Close the AlertDialog
+                                                           },
+                                                           child: Text('Cancel'),
+                                                         ),
+                                                         TextButton(
+                                                           onPressed: () async {
+                                                             // Send POST request
+                                                             final url = '/billingorder/change/${_allBills[index].kotId!}';
+                                                             final response = await ApiV1Service.putRequest(
+                                                               url,
+                                                               data: {'orderReady': true},
+                                                             );
+
+                                                             if (response.statusCode == 200) {
+                                                               // Request successful
+                                                               setState(() {
+                                                                 _allBills[index].orderReady = true;
+                                                               });
+                                                               Navigator.of(context).pop(); // Close the AlertDialog
+                                                             } else {
+                                                               // Request failed, handle error
+                                                               print('Failed to update order status: ${response.statusCode}');
+                                                               // You can display an error message to the user if needed
+                                                             }
+                                                           },
+                                                           child: Text('OK'),
+                                                         ),
+                                                       ],
+                                                     ),
+                                                   )
+                                                       : null;
+                                                 },
+                                                 child: Container(
+                                                   decoration:
+
+                                                   BoxDecoration(
+                                                     shape: BoxShape.rectangle,
+                                                     borderRadius: BorderRadius.circular(20),
+                                                     color: _allBills[index].orderReady! ? Colors.green : Colors.white, // Adjust color and opacity as needed
+                                                     border: Border.all(
+                                                       color: Colors.blue, // Border color
+                                                       width: _allBills[index].orderReady! ? 0 : 1, // Border width
+                                                     ),
+                                                   ),
+                                                   padding: EdgeInsets.only(top: 6, bottom: 6, left: 20, right: 20),
+                                                   child: Center(
+                                                     child: Container(
+                                                       // padding: EdgeInsets.only(left: 30, right: 10, top: 15, bottom: 15),
+                                                       // color: Colors.red,
+                                                       child: Row(
+                                                         mainAxisAlignment: MainAxisAlignment.end,
+                                                         children: [
+                                                           Text('Ready', style: TextStyle(color: _allBills[index].orderReady! ? Colors.white :Colors.blue, fontWeight: FontWeight.bold),),
+                                                           // SizedBox(width: 10,)
+                                                         ],
+                                                       ),
+                                                     ),
+                                                   ),
+                                                 ),
+
+                                               ) : SizedBox(),
                                                InkWell(
                                                  onTap: () async {
                                                    // print("on tap edit");

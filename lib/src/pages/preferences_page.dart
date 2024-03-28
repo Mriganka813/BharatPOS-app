@@ -18,6 +18,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool barcodeButtonSwitch = false;
   bool skipPendingOrderSwitch = false;
   bool autoRefreshPendingOrdersSwitch = false;
+  bool showReadySwitch = false;
   // bool multiplePaymentModeSwitch = false;
   String? defaultBillSize;
   String? defaultKotBillSize;
@@ -55,6 +56,13 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
     }else{//by default it will be false
       await prefs.setBool('refresh-pending-orders-preference', false);
       autoRefreshPendingOrdersSwitch = false;
+    }
+
+    if(prefs.containsKey('ready-orders-preference')){
+      showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
+    }else{//by default it will be false
+      await prefs.setBool('ready-orders-preference', false);
+      showReadySwitch = false;
     }
 
     // if(prefs.containsKey('payment-mode-preference')){
@@ -139,6 +147,22 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                                 skipPendingOrderSwitch = value;
                               });
                               await prefs.setBool('pending-orders-preference', value);
+                            }),
+                      ),
+                    ),
+                    Divider(thickness: 1,),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Order Ready'),
+                        subtitle: Text('Kitchen staff can mark an order ready to notify the staff'),
+                        trailing:  Switch(
+                            value: showReadySwitch,
+                            onChanged: (value) async {
+                              setState(() {
+                                showReadySwitch = value;
+                              });
+                              await prefs.setBool('ready-orders-preference', value);
                             }),
                       ),
                     ),

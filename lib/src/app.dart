@@ -97,14 +97,16 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: SplashScreen.routeName,
       theme: ThemeData(
+        useMaterial3 : false,
         progressIndicatorTheme:
             const ProgressIndicatorThemeData(color: Colors.white),
         appBarTheme: AppBarTheme(
+
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarIconBrightness: Brightness.dark,
             statusBarColor: Theme.of(context).scaffoldBackgroundColor,
           ),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Color(0xfffafafa),
           elevation: 0,
           iconTheme: const IconThemeData(
             color: Colors.black,
