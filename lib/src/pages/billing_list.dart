@@ -817,24 +817,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                          ),
                                                          TextButton(
                                                            onPressed: () async {
-                                                             // Send POST request
-                                                             final url = '/billingorder/change/${_allBills[index].kotId!}';
-                                                             final response = await ApiV1Service.putRequest(
-                                                               url,
-                                                               data: {'orderReady': true},
-                                                             );
-
-                                                             if (response.statusCode == 200) {
-                                                               // Request successful
-                                                               setState(() {
-                                                                 _allBills[index].orderReady = true;
-                                                               });
-                                                               Navigator.of(context).pop(); // Close the AlertDialog
-                                                             } else {
-                                                               // Request failed, handle error
-                                                               print('Failed to update order status: ${response.statusCode}');
-                                                               // You can display an error message to the user if needed
-                                                             }
+                                                             _allBills[index].orderReady = true;
+                                                             await _billingCubit.updateBillingOrder(_allBills[index]);
+                                                             Navigator.of(context).pop();// Close the AlertDialog
                                                            },
                                                            child: Text('OK'),
                                                          ),
