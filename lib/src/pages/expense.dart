@@ -87,8 +87,9 @@ class _ExpensePageState extends State<ExpensePage> {
                       expense: state.expense[index],
                       onDelete: () async {
                         var result = true;
+                        bool x = await _pinService.pinStatus();
+                        if (x == true) {
 
-                        if (await _pinService.pinStatus()==true) {
                           result = await _showPinDialog() as bool;
                         }
                         if (result!) {
@@ -100,9 +101,9 @@ class _ExpensePageState extends State<ExpensePage> {
                         }
                       },
                       onEdit: () async {
-                        var result = true;
-
-                        if (await _pinService.pinStatus()==true) {
+                        bool? result = true;
+                        bool x = await _pinService.pinStatus();
+                        if (x == true) {
                           result = await _showPinDialog() as bool;
                         }
                         if (result!) {

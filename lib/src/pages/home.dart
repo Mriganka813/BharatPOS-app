@@ -295,8 +295,8 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("Preferences")),
                         onTap: () async {
                           var result = true;
-
-                          if (await _pinService.pinStatus() == true) {
+                          var x  = await _pinService.pinStatus();
+                          if (x == true ) {
                             result = await PinValidation.showPinDialog(context) as bool;
                           }
                           if(result){

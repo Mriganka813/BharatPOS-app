@@ -460,8 +460,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                         isAvailable: isAvailable,
                                         onDelete: () async {
                                           var result = true;
-
-                                          if (await _pinService.pinStatus() == true) {
+                                          var x = await _pinService.pinStatus();
+                                          if (x == true) {
                                             result = await _showPinDialog() as bool;
                                           }
 
@@ -474,8 +474,8 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                         },
                                         onEdit: () async {
                                           var result = true;
-
-                                          if (await _pinService.pinStatus() == true) {
+                                          var x = await _pinService.pinStatus();
+                                          if (x == true) {
                                             result = await _showPinDialog() as bool;
                                           }
                                           if (result) {

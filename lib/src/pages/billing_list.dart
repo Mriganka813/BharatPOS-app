@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pin_code_fields/pin_code_fields.dart' as pinCode;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/billing/billing_cubit.dart';
@@ -89,6 +89,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
   late final BillingCubit _billingCubit;
+  int _dialogCount = 0;
 
   @override
   void initState() {
@@ -112,6 +113,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   void refreshPage() {
     _billingCubit.getBillingOrders();
+    _billingCubit.getQrOrders();
     // print("Function executed!");
   }
   init() async {
@@ -223,6 +225,9 @@ class _BillingListScreenState extends State<BillingListScreen> {
         (acc, curr){
           // print(acc);
           // print(curr.discountAmt);
+          if(curr.discountAmt == "null" || curr.discountAmt == null || curr.discountAmt == ""){
+            return acc;
+          }
           return double.parse(curr.discountAmt)+acc;
         }
     ).toStringAsFixed(2);
@@ -248,7 +253,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
               // }
               // else {
               double sum = 0;
-              if (curr.product!.baseSellingPriceGst != "null")
+              if (curr.product!.baseSellingPriceGst != "null" && curr.product!.baseSellingPriceGst != null)
                 sum = double.parse(curr.product!.baseSellingPriceGst!);
               else {
                 sum = curr.product!.sellingPrice!.toDouble();
@@ -267,7 +272,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
               // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) +
               //     acc;
               double sum = 0;
-              if (curr.product!.basePurchasePriceGst! != "null")
+              if (curr.product!.basePurchasePriceGst! != "null" && curr.product!.basePurchasePriceGst! != null)
                 sum = double.parse(curr.product!.basePurchasePriceGst!);
               else {
                 sum = curr.product!.purchasePrice.toDouble();
@@ -504,7 +509,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
           title: Text('Pending orders'),
           actions: [
             IconButton(onPressed: (){
-              _billingCubit.getBillingOrders();
+              refreshPage();
               //if is in search bar and presses refresh button then timer will restart
               timer?.cancel;
               if(autoRefreshPref) startTimer();
@@ -518,6 +523,17 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 if(state is BillingSuccess){
                   print("state is billing success");
                   _billingCubit.getBillingOrders();
+                }
+                if(state is BillingQrDialog) {
+                  timer?.cancel();
+
+                  state.qrOrders.forEach((element) {
+                    _dialogCount++;
+                    _showQrDialog(element) ;
+                    print("k = ");
+                  });
+                  print("dialog count: $_dialogCount");
+
                 }
               },
               child: BlocBuilder<BillingCubit, BillingState>(
@@ -637,6 +653,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                    //     });
                                  },
                                  onTap: () {
+                                   print("Checkout order = ${_allBills[index]}");
                                    Navigator.pushNamed(
                                      context,
                                      CheckoutPage.routeName,
@@ -680,8 +697,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                    },
                                    onDismissed: (direction) async {
                                      var result = true;
-
-                                     if (await _pinService.pinStatus() == true) {
+                                     bool x = await _pinService.pinStatus();
+                                     if (x == true) {
                                        result = await PinValidation.showPinDialog(context) as bool;
                                      }
                                      if(result){
@@ -772,7 +789,23 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                ),
                                              ],
                                            ),
-
+                                           Column(
+                                             children: [
+                                               const SizedBox(height: 5),
+                                               Row(
+                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                 children: [
+                                                   Text('Name'),
+                                                   Text(
+                                                     (_allBills[index].subUserName != '' && _allBills[index].subUserName != null)
+                                                         ? '${_allBills[index].subUserName}'
+                                                         : ((_allBills[index].userName != '' && _allBills[index].userName != null) ? '${_allBills[index].userName}' : '${_allBills[index].user!.businessName ?? ""}'),
+                                                     style: TextStyle(fontWeight: FontWeight.bold),
+                                                   ),
+                                                 ],
+                                               ),
+                                             ],
+                                           ),
                                            const SizedBox(height: 5),
                                            Row(
                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -861,20 +894,31 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                  onTap: () async {
                                                    // print("on tap edit");
                                                    // print(_allBills[index].orderItems![0].quantity);
-                                                   widget.orderType == OrderType.sale
-                                                       ? await Navigator.pushNamed(
-                                                       context, CreateSale.routeName,
-                                                       arguments: BillingPageArgs(
-                                                           editOrders: _allBills[index]
-                                                               .orderItems,
-                                                           kotId: _allBills[index].kotId,
-                                                           tableNo: _allBills[index].tableNo))
-                                                       : await Navigator.pushNamed(
-                                                       context, CreatePurchase.routeName,
-                                                       arguments: BillingPageArgs(
-                                                           editOrders: provider.purchaseBilling.values
-                                                               .toList()[index]
-                                                               .orderItems));
+                                                   var result = true;
+                                                   bool x = await _pinService.pinStatus();
+                                                   if (x == true) {
+                                                     result = await _showPinDialog() as bool;
+                                                   }
+                                                   if (result == true) {
+                                                     widget.orderType == OrderType.sale
+                                                         ? await Navigator.pushNamed(
+                                                         context, CreateSale.routeName,
+                                                         arguments: BillingPageArgs(
+                                                             editOrders: _allBills[index]
+                                                                 .orderItems,
+                                                             kotId: _allBills[index].kotId,
+                                                             tableNo: _allBills[index].tableNo))
+                                                         : await Navigator.pushNamed(
+                                                         context, CreatePurchase.routeName,
+                                                         arguments: BillingPageArgs(
+                                                             editOrders: provider.purchaseBilling.values
+                                                                 .toList()[index]
+                                                                 .orderItems));
+                                                     // Navigator.pop(context);
+                                                   } else {
+                                                     // Navigator.pop(context);
+                                                     locator<GlobalServices>().errorSnackBar("Incorrect pin");
+                                                   }
 
                                                    // var data = await DatabaseHelper().getOrderItems();
                                                    //
@@ -939,6 +983,149 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
       ),
     );
+  }
+  Future<bool?> _showQrDialog(Order order) {
+    return showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        actionsPadding: EdgeInsets.all(20),
+
+        title: Center(child: Text('Table No ${order.tableNo}', style: TextStyle(fontWeight: FontWeight.bold),)),
+        content: Container(
+          height: 100,
+          width: 100,
+          child: ListView.builder(
+            itemCount: order.orderItems!.length,
+            itemBuilder: (context, index){
+              return ListTile(
+                title: Text('${order.orderItems![index].quantity}x   ${order.orderItems![index].product!.name}'),
+              );
+            },),
+        ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Handle reject action
+              _dialogCount--;
+              print(" On reject dialog count: $_dialogCount");
+              if(_dialogCount == 0) {
+                startTimer();
+                print("Timer started by Dialog");
+                // _billingCubit.getBillingOrders();
+              }
+              _billingCubit.deleteQrOrder(order.objId.toString());
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(Size.fromWidth(100)),
+
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                ' Reject ',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              _dialogCount--;
+              print(" On accept dialog count: $_dialogCount");
+              if(_dialogCount == 0) {
+                startTimer();
+                print("Timer started by Dialog");
+                // _billingCubit.getBillingOrders();
+              }
+              _billingCubit.acceptQrOrder(order.objId.toString(), order);
+              // Handle accept action
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.all<Size>(Size.fromWidth(100)),
+              shape: MaterialStateProperty.all<OutlinedBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                ' Accept ',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Future<bool?> _showPinDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          content: pinCode.PinCodeTextField(
+            autoDisposeControllers: false,
+            appContext: context,
+            length: 6,
+            obscureText: true,
+            obscuringCharacter: '*',
+            blinkWhenObscuring: true,
+            animationType: pinCode.AnimationType.fade,
+            keyboardType: TextInputType.number,
+            pinTheme: pinCode.PinTheme(
+              shape: pinCode.PinCodeFieldShape.underline,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 40,
+              fieldWidth: 30,
+              inactiveColor: Colors.black45,
+              inactiveFillColor: Colors.white,
+              selectedFillColor: Colors.white,
+              selectedColor: Colors.black45,
+              disabledColor: Colors.black,
+              activeFillColor: Colors.white,
+            ),
+            cursorColor: Colors.black,
+            controller: pinController,
+            animationDuration: const Duration(milliseconds: 300),
+            enableActiveFill: true,
+          ),
+          title: Text('Enter your pin'),
+          actions: [
+            Center(
+                child: CustomButton(
+
+                    title: 'Verify',
+                    onTap: () async {
+                      bool status = await _pinService.verifyPin(
+                          int.parse(pinController.text.toString()));
+                      if (status) {
+                        pinController.clear();
+                        Navigator.of(ctx).pop(true);
+                      } else {
+                        Navigator.of(ctx).pop(false);
+                        pinController.clear();
+
+                        return;
+                      }
+                    }))
+          ],
+        ));
   }
   Future<bool?> _showDialog() {
     timer?.cancel();//pausing timer if this dialog is open

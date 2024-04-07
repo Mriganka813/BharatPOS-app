@@ -171,7 +171,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text('Auto refresh pending orders'),
-                        subtitle: Text('Pending orders page will be refreshed in the interval of 10 seconds'),
+                        subtitle: Text('Pending orders page will be refreshed in the interval of 30 seconds'),
                         trailing:  Switch(
                             value: autoRefreshPendingOrdersSwitch,
                             onChanged: (value) async {

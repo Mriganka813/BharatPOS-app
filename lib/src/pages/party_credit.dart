@@ -190,14 +190,25 @@ class _PartyCreditPageState extends State<PartyCreditPage> {
                               height: 50,
                               child: GestureDetector(
                                 onLongPress: () async {
-                                  HapticFeedback.vibrate();
-                                  print("line 193 in party_credit");
-                                  if(order.orderItems!.isEmpty){
-                                    print("order.objId is ${order.objId}");
-                                    print("order.party!.id! ${order.party!.id!}");
-                                    await openEditModal(order.objId!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
-                                  }else{
-                                    locator<GlobalServices>().infoSnackBar("You cannot edit sale order");
+                                  var result = true;
+                                  bool x = await _pinService.pinStatus();
+                                  if (x == true) {
+                                    result = await _showPinDialog() as bool;
+                                  }
+                                  if (result) {
+                                    HapticFeedback.vibrate();
+                                    print("line 193 in party_credit");
+                                    if(order.orderItems!.isEmpty){
+                                      print("order.objId is ${order.objId}");
+                                      print("order.party!.id! ${order.party!.id!}");
+                                      await openEditModal(order.objId!, order.total!, order.createdAt.toString(), order.modeOfPayment!, context);
+                                    }else{
+                                      locator<GlobalServices>().infoSnackBar("You cannot edit sale order");
+                                    }
+                                  } else {
+                                    Navigator.pop(context);
+                                    locator<GlobalServices>()
+                                        .errorSnackBar("Incorrect pin");
                                   }
                                 },
                                 child: Card(

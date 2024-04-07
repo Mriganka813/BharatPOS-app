@@ -29,6 +29,8 @@ class _PartyListPageState extends State<PartyListPage>
   late final PartyCubit _partyCubit;
   late final TabController _tabController;
   late final TextEditingController _typeAheadController;
+  PinService _pinService = PinService();
+  final TextEditingController pinController = TextEditingController();
 
   ///
   @override
@@ -45,7 +47,58 @@ class _PartyListPageState extends State<PartyListPage>
     _tabController.dispose();
     super.dispose();
   }
+  Future<bool?> _showPinDialog() {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          content: pinCode.PinCodeTextField(
+            autoDisposeControllers: false,
+            appContext: context,
+            length: 6,
+            obscureText: true,
+            obscuringCharacter: '*',
+            blinkWhenObscuring: true,
+            animationType: pinCode.AnimationType.fade,
+            keyboardType: TextInputType.number,
+            pinTheme: pinCode.PinTheme(
+              shape: pinCode.PinCodeFieldShape.underline,
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 40,
+              fieldWidth: 30,
+              inactiveColor: Colors.black45,
+              inactiveFillColor: Colors.white,
+              selectedFillColor: Colors.white,
+              selectedColor: Colors.black45,
+              disabledColor: Colors.black,
+              activeFillColor: Colors.white,
+            ),
+            cursorColor: Colors.black,
+            controller: pinController,
+            animationDuration: const Duration(milliseconds: 300),
+            enableActiveFill: true,
+          ),
+          title: Text('Enter your pin'),
+          actions: [
+            Center(
+                child: CustomButton(
+                    title: 'Verify',
+                    onTap: () async {
+                      bool status = await _pinService.verifyPin(
+                          int.parse(pinController.text.toString()));
+                      if (status) {
+                        pinController.clear();
+                        Navigator.of(ctx).pop(true);
+                      } else {
+                        Navigator.of(ctx).pop(false);
+                        pinController.clear();
 
+                        return;
+                      }
+                    }))
+          ],
+        ));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,10 +177,22 @@ class _PartyListPageState extends State<PartyListPage>
                   return ListTile(
                     leading: const Icon(Icons.person),
                     title: Text(party.name ?? ""),
-                    onTap: () {
-                      Navigator.pushNamed(context, PartyCreditPage.routeName,
-                          arguments: ScreenArguments(party.id!, party.name!,
-                              party.phoneNumber!, _tabController.index));
+                    onTap: () async {
+                      var result = true;
+                      bool x = await _pinService.pinStatus();
+                      if (x == true) {
+                        result = await _showPinDialog() as bool;
+                      }
+                      if (result!) {
+                        Navigator.pushNamed(context, PartyCreditPage.routeName,
+                            arguments: ScreenArguments(party.id!, party.name!,
+                                party.phoneNumber!, _tabController.index));
+                      } else {
+                        Navigator.pop(context);
+                        locator<GlobalServices>()
+                            .errorSnackBar("Incorrect pin");
+                      }
+
                     },
                   );
                 },
@@ -304,8 +369,8 @@ class _PartiesListViewState extends State<PartiesListView> {
               title: const Text("Edit"),
               onTap: () async {
                 var result = true;
-
-                if (await _pinService.pinStatus()==true) {
+                bool x = await _pinService.pinStatus();
+                if (x == true) {
                   result = await _showPinDialog() as bool;
                 }
                 if (result == true) {
@@ -324,8 +389,8 @@ class _PartiesListViewState extends State<PartiesListView> {
               title: const Text("Delete"),
               onTap: () async {
                 var result = true;
-
-                if (await _pinService.pinStatus()==true) {
+                bool x = await _pinService.pinStatus();
+                if (x==true) {
                   result = await _showPinDialog() as bool;
                 }
                 if (result == true) {

@@ -14,7 +14,10 @@ class BillingError extends BillingState {
   final String message;
   BillingError(this.message);
 }
-
+class BillingQrDialog extends BillingState {
+  final List<Order> qrOrders;
+  BillingQrDialog({required this.qrOrders});
+}
 class BillingLoading extends BillingState {}
 
 class BillingUpdate extends BillingState {}

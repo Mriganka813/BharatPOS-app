@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -17,14 +18,16 @@ class Order {
       this.party,
       this.user,
       this.createdAt,
-      this.reciverName,
-      this.businessName,
-      this.businessAddress,
-      this.gst,
-      this.invoiceNum,
-        this.estimateNum,
+      this.reciverName = "",
+      this.businessName = "",
+      this.businessAddress = "",
+      this.gst = "",
+      this.invoiceNum = "",
+        this.estimateNum = "",
       this.tableNo = "-1",
-      this.orderReady});
+      this.orderReady = false,
+        this.userName = "",
+        this.subUserName = ""});
 
   String? kotId;
   int? id;
@@ -43,11 +46,16 @@ class Order {
   String? estimateNum;
   String tableNo;
   bool? orderReady;
+  String? userName;
+  String? subUserName;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
-    orderReady: json["orderReady"] ?? false,
-        kotId: json["kotId"].toString(),
-        objId: json["_id"].toString(),
+
+      userName: json["userName"] ?? "",
+      subUserName: json["subUserName"] ?? "",
+      orderReady: json["orderReady"] ?? false,
+      kotId: json["kotId"].toString(),
+      objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
           json["orderItems"].map(
             (x) => OrderItemInput.fromMap(x),
@@ -74,6 +82,8 @@ class Order {
     
     
     return Order(
+      userName: json["userName"] ?? "",
+      subUserName: json["subUserName"] ?? "",
         orderReady: json["orderReady"] ?? false,
         objId: json["_id"].toString(),
         orderItems: List<OrderItemInput>.from(
@@ -90,6 +100,8 @@ class Order {
       );}
 
   Map<String, dynamic> toMap(OrderType type) => {
+    "userName" : userName,
+    "subUserName" : subUserName,
         "orderReady": orderReady,
         "kotId": kotId,
         "id": id,
@@ -105,6 +117,8 @@ class Order {
         "tableNo": tableNo
       };
   Map<String, dynamic> toMapForCopy() => {//for making copy of Order
+    "userName" : userName,
+    "subUserName" : subUserName,
     "orderReady": orderReady,
     "id": id,
     "kotId": kotId,
@@ -186,12 +200,12 @@ class OrderItemInput {
       "price": (product?.sellingPrice ?? 1),
       "quantity": quantity,
       "product": product?.id,
-      "saleCGST": product?.salecgst == 'null' ? '0' : product!.salecgst,
-      "saleSGST": product?.salesgst == 'null' ? '0' : product!.salesgst,
-      "baseSellingPrice": product?.baseSellingPriceGst == 'null' ? '0' : product!.baseSellingPriceGst,
-      "saleIGST": product?.saleigst == 'null' ? '0' : product!.saleigst,
-      "discountAmt": discountAmt,
-      "originalbaseSellingPrice": (double.parse(product!.baseSellingPriceGst! == "null" ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt!)).toString()};
+      "saleCGST": (product?.salecgst == null || product?.salecgst == "" || product?.salecgst == "null") ? '0' : product!.salecgst,
+      "saleSGST": (product?.salesgst == null || product?.salesgst == "null" || product?.salesgst == "") ? '0' : product!.salesgst,
+      "baseSellingPrice": (product?.baseSellingPriceGst == null || product?.baseSellingPriceGst == "null" || product?.baseSellingPriceGst == "") ? '0' : product!.baseSellingPriceGst,
+      "saleIGST": (product?.saleigst == 'null' || product?.saleigst == "" || product?.saleigst == null) ? '0' : product!.saleigst,
+      "discountAmt": (discountAmt == null || discountAmt == "" || discountAmt == "null")? "0" : discountAmt,
+      "originalbaseSellingPrice": (double.parse((product!.baseSellingPriceGst! == "null" || product!.baseSellingPriceGst! == null || product!.baseSellingPriceGst! == "") ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt)).toString()};
       return map;
   }
 

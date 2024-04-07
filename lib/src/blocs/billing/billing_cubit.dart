@@ -77,4 +77,34 @@ class BillingCubit extends Cubit<BillingState> {
     // getBillingOrders();
 
   }
+  void getQrOrders() async {
+
+    List<Order> _allQrBills = [];
+    List<dynamic> allQrBillingOrders = await _billingService.getAllQrOrder();
+    allQrBillingOrders.forEach((element) {
+      _allQrBills.add(Order.fromMap(element,));
+    });
+    emit(BillingQrDialog(qrOrders: _allQrBills));
+
+  }
+  void deleteQrOrder(String kotid) async {
+    emit(BillingLoading());
+    final response = await _billingService.deleteQrOrder(kotid);
+    if((response.statusCode ?? 400) > 300){
+      emit(BillingError("Error creating billing order"));
+      return;
+    }
+    emit(BillingSuccess());
+    // getBillingOrders();
+  }
+  void acceptQrOrder(String id, Order order) async {
+    emit(BillingLoading());
+    final response = await _billingService.acceptAddQrOrder(id,order);
+    if((response.statusCode ?? 400) > 300){
+      emit(BillingError("Error creating billing order"));
+      return;
+    }
+    emit(BillingSuccess());
+    // getBillingOrders();
+  }
 }

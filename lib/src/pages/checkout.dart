@@ -72,7 +72,7 @@ class PrintBillArgs {
 
 class CheckoutPageArgs {
   final OrderType invoiceType;
-  final Order order;
+  final Order? order;
   // final String orderId;
   ///canEdit flag is used for: checkout from sale report(stopping user to edit sale
   ///if canEdit is set to false while go to sale is executed from report page
@@ -141,7 +141,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // print(date.substring(11,16));
     // print(date.substring(10,12));
     getUserData();
-    // _isUPI = widget.args.Order.modeOfPayment == 'UPI' ? true : false;
+    // _isUPI = widget.args.order!.modeOfPayment == 'UPI' ? true : false;
 
     _checkoutCubit = CheckoutCubit();
     _typeAheadController = TextEditingController();
@@ -149,13 +149,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     _amountControllers.add(TextEditingController());
     _modeOfPayControllers.add(TextEditingController());
 
-    if (widget.args.order.reciverName != null &&
-        widget.args.order.reciverName != "") {
+    if (widget.args.order!.reciverName != null &&
+        widget.args.order!.reciverName != "") {
       isBillTo = true;
-      receiverNameController.text = widget.args.order.reciverName!;
-      businessNameController.text = widget.args.order.businessName!;
-      businessAddressController.text = widget.args.order.businessAddress!;
-      gstController.text = widget.args.order.gst!;
+      receiverNameController.text = widget.args.order!.reciverName!;
+      businessNameController.text = widget.args.order!.businessName!;
+      businessAddressController.text = widget.args.order!.businessAddress!;
+      gstController.text = widget.args.order!.gst!;
     }
 
     if(widget.args.canEdit==false)
@@ -164,9 +164,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///to show proper data (when coming from reports page)
   calculate(){
-    for (int i = 0; i < widget.args.order.orderItems!.length; i++) {
-      OrderItemInput orderItem = widget.args.order.orderItems![i];
-      double? totalInputAmount = widget.args.order.modeOfPayment?.fold<double>(0, (acc, curr) {
+    for (int i = 0; i < widget.args.order!.orderItems!.length; i++) {
+      OrderItemInput orderItem = widget.args.order!.orderItems![i];
+      double? totalInputAmount = widget.args.order!.modeOfPayment?.fold<double>(0, (acc, curr) {
         return curr['amount'] + acc;
       });
       _onTotalChange(orderItem.product!, orderItem.price?.toStringAsFixed(2));
@@ -296,7 +296,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   ///
   openShareModal(context, user, bool popAll) {
     final String successMsg = widget.args.invoiceType == OrderType.estimate
-        ? widget.args.order.estimateNum != null
+        ? widget.args.order!.estimateNum != null
         ? convertToSale
         ? 'Estimate converted to Sale'
         : 'Estimate updated successfully'
@@ -373,11 +373,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           String? defaultBill = prefs.getString('defaultBill');
 
                           if (defaultBill == null) {
-                            _showNewDialog(widget.args.order, popAll);
+                            _showNewDialog(widget.args.order!, popAll);
                           } else if (defaultBill == '57mm') {
-                            await _view57mmBill(widget.args.order, popAll);
+                            await _view57mmBill(widget.args.order!, popAll);
                           } else if (defaultBill == '80mm') {
-                            await _view80mmBill(widget.args.order, popAll);
+                            await _view80mmBill(widget.args.order!, popAll);
                           } else if (defaultBill == 'A4') {
                             await _viewPdf(popAll);
                             if(popAll){
@@ -463,11 +463,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         _launchUrl(
                                             t.text.trim(),
                                             user,
-                                            widget.args.order.modeOfPayment,
+                                            widget.args.order!.modeOfPayment,
                                             totalbasePrice(),
                                             totalgstPrice(),
                                             totalDiscount(),
-                                            widget.args.order.orderItems);
+                                            widget.args.order!.orderItems);
                                       },
                                       child: Text("Yes")),
                                   TextButton(
@@ -493,7 +493,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     bool mrpAvailableFlag = false;
     bool atleastOneItemhaveGST = false;
 
-    widget.args.order.orderItems!.forEach((element) {
+    widget.args.order!.orderItems!.forEach((element) {
       if (element.product!.expiryDate != null &&
           element.product!.expiryDate != "null" &&
           element.product!.expiryDate != "") {
@@ -539,15 +539,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
       purchasesInvoiceNo++;
     }
     print("line 392 in checkout.dart");
-    print(widget.args.order.invoiceNum.runtimeType);
+    print(widget.args.order!.invoiceNum.runtimeType);
     // print(salesInvoiceNo);
-    // print(widget.args.order.createdAt);
+    // print(widget.args.order!.createdAt);
     print("total price is ${totalPrice()}");
     final htmlContent = invoiceTemplatewithGST(
       type: widget.args.invoiceType.toString(),
-      date: widget.args.order.createdAt.toString() ?? "",
+      date: widget.args.order!.createdAt.toString() ?? "",
       companyName: userData.businessName ?? "",
-      order: widget.args.order,
+      order: widget.args.order!,
       user: userData,
       headers: headerList,
       total: totalPrice() ?? "",
@@ -556,15 +556,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
       dlNum: dlNumController.text,
       convertToSale: convertToSale,
       invoiceNum: widget.args.invoiceType == OrderType.sale
-          ? "Invoice No: ${widget.args.order.invoiceNum != '' && widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null" ? widget.args.order.invoiceNum : salesInvoiceNo.toString()}"
+          ? "Invoice No: ${widget.args.order!.invoiceNum != '' && widget.args.order!.invoiceNum != null && widget.args.order!.invoiceNum != "null" ? widget.args.order!.invoiceNum : salesInvoiceNo.toString()}"
           : widget.args.invoiceType == OrderType.purchase
           ? "Invoice No: ${purchasesInvoiceNo.toString()}"
           : widget.args.invoiceType == OrderType.estimate
-          ? widget.args.order.estimateNum == '' || widget.args.order.estimateNum == "null" || widget.args.order.estimateNum == null
+          ? widget.args.order!.estimateNum == '' || widget.args.order!.estimateNum == "null" || widget.args.order!.estimateNum == null
           ? "Estimate No: ${estimateNo.toString()}"
           : convertToSale
           ? "Invoice No: ${salesInvoiceNo.toString()}"
-          : "Estimate No: ${widget.args.order.estimateNum}"
+          : "Estimate No: ${widget.args.order!.estimateNum}"
           : "",
     );
     final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
@@ -590,7 +590,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //     type: widget.args.invoiceType.toString(),
   //     date: DateTime.now(),
   //     companyName: user.businessName ?? "",
-  //     order: widget.args.Order,
+  //     order: widget.args.order!,
   //     user: user,
   //     headers: ["Name", "Qty", "Rate/Unit", "GST/Unit", "Amount"],
   //     total: totalPrice() ?? "",
@@ -619,7 +619,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //   );
   //   return;
   // }
-  // final party = widget.args.Order.party;
+  // final party = widget.args.order!.party;
   // if (party == null) {
   //   final path = generatedPdfFile.path;
   //   await Share.shareFiles([path], mimeTypes: ['application/pdf']);
@@ -646,7 +646,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //     type: widget.args.invoiceType.toString(),
   //     date: DateTime.now(),
   //     companyName: user.businessName ?? "",
-  //     order: widget.args.Order,
+  //     order: widget.args.order!,
   //     user: user,
   //     headers: ["Name", "Qty", "Rate/Unit", "Amount"],
   //     total: totalPrice() ?? "",
@@ -667,7 +667,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   //     return;
   //   }
 
-  //   final party = widget.args.Order.party;
+  //   final party = widget.args.order!.party;
   //   if (party == null) {
   //     final path = generatedPdfFile.path;
   //     await Share.shareFiles([path], mimeTypes: ['application/pdf']);
@@ -706,7 +706,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   String? totalPrice() {
-    return widget.args.order.orderItems?.fold<double>(
+    return widget.args.order!.orderItems?.fold<double>(
       0,
       (acc, curr) {
         if (widget.args.invoiceType == OrderType.purchase) {
@@ -721,13 +721,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///
   String? totalbasePrice() {
-    return widget.args.order.orderItems?.fold<double>(
+    return widget.args.order!.orderItems?.fold<double>(
       0,
       (acc, curr) {
         if (widget.args.invoiceType == OrderType.purchase) {
           // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
           double sum = 0;
-          if (curr.product!.basePurchasePriceGst! != "null")
+          if (curr.product!.basePurchasePriceGst! != "null" && curr.product!.basePurchasePriceGst! != "")
             sum = double.parse(curr.product!.basePurchasePriceGst!);
           else {
             sum = curr.product!.purchasePrice.toDouble();
@@ -735,7 +735,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           return (curr.quantity * sum) + acc;
         } else {
           double sum = 0;
-          if (curr.product!.baseSellingPriceGst! != "null")
+          if (curr.product!.baseSellingPriceGst! != "null" && curr.product!.baseSellingPriceGst! != "")
             sum = double.parse(curr.product!.baseSellingPriceGst!);
           else {
             sum = curr.product!.sellingPrice!.toDouble();
@@ -746,22 +746,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
     ).toStringAsFixed(2);
   }
   String? totalDiscount(){
-    return widget.args.order.orderItems?.fold<double>(
+    return widget.args.order!.orderItems?.fold<double>(
         0,
             (acc, curr){
+          if(curr.discountAmt == null || curr.discountAmt == "" || curr.discountAmt == "null") {
+            return acc;
+          }
           return double.parse(curr.discountAmt)+acc;
         }
     ).toStringAsFixed(2);
   }
   ///
   String? totalgstPrice() {
-    return widget.args.order.orderItems?.fold<double>(
+    return widget.args.order!.orderItems?.fold<double>(
       0,
       (acc, curr) {
         if (widget.args.invoiceType == OrderType.purchase) {
           // return (curr.quantity * (curr.product?.purchasePrice ?? 1)) + acc;
           double gstsum = 0;
-          if (curr.product!.purchaseigst! != "null")
+          if (curr.product!.purchaseigst! != "null" && curr.product!.purchaseigst! != "" && curr.product!.purchaseigst! != null )
             gstsum = double.parse(curr.product!.purchaseigst!);
           // else {
           //   gstsum = curr.product!.sellingPrice;
@@ -770,7 +773,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ((curr.quantity * gstsum) + acc).toStringAsFixed(2));
         } else {
           double gstsum = 0;
-          if (curr.product!.saleigst! != "null")
+          if (curr.product!.saleigst! != "null" &&  curr.product!.saleigst! != "" &&  curr.product!.saleigst! != null  )
             gstsum = double.parse(curr.product!.saleigst!);
           // else {
           //   gstsum = curr.product!.sellingPrice;
@@ -828,8 +831,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ],
           dateTime: DateTime.now(),
           invoiceNum: widget.args.invoiceType == OrderType.sale
-              ? widget.args.order.invoiceNum != ''&& widget.args.order.invoiceNum != null && widget.args.order.invoiceNum != "null"
-              ? widget.args.order.invoiceNum!
+              ? widget.args.order!.invoiceNum != ''&& widget.args.order!.invoiceNum != null && widget.args.order!.invoiceNum != "null"
+              ? widget.args.order!.invoiceNum!
               : salesInvoiceNo.toString()
               : purchasesInvoiceNo.toString(),
           totalPrice: totalPrice() ?? '',
@@ -872,8 +875,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     // );
 
     // print(
-    //     widget.args.order.orderItems![0].product!.baseSellingPriceGst == 'null'
-    //         ? widget.args.order.orderItems![0].product!.sellingPrice
+    //     widget.args.order!.orderItems![0].product!.baseSellingPriceGst == 'null'
+    //         ? widget.args.order!.orderItems![0].product!.sellingPrice
     //         : 0);
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
     purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
@@ -893,10 +896,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
           ],
           dateTime: DateTime.now(),
           invoiceNum: widget.args.invoiceType == OrderType.sale
-              ? widget.args.order.invoiceNum != '' &&
-              widget.args.order.invoiceNum != null &&
-              widget.args.order.invoiceNum != "null"
-              ? widget.args.order.invoiceNum!
+              ? widget.args.order!.invoiceNum != '' &&
+              widget.args.order!.invoiceNum != null &&
+              widget.args.order!.invoiceNum != "null"
+              ? widget.args.order!.invoiceNum!
               : salesInvoiceNo.toString()
               : purchasesInvoiceNo.toString(),
           totalPrice: totalPrice() ?? '',
@@ -985,7 +988,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          // "${widget.args.order.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} Products",
+          // "${widget.args.order!.orderItems?.fold<double>(0, (acc, item) => item.quantity + acc)} Products",
           "Checkout",
         ),
       ),
@@ -1003,7 +1006,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         backgroundColor: Colors.green,
                         content: Text(
                           widget.args.invoiceType == OrderType.estimate
-                              ? widget.args.order.estimateNum != null
+                              ? widget.args.order!.estimateNum != null
                                   ? convertToSale
                                       ? 'Estimate Converted to Sale'
                                       : 'Estimate Updated successfully'
@@ -1115,7 +1118,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             const Divider(color: Colors.transparent),
                             const Divider(color: Colors.transparent),
                             if (widget.args.invoiceType == OrderType.estimate &&
-                                widget.args.order.estimateNum != null)
+                                widget.args.order!.estimateNum != null)
                               Column(
                                 children: [
                                   SwitchListTile(
@@ -1194,7 +1197,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                     },
                                     onSuggestionSelected: (Party party) {
                                       setState(() {
-                                        widget.args.order.party = party;
+                                        widget.args.order!.party = party;
                                       });
                                       _typeAheadController.text =
                                           party.name ?? "";
@@ -1212,12 +1215,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                               child: CustomDropDownField(
                                                 items: const <String> ["Cash","Credit","Bank Transfer","UPI"],
                                                 onSelected: (e) {
-                                                  // widget.args.order.modeOfPayment = e;
+                                                  // widget.args.order!.modeOfPayment = e;
                                                   _modeOfPayControllers[0]
                                                       .text = e;
                                                   checkUpi();
                                                   checkCredit();
-                                                  // if (widget.args.order.modeOfPayment ==
+                                                  // if (widget.args.order!.modeOfPayment ==
                                                   //     'UPI') {
                                                   //   _isUPI = true;
                                                   //   getUPIDetails();
@@ -1468,7 +1471,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10))),
                                     onChanged: (val) {
-                                      widget.args.order.reciverName = val;
+                                      widget.args.order!.reciverName = val;
                                       setState(() {});
                                     },
                                   ),
@@ -1483,7 +1486,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10))),
                                     onChanged: (val) {
-                                      widget.args.order.businessName = val;
+                                      widget.args.order!.businessName = val;
                                       setState(() {});
                                     },
                                   ),
@@ -1498,7 +1501,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10))),
                                     onChanged: (val) {
-                                      widget.args.order.businessAddress = val;
+                                      widget.args.order!.businessAddress = val;
                                       setState(() {});
                                     },
                                   ),
@@ -1513,7 +1516,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10))),
                                     onChanged: (val) {
-                                      widget.args.order.gst = val;
+                                      widget.args.order!.gst = val;
                                       setState(() {});
                                     },
                                   ),
@@ -1528,7 +1531,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                             borderRadius:
                                                 BorderRadius.circular(10))),
                                     onChanged: (val) {
-                                      // widget.args.order.dlNum = val;
+                                      // widget.args.order!.dlNum = val;
                                       setState(() {});
                                     },
                                   ),
@@ -1638,7 +1641,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return true;
   }
   void includePayments(){
-    widget.args.order.modeOfPayment = [];
+    widget.args.order!.modeOfPayment = [];
 
     if (_singlePayMode) {
       _amountControllers[0].text = totalPrice()!;
@@ -1646,7 +1649,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         "mode": _modeOfPayControllers[0].text,
         "amount": double.parse(_amountControllers[0].text)
       };
-      widget.args.order.modeOfPayment?.add(defaultPayment);
+      widget.args.order!.modeOfPayment?.add(defaultPayment);
     } else {
       for (int i = 0; i < _modeOfPayControllers.length; i++) {
         if (_modeOfPayControllers[i].text.isNotEmpty) {
@@ -1659,7 +1662,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           } else {
             newPayment["amount"] = "0";
           }
-          widget.args.order.modeOfPayment?.add(newPayment);
+          widget.args.order!.modeOfPayment?.add(newPayment);
         }
       }
     }
@@ -1667,13 +1670,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onTapSubmit() async {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
-      // print("discountttttttt=${widget.args.order.orderItems![0].discountAmt}");
-      print("widget.args.order ${widget.args.order}");
-      print("widget.args.order ${widget.args.order.kotId}");
+      // print("discountttttttt=${widget.args.order!.orderItems![0].discountAmt}");
+      print("widget.args.order! ${widget.args.order!}");
+      print("widget.args.order! ${widget.args.order!.kotId}");
       print(totalPrice());
       print(totalbasePrice());
       print(totalgstPrice());
-      widget.args.order.modeOfPayment = [];
+      widget.args.order!.modeOfPayment = [];
 
       if (_singlePayMode) {
         _amountControllers[0].text = totalPrice()!;
@@ -1681,7 +1684,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           "mode": _modeOfPayControllers[0].text,
           "amount": double.parse(_amountControllers[0].text)
         };
-        widget.args.order.modeOfPayment?.add(defaultPayment);
+        widget.args.order!.modeOfPayment?.add(defaultPayment);
       } else {
         for (int i = 0; i < _modeOfPayControllers.length; i++) {
           if (_modeOfPayControllers[i].text.isNotEmpty) {
@@ -1694,7 +1697,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             } else {
               newPayment["amount"] = "0";
             }
-            widget.args.order.modeOfPayment?.add(newPayment);
+            widget.args.order!.modeOfPayment?.add(newPayment);
           }
         }
       }
@@ -1702,39 +1705,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
       salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
       purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
       estimateNo = await _checkoutCubit.getEstimateNum() as int;
-      // print("lilne 1310 in checkout.dart");
-      // print("sales invoice no is: $salesInvoiceNo");
+      print("lilne 1310 in checkout.dart");
+      print("sales invoice no is: $salesInvoiceNo");
 
       if (widget.args.invoiceType == OrderType.purchase) {
         if(checkAmounts()){
           _checkoutCubit.createPurchaseOrder(
-              widget.args.order, (purchasesInvoiceNo + 1).toString());
+              widget.args.order!, (purchasesInvoiceNo + 1).toString());
         }
       } else if (widget.args.invoiceType == OrderType.saleReturn) {
         _checkoutCubit.createSalesReturn(
-            widget.args.order, date, totalPrice()!);
+            widget.args.order!, date, totalPrice()!);
       } else if (widget.args.invoiceType == OrderType.estimate) {
-        if (widget.args.order.estimateNum != null) {
+        if (widget.args.order!.estimateNum != null) {
           //update estimate
           if (convertToSale) {
             if(checkAmounts()){
               //TODO: implement sub Product availability validation
               _checkoutCubit.convertEstimateToSales(
-                  widget.args.order, (salesInvoiceNo + 1).toString());
+                  widget.args.order!, (salesInvoiceNo + 1).toString());
             }
           } else {
-            _checkoutCubit.updateEstimateOrder(widget.args.order);
+            _checkoutCubit.updateEstimateOrder(widget.args.order!);
           }
         } else {
           //TODO: implement sub Product availability validation
           _checkoutCubit.createEstimateOrder(
-              widget.args.order, (estimateNo + 1).toString());
+              widget.args.order!, (estimateNo + 1).toString());
         }
       } else if (widget.args.invoiceType == OrderType.sale) {
         if(checkAmounts()){
           //TODO: implement sub Product availability validation
           _checkoutCubit.createSalesOrder(
-              widget.args.order,(salesInvoiceNo + 1).toString());
+              widget.args.order!,(salesInvoiceNo + 1).toString());
         }
       }
 
@@ -1742,13 +1745,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
       if (widget.args.invoiceType == OrderType.sale ||
           widget.args.invoiceType == OrderType.purchase) {
         if(widget.args.invoiceType == OrderType.sale){
-          BillingCubit().deleteBillingOrder(widget.args.order.kotId!);
+          BillingCubit().deleteBillingOrder(widget.args.order!.kotId!);
         }
-        // DatabaseHelper().deleteOrderItemInput(widget.args.order);
+        // DatabaseHelper().deleteOrderItemInput(widget.args.order!);
         // if (widget.args.invoiceType == OrderType.purchase) {
-          // provider.removePurchaseBillItems(widget.args.orderId);
+          // provider.removePurchaseBillItems(widget.args.order!Id);
         // } else {
-          // provider.removeSalesBillItems(widget.args.orderId);
+          // provider.removeSalesBillItems(widget.args.order!Id);
         // }
       }
     }
@@ -1756,7 +1759,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   ///for validation of availability of Sub Product quantity
   // _validateSubProductQuantity() {
-  //   widget.args.order.orderItems?.forEach((orderItem) async {
+  //   widget.args.order!.orderItems?.forEach((orderItem) async {
   //     //fetch product
   //     var resp = await ProductService().getProduct(orderItem.product!.id!);
   //     final product = Product.fromMap(resp.data['inventory']);
