@@ -207,6 +207,7 @@ class OrderItemInput {
       "discountAmt": (discountAmt == null || discountAmt == "" || discountAmt == "null")? "0" : discountAmt,
       "originalbaseSellingPrice": (double.parse((product!.baseSellingPriceGst! == "null" || product!.baseSellingPriceGst! == null || product!.baseSellingPriceGst! == "") ? '0' : product!.baseSellingPriceGst!) + double.parse(discountAmt)).toString()};
       return map;
+
   }
 
   Map<String, dynamic> toSaleReturnMap() => {
