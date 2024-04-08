@@ -238,6 +238,7 @@ class _SignInPageState extends State<SignInPage> {
                         if (!isValid) {
                           return;
                         }
+                        print("LOGGING INNNNNNNNNNNNNNNN $_email $_password \n\n\n\n");
                         _authCubit.signIn(_email, _password, _rememberMe);
                       },
                       title: 'Login',

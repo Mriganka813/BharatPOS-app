@@ -23,7 +23,10 @@ class SalesService {
     var dataSent = {
       'kotId': orderItemInput.kotId,
       'orderItems':
-      orderItemInput.orderItems?.map((e) => e.toSaleMap()).toList(),
+      orderItemInput.orderItems?.map((e) {
+        print("E.price.toString() = ${e.price.toString()}");
+        return e.toSaleMap();
+      }).toList(),
       'modeOfPayment': orderItemInput.modeOfPayment,
       'party': orderItemInput.party?.id,
       'invoiceNum': invoiceNum,

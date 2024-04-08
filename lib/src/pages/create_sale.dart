@@ -182,7 +182,7 @@ class _CreateSaleState extends State<CreateSale> {
                     child: ProductCardPurchase(
                       type: "sale",
                       product: _orderItems[index].product!,
-                      discount: _orderItems[index].discountAmt,
+                      discount: _orderItems[index].discountAmt!,
                       onQuantityFieldChange: (double value){
                         setQuantityToBeSold(_orderItems[index], value, index);
                       },
@@ -279,8 +279,8 @@ class _CreateSaleState extends State<CreateSale> {
 
   void _onAdd(OrderItemInput orderItem) {
     final qty = orderItem.quantity + 1;
-    double discountForOneItem = double.parse(orderItem.discountAmt) / orderItem.quantity;
-    orderItem.discountAmt = (double.parse(orderItem.discountAmt) + discountForOneItem).toStringAsFixed(2);
+    double discountForOneItem = double.parse(orderItem.discountAmt!) / orderItem.quantity;
+    orderItem.discountAmt = (double.parse(orderItem.discountAmt!) + discountForOneItem).toStringAsFixed(2);
     final availableQty = orderItem.product?.quantity ?? 0;
     if (qty > availableQty) {
       locator<GlobalServices>().infoSnackBar("Quantity not available");
@@ -520,8 +520,8 @@ class _CreateSaleState extends State<CreateSale> {
   }
 
   void OnDelete(OrderItemInput _orderItem, index) {
-    double discountForOneItem = double.parse(_orderItem.discountAmt) / _orderItem.quantity;
-    _orderItem.discountAmt = (double.parse(_orderItem.discountAmt) - discountForOneItem).toStringAsFixed(2);
+    double discountForOneItem = double.parse(_orderItem.discountAmt!) / _orderItem.quantity;
+    _orderItem.discountAmt = (double.parse(_orderItem.discountAmt!) - discountForOneItem).toStringAsFixed(2);
 
     setState(() {
       if(_orderItem.quantity <= 1){
@@ -624,7 +624,7 @@ class _CreateSaleState extends State<CreateSale> {
     final baseSellingPriceToShow = productJson.baseSellingPriceGst;
     final sellingPriceToShow = productJson.sellingPrice;
 
-    double discount = double.parse(_orderItem.discountAmt);
+    double discount = double.parse(_orderItem.discountAmt!);
     final product = _orderItems[index].product!;
     showDialog(
         useSafeArea: true,
@@ -690,11 +690,11 @@ class _CreateSaleState extends State<CreateSale> {
                             print(_orderItem.product!.baseSellingPriceGst!);
                             if(_orderItem.product!.baseSellingPriceGst =="null"){
                               print("---line 467 in createsale.dart");
-                              discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                              discount = (_orderItem.product!.sellingPrice!  + double.parse(_orderItem.discountAmt!) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
 
                             }else{
                               print("---line 470 in createsale.dart");
-                              discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
+                              discount = (double.parse(_orderItem.product!.baseSellingPriceGst!) + double.parse(_orderItem.discountAmt!) - double.parse(localSellingPrice!).toDouble()) * _orderItem.quantity;
                             }
 
                             _orderItems[index].discountAmt = discount.toStringAsFixed(2);

@@ -47,6 +47,19 @@ class ApiV1Service {
     return await _dio.post(url, data: formData ?? data);
   }
 
+  // Future<void> saveCookie(response) async {
+  //   List<Cookie> cookies;
+  //
+  //   if(response.data['token_subuser'] != null && response.data['token_subuser'] != ""){
+  //     cookies= [Cookie("token", response.data['token']), Cookie("token_subuser", response.data['token_subuser'])];
+  //   }
+  //   else{
+  //     cookies = [Cookie("token", response.data['token'])];
+  //   }
+  //   final cj = await ApiV1Service.getCookieJar();
+  //   await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+  //   _dio.interceptors.add(CookieManager(cj));
+  // }
   ///
   static Future<Response> getRequest(
     String url, {

@@ -11,8 +11,15 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> currentUser() async {
     final response = await UserService.me();
-    final user = User.fromMap(response.data['user']);
-    emit(HomeRender(user));
+    print (" MEEEEEEEEEEEEEEEEE\n\n ${response.data}");
+    if(response.data['subUser'] != null && response.data['subUser'] != ""){
+      final user = User.fromMap(response.data['subUser']);
+      emit(HomeRender(user));
+    }
+    else {
+      final user = User.fromMap(response.data['user']);
+      emit(HomeRender(user));
+    }
   }
 
 

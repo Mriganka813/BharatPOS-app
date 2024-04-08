@@ -269,6 +269,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     });
     final response = await UserService.me();
     userData = User.fromMap(response.data['user']);
+
+    print("UserData = ${response.data}");
     getUPIDetails();
     setState(() {
       _isLoading = false;
@@ -752,7 +754,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           if(curr.discountAmt == null || curr.discountAmt == "" || curr.discountAmt == "null") {
             return acc;
           }
-          return double.parse(curr.discountAmt)+acc;
+          return double.parse(curr.discountAmt!)+acc;
         }
     ).toStringAsFixed(2);
   }

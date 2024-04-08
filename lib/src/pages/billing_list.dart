@@ -228,7 +228,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
           if(curr.discountAmt == "null" || curr.discountAmt == null || curr.discountAmt == ""){
             return acc;
           }
-          return double.parse(curr.discountAmt)+acc;
+          return double.parse(curr.discountAmt!)+acc;
         }
     ).toStringAsFixed(2);
   }
@@ -798,8 +798,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                    Text('Name'),
                                                    Text(
                                                      (_allBills[index].subUserName != '' && _allBills[index].subUserName != null)
-                                                         ? '${_allBills[index].subUserName}'
-                                                         : ((_allBills[index].userName != '' && _allBills[index].userName != null) ? '${_allBills[index].userName}' : '${_allBills[index].user!.businessName ?? ""}'),
+                                                         ? '${_allBills[index].subUserName}' :
+                                                     ((_allBills[index].userName != '' && _allBills[index].userName != null) ? '${_allBills[index].userName}' :
+                                                     '${_allBills[index].user!.businessName ?? ""}'
+                                                     ),
                                                      style: TextStyle(fontWeight: FontWeight.bold),
                                                    ),
                                                  ],

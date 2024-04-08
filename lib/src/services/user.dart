@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/services/api_v1.dart';
@@ -11,6 +13,10 @@ class UserService {
     var response;
     try {
       response = await ApiV1Service.getRequest('/me');
+      // final cj = await ApiV1Service.getCookieJar();
+      // print(cj.storage.read('token'));
+      // print(cj.storage.read('token_subuser'));
+      print("IN MEEEEE \n\n");
       print(response);
       getNewToken();
     } catch (e) {

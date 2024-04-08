@@ -89,13 +89,17 @@ class _SwitchAccountPageState extends State<SwitchAccountPage> {
               Spacer(),
               CustomButton(
                   title: "Add Account",
-                  onTap: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      SignInPage.routeName,
-                      (route) => false,
-                    );
-                  })
+                onTap: ()  {
+                  // await const AuthService().signOut();
+                  // final provider =
+                  //     Provider.of<Billing>(context, listen: false);
+                  // provider.removeAll();
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    SignInPage.routeName,
+                        (route) => false,
+                  );
+                },)
             ],
           ),
         ),

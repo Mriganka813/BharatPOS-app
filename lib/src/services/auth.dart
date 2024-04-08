@@ -42,15 +42,25 @@ class AuthService {
 
   /// Save cookies after sign in/up
   Future<void> saveCookie(Response response) async {
-    List<Cookie> cookies = [Cookie("token", response.data['token'])];
+    List<Cookie> cookies;
+
+    if(response.data['token_subuser'] != null && response.data['token_subuser'] != ""){
+      cookies= [Cookie("token", response.data['token']), Cookie("token_subuser", response.data['token_subuser'])];
+    }
+    else{
+      cookies = [Cookie("token", response.data['token'])];
+    }
     final cj = await ApiV1Service.getCookieJar();
     await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+    // _dio.interceptors.add(CookieManager(cj));
   }
 
   ///
   Future<void> signOut() async {
+
     await clearCookies();
     await fb.FirebaseAuth.instance.signOut();
+    // final res = await ApiV1Service.getRequest('/logout');
   }
 
   /// Clear cookies before log out
@@ -75,6 +85,9 @@ class AuthService {
     print("line 70 signin request");
     print('res = ${response.data}');
     await saveCookie(response);
+    if(response.data['subUser'] != null && response.data['subUser'] != ""){
+      return User.fromMap(response.data['subUser']);
+    }
     return User.fromMap(response.data['user']);
   }
 

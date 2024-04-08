@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/models/product.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/services/locator.dart';
@@ -57,18 +58,24 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
   double itemQuantity = 0;
   TextEditingController _itemQuantityController = TextEditingController();
   String? errorText;
+  
   ProductAvailabilityService productAvailability = ProductAvailabilityService();
+  bool _showInStockSwitch = false;
   bool tapflag = false;
   bool onTapOutsideWillWork = false;
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState(){
     super.initState();
+    init();
+
     itemQuantity = widget.noOfQuatityadded;
     _itemQuantityController.text = itemQuantity.toString();
     setState(() {});
   }
-
+  init() async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    _showInStockSwitch = (await pref.getBool('in-stock-button-preference'))! ;
+  }
   @override
   Widget build(BuildContext context) {
     // print(widget.isSelecting);
@@ -447,7 +454,8 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 ],
                               ),
 
-                            /*   Row(
+                              _showInStockSwitch ?
+                              Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Switch(
@@ -464,7 +472,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                   setState(() {});
                                 }),
                           ],
-                        ),*/
+                        ) : SizedBox(height: 0,),
 
                             // previous version (will use after sometime)
                             // Text('${product.quantity} pcs'),
