@@ -13,11 +13,14 @@ class HomeCubit extends Cubit<HomeState> {
     final response = await UserService.me();
     print (" MEEEEEEEEEEEEEEEEE\n\n ${response.data}");
     if(response.data['subUser'] != null && response.data['subUser'] != ""){
+      print("\n\nSUBUSER DETECTED\n\n");
       final user = User.fromMap(response.data['subUser']);
+      print("Names of userrrrr \n ------------------------- \n ${user.name} ?? ${user.businessName}");
       emit(HomeRender(user));
     }
     else {
       final user = User.fromMap(response.data['user']);
+      print("Names of userrrrr \n ------------------------- \n ${user.name} ?? ${user.businessName}");
       emit(HomeRender(user));
     }
   }

@@ -6,6 +6,7 @@ import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/models/input/sign_up_input.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/services/api_v1.dart';
+import 'package:shopos/src/services/user.dart';
 
 class AuthService {
   const AuthService();
@@ -36,38 +37,46 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await saveCookie(response);
+    await const ApiV1Service().saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 
   /// Save cookies after sign in/up
-  Future<void> saveCookie(Response response) async {
-    List<Cookie> cookies;
-
-    if(response.data['token_subuser'] != null && response.data['token_subuser'] != ""){
-      cookies= [Cookie("token", response.data['token']), Cookie("token_subuser", response.data['token_subuser'])];
-    }
-    else{
-      cookies = [Cookie("token", response.data['token'])];
-    }
-    final cj = await ApiV1Service.getCookieJar();
-    await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
-    // _dio.interceptors.add(CookieManager(cj));
-  }
+  // Future<void> saveCookie(Response response) async {
+  //   List<Cookie> cookies;
+  //
+  //   if(response.data['token_subuser'] != null && response.data['token_subuser'] != ""){
+  //     cookies= [Cookie("token", response.data['token']), Cookie("token_subuser", response.data['token_subuser'])];
+  //   }
+  //   else{
+  //     cookies = [Cookie("token", response.data['token'])];
+  //   }
+  //   final cj = await ApiV1Service.getCookieJar();
+  //   await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+  //   // _dio.interceptors.add(CookieManager(cj));
+  // }
 
   ///
   Future<void> signOut() async {
+    const ApiV1Service().clearCookies();
 
-    await clearCookies();
+
     await fb.FirebaseAuth.instance.signOut();
+    final response = await ApiV1Service.getRequest('/logout');
+
+    if((response.statusCode ?? 400) > 300) {
+      print("\n\nERROR IN LOGOUT\n\n");
+      return;
+    }
+
     // final res = await ApiV1Service.getRequest('/logout');
   }
 
   /// Clear cookies before log out
-  Future<void> clearCookies() async {
-    final cj = await ApiV1Service.getCookieJar();
-    await cj.deleteAll();
-  }
+  // Future<void> clearCookies() async {
+  //   final cj = await ApiV1Service.getCookieJar();
+  //   await cj.deleteAll();
+  // }
 
   /// Send sign in request
   ///
@@ -84,7 +93,7 @@ class AuthService {
     }
     print("line 70 signin request");
     print('res = ${response.data}');
-    await saveCookie(response);
+    await ApiV1Service().saveCookie(response);
     if(response.data['subUser'] != null && response.data['subUser'] != ""){
       return User.fromMap(response.data['subUser']);
     }

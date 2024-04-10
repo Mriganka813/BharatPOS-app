@@ -18,7 +18,7 @@ class UserService {
       // print(cj.storage.read('token_subuser'));
       print("IN MEEEEE \n\n");
       print(response);
-      getNewToken();
+      await getNewToken();
     } catch (e) {
       print('cube token expired');
       await getNewToken();
@@ -30,11 +30,16 @@ class UserService {
 
   // /// get new token from server
   static getNewToken() async {
+
     final response = await ApiV1Service.getRequest('/get-token');
+
+
     if ((response.statusCode ?? 400) > 300) {
+      print("\nERROR IN GETTING NEW TOKEN\n");
       return null;
     }
-    await AuthService().saveCookie(response);
+    print("GOT SOME TOKENSSS \N\N\N");
+    await const ApiV1Service().saveCookie(response);
   }
 
   /// shop open or close

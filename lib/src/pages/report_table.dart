@@ -73,6 +73,7 @@ class _ReportTableState extends State<ReportTable> {
   List<String> discountAmt = [];
   List<String> invoiceNum = [];
   List<String> orginalbasePurchasePrice = [];
+  List<String> names = [];
 
   String taxfileType = "initailized";
 
@@ -96,6 +97,7 @@ class _ReportTableState extends State<ReportTable> {
       print(estimateNum.length);
       datelist.add("");
       timelist.add("");
+      names.add("");
       estimateNum.add("");
       partynamelist.add("");
       productnamelist.add("");
@@ -118,6 +120,7 @@ class _ReportTableState extends State<ReportTable> {
     final headersS = [
       'Date',
       'Time',
+      'Name',
       'Invoice No',
       'Party',
       'Mode of Payment',
@@ -135,6 +138,7 @@ class _ReportTableState extends State<ReportTable> {
     final headersSaleReturn = [
       'Date',
       'Time',
+      'Name',
       'Invoice No',
       'Party',
       'Product',
@@ -151,6 +155,7 @@ class _ReportTableState extends State<ReportTable> {
     final headersEstimate = [
       'Date',
       'Time',
+      'Name',
       'Estimate No',
       'Product',
       'Hsn',
@@ -166,6 +171,7 @@ class _ReportTableState extends State<ReportTable> {
     final headersP = [
       'Date',
       'Time',
+      'Name',
       'Party',
       'Mode of Payment',
       'Product',
@@ -372,6 +378,7 @@ class _ReportTableState extends State<ReportTable> {
           list.add(DataRow(cells: [
             DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(names[i], style: TextStyle(fontSize: 6),)),
             DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(i == datelist.length - 1 ? totalMop :
@@ -407,6 +414,7 @@ class _ReportTableState extends State<ReportTable> {
         list.add(DataRow(cells: [
           DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
@@ -461,6 +469,7 @@ class _ReportTableState extends State<ReportTable> {
         list.add(DataRow(cells: [
           DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(names[i], style: TextStyle(fontSize: 6),)),
           DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
           DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
@@ -482,6 +491,7 @@ class _ReportTableState extends State<ReportTable> {
       list.add(DataRow(cells: [
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6),)),
         DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
@@ -526,6 +536,7 @@ class _ReportTableState extends State<ReportTable> {
         list.add(DataRow(cells: [
           DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(names[i], style: TextStyle(fontSize: 6),)),
           DataCell(Text(estimateNum[i], style: TextStyle(fontSize: 6),)),
           DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
@@ -623,6 +634,7 @@ class _ReportTableState extends State<ReportTable> {
         list.add(DataRow(cells: [
           DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(names[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(index == datelist.length - 1 ? totalMop :
               moplist[index].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
@@ -645,6 +657,7 @@ class _ReportTableState extends State<ReportTable> {
       list.add(DataRow(cells: [
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
             .join(', '), style: TextStyle(fontSize: 6))),
@@ -743,6 +756,7 @@ class _ReportTableState extends State<ReportTable> {
         if (breakruler != DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!)) {
           datelist.add("");
           timelist.add("");
+          names.add("");
           estimateNum.add("");
           partynamelist.add("");
           productnamelist.add("");
@@ -761,6 +775,7 @@ class _ReportTableState extends State<ReportTable> {
         }
         datelist.add(DateFormat('dd MMM, yyyy').format(DateTime.tryParse(e.createdAt.toString())!));
         timelist.add(DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!));
+        names.add((e.subUserName != null && e.subUserName != "" ? e.subUserName : (e.userName != null && e.userName != "" ? e.userName : (e.user?.name != null && e.user?.name != "" ? e.user?.name : "N/A")))!);
         partynamelist.add(e.party?.name ?? "N/A");
         productnamelist.add("${item.quantity} x ${item.product?.name ?? ""}");
         gstratelist.add("${item.product?.gstRate == "null" || item.product?.gstRate == null ? "N/A" : (item.product?.gstRate != "null" ? item.product?.gstRate : "N/A")}%");

@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Hi ${state.user.businessName ?? ""}!"),
+                        Text("Hi ${((state.user.name == null || state.user.name == "") ? state.user.businessName : state.user.name) }!"),
                         SizedBox(
                           width: 35,
                         ),

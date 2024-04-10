@@ -50,8 +50,8 @@ class Order {
   String? subUserName;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
-      userName: json["userName"] ?? "",
-      subUserName: json["subUserName"] ?? "",
+      userName: (json["userName"] == null  ? "" : json["userName"]),
+      subUserName: (json["subUserName"] == null ? "" : json["subUserName"]),
       orderReady: json["orderReady"] ?? false,
       kotId: json["kotId"].toString(),
       objId: json["_id"].toString(),
@@ -63,7 +63,7 @@ class Order {
       modeOfPayment:  (json["modeOfPayment"] as List?)?.cast<Map<String, dynamic>>() ?? [],
       id: json['id'],
       party: json["party"] is Map ? Party.fromMap(json["party"]) : null,
-      user: json["user"] is Map ? User.fromMap(json["user"]) : null,
+      user: json["user"] is Map ? User.fromMMap(json["user"]) : null,
       invoiceNum: json["invoiceNum"],
       estimateNum: json["estimateNum"].toString(),
       createdAt: json["createdAt"] == null || json["createdAt"] == "null" ? DateTime.now() : DateTime.parse(json["createdAt"].toString()),

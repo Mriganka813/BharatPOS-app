@@ -175,17 +175,19 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                             child: Container(
                               width: MediaQuery.of(context).size.width / 2.55,
                               alignment: Alignment.center,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                child: Text(
+                              child:
+                              // SingleChildScrollView(
+                              //   scrollDirection: Axis.horizontal,
+                              //   physics: BouncingScrollPhysics(),
+                              //   child:
+                                Text(
                                   widget.product.name ?? "",
-                                  maxLines: 1,
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis,
+                                  // maxLines: 1,
+                                  // softWrap: false,
+                                  // overflow: TextOverflow.visible,
                                   style: Theme.of(context).textTheme.headline6,
                                 ),
-                              ),
+                              // ),
                             ),
                           ),
                           Align(

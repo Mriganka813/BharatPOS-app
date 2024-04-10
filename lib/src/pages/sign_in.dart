@@ -81,6 +81,7 @@ class _SignInPageState extends State<SignInPage> {
         bloc: _authCubit,
         listener: (context, state) {
           if (state is SignInSucces) {
+            print("Sign in was a sucesss \n\n\n\n\n");
             Navigator.pushNamedAndRemoveUntil(
               context,
               HomePage.routeName,
