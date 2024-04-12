@@ -14,6 +14,7 @@ class DefaultPreferences extends StatefulWidget {
 }
 
 class _DefaultPreferencesState extends State<DefaultPreferences> {
+  bool showNamePref = false;
   bool shareButtonSwitch = false;
   bool barcodeButtonSwitch = false;
   bool skipPendingOrderSwitch = false;
@@ -39,11 +40,18 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
       shareButtonSwitch = false;
     }
 
+    if(prefs.containsKey('show-name-preference')){
+      showNamePref = (await prefs.getBool('show-name-preference'))!;
+    }else{//by default it will be false
+      await prefs.setBool('show-name-preference', false);
+      showNamePref = false;
+    }
+
     if(prefs.containsKey('in-stock-button-preference')){
-      shareButtonSwitch = (await prefs.getBool('in-stock-button-preference'))!;
+      showInStockSwitch = (await prefs.getBool('in-stock-button-preference'))!;
     }else{//by default it will be false
       await prefs.setBool('in-stock-button-preference', false);
-      shareButtonSwitch = false;
+      showInStockSwitch = false;
     }
 
     if(prefs.containsKey('barcode-button-preference')){
@@ -205,6 +213,22 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                                   showInStockSwitch = value;
                                 });
                                 await prefs.setBool('in-stock-button-preference', value);
+                              }),
+                        ),
+                      ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text('Save Name'),
+                          subtitle: Text('Save name of user who has created the order'),
+                          trailing:  Switch(
+                              value: showNamePref,
+                              onChanged: (value) async {
+                                setState(() {
+                                  showNamePref = value;
+                                });
+                                await prefs.setBool('show-name-preference', value);
                               }),
                         ),
                       ),

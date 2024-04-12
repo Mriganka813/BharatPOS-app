@@ -17,7 +17,7 @@ class Product {
     this.v,
     this.salecgst,
     this.saleigst,
-    this.hsn,
+    this.hsn = "",
     this.salesgst,
     this.purchasecgst,
     this.purchaseigst,
@@ -28,8 +28,9 @@ class Product {
     this.sellerName,
     this.batchNumber,
     this.expiryDate,
-    this.mrp,
+    this.mrp = 0.0,
     this.quantityToBeSold,
+    this.available
   });
 
   String? name;
@@ -58,6 +59,7 @@ class Product {
   DateTime? expiryDate;
   double? quantityToBeSold;
   num i=0;
+  bool? available;
   
   factory Product.fromMap(Map<String, dynamic> json){ 
     
@@ -85,7 +87,7 @@ class Product {
       image: json['image'],
       id: json["_id"],
       hsn: json["hsn"],
-      mrp: json["mrp"] == null ? null : json["mrp"].toDouble(),
+      mrp: json["mrp"] == null ? 0.0 : json["mrp"].toDouble(),
       createdAt: DateTime.parse(json["createdAt"]),
       v: json["__v"],
       gstRate: json['GSTRate'].toString(),
@@ -103,6 +105,7 @@ class Product {
       //     )
       // ),
       sellerName: json['sellerName'].toString(),
+      available: json['available'],
       batchNumber: json['batchNumber'] ?? null,
       quantityToBeSold: json['quantityToBeSold'] is int ? json['quantityToBeSold'].toDouble() : json['quantityToBeSold'] ,
       expiryDate: json['expiryDate'] != null
@@ -141,6 +144,7 @@ class Product {
         "purchaseIGST": purchaseigst,
         "basePurchasePrice": basePurchasePriceGst,
         "sellerName": sellerName,
+        "available": available,
         "batchNumber": batchNumber,
         "expiryDate": expiryDate,
         "quantityToBeSold": quantityToBeSold

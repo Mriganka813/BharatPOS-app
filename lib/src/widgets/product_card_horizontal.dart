@@ -10,7 +10,9 @@ import 'package:shopos/src/services/product_availability_service.dart';
 import 'package:shopos/src/widgets/custom_button.dart';
 import 'package:shopos/src/widgets/custom_text_field.dart';
 
+import '../models/input/product_input.dart';
 import '../services/global.dart';
+import '../services/product.dart';
 
 class ProductCardHorizontal extends StatefulWidget {
   final Product product;
@@ -28,6 +30,7 @@ class ProductCardHorizontal extends StatefulWidget {
   Function onTap;
   Function onQuantityFieldChange;
   bool isAvailable;
+  bool showInStockSwitch;
 
   double noOfQuatityadded;
   ProductCardHorizontal({
@@ -47,7 +50,8 @@ class ProductCardHorizontal extends StatefulWidget {
     required this.onAdd,
     required this.onRemove,
     required this.onTap,
-    required this.onQuantityFieldChange
+    required this.onQuantityFieldChange,
+    required this.showInStockSwitch,
   }) : super(key: key);
 
   @override
@@ -60,22 +64,19 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
   String? errorText;
   
   ProductAvailabilityService productAvailability = ProductAvailabilityService();
-  bool _showInStockSwitch = false;
+  late bool _showInStockSwitch = widget.showInStockSwitch;
   bool tapflag = false;
   bool onTapOutsideWillWork = false;
   @override
   void initState(){
     super.initState();
-    init();
 
     itemQuantity = widget.noOfQuatityadded;
     _itemQuantityController.text = itemQuantity.toString();
     setState(() {});
   }
-  init() async{
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    _showInStockSwitch = (await pref.getBool('in-stock-button-preference'))! ;
-  }
+
+
   @override
   Widget build(BuildContext context) {
     // print(widget.isSelecting);
@@ -169,73 +170,76 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                   padding: const EdgeInsets.only(top: 3, bottom: 8),
                   child: Column(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width / 2.55,
-                              alignment: Alignment.center,
-                              child:
-                              // SingleChildScrollView(
-                              //   scrollDirection: Axis.horizontal,
-                              //   physics: BouncingScrollPhysics(),
-                              //   child:
-                                Text(
-                                  widget.product.name ?? "",
-                                  // maxLines: 1,
-                                  // softWrap: false,
-                                  // overflow: TextOverflow.visible,
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                              // ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: PopupMenuButton<int>(
-                                  child: const Icon(Icons.more_vert_rounded),
-                                  onSelected: (int e) {
-                                    if (e == 0) {
-                                      widget.onEdit();
-                                    } else if (e == 1) {
-                                      widget.onDelete();
-                                    } else if(e == 2) {
-                                      widget.onCopy();
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) {
-                                    return <PopupMenuItem<int>>[
-                                      const PopupMenuItem<int>(
-                                        value: 0,
-                                        child: Text('Edit'),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 2,
-                                        child: Text('Copy'),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 1,
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      )
-                                    ];
-                                  },
-                                ),
+                      Container(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width / 2.55,
+                                alignment: Alignment.center,
+                                child:
+                                // SingleChildScrollView(
+                                //   scrollDirection: Axis.horizontal,
+                                //   physics: BouncingScrollPhysics(),
+                                //   child:
+                                  Text(
+                                    widget.product.name ?? "",
+                                    // maxLines: 1,
+                                    // softWrap: false,
+                                    // overflow: TextOverflow.visible,
+                                    style: Theme.of(context).textTheme.headline6,
+                                  ),
+                                // ),
                               ),
                             ),
-                          )
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: PopupMenuButton<int>(
+                                    child: const Icon(Icons.more_vert_rounded),
+                                    onSelected: (int e) {
+                                      if (e == 0) {
+                                        widget.onEdit();
+                                      } else if (e == 1) {
+                                        widget.onDelete();
+                                      } else if(e == 2) {
+                                        widget.onCopy();
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      return <PopupMenuItem<int>>[
+                                        const PopupMenuItem<int>(
+                                          value: 0,
+                                          child: Text('Edit'),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 2,
+                                          child: Text('Copy'),
+                                        ),
+                                        const PopupMenuItem<int>(
+                                          value: 1,
+                                          child: Text(
+                                            'Delete',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        )
+                                      ];
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
 
-                        ],
+                          ],
+                        ),
                       ),
                       Divider(color: Colors.black54),
                       Container(
                         width: MediaQuery.of(context).size.width/2.30,
+                        height: 100,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -464,6 +468,7 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                 value: widget.isAvailable,
                                 onChanged: (val) async {
                                   widget.isAvailable = val;
+                                  widget.product.available = val;
                                   if (widget.isAvailable == true) {
                                     await productAvailability.isProductAvailable(
                                         widget.product.id!, 'active');
@@ -471,6 +476,10 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                                     await productAvailability.isProductAvailable(
                                         widget.product.id!, 'disable');
                                   }
+                                  print(widget.product);
+                                  print(widget.product.toMap());
+                                  final productInput = ProductFormInput.fromMap(widget.product.toMap());
+                                  await ProductService().updateProduct1(productInput);
                                   setState(() {});
                                 }),
                           ],

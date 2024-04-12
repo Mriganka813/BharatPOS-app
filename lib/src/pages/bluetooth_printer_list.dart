@@ -46,6 +46,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   @override
   void initState() {
     super.initState();
+    var order = widget.args.bluetoothArgs?.order;
+    print('Name : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}');
     getpermission();
     getDevices();
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -330,6 +332,12 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     bytes += generator.text(
       'Table no : ${tableNoController.text}',
       styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),
+
+    );
+    var order = widget.args.bluetoothArgs?.order;
+    bytes += generator.text(
+        'Name : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}',
+        styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),
       linesAfter: 2,
     );
     // bytes +=

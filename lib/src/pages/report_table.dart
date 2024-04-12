@@ -38,8 +38,9 @@ class tableArg {
   final List<Expense>? expenses;
   final List<Product>? products;
   final String type;
+  final bool showNamePreference;
 
-  tableArg({this.orders, required this.type, this.expenses, this.products});
+  tableArg({this.orders, required this.type, this.expenses, this.products,required this.showNamePreference});
 }
 
 class ReportTable extends StatefulWidget {
@@ -74,6 +75,7 @@ class _ReportTableState extends State<ReportTable> {
   List<String> invoiceNum = [];
   List<String> orginalbasePurchasePrice = [];
   List<String> names = [];
+  bool _showNamePreference = false;
 
   String taxfileType = "initailized";
 
@@ -89,6 +91,7 @@ class _ReportTableState extends State<ReportTable> {
   @override
   void initState() {
     super.initState();
+    _showNamePreference = widget.args.showNamePreference;
     if (widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.purchase" || widget.args.type == "ReportType.estimate" || widget.args.type == "ReportType.saleReturn") {
       print("line 78 in report table");
       itemSPRows();
@@ -117,7 +120,9 @@ class _ReportTableState extends State<ReportTable> {
   }
 
   headerRows() {
-    final headersS = [
+    final headersS =
+    _showNamePreference ?
+    [
       'Date',
       'Time',
       'Name',
@@ -134,8 +139,27 @@ class _ReportTableState extends State<ReportTable> {
       'SGST',
       'GST',
       'Total',
+    ] :
+    [
+      'Date',
+      'Time',
+      'Invoice No',
+      'Party',
+      'Mode of Payment',
+      'Product',
+      'Hsn',
+      "Rate",
+      "Discount",
+      "Taxable value", // 'Amount/Unit',
+      'GST Rate',
+      'CGST',
+      'SGST',
+      'GST',
+      'Total',
     ];
-    final headersSaleReturn = [
+    final headersSaleReturn =
+    _showNamePreference ?
+    [
       'Date',
       'Time',
       'Name',
@@ -151,8 +175,26 @@ class _ReportTableState extends State<ReportTable> {
       'SGST',
       'GST',
       'Total',
+    ]:
+    [
+    'Date',
+    'Time',
+    'Invoice No',
+    'Party',
+    'Product',
+    'Hsn',
+    "Rate",
+    "Discount",
+    "Taxable value", // 'Amount/Unit',
+    'GST Rate',
+    'CGST',
+    'SGST',
+    'GST',
+    'Total',
     ];
-    final headersEstimate = [
+    final headersEstimate =
+    _showNamePreference ?
+    [
       'Date',
       'Time',
       'Name',
@@ -167,11 +209,44 @@ class _ReportTableState extends State<ReportTable> {
       'SGST',
       'GST',
       'Total',
-    ];
-    final headersP = [
+    ]:
+    [
       'Date',
       'Time',
-      'Name',
+      'Estimate No',
+      'Product',
+      'Hsn',
+      "Rate",
+      "Discount",
+      "Taxable value", // 'Amount/Unit',
+      'GST Rate',
+      'CGST',
+      'SGST',
+      'GST',
+      'Total',
+    ];
+    final headersP =
+    _showNamePreference ?
+    [
+    'Date',
+    'Time',
+    'Name',
+    'Party',
+    'Mode of Payment',
+    'Product',
+    'Hsn',
+    "Rate",
+    "Discount",
+    "Taxable value", // 'Amount/Unit',
+    'GST Rate',
+    'CGST',
+    'SGST',
+    'GST',
+    'Total',
+    ]:
+    [
+      'Date',
+      'Time',
       'Party',
       'Mode of Payment',
       'Product',
@@ -375,10 +450,40 @@ class _ReportTableState extends State<ReportTable> {
           if (i != datelist.length - 1 && sgstlist[i].length != 0 && sgstlist[i] != "N/A" && sgstlist[i] != "null") sgstTotal += double.parse(sgstlist[i]);
           if (i != datelist.length - 1 && igstlist[i].length != 0 && igstlist[i] != "N/A" && igstlist[i] != "null") igstTotal += double.parse(igstlist[i]);
           if (i != datelist.length - 1 && mrplist[i].length != 0 && mrplist[i] != "N/A" && mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
+          _showNamePreference ?
           list.add(DataRow(cells: [
             DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(names[i], style: TextStyle(fontSize: 6),)),
+            DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
+            DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? totalMop :
+            moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+            /*used if cash credit bankTransfer UPI would be 4 different columns*/
+            // DataCell(Text(moplist[i].isEmpty? "":
+            //     moplist[i].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(),style: TextStyle(fontSize: 6))),
+            // DataCell(Text(moplist[i].isEmpty? "":
+            //     moplist[i].firstWhere((entry) => entry['mode'] == 'Bank Transfer',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+            // DataCell(Text(moplist[i].isEmpty? "":
+            //     moplist[i].firstWhere((entry) => entry['mode'] == 'UPI',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+            // DataCell(Text(moplist[i].isEmpty? "":
+            //     moplist[i].firstWhere((entry) => entry['mode'] == 'Credit',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+
+            DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(orginalbasePurchasePrice[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(discountAmt[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? basesplitTotal.toStringAsFixed(2) : basesplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(gstratelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? cgstTotal.toStringAsFixed(2) : cgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? sgstTotal.toStringAsFixed(2) : sgstlist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(i == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[i], style: TextStyle(fontSize: 6))),
+            // DataCell(Text(i == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
+          ])):
+          list.add(DataRow(cells: [
+            DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
+            DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(i == datelist.length - 1 ? totalMop :
@@ -411,10 +516,39 @@ class _ReportTableState extends State<ReportTable> {
       if (partynametoFilter != "" || filterPaymentModeSelected!=""){//for adding the last row in the table
         print("line 277 in report table.dart");
         print(datelist[datelist.length - 1]);
+        _showNamePreference ?
         list.add(DataRow(cells: [
           DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6),)),
+          DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
+          DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+              .join(', '), style: TextStyle(fontSize: 6))),
+          // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
+          //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+          // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
+          //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'Bank Transfer',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+          // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
+          //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'UPI',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+          // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
+          //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'Credit',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
+
+          DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(hsn[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(orginalbasePurchasePrice[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(discountAmt[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(basesplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(cgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(sgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(igstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(total.toStringAsFixed(2), style: TextStyle(fontSize: 6))),
+        ])):
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
@@ -466,6 +600,7 @@ class _ReportTableState extends State<ReportTable> {
         if (i != datelist.length - 1 && sgstlist[i].length != 0 && sgstlist[i] != "N/A" && sgstlist[i] != "null") sgstTotal += double.parse(sgstlist[i]);
         if (i != datelist.length - 1 && igstlist[i].length != 0 && igstlist[i] != "N/A" && igstlist[i] != "null") igstTotal += double.parse(igstlist[i]);
         if (i != datelist.length - 1 && mrplist[i].length != 0 && mrplist[i] != "N/A" && mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
+        _showNamePreference ?
         list.add(DataRow(cells: [
           DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
@@ -483,15 +618,50 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(i == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[i], style: TextStyle(fontSize: 6))),
           // DataCell(Text(i == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
-        ]));
+        ])):
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
+          DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(orginalbasePurchasePrice[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(discountAmt[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? basesplitTotal.toStringAsFixed(2) : basesplist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? cgstTotal.toStringAsFixed(2) : cgstlist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? sgstTotal.toStringAsFixed(2) : sgstlist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[i], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(i == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
+        ]));;
       }
     }
     if (partynametoFilter != "" || filterPaymentModeSelected!=""){
       print("line 277 in report table.dart");
+      _showNamePreference ?
       list.add(DataRow(cells: [
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6),)),
+        DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
+        DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(hsn[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(orginalbasePurchasePrice[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(discountAmt[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(basesplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(gstratelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(cgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(sgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(igstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        // DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+      ])):
+      list.add(DataRow(cells: [
+        DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
@@ -533,10 +703,41 @@ class _ReportTableState extends State<ReportTable> {
         if (i != datelist.length - 1 && sgstlist[i].length != 0 && sgstlist[i] != "N/A" && sgstlist[i] != "null") sgstTotal += double.parse(sgstlist[i]);
         if (i != datelist.length - 1 && igstlist[i].length != 0 && igstlist[i] != "N/A" && igstlist[i] != "null") igstTotal += double.parse(igstlist[i]);
         if (i != datelist.length - 1 && mrplist[i].length != 0 && mrplist[i] != "N/A" && mrplist[i] != "null") mrpTotal += double.parse(mrplist[i]);
+        _showNamePreference ?
         list.add(DataRow(cells: [
           DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(names[i], style: TextStyle(fontSize: 6),)),
+          DataCell(Text(estimateNum[i], style: TextStyle(fontSize: 6),)),
+          DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(orginalbasePurchasePrice[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(discountAmt[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? basesplitTotal.toStringAsFixed(2) : basesplist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? cgstTotal.toStringAsFixed(2) : cgstlist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? sgstTotal.toStringAsFixed(2) : sgstlist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(i == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[i], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(i == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(totalsplist[i], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(estimateNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
+          // DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(hsn[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(orginalbasePurchasePrice[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(discountAmt[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(basesplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(gstratelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(cgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(sgstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(igstlist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(total.toString(), style: TextStyle(fontSize: 6))),
+        ])):
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(estimateNum[i], style: TextStyle(fontSize: 6),)),
           DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
           DataCell(Text(hsn[i], style: TextStyle(fontSize: 6))),
@@ -630,7 +831,7 @@ class _ReportTableState extends State<ReportTable> {
         if (index != datelist.length - 1 && sgstlist[index].length != 0 && sgstlist[index] != "N/A" && basesplist[index] != "null") sgstTotal += double.parse(sgstlist[index]);
         if (index != datelist.length - 1 && igstlist[index].length != 0 && igstlist[index] != "N/A" && basesplist[index] != "null") igstTotal += double.parse(igstlist[index]);
         if (index != datelist.length - 1 && mrplist[index].length != 0 && mrplist[index] != "N/A" && basesplist[index] != "null") mrpTotal += double.parse(mrplist[index]);
-
+        _showNamePreference ?
         list.add(DataRow(cells: [
           DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
@@ -649,15 +850,52 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(index == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[index], style: TextStyle(fontSize: 6))),
           // DataCell(Text(index == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
+        ])):
+        list.add(DataRow(cells: [
+          DataCell(Text(datelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? totalMop :
+          moplist[index].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+          DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(orginalbasePurchasePrice[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(discountAmt[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? basesplitTotal.toStringAsFixed(2) : basesplist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(gstratelist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? cgstTotal.toStringAsFixed(2) : cgstlist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? sgstTotal.toStringAsFixed(2) : sgstlist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(index == datelist.length - 1 ? igstTotal.toStringAsFixed(2) : igstlist[index], style: TextStyle(fontSize: 6))),
+          // DataCell(Text(index == datelist.length - 1 ? mrpTotal.toStringAsFixed(2) : mrplist[index], style: TextStyle(fontSize: 6))),
+          DataCell(Text(totalsplist[index], style: TextStyle(fontSize: 6))),
         ]));
       }
     }
 
     if (partynametoFilter != "" || filterPaymentModeSelected!="")
+      _showNamePreference ?
       list.add(DataRow(cells: [
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+            .join(', '), style: TextStyle(fontSize: 6))),
+        DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(hsn[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(orginalbasePurchasePrice[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(gstratelist[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(cgstlist[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(sgstlist[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(igstlist[datelist.length-1], style: TextStyle(fontSize: 6))),
+        // DataCell(Text(mrplist[datelist.length-1], style: TextStyle(fontSize: 6))),
+        DataCell(Text("", style: TextStyle(fontSize: 6))),
+        DataCell(Text(" ", style: TextStyle(fontSize: 6))),
+        DataCell(Text(total.toStringAsFixed(2), style: TextStyle(fontSize: 6))),
+      ])):
+      list.add(DataRow(cells: [
+        DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
+        DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
             .join(', '), style: TextStyle(fontSize: 6))),

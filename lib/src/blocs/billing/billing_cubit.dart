@@ -57,6 +57,14 @@ class BillingCubit extends Cubit<BillingState> {
     print("executing get billing orders");
     List<Order> _allBills = [];
     List<dynamic> allBillingOrders = await _billingService.getAllBillingOrder();
+
+    List<Order> _allQrBills = [];
+    List<dynamic> allQrBillingOrders = await _billingService.getAllQrOrder();
+    allQrBillingOrders.forEach((element) {
+      _allQrBills.add(Order.fromMap(element,));
+    });
+    emit(BillingQrDialog(qrOrders: _allQrBills));
+
     // if((response.statusCode ?? 400) > 300){
     //   emit(BillingError("Error creating billing order"));
     //   return;
@@ -77,16 +85,16 @@ class BillingCubit extends Cubit<BillingState> {
     // getBillingOrders();
 
   }
-  void getQrOrders() async {
-
-    List<Order> _allQrBills = [];
-    List<dynamic> allQrBillingOrders = await _billingService.getAllQrOrder();
-    allQrBillingOrders.forEach((element) {
-      _allQrBills.add(Order.fromMap(element,));
-    });
-    emit(BillingQrDialog(qrOrders: _allQrBills));
-
-  }
+  // void getQrOrders() async {
+  //   emit(BillingLoading());
+  //   List<Order> _allQrBills = [];
+  //   List<dynamic> allQrBillingOrders = await _billingService.getAllQrOrder();
+  //   allQrBillingOrders.forEach((element) {
+  //     _allQrBills.add(Order.fromMap(element,));
+  //   });
+  //   emit(BillingQrDialog(qrOrders: _allQrBills));
+  //
+  // }
   void deleteQrOrder(String kotid) async {
     emit(BillingLoading());
     final response = await _billingService.deleteQrOrder(kotid);

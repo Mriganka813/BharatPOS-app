@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/product/product_cubit.dart';
 import 'package:shopos/src/blocs/report/report_cubit.dart';
 
@@ -56,16 +57,23 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
 
   int expiryDaysTOSearch = 7;
   String searchMode = "normalSearch";
+  late bool _showInStockSwitch;
 
   @override
   void initState() {
     super.initState();
     _products = [];
+    init();
     _productCubit = ProductCubit()..getProducts(_currentPage, _limit);
 
     scrollController.addListener(_scrollListener);
     _reportCubit = ReportCubit();
     fetchSearchedProducts();
+  }
+
+  init() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    _showInStockSwitch = (await pref.getBool('in-stock-button-preference')) ?? false ;
   }
 
   //goToProductDetails(BuildContext context, int idx) {
@@ -390,6 +398,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                   Stack(
                                     children: [
                                       ProductCardHorizontal(
+                                        showInStockSwitch: _showInStockSwitch,
                                         color: 0XFFFFFFFF,
                                         type: widget.args!.orderType,
                                         noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
@@ -457,7 +466,7 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                                           setState(() {});
                                         },
                                         product: prodList[index],
-                                        isAvailable: isAvailable,
+                                        isAvailable: prodList[index].available!,
                                         onDelete: () async {
                                           var result = true;
                                           var x = await _pinService.pinStatus();

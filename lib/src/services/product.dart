@@ -77,12 +77,34 @@ class ProductService {
     );
     print("line 75 in update product");
     print(response.data);
-    // print("_id is ${response.data["inventory"]["_id"]}");
+    print("_id is ${response.data["inventory"]["_id"]}");
     final imageResp = await uploadImage(formData, response.data["inventory"]["_id"]);//uploaded image for the product
     print(imageResp.data);
     return response;
   }
 
+  ///
+  Future<Response> updateProduct1(ProductFormInput input) async {
+    final formData = FormData();
+    print("last sec");
+    print(input.toMap());
+    final filePath = input.imageFile?.path ?? "";
+    if (filePath.isNotEmpty) {
+      final image = MapEntry("image", await MultipartFile.fromFile(filePath));
+      formData.files.add(image);
+    }
+    var dataToSend = input.toMap();
+    print("line 71 in update product");
+    print(input.id);
+    final response = await ApiV1Service.putRequest(
+      '/update/inventory/${input.id}',
+      data: dataToSend,
+    );
+    print("line 75 in update product");
+    print(response.data);
+
+    return response;
+  }
   ///
   /* Future<Response> getProducts() async {
     //final response = await ApiV1Service.getRequest('/inventory/me/items?page=1&limit=10');

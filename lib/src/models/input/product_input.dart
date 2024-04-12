@@ -138,7 +138,7 @@ class  ProductFormInput {
     print(map['subProducts']);
 
     return ProductFormInput(
-        name: map['name'],
+        name: map['name']== null ? "" : map['name'].toString(),
         purchasePrice: map['purchasePrice'].toString(),
         sellingPrice: map['sellingPrice'].toString(),
         barCode: map['barCode'].toString(),
@@ -157,14 +157,16 @@ class  ProductFormInput {
         baseSellingPriceGst: map['baseSellingPrice'].toString(),
         basePurchasePriceGst: map['basePurchasePrice'].toString(),
         sellerName: map['sellerName'].toString(),
-        available: map['available'] ?? true,
+        available: map['available'],
         batchNumber: map['batchNumber'] != null ? map['batchNumber'] : null,
         expiryDate: map['expiryDate'] != null
             ? DateTime.parse((map['expiryDate']).toString().substring(0, 10))
             : null,
         unit: map['unit'] ?? "",
         GSTincluded: map['GSTincluded'],
-        subProducts: List<SubProduct>.from(
+        subProducts:
+            map["subProducts"] == null ? [] :
+        List<SubProduct>.from(
           map["subProducts"].map(
               (e)=> SubProduct.fromMap(e)
           )

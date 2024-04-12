@@ -254,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                         title: Title(
                           color: Colors.black,
                           child: Text(
-                            state.user.businessName ?? "",
+                              ((state.user.name == null || state.user.name == "") ? state.user.businessName : state.user.name)!,
                           ),
                         ),
                         subtitle: Text(

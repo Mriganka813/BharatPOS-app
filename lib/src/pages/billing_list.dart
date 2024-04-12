@@ -29,6 +29,7 @@ import '../services/set_or_change_pin.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/pin_validation.dart';
+import './../models/user.dart';
 
 enum kotType {
   is57mm,
@@ -85,6 +86,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   String date = '';
   bool autoRefreshPref = false;
   bool showReadySwitch = false;
+  bool showNamePref = false;
   late SharedPreferences prefs;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
@@ -113,13 +115,14 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   void refreshPage() {
     _billingCubit.getBillingOrders();
-    _billingCubit.getQrOrders();
+    // _billingCubit.getQrOrders();
     // print("Function executed!");
   }
   init() async {
     prefs = await SharedPreferences.getInstance();
     autoRefreshPref = (await prefs.getBool('refresh-pending-orders-preference'))!;
     showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
+    showNamePref = (await prefs.getBool('show-name-preference'))!;
     if(autoRefreshPref)
       startTimer();
   }
@@ -526,12 +529,16 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 }
                 if(state is BillingQrDialog) {
                   timer?.cancel();
-
-                  state.qrOrders.forEach((element) {
-                    _dialogCount++;
-                    _showQrDialog(element) ;
-                    print("k = ");
-                  });
+                  if(state.qrOrders.isNotEmpty) {
+                    state.qrOrders.forEach((element) {
+                      _dialogCount++;
+                      _showQrDialog(element);
+                      print("k = ");
+                    });
+                  }
+                  else {
+                    startTimer();
+                  }
                   print("dialog count: $_dialogCount");
 
                 }
@@ -652,7 +659,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                    //       );
                                    //     });
                                  },
-                                 onTap: () {
+                                 onTap: () async {
                                    print("Checkout order = ${_allBills[index]}");
                                    Navigator.pushNamed(
                                      context,
@@ -789,6 +796,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                ),
                                              ],
                                            ),
+                                           showNamePref ?
                                            Column(
                                              children: [
                                                const SizedBox(height: 5),
@@ -807,7 +815,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                  ],
                                                ),
                                              ],
-                                           ),
+                                           ) :
+                                           SizedBox(height: 0),
                                            const SizedBox(height: 5),
                                            Row(
                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -896,12 +905,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                  onTap: () async {
                                                    // print("on tap edit");
                                                    // print(_allBills[index].orderItems![0].quantity);
-                                                   var result = true;
-                                                   bool x = await _pinService.pinStatus();
-                                                   if (x == true) {
-                                                     result = await _showPinDialog() as bool;
-                                                   }
-                                                   if (result == true) {
+                                                   // var result = true;
+                                                   // bool x = await _pinService.pinStatus();
+                                                   // if (x == true) {
+                                                   //   result = await _showPinDialog() as bool;
+                                                   // }
+                                                   // if (result == true) {
                                                      widget.orderType == OrderType.sale
                                                          ? await Navigator.pushNamed(
                                                          context, CreateSale.routeName,
@@ -917,10 +926,10 @@ class _BillingListScreenState extends State<BillingListScreen> {
                                                                  .toList()[index]
                                                                  .orderItems));
                                                      // Navigator.pop(context);
-                                                   } else {
-                                                     // Navigator.pop(context);
-                                                     locator<GlobalServices>().errorSnackBar("Incorrect pin");
-                                                   }
+                                                   // } else {
+                                                   //   // Navigator.pop(context);
+                                                   //   locator<GlobalServices>().errorSnackBar("Incorrect pin");
+                                                   // }
 
                                                    // var data = await DatabaseHelper().getOrderItems();
                                                    //
@@ -1036,9 +1045,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text(
-                ' Reject ',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+              child: FittedBox( // Ensures text maintains constant font size
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Reject',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
             ),
           ),
@@ -1066,9 +1078,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Text(
-                ' Accept ',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  'Accept',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
               ),
             ),
           ),
