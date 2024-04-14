@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,7 @@ import 'package:shopos/src/services/kot_services.dart';
 import 'package:shopos/src/services/api_v1.dart';
 
 import '../config/colors.dart';
+import '../models/product.dart';
 import '../services/global.dart';
 import '../services/locator.dart';
 import '../services/set_or_change_pin.dart';
@@ -996,6 +998,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
     );
   }
   Future<bool?> _showQrDialog(Order order) {
+    final provider = Provider.of<Billing>(context, listen: false);
+
     return showDialog(
       barrierDismissible: false,
       context: context,
@@ -1055,7 +1059,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async{
               _dialogCount--;
               print(" On accept dialog count: $_dialogCount");
               if(_dialogCount == 0) {
@@ -1063,6 +1067,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 print("Timer started by Dialog");
                 // _billingCubit.getBillingOrders();
               }
+              order.kotId = DateTime.now().toString();
+              await insertToDatabase(provider, order);
               _billingCubit.acceptQrOrder(order.objId.toString(), order);
               // Handle accept action
               Navigator.of(context).pop(); // Close the dialog
@@ -1090,6 +1096,101 @@ class _BillingListScreenState extends State<BillingListScreen> {
         ],
       ),
     );
+  }
+  insertToDatabase(Billing provider, Order _Order) async {
+
+
+    Kot _kot = Kot(kotId: _Order.kotId,items: []);
+    List<Item> kotItems = [];
+    // int id = await DatabaseHelper().InsertOrder(_Order, provider, newAddedItems!);
+
+    List<Product> Kotlist = [];
+    //remove all from kotList, add all products from _Order to kotList while comparing to _currOrder
+    // print("_currOrder length in line 326 is ${_prevOrder.orderItems?.length}");
+    // if(_prevOrder.orderItems!.length != 0){//no matter we can clear kot list anyway
+    print("clearing kot list");
+    Kotlist.clear();
+    // }
+    for(int i = 0; i < _Order.orderItems!.length; i++){
+      Product? product = _Order.orderItems?[i].product;
+      product?.quantityToBeSold = _Order.orderItems?[i].quantity;
+      // print("product name is ${product!.name} and quantity to be sold is ${product.quantityToBeSold}");
+      String? productId = _Order.orderItems?[i].product?.id;
+      //todo: all the working will be done by orderItems.quantity
+
+        //add the product as it is because it is new product added
+        print("adding in kot list");
+        Kotlist.add(_Order.orderItems![i].product!);
+
+    }
+
+    //if user is editing the order and have removed any products
+    //checks from Previously saved Order and compares
+
+
+
+    var tempMap = CountNoOfitemIsList(Kotlist);
+    print("inserting to database");
+    print("temp map is $tempMap");
+    print("kotlist length is ${Kotlist.length} and kotlist is $Kotlist");
+    Kotlist.forEach((element) {
+      print("---kotList for each loop running---");
+      if(tempMap['${element.id}'] > 0){//to remove those items which has 0 quantity in kotList
+        print("kot model name: ${element.name!}, qtycount :${tempMap['${element.id}']}");
+        //Making Item object for kot api
+        Item item = Item(name: element.name, quantity: tempMap['${element.id}'], createdAt: DateTime.now());
+        kotItems.add(item);
+
+        // var model = KotModel(id, element.name!, tempMap['${element.id}'], "no");//for local database
+        // kotItemlist.add(model);//for local database
+      }
+    });
+
+
+    //adding items to _kot object
+    _kot.items = kotItems;
+    for (int i = 0; i  < kotItems.length; i++) {
+      print("\nKOTITEM = ${kotItems[i]}\n");
+    }
+    await KOTService.createKot(_kot);
+
+
+    // billingCubit.getBillingOrders();
+    // print(resp);
+    // DatabaseHelper().insertKot(kotItemlist);
+  }
+  Map CountNoOfitemIsList(List<Product> temp) {
+    var tempMap = {};
+
+    for (int i = 0; i < temp.length; i++) {
+      if (!tempMap.containsKey("${temp[i].id}")) {
+        // for (int j = i + 1; j < temp.length; j++) {
+        //   if (temp[i].id == temp[j].id) {
+        //     count++;
+        //     print("count =$count");
+        //   }
+        // }
+        temp[i].quantityToBeSold = roundToDecimalPlaces(temp[i].quantityToBeSold!, 4);
+        if(temp[i].quantityToBeSold != 0)
+          tempMap["${temp[i].id}"] = temp[i].quantityToBeSold;
+      }
+    }
+    print("temp map is $tempMap");
+
+    for (int i = 0; i < temp.length; i++) {
+      for (int j = i + 1; j < temp.length; j++) {
+        if (temp[i].id == temp[j].id) {
+          temp.removeAt(j);
+          j--;
+        }
+      }
+    }
+
+    return tempMap;
+  }
+  double roundToDecimalPlaces(double value, int decimalPlaces) {
+    final factor = pow(10, decimalPlaces).toDouble();
+    return (value * factor).round() / factor;
   }
   Future<bool?> _showPinDialog() {
     return showDialog(

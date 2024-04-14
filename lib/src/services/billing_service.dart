@@ -46,7 +46,7 @@ class BillingService{
   }
 
   Future<Response> acceptAddQrOrder(String id,Order order) async {
-    String kotId = DateTime.now().toString();
+    String? kotId = order.kotId;
     print("Accepting kotid = ${kotId}");
     final response = await ApiV1Service.postRequest(
       '/qrOrder/accept/$id',

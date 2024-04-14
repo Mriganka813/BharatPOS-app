@@ -47,7 +47,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   void initState() {
     super.initState();
     var order = widget.args.bluetoothArgs?.order;
-    print('Name : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}');
+    print('\n\n\nName : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}\n\n\n');
+    print('Table no : ${tableNoController.text}');
+    init();
     getpermission();
     getDevices();
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -292,6 +294,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       return itemList;
     // print("ITEM LIST IS $itemList");
   }
+
   Future<List<int>> kotTicket() async {
     final bargs = widget.args.bluetoothArgs!;
 
@@ -577,8 +580,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (_) async {
 
           if(widget.args.bluetoothArgs != null){
             final bargs = widget.args.bluetoothArgs!;
@@ -605,7 +608,6 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           }
 
 
-        return true;
       },
       child: Scaffold(
           appBar: AppBar(
@@ -665,5 +667,14 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
             ],
           )),
     );
+  }
+
+  init() async {
+    List<Map<String, dynamic>> list = await getKotData(
+        widget.args.bluetoothArgs!.order.kotId!);
+    for (int i = 0; i < list.length; i++) {
+      print('${list[i]['name']}');
+      print('${list[i]['qty']}');
+    }
   }
 }

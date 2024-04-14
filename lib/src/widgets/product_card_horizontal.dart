@@ -239,7 +239,6 @@ class _ProductCardHorizontalState extends State<ProductCardHorizontal> {
                       Divider(color: Colors.black54),
                       Container(
                         width: MediaQuery.of(context).size.width/2.30,
-                        height: 100,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
