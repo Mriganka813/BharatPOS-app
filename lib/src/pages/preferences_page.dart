@@ -21,6 +21,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool autoRefreshPendingOrdersSwitch = false;
   bool showReadySwitch = false;
   bool showInStockSwitch = false;
+  bool buzzerSoundPref = false;
   // bool multiplePaymentModeSwitch = false;
   String? defaultBillSize;
   String? defaultKotBillSize;
@@ -38,6 +39,12 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
     }else{//by default it will be false
       await prefs.setBool('share-button-preference', false);
       shareButtonSwitch = false;
+    }
+    if(prefs.containsKey('buzzer-qr-order-preference')){
+      buzzerSoundPref = (await prefs.getBool('buzzer-qr-order-preference'))!;
+    }else{//by default it will be false
+      await prefs.setBool('buzzer-qr-order-preference', false);
+      buzzerSoundPref = false;
     }
 
     if(prefs.containsKey('show-name-preference')){
@@ -229,6 +236,22 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                                   showNamePref = value;
                                 });
                                 await prefs.setBool('show-name-preference', value);
+                              }),
+                        ),
+                      ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text('Notification'),
+                          subtitle: Text('Turn this on to get notification when you receive a new order'),
+                          trailing:  Switch(
+                              value: buzzerSoundPref,
+                              onChanged: (value) async {
+                                setState(() {
+                                  buzzerSoundPref = value;
+                                });
+                                await prefs.setBool('buzzer-qr-order-preference', value);
                               }),
                         ),
                       ),

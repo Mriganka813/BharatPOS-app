@@ -70,7 +70,10 @@ dependencies:
   path:
   otp_text_field:
   widget_toolkit_otp:
- 
+  vibration: ^1.7.7
+
+
+
 
 dev_dependencies:
   flutter_test:

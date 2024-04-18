@@ -25,6 +25,7 @@ import 'package:shopos/src/services/api_v1.dart';
 
 import '../config/colors.dart';
 import '../models/product.dart';
+import '../services/background_service.dart';
 import '../services/global.dart';
 import '../services/locator.dart';
 import '../services/set_or_change_pin.dart';
@@ -84,11 +85,13 @@ class _BillingListScreenState extends State<BillingListScreen> {
   //   _Order = provider.getAllOrder();
   //   _orderType = provider.getAllOrderType();
   // }
-  Timer? timer; //we cancel timer when pending order delete dialog shows up, and user is searching using table nu
+  Timer? timer;//we cancel timer when pending order delete dialog shows up, and user is searching using table nu
+  Timer? buzzertimer;
   String date = '';
   bool autoRefreshPref = false;
   bool showReadySwitch = false;
   bool showNamePref = false;
+  bool buzzerSoundPref = false;
   late SharedPreferences prefs;
   final TextEditingController pinController = TextEditingController();
   PinService _pinService = PinService();
@@ -107,12 +110,24 @@ class _BillingListScreenState extends State<BillingListScreen> {
   @override
   void dispose() {
     super.dispose();
-    timer?.cancel(); // Cancel the timer when the widget is disposed
+    timer?.cancel();// Cancel the timer when the widget is disposed
+    buzzertimer?.cancel();
   }
 
   void startTimer() {
     print("timer started");
     timer = Timer.periodic(Duration(seconds: 30), (_) => refreshPage());
+  }
+
+  void startBuzzer() {
+    scheduleAlarm('New order received', '');
+    buzzertimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      print("Timer.tick = ${timer.tick}");
+      scheduleAlarm('New order received', '');
+    });
+    return;
+
+
   }
 
   void refreshPage() {
@@ -122,6 +137,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
   }
   init() async {
     prefs = await SharedPreferences.getInstance();
+    buzzerSoundPref = (await prefs.getBool('buzzer-qr-order-preference'))!;
     autoRefreshPref = (await prefs.getBool('refresh-pending-orders-preference'))!;
     showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
     showNamePref = (await prefs.getBool('show-name-preference'))!;
@@ -496,17 +512,18 @@ class _BillingListScreenState extends State<BillingListScreen> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<Billing>(
       context,
     );
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (_) async {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(HomePage.routeName, (route) => false);
-
-        return false;
+        if(buzzerSoundPref) flutterLocalNotificationsPlugin.cancelAll();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -524,19 +541,29 @@ class _BillingListScreenState extends State<BillingListScreen> {
         ),
         body:BlocListener<BillingCubit, BillingState>(
               bloc: _billingCubit,
-              listener: (context, state){
+              listener: (context, state) async {
                 if(state is BillingSuccess){
                   print("state is billing success");
                   _billingCubit.getBillingOrders();
                 }
                 if(state is BillingQrDialog) {
+
                   timer?.cancel();
-                  if(state.qrOrders.isNotEmpty) {
+                  buzzertimer?.cancel();
+                  print("buzzertimer stopped");
+                  if(state.qrOrders.isNotEmpty)  {
+                    if(buzzerSoundPref)
+                    startBuzzer();
+                    print("BUZZER Started");
                     state.qrOrders.forEach((element) {
                       _dialogCount++;
+                      // initializeService();
+
                       _showQrDialog(element);
                       print("k = ");
                     });
+
+
                   }
                   else {
                     startTimer();
@@ -1030,6 +1057,11 @@ class _BillingListScreenState extends State<BillingListScreen> {
               _dialogCount--;
               print(" On reject dialog count: $_dialogCount");
               if(_dialogCount == 0) {
+                if(buzzerSoundPref) {
+                  buzzertimer?.cancel();
+                  flutterLocalNotificationsPlugin.cancelAll();
+                }
+                print("buzzertimer stopped");
                 startTimer();
                 print("Timer started by Dialog");
                 // _billingCubit.getBillingOrders();
@@ -1063,6 +1095,11 @@ class _BillingListScreenState extends State<BillingListScreen> {
               _dialogCount--;
               print(" On accept dialog count: $_dialogCount");
               if(_dialogCount == 0) {
+                if(buzzerSoundPref) {
+                  buzzertimer?.cancel();
+                  flutterLocalNotificationsPlugin.cancelAll();
+                }
+                print("buzzertimer stopped");
                 startTimer();
                 print("Timer started by Dialog");
                 // _billingCubit.getBillingOrders();

@@ -57,7 +57,8 @@ class User {
   // extracting taxfile detail from json
   factory User.fromMMap(Map<String, dynamic> json) =>
       User(id: json["_id"], type: json["taxFile"],
-          name: json["businessName"]
+          name: json["businessName"],
+         address: json["address"],
       );
 
   Map<String, dynamic> toMap() => {

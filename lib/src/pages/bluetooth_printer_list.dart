@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:ui';
 // import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -49,6 +50,17 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     var order = widget.args.bluetoothArgs?.order;
     print('\n\n\nName : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}\n\n\n');
     print('Table no : ${tableNoController.text}');
+    print(widget.args.billArgs?.user.address.toString());
+    List<String>? addressRows() => widget.args.billArgs?.user.address
+        ?.toString()
+        .split(',')
+        .map((e) =>
+    '${e.replaceAll('{', '').replaceAll('}', '').replaceAll('[', '').replaceAll(']', '').replaceAll(',', '').replaceAll('locality:', '').replaceAll('city:', '').replaceAll('state:', '').replaceAll('country:', '')}')
+        .toList();
+
+    for(int i = 0; i < addressRows()!.length; i++) {
+      print("${addressRows()!.elementAt(i)}");
+    }
     init();
     getpermission();
     getDevices();
@@ -294,7 +306,23 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       return itemList;
     // print("ITEM LIST IS $itemList");
   }
-
+  List<String> splitName(String name, bool isName, {int maxCharsPerLine = 24}) {
+    List<String> words = name.split(' ');
+    List<String> lines = [];
+    String currentLine = isName ? "Name: " : "";
+    for (String word in words) {
+      if (currentLine.length + word.length + 1 <= maxCharsPerLine) {
+        currentLine += word + " ";
+      } else {
+        lines.add(currentLine.trim());
+        currentLine = word + " ";
+      }
+    }
+    if (currentLine.isNotEmpty) {
+      lines.add(currentLine.trim());
+    }
+    return lines;
+  }
   Future<List<int>> kotTicket() async {
     final bargs = widget.args.bluetoothArgs!;
 
@@ -338,10 +366,22 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
     );
     var order = widget.args.bluetoothArgs?.order;
-    bytes += generator.text(
-        'Name : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}',
+    String? name = ((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName));
+    List<String> nameLines = splitName(name!,true, maxCharsPerLine: (bargs.type == kotType.is57mm) ? 24 : 32);
+    // bytes += generator.text(
+    //
+    //     'Name : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}',
+    //     styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),
+    //   linesAfter: 2,
+    //   maxCharsPerLine: (bargs.type == kotType.is57mm) ? 24 : 32,
+    //
+    // );
+    for(int i = 0; i < nameLines.length -1; i++) {
+      bytes += generator.text(nameLines[i], styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),);
+    }
+    bytes += generator.text(nameLines[nameLines.length - 1],
         styles: PosStyles(fontType: PosFontType.fontA, align: PosAlign.center),
-      linesAfter: 2,
+        linesAfter: 2,
     );
     // bytes +=
     //     generator.text('Align left', styles: PosStyles(align: PosAlign.left));
@@ -453,26 +493,35 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     // Using `ESC *`
 
     String dateFormat() => DateFormat('dd/MM/yy').format(args.dateTime);
-
     List<String>? addressRows() => args.user.address
         ?.toString()
         .split(',')
         .map((e) =>
-            '${e.replaceAll('{', '').replaceAll('}', '').replaceAll('[', '').replaceAll(']', '').replaceAll(',', '').replaceAll('locality:', '').replaceAll('city:', '').replaceAll('state:', '').replaceAll('country:', '')}')
+    '${e.replaceAll('{', '').replaceAll('}', '').replaceAll('[', '').replaceAll(']', '').replaceAll(',', '').replaceAll('locality:', '').replaceAll('city:', '').replaceAll('state:', '').replaceAll('country:', '')}')
         .toList();
+    String address = "";
+    for(int i = 0; i < addressRows()!.length; i++) {
+      address += addressRows()!.elementAt(i).toString() +",";
+      // print("${addressRows()!.elementAt(i)}");
+    }
+    List<String> addressRows1 = splitName(address, false, maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm) ? 24 : 32);
+
 
     bytes += generator.text('${args.user.businessName}',
         styles: PosStyles(height: PosTextSize.size3, align: PosAlign.center));
 
-    for (int i = 0; i < addressRows()!.length; i++) {
-      bytes += generator.text('${addressRows()!.elementAt(i)}',
-          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
+    for (int i = 0; i < addressRows1.length; i++) {
+      bytes += generator.text('${addressRows1[i]}',
+        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center),
+      );
+      if(atLeastOneItemHasGst)
+        if (i == 0 && args.user.GstIN.toString() != "null" )
+          bytes += generator.text('GSTIN ${args.user.GstIN}', styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
+    }
 
   
-      if(atLeastOneItemHasGst)
-      if (i == 0 && args.user.GstIN.toString() != "null" )
-        bytes += generator.text('GSTIN ${args.user.GstIN}', styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
-    }
+
+
     bytes += generator.text('${args.user.phoneNumber}',
         styles: PosStyles(height: PosTextSize.size1, align: PosAlign.center));
 
@@ -496,23 +545,76 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     );
 
     for (int i = 0; i < args.order.orderItems!.length; i++) {
-      bytes += generator.row([
-        PosColumn(
-          text:
-              '${args.order.orderItems![i].quantity}  ${args.order.orderItems![i].product!.name}',
-          width: 9,
-          styles: PosStyles(
-            height: PosTextSize.size1,
-            underline: true,
+      List<String> orderItemName = splitName(args.order.orderItems![i].product!.name.toString(), false, maxCharsPerLine: 17);
+      if(orderItemName.length == 1) {
+        bytes += generator.row([
+          PosColumn(
+            text:
+            '${args.order.orderItems![i].quantity}  ${args.order.orderItems![i]
+                .product!.name}',
+            width: 9,
+            styles: PosStyles(
+              height: PosTextSize.size1,
+              underline: true,
+            ),
           ),
-        ),
-        PosColumn(
-          text:
-              ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null' ? args.order.orderItems![i].product!.sellingPrice : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
-          width: 3,
-          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
-        ),
-      ]);
+          PosColumn(
+            text:
+            ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
+                ? args.order.orderItems![i].product!.sellingPrice
+                : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+            width: 3,
+            styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+          ),
+        ]);
+      }
+      else {
+        int len = args.order.orderItems![i].quantity.toString().length;
+        for(int i = 0; i < orderItemName.length; i++) {
+          if(i == 0) {
+            bytes += generator.row([
+              PosColumn(
+                text:
+                '${args.order.orderItems![i].quantity}  ${orderItemName[i]}',
+                width: 9,
+                styles: PosStyles(
+                  height: PosTextSize.size1,
+                  underline: true,
+                ),
+              ),
+              PosColumn(
+                text:
+                ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
+                    ? args.order.orderItems![i].product!.sellingPrice
+                    : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+                width: 3,
+                styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+              ),
+            ]);
+          }
+          else {
+            orderItemName[i] = ' '*(len+1) + orderItemName[i];
+            bytes += generator.row([
+              PosColumn(
+                text:
+                '${orderItemName[i]}',
+                width: 9,
+                styles: PosStyles(
+                  height: PosTextSize.size1,
+                  underline: true,
+                ),
+              ),
+              PosColumn(
+                text:
+                ' ',
+                width: 3,
+                styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+              ),
+            ]);
+
+          }
+        }
+      }
     }
 
     bytes += generator.hr(linesAfter: 1);
@@ -672,9 +774,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   init() async {
     List<Map<String, dynamic>> list = await getKotData(
         widget.args.bluetoothArgs!.order.kotId!);
+    var order = widget.args.bluetoothArgs?.order;
     for (int i = 0; i < list.length; i++) {
       print('${list[i]['name']}');
       print('${list[i]['qty']}');
     }
+
+
+
   }
 }

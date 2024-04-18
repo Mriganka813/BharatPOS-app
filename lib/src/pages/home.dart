@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
     // _checkUpdate();
     _homeCubit = HomeCubit()..currentUser();
     super.initState();
-    initializeService();
+    // initializeService();
     init();
     // getDataFromDatabase();
   }
