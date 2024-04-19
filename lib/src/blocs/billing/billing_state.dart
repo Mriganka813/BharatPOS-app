@@ -22,5 +22,7 @@ class BillingLoading extends BillingState {}
 
 class BillingUpdate extends BillingState {}
 
+class BillingQrSuccess extends BillingState {}
+
 class BillingSuccess extends BillingState {}
 

@@ -103,7 +103,8 @@ class _BillingListScreenState extends State<BillingListScreen> {
     super.initState();
     fetchNTPTime();
     init();
-    _billingCubit = BillingCubit()..getBillingOrders();
+    _billingCubit = BillingCubit()..getBillingOrders()..getQrOrders();
+
 
   }
 
@@ -132,12 +133,14 @@ class _BillingListScreenState extends State<BillingListScreen> {
 
   void refreshPage() {
     _billingCubit.getBillingOrders();
+    _billingCubit.getQrOrders();
     // _billingCubit.getQrOrders();
     // print("Function executed!");
   }
   init() async {
     prefs = await SharedPreferences.getInstance();
     buzzerSoundPref = (await prefs.getBool('buzzer-qr-order-preference'))!;
+    // buzzerSoundPref = true;
     autoRefreshPref = (await prefs.getBool('refresh-pending-orders-preference'))!;
     showReadySwitch = (await prefs.getBool('ready-orders-preference'))!;
     showNamePref = (await prefs.getBool('show-name-preference'))!;
@@ -549,7 +552,6 @@ class _BillingListScreenState extends State<BillingListScreen> {
                 if(state is BillingQrDialog) {
 
                   timer?.cancel();
-                  buzzertimer?.cancel();
                   print("buzzertimer stopped");
                   if(state.qrOrders.isNotEmpty)  {
                     if(buzzerSoundPref)
@@ -1093,7 +1095,7 @@ class _BillingListScreenState extends State<BillingListScreen> {
           TextButton(
             onPressed: () async{
               _dialogCount--;
-              print(" On accept dialog count: $_dialogCount");
+              print("\n\n On accept dialog count: $_dialogCount\n\n");
               if(_dialogCount == 0) {
                 if(buzzerSoundPref) {
                   buzzertimer?.cancel();
