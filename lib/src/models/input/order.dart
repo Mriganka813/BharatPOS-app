@@ -50,8 +50,8 @@ class Order {
   String? subUserName;
 
   factory Order.fromMap(Map<String, dynamic> json) => Order(
-      userName: (json["userName"] == null  ? "" : json["userName"]),
-      subUserName: (json["subUserName"] == null ? "" : json["subUserName"]),
+      userName: json["userName"],
+      subUserName: json["subUserName"],
       orderReady: json["orderReady"] ?? false,
       kotId: json["kotId"].toString(),
       objId: json["_id"].toString(),
@@ -81,8 +81,8 @@ class Order {
 
 
     return Order(
-      userName: json["userName"] ?? "",
-      subUserName: json["subUserName"] ?? "",
+      userName: json["userName"],
+      subUserName: json["subUserName"],
       orderReady: json["orderReady"] ?? false,
       objId: json["_id"].toString(),
       orderItems: List<OrderItemInput>.from(
@@ -99,8 +99,8 @@ class Order {
     );}
 
   Map<String, dynamic> toMap(OrderType type) => {
-    "userName": userName ?? "",
-    "subUserName": subUserName ?? "",
+    "userName": userName,
+    "subUserName": subUserName,
     "orderReady": orderReady,
     "kotId": kotId,
     "id": id,
@@ -116,8 +116,8 @@ class Order {
     "tableNo": tableNo
   };
   Map<String, dynamic> toMapForCopy() => {//for making copy of Order
-    "userName": userName ?? "",
-    "subUserName": subUserName ?? "",
+    "userName": userName ,
+    "subUserName": subUserName ,
     "orderReady": orderReady,
     "id": id,
     "kotId": kotId,
@@ -211,6 +211,7 @@ class OrderItemInput {
       "discountAmt": (discountAmt == null || discountAmt == "" || discountAmt == "null") ? '0' : discountAmt,
       "originalbaseSellingPrice": (double.parse((product!.baseSellingPriceGst == null ||product!.baseSellingPriceGst == "null" || product!.baseSellingPriceGst == "") ? '0' : product!.baseSellingPriceGst!) + double.parse((discountAmt == null || discountAmt == "null" || discountAmt == '') ? "0" : discountAmt!)).toString()
     };
+    print(" - ToSaleMap - \n");
     return map;
   }
 

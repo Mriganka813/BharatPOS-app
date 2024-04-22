@@ -34,9 +34,13 @@ class SalesService {
       'businessName': orderItemInput.businessName,
       'businessAddress': orderItemInput.businessAddress,
       'gst': orderItemInput.gst,
+      'userName' : orderItemInput.userName,
+      'subUserName' : orderItemInput.subUserName ?? "NIL"
     };
-    print("--data sent--");
+    print("\n\n--data sent--\n\n");
     print(jsonEncode(dataSent));
+    print("\n\n----------------DATA SENTTTTT -------------------\n\n");
+
     final response = await ApiV1Service.postRequest(
       '/salesOrder/new',
       data: {
@@ -50,6 +54,8 @@ class SalesService {
         'businessName': orderItemInput.businessName,
         'businessAddress': orderItemInput.businessAddress,
         'gst': orderItemInput.gst,
+
+        'subUserName' : orderItemInput.subUserName ?? "NIL"
       },
     );
     print("line 37 in sales.dart");
