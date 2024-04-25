@@ -56,6 +56,8 @@ class PrintBillArgs {
   final String totalPrice;
   final String subtotalPrice;
   final String gsttotalPrice;
+  final String totalOriginalPrice;
+  final String totalDiscount;
 
   PrintBillArgs({
     required this.type,
@@ -67,6 +69,8 @@ class PrintBillArgs {
     required this.totalPrice,
     required this.subtotalPrice,
     required this.gsttotalPrice,
+    required this.totalOriginalPrice,
+    required this.totalDiscount,
   });
 }
 
@@ -786,6 +790,39 @@ class _CheckoutPageState extends State<CheckoutPage> {
       },
     ).toStringAsFixed(2);
   }
+  ///
+  String? total() {
+    double? total = 0;
+    // List<OrderItemInput> list = widget.args.order!.orderItems!;
+    // for(int i = 0; i < list.length; i++) {
+    //   if (widget.args.invoiceType == "sale" || widget.args.invoiceType == "estimate") {
+    //     if (list[i]. != "null") {
+    //       baseSellingPrice = double.parse((double.parse(widget.product.baseSellingPriceGst!) * widget.productQuantity).toStringAsFixed(2));
+    //       // Sellinggstvalue = double.parse((double.parse(widget.product.saleigst!) * widget.productQuantity).toStringAsFixed(2));
+    //     }
+    //     if (widget.product.gstRate == "null") {
+    //       baseSellingPrice = double.parse((widget.product.sellingPrice! * widget.productQuantity).toDouble().toStringAsFixed(2));
+    //     }
+    //     // SellingPrice = (widget.product.sellingPrice! * widget.productQuantity);
+    //   }
+    // }
+    List<OrderItemInput> list = widget.args.order!.orderItems!;
+    for(int i = 0; i < list.length; i++) {
+      // print(double.parse(list[i].baseSellingPrice!));
+      total = (total! + double.parse(list[i].originalbaseSellingPrice!));
+      // print("Total in loop = $total");
+    }
+    return total?.toStringAsFixed(2);
+    return widget.args.order!.orderItems?.fold<double>(
+        0,
+            (acc, curr){
+          if(curr.baseSellingPrice == null || curr.baseSellingPrice == "" || curr.baseSellingPrice == "null") {
+            return acc;
+          }
+          return double.parse(curr.baseSellingPrice!)+acc;
+        }
+    ).toStringAsFixed(2);
+  }
 
   _view80mmBill(Order Order, bool popAll) async {
     // PdfUI.generate80mmPdf(
@@ -840,6 +877,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
           totalPrice: totalPrice() ?? '',
           subtotalPrice: totalbasePrice() ?? '',
           gsttotalPrice: totalgstPrice() ?? '',
+          totalOriginalPrice: total() ??'',
+          totalDiscount: totalDiscount() ?? '',
         ));
     if(popAll){
       Navigator.of(context).pushNamedAndRemoveUntil(
@@ -862,6 +901,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   _view57mmBill(Order Order, bool popAll) async {
+
     // PdfUI.generate57mmPdf(
     //   user: userData,
     //   order: Order,
@@ -907,6 +947,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
           totalPrice: totalPrice() ?? '',
           subtotalPrice: totalbasePrice() ?? '',
           gsttotalPrice: totalgstPrice() ?? '',
+          totalOriginalPrice: total() ??'',
+          totalDiscount: totalDiscount() ?? '',
         ));
 
     if(popAll){
@@ -1069,6 +1111,24 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                     const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Total'),
+                                        Text('₹ ${total()}'),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Discount'),
+                                        Text('₹ ${totalDiscount()}'),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text('Sub Total'),
@@ -1085,16 +1145,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                         Text('₹ ${totalgstPrice()}'),
                                       ],
                                     ),
-                                    const SizedBox(height: 5),
-                                    const SizedBox(height: 5),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text('Discount'),
-                                        Text('₹ ${totalDiscount()}'),
-                                      ],
-                                    ),
+
                                     const SizedBox(height: 5),
                                     Divider(color: Colors.black54),
                                     const SizedBox(height: 5),

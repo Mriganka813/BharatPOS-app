@@ -47,9 +47,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   @override
   void initState() {
     super.initState();
-    var order = widget.args.bluetoothArgs?.order;
-    print('\n\n\nName : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}\n\n\n');
-    print('Table no : ${tableNoController.text}');
+    // var order = widget.args.bluetoothArgs?.order;
+    // print('\n\n\nName : ${((order?.subUserName != null && order?.subUserName != "" && order?.subUserName != "null") ? order?.subUserName : (order?.userName != null && order?.userName != "" && order?.userName != "null" ? order?.userName : order?.businessName))}\n\n\n');
+    // print('Table no : ${tableNoController.text}');
     // print(widget.args.billArgs?.user.address.toString());
     // List<String>? addressRows() => widget.args.billArgs?.user.address
     //     ?.toString()
@@ -61,7 +61,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     // for(int i = 0; i < addressRows()!.length; i++) {
     //   print("${addressRows()!.elementAt(i)}");
     // }
-    init();
+    // init();
     getpermission();
     getDevices();
     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -300,11 +300,13 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           'name': item['name'],
           'qty': item['quantity'],
         });
+        print("added");
       }
     }
     itemList.removeWhere((item) => item['qty'] <= 0);
+    print("ITEM LIST IS $itemList");
       return itemList;
-    // print("ITEM LIST IS $itemList");
+
   }
   List<String> splitName(String name, bool isName, {int maxCharsPerLine = 24}) {
     List<String> words = name.split(' ');
@@ -408,36 +410,57 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
       // ),
     ]);
 
-    for (int i = 0; i < list.length; i++) {
-      bytes += generator.row([
-        PosColumn(
-          text: '${list[i]['name']}',
-          width: 9,
-          styles: PosStyles(height: PosTextSize.size1),
-        ),
-        PosColumn(
-          text: '${list[i]['qty']}',
-          width: 3,
-          styles: PosStyles(height: PosTextSize.size1),
-        ),
-      ]);
-    }
     // for (int i = 0; i < list.length; i++) {
-    //   List<String> orderItemName = splitName(list[i]['name'].toString(), false, maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm) ? 17 : 22);
-    //   if(orderItemName.length == 1) {
-    //     bytes += generator.row([
-    //       PosColumn(
-    //         text: '${list[i]['name']}',
-    //         width: 9,
-    //         styles: PosStyles(height: PosTextSize.size1),
-    //       ),
-    //       PosColumn(
-    //         text: '${list[i]['qty']}',
-    //         width: 3,
-    //         styles: PosStyles(height: PosTextSize.size1),
-    //       ),
-    //     ]);
-    //   }
+    //   bytes += generator.row([
+    //     PosColumn(
+    //       text: '${list[i]['name']}',
+    //       width: 9,
+    //       styles: PosStyles(height: PosTextSize.size1),
+    //     ),
+    //     PosColumn(
+    //       text: '${list[i]['qty']}',
+    //       width: 3,
+    //       styles: PosStyles(height: PosTextSize.size1),
+    //     ),
+    //   ]);
+    // }
+    for (int i = 0; i < list.length; i++) {
+      List<String> orderItemName = splitName(list[i]['name'].toString(), false,
+          maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm)
+              ? 17
+              : 22);
+      for (int j = 0; j < orderItemName.length; j++) {
+        if (j == 0) {
+          bytes += generator.row([
+            PosColumn(
+              text: '${orderItemName[j]}',
+              width: 9,
+              styles: PosStyles(height: PosTextSize.size1),
+            ),
+            PosColumn(
+              text: '${list[i]['qty']}',
+              width: 3,
+              styles: PosStyles(height: PosTextSize.size1),
+            ),
+          ]);
+        }
+        else {
+          bytes += generator.row([
+            PosColumn(
+              text: '${orderItemName[j]}',
+              width: 9,
+              styles: PosStyles(height: PosTextSize.size1),
+            ),
+            PosColumn(
+              text: ' ',
+              width: 3,
+              styles: PosStyles(height: PosTextSize.size1),
+            ),
+          ]);
+        }
+      }
+    }
+
     //   else {
     //     for(int j = 0; j < orderItemName.length; j++) {
     //       if(j == 0) {
@@ -667,7 +690,34 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     }
 
     bytes += generator.hr(linesAfter: 1);
+    String? d = widget.args.billArgs?.totalDiscount;
+    if(d != '' && d != null && d != "null") {
+      bytes += generator.row([
+        PosColumn(
+          text: 'Amount',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1),
+        ),
+        PosColumn(
+          text: ' ${args.totalOriginalPrice}',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1),
+        ),
+      ]);
+      bytes += generator.row([
+        PosColumn(
+          text: 'Discount',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1),
+        ),
+        PosColumn(
+          text: ' ${args.totalDiscount}',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1),
+        ),
+      ]);
 
+    }
     bytes += generator.row([
       PosColumn(
         text: 'Subtotal',
@@ -823,11 +873,24 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   init() async {
     List<Map<String, dynamic>> list = await getKotData(
         widget.args.bluetoothArgs!.order.kotId!);
+    print(list);
+    print("CAME HERE ||");
     var order = widget.args.bluetoothArgs?.order;
     for (int i = 0; i < list.length; i++) {
       print('${list[i]['name']}');
       print('${list[i]['qty']}');
     }
+    for (int i = 0; i < list.length; i++) {
+      List<String> orderItemName = splitName(list[i]['name'].toString(), false,
+          maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm)
+              ? 17
+              : 22);
+      print("---------KOT ---------------");
+      for(int j = 0; j < orderItemName.length; j++) {
+        print('First is ${orderItemName[j]} ');
+      }
+    }
+
 
 
 

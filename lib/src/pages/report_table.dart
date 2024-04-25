@@ -353,7 +353,7 @@ class _ReportTableState extends State<ReportTable> {
             DataCell(Text(datelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(timelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
-            DataCell(Text(moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+            DataCell(Text(moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
                 .join(', '), style: TextStyle(fontSize: 6))),
             DataCell(Text(productnamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(mrplist[i], style: TextStyle(fontSize: 6))),
@@ -369,7 +369,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
               .join(', '), style: TextStyle(fontSize: 6))),
           DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(mrplist[datelist.length - 1], style: TextStyle(fontSize: 6))),
@@ -458,7 +458,7 @@ class _ReportTableState extends State<ReportTable> {
             DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(i == datelist.length - 1 ? totalMop :
-            moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+            moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
             /*used if cash credit bankTransfer UPI would be 4 different columns*/
             // DataCell(Text(moplist[i].isEmpty? "":
             //     moplist[i].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(),style: TextStyle(fontSize: 6))),
@@ -487,7 +487,7 @@ class _ReportTableState extends State<ReportTable> {
             DataCell(Text(invoiceNum[i], style: TextStyle(fontSize: 6),)),
             DataCell(Text(partynamelist[i], style: TextStyle(fontSize: 6))),
             DataCell(Text(i == datelist.length - 1 ? totalMop :
-                moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+                moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
             /*used if cash credit bankTransfer UPI would be 4 different columns*/
             // DataCell(Text(moplist[i].isEmpty? "":
             //     moplist[i].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(),style: TextStyle(fontSize: 6))),
@@ -523,7 +523,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
               .join(', '), style: TextStyle(fontSize: 6))),
           // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
           //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
@@ -551,7 +551,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
           DataCell(Text(invoiceNum[datelist.length - 1], style: TextStyle(fontSize: 6),)),
           DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+          DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
               .join(', '), style: TextStyle(fontSize: 6))),
           // DataCell(Text(moplist[datelist.length-1].isEmpty? "":
           //     moplist[datelist.length-1].firstWhere((entry) => entry['mode'] == 'Cash',orElse: () => {'amount': 'N/A'})['amount'].toString(), style: TextStyle(fontSize: 6))),
@@ -838,7 +838,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(names[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(index == datelist.length - 1 ? totalMop :
-              moplist[index].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+              moplist[index].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
           DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(orginalbasePurchasePrice[index], style: TextStyle(fontSize: 6))),
@@ -856,7 +856,7 @@ class _ReportTableState extends State<ReportTable> {
           DataCell(Text(timelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(partynamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(index == datelist.length - 1 ? totalMop :
-          moplist[index].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
+          moplist[index].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}").join(', '), style: TextStyle(fontSize: 6))),
           DataCell(Text(productnamelist[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(hsn[index], style: TextStyle(fontSize: 6))),
           DataCell(Text(orginalbasePurchasePrice[index], style: TextStyle(fontSize: 6))),
@@ -879,7 +879,7 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(names[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-        DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+        DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
             .join(', '), style: TextStyle(fontSize: 6))),
         DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(hsn[datelist.length-1], style: TextStyle(fontSize: 6))),
@@ -897,7 +897,7 @@ class _ReportTableState extends State<ReportTable> {
         DataCell(Text(datelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(timelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(partynamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
-        DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+        DataCell(Text(moplist[datelist.length - 1].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
             .join(', '), style: TextStyle(fontSize: 6))),
         DataCell(Text(productnamelist[datelist.length - 1], style: TextStyle(fontSize: 6))),
         DataCell(Text(hsn[datelist.length-1], style: TextStyle(fontSize: 6))),
@@ -988,8 +988,10 @@ class _ReportTableState extends State<ReportTable> {
     return widget.args.orders!.map((Order e) {
       print("line 430 in report table");
       // print(e.estimateNum);
+      int len = e.orderItems!.length;
       return e.orderItems!.map((OrderItemInput item) {
         // print(e.user!.type);
+
         taxfileType = e.user?.type ?? "notdone";
         if (breakruler != DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!)) {
           datelist.add("");
@@ -1034,15 +1036,20 @@ class _ReportTableState extends State<ReportTable> {
             ? mrplist.add("${item.price?.toStringAsFixed(2)}") : mrplist.add("${item.product?.purchasePrice == "null" || item.product?.purchasePrice == null ? "N/A" : item.product?.purchasePrice}");
         hsn.add("${item.product?.hsn == "null" || item.product?.hsn == null ? "N/A" : item.product?.hsn}");
         discountAmt.add("${item.discountAmt == "null" ? "N/A" : item.discountAmt}");
-
-        invoiceNum.add("${e.invoiceNum == null ? "N/A" : e.invoiceNum}");
+        if(len == 1)
+          invoiceNum.add("${e.invoiceNum == null ? "N/A" : e.invoiceNum}");
+        else
+          invoiceNum.add("");
         estimateNum.add("${e.estimateNum == null? "N/A": e.estimateNum}");
         orginalbasePurchasePrice.add(item.product?.sellingPrice=="null" || item.product?.sellingPrice==null ? "N/A" : "${item.product?.sellingPrice}");
         widget.args.type == "ReportType.sale" || widget.args.type == "ReportType.estimate"
             ? totalsplist.add("${((item.quantity) * (item.price ?? 0)).toStringAsFixed(2)}") : totalsplist.add("${((item.quantity) * (item.product?.purchasePrice ?? 0)).toStringAsFixed(2)}");
-
-        moplist.add(e.modeOfPayment ?? [{"N/A":0}]);
+        if(len == 1)
+          moplist.add(e.modeOfPayment ?? [{"N/A":0}]);
+        else
+          moplist.add([{'mode': null}]);
         breakruler = DateFormat('hh:mm a').format(DateTime.tryParse(e.createdAt.toString())!);
+        len--;
       }).toList();
     }).toList();
   }
@@ -1244,7 +1251,7 @@ class _ReportTableState extends State<ReportTable> {
         sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
         sheet.getRangeByIndex(i + 2, 3).setText(invoiceNum[i]);
         sheet.getRangeByIndex(i + 2, 4).setText(partynamelist[i]);
-        sheet.getRangeByIndex(i + 2, 5).setText(moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+        sheet.getRangeByIndex(i + 2, 5).setText(moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
             .join(', '));
         sheet.getRangeByIndex(i + 2, 6).setText(productnamelist[i]);
         sheet.getRangeByIndex(i + 2, 7).setText(mrplist[i]);
@@ -1254,7 +1261,7 @@ class _ReportTableState extends State<ReportTable> {
         sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
         sheet.getRangeByIndex(i + 2, 3).setText(invoiceNum[i]);
         sheet.getRangeByIndex(i + 2, 4).setText(partynamelist[i]);
-        sheet.getRangeByIndex(i + 2, 5).setText(moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+        sheet.getRangeByIndex(i + 2, 5).setText(moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
             .join(', '));
         sheet.getRangeByIndex(i + 2, 6).setText(productnamelist[i]);
         sheet.getRangeByIndex(i + 2, 7).setText(hsn[i]);
@@ -1366,7 +1373,7 @@ class _ReportTableState extends State<ReportTable> {
         sheet.getRangeByIndex(i + 2, 1).setText(datelist[i]);
         sheet.getRangeByIndex(i + 2, 2).setText(timelist[i]);
         sheet.getRangeByIndex(i + 2, 3).setText(partynamelist[i]);
-        sheet.getRangeByIndex(i + 2, 4).setText(moplist[i].map((map) => "${map['mode'] ?? "N/A"} : ${map['amount'] ?? ""}")
+        sheet.getRangeByIndex(i + 2, 4).setText(moplist[i].map((map) => "${map['mode'] ?? " "} : ${map['amount'] ?? ""}")
             .join(', '));
         sheet.getRangeByIndex(i + 2, 5).setText(productnamelist[i]);
         sheet.getRangeByIndex(i + 2, 6).setText(mrplist[i]);

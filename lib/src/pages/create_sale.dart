@@ -651,8 +651,11 @@ class _CreateSaleState extends State<CreateSale> {
                     CustomTextField(
                       inputType: TextInputType.number,
                       onChanged: (val) {
-                        localSellingPrice = val;
+                        double? taxableValue = ((_orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="") ? double.parse(baseSellingPriceToShow as String) : sellingPriceToShow);
+                        localSellingPrice = (taxableValue! - double.parse(val)/100*taxableValue).toString();
+                        print("LOCAL SELLING PRICE: $localSellingPrice");
                       },
+                        suffixIcon: Icon(Icons.percent),
                       hintText: 'Enter Taxable Value   (${_orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="" ?
                       baseSellingPriceToShow : sellingPriceToShow})'
                     ),
@@ -663,9 +666,10 @@ class _CreateSaleState extends State<CreateSale> {
                     ) : SizedBox.shrink(),
                     _orderItem.product!.gstRate != "null"  && _orderItem.product!.gstRate!="" ?
                     CustomTextField(
+                      suffixIcon: Icon(Icons.percent),
                       inputType: TextInputType.number,
                       onChanged: (val) {
-                        discountedPrice = val;
+                        discountedPrice = (sellingPriceToShow! - double.parse(val)/100*sellingPriceToShow).toString();
                       },
                       hintText: 'Enter total value   (${sellingPriceToShow})',
                       validator: (val) {
