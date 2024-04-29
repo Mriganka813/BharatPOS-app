@@ -680,7 +680,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
                 text:
                 ' ',
                 width: 3,
-                styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+                styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right,),
               ),
             ]);
 
@@ -690,20 +690,20 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     }
 
     bytes += generator.hr(linesAfter: 1);
+    bytes += generator.row([
+      PosColumn(
+        text: 'Total',
+        width: 6,
+        styles: PosStyles(height: PosTextSize.size1),
+      ),
+      PosColumn(
+        text: ' ${args.totalOriginalPrice}\t',
+        width: 6,
+        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+      ),
+    ]);
     String? d = widget.args.billArgs?.totalDiscount;
-    if(d != '' && d != null && d != "null") {
-      bytes += generator.row([
-        PosColumn(
-          text: 'Amount',
-          width: 6,
-          styles: PosStyles(height: PosTextSize.size1),
-        ),
-        PosColumn(
-          text: ' ${args.totalOriginalPrice}',
-          width: 6,
-          styles: PosStyles(height: PosTextSize.size1),
-        ),
-      ]);
+    if(d != '' && d != null && d != "null" && d != "0.00") {
       bytes += generator.row([
         PosColumn(
           text: 'Discount',
@@ -711,25 +711,26 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           styles: PosStyles(height: PosTextSize.size1),
         ),
         PosColumn(
-          text: ' ${args.totalDiscount}',
+          text: ' ${args.totalDiscount}\t',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+        ),
+      ]);
+      bytes += generator.row([
+        PosColumn(
+          text: 'Subtotal',
           width: 6,
           styles: PosStyles(height: PosTextSize.size1),
+        ),
+        PosColumn(
+          text: ' ${args.subtotalPrice}\t',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
         ),
       ]);
 
     }
-    bytes += generator.row([
-      PosColumn(
-        text: 'Subtotal',
-        width: 6,
-        styles: PosStyles(height: PosTextSize.size1),
-      ),
-      PosColumn(
-        text: ' ${args.subtotalPrice}',
-        width: 6,
-        styles: PosStyles(height: PosTextSize.size1),
-      ),
-    ]);
+
 
     if(atLeastOneItemHasGst)
     bytes += generator.row([
@@ -739,9 +740,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         styles: PosStyles(height: PosTextSize.size1),
       ),
       PosColumn(
-        text: ' ${args.gsttotalPrice}',
+        text: ' ${args.gsttotalPrice}\t',
         width: 6,
-        styles: PosStyles(height: PosTextSize.size1),
+        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
       ),
     ]);
 
@@ -754,9 +755,9 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
         styles: PosStyles(height: PosTextSize.size1),
       ),
       PosColumn(
-        text: ' ${args.totalPrice}',
+        text: ' ${args.totalPrice}\t',
         width: 6,
-        styles: PosStyles(height: PosTextSize.size1),
+        styles: PosStyles(height: PosTextSize.size1,align: PosAlign.right),
       ),
     ]);
 

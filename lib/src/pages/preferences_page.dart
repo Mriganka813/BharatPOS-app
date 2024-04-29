@@ -13,6 +13,8 @@ class DefaultPreferences extends StatefulWidget {
   State<DefaultPreferences> createState() => _DefaultPreferencesState();
 }
 
+enum DiscountType { percent, amount }
+
 class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool showNamePref = false;
   bool shareButtonSwitch = false;
@@ -22,6 +24,8 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool showReadySwitch = false;
   bool showInStockSwitch = false;
   bool buzzerSoundPref = false;
+  bool isPercentageDiscount = false;
+  DiscountType _type = DiscountType.amount;
   // bool multiplePaymentModeSwitch = false;
   String? defaultBillSize;
   String? defaultKotBillSize;
@@ -32,6 +36,9 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
     init();
 
   }
+
+
+
   void init() async {
     prefs = await SharedPreferences.getInstance();
     if(prefs.containsKey('share-button-preference')){
@@ -88,6 +95,13 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
       showReadySwitch = false;
     }
 
+    if(prefs.containsKey('discount-type-preference')){
+      isPercentageDiscount = (await prefs.getBool('discount-type-preference'))!;
+      if(isPercentageDiscount) _type = DiscountType.percent;
+    }else{//by default it will be false
+      await prefs.setBool('discount-type-preference', false);
+      isPercentageDiscount = false;
+    }
     // if(prefs.containsKey('payment-mode-preference')){
     //   multiplePaymentModeSwitch = (await prefs.getBool('payment-mode-preference'))!;
     // }else{//by default it will be true
@@ -253,6 +267,66 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                                 });
                                 await prefs.setBool('buzzer-qr-order-preference', value);
                               }),
+                        ),
+                      ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 80,
+                          width: double.infinity,
+                          child: Stack(
+                            children: [
+                              ListTile(title: Text('Choose a discounting method')),
+                              Positioned(
+                                top: -15,
+                                right: 8,
+                                child: SizedBox(
+                                height: 100,
+                                width: 100,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Percentage', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                          Radio(
+
+
+                                            value: DiscountType.percent,
+                                            onChanged: (DiscountType? value) async {
+                                              await prefs.setBool('discount-type-preference', isPercentageDiscount);
+                                              isPercentageDiscount = true;
+                                              setState(() {
+                                                _type = value!;
+                                              });
+                                            },
+                                            groupValue: _type,
+                                          ), ]
+                                    ),
+                                    Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Amount', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
+                                          Radio(
+                                            value: DiscountType.amount,
+                                            onChanged: (DiscountType? value) async {
+                                              isPercentageDiscount = false;
+                                              await prefs.setBool('discount-type-preference', isPercentageDiscount);
+                                              setState(() {
+                                                _type = value!;
+                                              });
+
+                                            },
+                                            groupValue: _type,
+                                          ),
+                                        ]),
+                                  ],
+                                ),
+                              ),
+                              )
+                              ]
+                          ),
                         ),
                       ),
                       // Divider(thickness: 1,),

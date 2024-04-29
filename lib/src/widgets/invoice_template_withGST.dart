@@ -12,6 +12,8 @@ String invoiceTemplatewithGST({
   String? dlNum,
   String? subtotal,
   String? gsttotal,
+  String? totalAmount,
+  String? discountTotal,
   required String date,
   required String type,
   String? invoiceNum,
@@ -165,9 +167,9 @@ String invoiceTemplatewithGST({
                           : '<td class="left"></td>'
                       : '') +
                   (mrpAvailableFlag
-                      ? orderItem.product!.mrp != null
+                      ? (orderItem.product!.mrp != null && orderItem.product!.mrp != 0.0)
                         ? '<td class="left"> ${orderItem.product!.mrp!="null"?orderItem.product!.mrp :''}</td>'
-                        : '<td class="left"></td>'
+                        : ''
                       : '') +
                   (atleastOneItemhaveGST
                       ? '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>'
@@ -194,9 +196,9 @@ String invoiceTemplatewithGST({
                           : '<td class="left"></td>'
                       : '') +
                   (mrpAvailableFlag
-                      ? orderItem.product!.mrp != null
+                      ? (orderItem.product!.mrp != null && orderItem.product!.mrp != 0.0)
                       ? '<td class="left"> ${orderItem.product!.mrp!="null"?orderItem.product!.mrp :''}</td>'
-                      : '<td class="left"></td>'
+                      : ''
                       : '') +
                   (atleastOneItemhaveGST
                   ?  '<td class="left">₹ ${baseprice.toStringAsFixed(2)}</td>' +
@@ -364,16 +366,18 @@ String invoiceTemplatewithGST({
                 ${headers.contains("Taxable value")?"<td></td>":""}
                 ${headers.contains("GST")?"<td></td>":""}
                   <td class="right">
-                    <strong>Sub Total</strong>
-                    <br>
+                    <strong>Total</strong><br>
+                    ${(discountTotal != "null" && discountTotal != null && discountTotal != "" && discountTotal != "0.00") ?
+                     "<strong>Discount</strong><br><strong>Sub Total</strong><br>" : ""}
                     ${atleastOneItemhaveGST ? "<strong>GST Total</strong><br>" : ""}
                     <strong>Net Total</strong>
                   </td>
                   <td class="right">
-                     ₹ $subtotal
-                      <br>
-                      ${atleastOneItemhaveGST ? "₹ $gsttotal<br>" : ""}
-                      ₹ $total
+                      <div align="right";>₹ $totalAmount </div>
+                      ${(discountTotal != "null" && discountTotal != null && discountTotal != "" && discountTotal != "0.00") ?
+                        "<div align=\"right\";>₹ $discountTotal</div><div align=\"right\";>₹ $subtotal</div>" : ""}
+                      ${atleastOneItemhaveGST ? "<div align=\"right\";>₹ $gsttotal</div>" : ""}
+                      <div align="right";>₹ $total </div>
                   </td>
                 </tr>
               </tbody>

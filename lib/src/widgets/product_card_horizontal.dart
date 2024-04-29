@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/models/product.dart';
@@ -596,6 +597,8 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
       }
       SellingPrice = (widget.product.sellingPrice! * widget.productQuantity);
     }
+    print("Base Selling price if $baseSellingPrice");
+
 
     if (widget.type == "purchase") {
       if (widget.product.purchasePrice != 0 && widget.product.gstRate != "null") {
@@ -606,6 +609,8 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
       }
       PurchasePrice = widget.product.purchasePrice * widget.productQuantity;
     }
+    print("Base purchase Price if $basePurchasePrice");
+    print("$baseSellingPrice ${widget.discount}");
     return SizedBox(
       height: 200,
       child: Card(
@@ -755,6 +760,7 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('Amount'),
+
                         (widget.type == "sale" ||widget.type == "estimate") ? Text('₹ ${(baseSellingPrice + double.parse(widget.discount)).toStringAsFixed(2)}') : Text('₹ ${basePurchasePrice}'),
                       ],
                     ),
