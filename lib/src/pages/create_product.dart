@@ -970,9 +970,11 @@ class _CreateProductState extends State<CreateProduct> {
                           print("line 889 in createProduct.dart----");
                           print(_formInput.subProducts.toString());
                           _productCubit.createProduct(_formInput);
+                          // _productCubit.getProducts(1, 30);
                           print("Barcode:");
                           print(_formInput.barCode);
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
+                          Navigator.of(context).popUntil((route) => route.isFirst);
                         }
                       },
                     ),

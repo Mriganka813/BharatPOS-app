@@ -10,6 +10,7 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:provider/provider.dart';
 
 import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:shopos/src/models/input/order.dart';
 import 'package:shopos/src/pages/billing_list.dart';
 import 'package:shopos/src/pages/checkout.dart';
 import 'package:shopos/src/services/LocalDatabase.dart';
@@ -617,12 +618,42 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     );
 
     for (int i = 0; i < args.order.orderItems!.length; i++) {
+      double? a;
+      if(args.order.orderItems?[i].product!.baseSellingPriceGst == null || args.order.orderItems?[i].product!.baseSellingPriceGst == "null" || args.order.orderItems?[i].product!.baseSellingPriceGst == "")
+        a = double.parse((args.order.orderItems?[i].product!.sellingPrice).toString());
+      else
+        a = double.parse((args.order.orderItems?[i].product!.baseSellingPriceGst).toString());
+      // print("a=$a");
+      double? b = args.order.orderItems?[i].quantity;
+      // print("b=$b");
+      double c = a * b!;
+      // print("c=$c");
+      double d = double.parse(args.order.orderItems![i].discountAmt!);
+      OrderItemInput orderItem = args.order.orderItems![i];
+      double baseprice = 0.0;
+      if (orderItem.product!.gstRate == "null") {
+        double? sp =orderItem.product!.sellingPrice;
+        baseprice = sp == null ? 0.0 : sp;
+        // String ? bspg = orderItem.baseSellingPrice;
+        // baseprice = double.parse(bspg == null || bspg == "null" ? '0.0' : bspg);
+        // gstrate = "NA";
+      } else {
+        String ? bspg = orderItem.baseSellingPrice;
+        baseprice = double.parse(bspg == null || bspg == "null" ? '0.0' : bspg);
+        // gstrate = orderItem.product!.gstRate!;
+      }
+      // print("d=$d");
+      // print("Final base = ${c+d}");
+      // if (args.type == "purchase") {
+      //   baseSellingPrice = double.parse(((args.order.orderItems?[i].product?.purchasePrice)! * int.parse(args.order.orderItems![i].quantity as String)).toDouble().toStringAsFixed(2));
+      //   SellingPrice = ((args.order.orderItems?[i].product?.purchasePrice)! * int.parse(args.order.orderItems![i].quantity as String));
+      // }
       List<String> orderItemName = splitName(args.order.orderItems![i].product!.name.toString(), false, maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm) ? 17 : 22);
       if(orderItemName.length == 1) {
         bytes += generator.row([
           PosColumn(
             text:
-            '${args.order.orderItems![i].quantity}  ${args.order.orderItems![i]
+            '${args.order.orderItems![i].quantity.toInt()}  ${args.order.orderItems![i]
                 .product!.name}',
             width: 9,
             styles: PosStyles(
@@ -632,9 +663,10 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           ),
           PosColumn(
             text:
-            ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
-                ? args.order.orderItems![i].product!.sellingPrice
-                : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+            // ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
+            //     ? args.order.orderItems![i].product!.sellingPrice
+            //     : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+            '${((orderItem.quantity) * double.parse(baseprice.toString()) + double.parse(orderItem.discountAmt![0] =='-' ? '0' : orderItem.discountAmt!)).toStringAsFixed(2)}',
             width: 3,
             styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
           ),
@@ -647,7 +679,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
             bytes += generator.row([
               PosColumn(
                 text:
-                '${args.order.orderItems![i].quantity}  ${orderItemName[j]}',
+                '${args.order.orderItems![i].quantity.toInt()}  ${orderItemName[j]}',
                 width: 9,
                 styles: PosStyles(
                   height: PosTextSize.size1,
@@ -656,9 +688,10 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
               ),
               PosColumn(
                 text:
-                ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
-                    ? args.order.orderItems![i].product!.sellingPrice
-                    : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+                // ' ${args.order.orderItems![i].product!.baseSellingPriceGst == 'null'
+                //     ? args.order.orderItems![i].product!.sellingPrice
+                //     : args.order.orderItems![i].product!.baseSellingPriceGst}  ',
+                '${((orderItem.quantity) * double.parse(baseprice.toString()) + double.parse(orderItem.discountAmt![0] =='-' ? '0' : orderItem.discountAmt!)).toStringAsFixed(2)}',
                 width: 3,
                 styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
               ),
@@ -690,20 +723,21 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
     }
 
     bytes += generator.hr(linesAfter: 1);
-    bytes += generator.row([
-      PosColumn(
-        text: 'Total',
-        width: 6,
-        styles: PosStyles(height: PosTextSize.size1),
-      ),
-      PosColumn(
-        text: ' ${args.totalOriginalPrice}\t',
-        width: 6,
-        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
-      ),
-    ]);
+
     String? d = widget.args.billArgs?.totalDiscount;
-    if(d != '' && d != null && d != "null" && d != "0.00") {
+    if(d != '' && d != null && d != "null" && double.parse(d) > 0.00 ) {
+      bytes += generator.row([
+        PosColumn(
+          text: 'Total',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1),
+        ),
+        PosColumn(
+          text: ' ${args.totalOriginalPrice}\t',
+          width: 6,
+          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+        ),
+      ]);
       bytes += generator.row([
         PosColumn(
           text: 'Discount',
@@ -716,20 +750,21 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
           styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
         ),
       ]);
-      bytes += generator.row([
-        PosColumn(
-          text: 'Subtotal',
-          width: 6,
-          styles: PosStyles(height: PosTextSize.size1),
-        ),
-        PosColumn(
-          text: ' ${args.subtotalPrice}\t',
-          width: 6,
-          styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
-        ),
-      ]);
+
 
     }
+    bytes += generator.row([
+      PosColumn(
+        text: 'Subtotal',
+        width: 6,
+        styles: PosStyles(height: PosTextSize.size1),
+      ),
+      PosColumn(
+        text: ' ${args.subtotalPrice}\t',
+        width: 6,
+        styles: PosStyles(height: PosTextSize.size1, align: PosAlign.right),
+      ),
+    ]);
 
 
     if(atLeastOneItemHasGst)
@@ -872,24 +907,69 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
   }
 
   init() async {
-    List<Map<String, dynamic>> list = await getKotData(
-        widget.args.bluetoothArgs!.order.kotId!);
-    print(list);
+    // List<Map<String, dynamic>> list = await getKotData(
+    //     widget.args.bluetoothArgs!.order.kotId!);
+    // print(list);
+    List<OrderItemInput>? list = widget.args.billArgs!.order.orderItems;
     print("CAME HERE ||");
-    var order = widget.args.bluetoothArgs?.order;
-    for (int i = 0; i < list.length; i++) {
-      print('${list[i]['name']}');
-      print('${list[i]['qty']}');
-    }
-    for (int i = 0; i < list.length; i++) {
-      List<String> orderItemName = splitName(list[i]['name'].toString(), false,
-          maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm)
-              ? 17
-              : 22);
-      print("---------KOT ---------------");
-      for(int j = 0; j < orderItemName.length; j++) {
-        print('First is ${orderItemName[j]} ');
+    // var order = widget.args.bluetoothArgs?.order;
+    // for (int i = 0; i < list?.length; i++) {
+    //   print('${list[i]['name']}');
+    //   print('${list[i]['qty']}');
+    // }
+    final args = widget.args.billArgs!;
+    for (int i = 0; i < list!.length; i++) {
+      // List<String> orderItemName = splitName(list[i]['name'].toString(), false,
+      //     maxCharsPerLine: (widget.args.bluetoothArgs?.type == kotType.is57mm)
+      //         ? 17
+      //         : 22);
+      double baseSellingPrice1 = 0.0, Sellinggstvalue, SellingPrice;
+      if (args.type == "sale" || args.type == "estimate") {
+        if (args.order.orderItems?[i].product?.gstRate != "null" && args.order.orderItems?[i].product?.gstRate != null) {
+          baseSellingPrice1 = double.parse((double.parse((args.order.orderItems?[i].product?.baseSellingPriceGst!)! * int.parse(args.order.orderItems![i].quantity as String)).toStringAsFixed(2)));
+          Sellinggstvalue = double.parse((double.parse((args.order.orderItems?[i].product?.saleigst!)! * int.parse(args.order.orderItems![i].quantity as String)).toStringAsFixed(2)));
+        }
+        if (args.order.orderItems?[i].product?.gstRate == "null" || args.order.orderItems?[i].product?.gstRate == null) {
+          baseSellingPrice1 = double.parse(((args.order.orderItems?[i].product?.sellingPrice)! * int.parse(args.order.orderItems![i].quantity as String)).toDouble().toStringAsFixed(2));
+        }
+        SellingPrice = ((args.order.orderItems?[i].product?.sellingPrice)! * int.parse(args.order.orderItems![i].quantity as String));
       }
+      OrderItemInput orderItem = args.order.orderItems![i];
+      double baseprice = 0.0;
+      if (orderItem.product!.gstRate == "null") {
+        double? sp =orderItem.product!.sellingPrice;
+        baseprice = sp == null ? 0.0 : sp;
+        // String ? bspg = orderItem.baseSellingPrice;
+        // baseprice = double.parse(bspg == null || bspg == "null" ? '0.0' : bspg);
+        // gstrate = "NA";
+      } else {
+        String ? bspg = orderItem.baseSellingPrice;
+        baseprice = double.parse(bspg == null || bspg == "null" ? '0.0' : bspg);
+        // gstrate = orderItem.product!.gstRate!;
+      }
+      print("---------KOT ---------------");
+      // double? a;
+      // if(args.order.orderItems?[i].product!.baseSellingPriceGst == null || args.order.orderItems?[i].product!.baseSellingPriceGst == "null" || args.order.orderItems?[i].product!.baseSellingPriceGst == "")
+      //   a = double.parse((args.order.orderItems?[i].product!.sellingPrice).toString());
+      // else
+      //   a = double.parse((args.order.orderItems?[i].product!.baseSellingPriceGst).toString());
+      // print("a=$a");
+      // double? b = args.order.orderItems?[i].quantity;
+      // print("b=$b");
+      // double c = a * b!;
+      // print("c=$c");
+      // double d = double.parse(args.order.orderItems![i].discountAmt!);
+      // print("d=$d");
+
+      print("Final base = ${((orderItem.quantity) * double.parse(baseprice.toString()) + double.parse(orderItem.discountAmt![0] =='-' ? '0' : orderItem.discountAmt!)).toStringAsFixed(2)}");
+      print('${args.order.orderItems![i].quantity.toInt()}');
+      // print('${(double.parse((double.parse(args.order.orderItems?[i].product!.baseSellingPriceGst.toString() ?? "") * int.parse(args.order.orderItems?[i].quantity as String) + double.parse(args.order.orderItems![i].discountAmt!)).toString()))}');
+      // for(int j = 0; j < orderItemName.length; j++) {
+      //   print('First is ${orderItemName[j]} ');
+      //
+      // }
+      // print('${(double.parse(list[i].product!.sellingPrice as String) * double.parse(widget.args.billArgs?.order.orderItems![i].quantity as String)) ?? 0}');
+      // print('${baseSellingPrice1}');
     }
 
 

@@ -612,7 +612,7 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
     print("Base purchase Price if $basePurchasePrice");
     print("$baseSellingPrice ${widget.discount}");
     return SizedBox(
-      height: 200,
+      height: 220,
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(
@@ -738,16 +738,16 @@ class _ProductCardPurchaseState extends State<ProductCardPurchase> {
                         Container(
                           width: MediaQuery.of(context).size.width / 2.25,
                           alignment: Alignment.center,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: BouncingScrollPhysics(),
+                          // child: SingleChildScrollView(
+                          //   scrollDirection: Axis.horizontal,
+                          //   physics: BouncingScrollPhysics(),
                             child: Text(
                               widget.product.name ?? "",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              // maxLines: 1,
+                              // overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.headline6,
                             ),
-                          ),
+                          // ),
                         ),
                       ],
                     ),

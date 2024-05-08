@@ -49,7 +49,7 @@ class User {
         updatedAt: DateTime.parse(json["updatedAt"]),
         v: json["__v"],
         type: json["taxFile"],
-        upi_id: json["upi_id"],
+        upi_id: json["upi_id"] ?? "",
         GstIN: json["GstIN"],
         dlNum: json['dlNum']
       );

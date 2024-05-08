@@ -426,6 +426,8 @@ class _CreateSaleState extends State<CreateSale> {
         print("adding in kot list");
         Kotlist.add(_Order.orderItems![i].product!);
       }
+      // String? bsp = _Order.orderItems![i].baseSellingPrice;
+      // _Order.orderItems?[i].originalbaseSellingPrice = (double.parse((bsp == null  || double.parse(bsp) == 0 ? (_Order.orderItems![i].price!).toStringAsFixed(2) : bsp).toString()) * _Order.orderItems![i].quantity + double.parse(_Order.orderItems![i].discountAmt!)).toStringAsFixed(2);
     }
 
     //if user is editing the order and have removed any products

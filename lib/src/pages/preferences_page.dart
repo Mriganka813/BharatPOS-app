@@ -25,9 +25,11 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
   bool showInStockSwitch = false;
   bool buzzerSoundPref = false;
   bool isPercentageDiscount = false;
-  DiscountType _type = DiscountType.amount;
+  String? _type;
   // bool multiplePaymentModeSwitch = false;
   String? defaultBillSize;
+  String? defaultPurchaseGst;
+  String? defaultSaleGst;
   String? defaultKotBillSize;
   late SharedPreferences prefs;
   @override
@@ -95,13 +97,13 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
       showReadySwitch = false;
     }
 
-    if(prefs.containsKey('discount-type-preference')){
-      isPercentageDiscount = (await prefs.getBool('discount-type-preference'))!;
-      if(isPercentageDiscount) _type = DiscountType.percent;
-    }else{//by default it will be false
-      await prefs.setBool('discount-type-preference', false);
-      isPercentageDiscount = false;
-    }
+    // if(prefs.containsKey('discount-type-preference')){
+    //   isPercentageDiscount = (await prefs.getBool('discount-type-preference'))!;
+    //   if(isPercentageDiscount) _type = DiscountType.percent;
+    // }else{//by default it will be false
+    //   await prefs.setBool('discount-type-preference', false);
+    //   isPercentageDiscount = false;
+    // }
     // if(prefs.containsKey('payment-mode-preference')){
     //   multiplePaymentModeSwitch = (await prefs.getBool('payment-mode-preference'))!;
     // }else{//by default it will be true
@@ -109,8 +111,17 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
     //   multiplePaymentModeSwitch = true;
     // }
 
+    if(prefs.containsKey('discount-type-preference')) {
+      _type = (await prefs.getBool('discount-type-preference'))! ? "percent" : "amount";
+    }
     if(prefs.containsKey('defaultBill')){
       defaultBillSize = (await prefs.getString('defaultBill'))!;
+    }
+    if(prefs.containsKey('sale-gst-preference')){
+      defaultSaleGst = (await prefs.getBool('sale-gst-preference'))! ? "GST" : "NO GST";
+    }
+    if(prefs.containsKey('purchase-gst-preference')){
+      defaultPurchaseGst = (await prefs.getBool('purchase-gst-preference'))! ? "GST" : "NO GST";
     }
 
     if(prefs.containsKey('default')){
@@ -269,66 +280,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                               }),
                         ),
                       ),
-                      Divider(thickness: 1,),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 80,
-                          width: double.infinity,
-                          child: Stack(
-                            children: [
-                              ListTile(title: Text('Choose a discounting method')),
-                              Positioned(
-                                top: -15,
-                                right: 8,
-                                child: SizedBox(
-                                height: 100,
-                                width: 100,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Percentage', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                          Radio(
 
-
-                                            value: DiscountType.percent,
-                                            onChanged: (DiscountType? value) async {
-                                              await prefs.setBool('discount-type-preference', isPercentageDiscount);
-                                              isPercentageDiscount = true;
-                                              setState(() {
-                                                _type = value!;
-                                              });
-                                            },
-                                            groupValue: _type,
-                                          ), ]
-                                    ),
-                                    Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Amount', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),),
-                                          Radio(
-                                            value: DiscountType.amount,
-                                            onChanged: (DiscountType? value) async {
-                                              isPercentageDiscount = false;
-                                              await prefs.setBool('discount-type-preference', isPercentageDiscount);
-                                              setState(() {
-                                                _type = value!;
-                                              });
-
-                                            },
-                                            groupValue: _type,
-                                          ),
-                                        ]),
-                                  ],
-                                ),
-                              ),
-                              )
-                              ]
-                          ),
-                        ),
-                      ),
                       // Divider(thickness: 1,),
                       // Padding(
                       //   padding: const EdgeInsets.all(8.0),
@@ -345,6 +297,86 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                       //         }),
                       //   ),
                       // ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text('Choose a discounting method'),
+                          subtitle:  Text('Select which type of discounting you want(percent or amount)'),
+                          trailing:  SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: CustomDropDownField(
+                              items: const <String> ["percent","amount"],
+                              initialValue: _type == 'percent' ? "percent" : "amount",
+                              onSelected: (e) async {
+                                await prefs.setBool('discount-type-preference', e == "percent");
+                                setState(() {});
+                              },
+                              // validator: (e) {
+                              //   if ((e ?? "").isEmpty) {
+                              //     return 'Please select a mode of payment';
+                              //   }
+                              //   return null;
+                              // },
+                              hintText: "select",
+                            ),
+                          ),
+                        ),
+                      ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text('Sale GST Report'),
+                          subtitle:  Text('Select which type of report you want'),
+                          trailing:  SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: CustomDropDownField(
+                              items: const <String> ["GST","NO GST"],
+                              initialValue: defaultSaleGst,
+                              onSelected: (e) async {
+                                defaultSaleGst = e;
+                                await prefs.setBool('sale-gst-preference', e == "GST");
+                                setState(() {});
+                              },
+                              // validator: (e) {
+                              //   if ((e ?? "").isEmpty) {
+                              //     return 'Please select a mode of payment';
+                              //   }
+                              //   return null;
+                              // },
+                              hintText: "select",
+                            ),
+                          ),
+                        ),
+                      ),
+                      Divider(thickness: 1,),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          title: Text('Purchase GST Report'),
+                          subtitle:  Text('Select which type of report you want'),
+                          trailing:  SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            child: CustomDropDownField(
+                              items: const <String> ["GST" , "NO GST"],
+                              initialValue: defaultPurchaseGst,
+                              onSelected: (e) async {
+                                defaultPurchaseGst = e;
+                                await prefs.setBool('purchase-gst-preference', e == "GST");
+                                setState(() {});
+                              },
+                              // validator: (e) {
+                              //   if ((e ?? "").isEmpty) {
+                              //     return 'Please select a mode of payment';
+                              //   }
+                              //   return null;
+                              // },
+                              hintText: "select",
+                            ),
+                          ),
+                        ),
+                      ),
                       Divider(thickness: 1,),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

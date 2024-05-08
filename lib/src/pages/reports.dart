@@ -36,6 +36,8 @@ class _ReportsPageState extends State<ReportsPage> {
   PinService _pinService = PinService();
 
   bool showNamePref = false;
+  bool salegstreport = false;
+  bool purchasegstreport = false;
   late SharedPreferences prefs;
 
 
@@ -51,6 +53,8 @@ class _ReportsPageState extends State<ReportsPage> {
   init() async {
     prefs = await SharedPreferences.getInstance();
     showNamePref = (await prefs.getBool('show-name-preference'))!;
+    salegstreport = (await prefs.getBool('sale-gst-preference'))!;
+    purchasegstreport = (await prefs.getBool('purchase-gst-preference'))!;
   }
 
 
@@ -74,19 +78,24 @@ class _ReportsPageState extends State<ReportsPage> {
     if (state.expenses != null) {
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              expenses: state.expenses, type: _reportInput.type.toString(), showNamePreference: showNamePref),);
+              expenses: state.expenses, type: _reportInput.type.toString(), showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,
+
+          ),);
     }
     if (state.orders != null) {
       print("line 65 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              orders: state.orders, type: _reportInput.type.toString(), showNamePreference: showNamePref),);
+              orders: state.orders, type: _reportInput.type.toString(), showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,),);
     }
     if (state.product != null) {
       print("linen 71 in reports.dart");
       Navigator.pushNamed(context, ReportTable.routeName,
           arguments: tableArg(
-              products: state.product, type: _reportInput.type.toString(), showNamePreference: showNamePref),);
+              products: state.product, type: _reportInput.type.toString(), showNamePreference: showNamePref,
+            salegstreport: salegstreport, purchasegstreport: purchasegstreport,),);
     }
   }
 

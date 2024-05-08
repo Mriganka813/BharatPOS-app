@@ -498,6 +498,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     bool hsnAvailableFlag = false;
     bool mrpAvailableFlag = false;
     bool atleastOneItemhaveGST = false;
+    bool atleastOneItemHaveDiscount = false;
 
     widget.args.order!.orderItems!.forEach((element) {
       if (element.product!.expiryDate != null &&
@@ -519,15 +520,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
       if (element.product!.gstRate != "null") {
         atleastOneItemhaveGST = true;
       }
+      if(element.discountAmt != null && element.discountAmt != "" && element.discountAmt != "null" && double.parse(element.discountAmt.toString()) > 0.0){
+        atleastOneItemHaveDiscount = true;
+      }
     });
 
-    var headerList = ["Name", "Qty", "Amount"];
+    var headerList = ["Name", "Qty", "Rate","Amount", "Total"];
+
+
     if(atleastOneItemhaveGST){
-      headerList.insert(2, "GST");
-      headerList.insert(2, "Taxable value");
+      headerList.insert(4, "GST");
+      headerList.insert(4, "Taxable value");
     }
     if(mrpAvailableFlag){
-      headerList.insert(2, "MRP");
+      headerList.insert(4, "MRP");
+    }
+    if(atleastOneItemHaveDiscount) {
+      headerList.insert(4, "Discount");
     }
     if (hsnAvailableFlag && widget.args.invoiceType!=OrderType.purchase) {
       headerList.insert(2, "HSN");
@@ -535,6 +544,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (expirydateAvailableFlag  && widget.args.invoiceType!=OrderType.purchase) {
       headerList.insert(2, "Expiry");
     }
+
+    
     final targetPath = await getExternalCacheDirectories();
     var targetFileName = "Invoice " + DateTime.now().toString();
     salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
@@ -560,7 +571,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       total: totalPrice() ?? "",
       subtotal: totalbasePrice() ?? "",
       gsttotal: totalgstPrice() ?? "",
-      totalAmount: (double.parse(totalDiscount()!)+double.parse(totalbasePrice()!)).toString() ?? "",
+      totalAmount: (double.parse(totalDiscount()!)+double.parse(totalbasePrice()!)).toStringAsFixed(2) ?? "",
       discountTotal: totalDiscount() ?? "",
       dlNum: dlNumController.text,
       convertToSale: convertToSale,
@@ -758,7 +769,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return widget.args.order!.orderItems?.fold<double>(
         0,
             (acc, curr){
-          if(curr.discountAmt == null || curr.discountAmt == "" || curr.discountAmt == "null") {
+          if(curr.discountAmt == null || curr.discountAmt == "" || curr.discountAmt == "null" || curr.discountAmt![0] == '-') {
             return acc;
           }
           return (double.parse(curr.discountAmt!))+acc;
@@ -1442,6 +1453,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                           height: 10,
                                         ),
                                         if (_isUPI)
+                                          _myUpiId?.upiID != '' ?
                                           Center(
                                             child: UPIPaymentQRCode(
                                               upiDetails: _myUpiId!,
@@ -1456,12 +1468,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                   child:
                                                       CircularProgressIndicator()),
                                             ),
-                                          ),
+                                          ) :Container(),
                                         if (_isUPI)
                                           SizedBox(
                                             height: 20,
                                           ),
                                         if (_isUPI)
+                                          _myUpiId?.upiID != '' ?
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -1474,7 +1487,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                                                 _myUpiId!.upiID,
                                               )
                                             ],
-                                          ),
+                                          ):Container(),
                                       ],
                                     )
                                 ],
@@ -1579,7 +1592,71 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 ),
               ),
             ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: BlocBuilder<CheckoutCubit, CheckoutState>(
+          bloc: _checkoutCubit,
+          builder: (context, state) {
+            if(state is CheckoutLoading) {
+              return  Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  children: [
+                    if(convertToSale)
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width*0.8,
+                          child: CustomButton(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(color: Colors.white, fontSize: 18),
+                              title: "Submit",
+                              onTap: (){
+
+                              }),
+                        ),
+                      ),
+                    if((shareButtonPref == true && convertToSale == false) || (shareButtonPref == false && widget.args.canEdit == false))
+                      Visibility(
+                        visible: !_loadingShareButton,
+                        child: Expanded(
+                          child: CustomButton(
+                            title: "Share",
+                            onTap: () async {
+                              try {
+                                final res = await UserService.me();
+                                if ((res.statusCode ?? 400) < 300) {
+                                  final user = User.fromMap(res.data['user']);
+
+                                  openShareModal(context, user, false);
+                                }
+                              } catch (_) {}
+                            },
+                            type: ButtonType.outlined,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                              vertical: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    if (widget.args.canEdit != false)
+                      if(!convertToSale)
+                        Expanded(
+                          child: CustomButton(
+                              onTap: () {},
+                              title: 'Save',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  ?.copyWith(color: Colors.white, fontSize: 16)
+                          ),
+                        )
+                  ],
+                ),
+              );
+            }
+            return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Row(
           children: [
@@ -1628,6 +1705,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               Expanded(
                 child: CustomButton(
                   onTap: () {
+                    // _checkoutCubit.loading();
                     _onTapSubmit();
                   },
                   title: 'Save',
@@ -1639,7 +1717,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
               )
           ],
         ),
-      ),
+      );
+          })
     );
   }
 

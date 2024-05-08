@@ -12,6 +12,10 @@ part 'checkout_state.dart';
 class CheckoutCubit extends Cubit<CheckoutState> {
   CheckoutCubit() : super(CheckoutInitial());
 
+  void loading() {
+    emit(CheckoutLoading());
+  }
+
   Future<int?> getSalesNum() async {
     try {
       Map<String, dynamic> salesNumMap = await SalesService.getNumberOfSales();

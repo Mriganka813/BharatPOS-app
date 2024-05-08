@@ -47,8 +47,15 @@ class ProductService {
     // print(response.data["inventory"]);
     print("line 25 in product.dart");
     print("_id is ${response.data["inventory"]["_id"]}");
-    final imageResp = await uploadImage(formData, response.data["inventory"]["_id"]);//uploaded image for the product
-    print(imageResp.data);
+    try {
+      final imageResp = await uploadImage(formData,
+          response.data["inventory"]["_id"]); //uploaded image for the product
+      print("${imageResp.data} = IMAGERESP");
+    }
+    catch (e) {
+      print(e);
+    }
+
     return response;
   }
 

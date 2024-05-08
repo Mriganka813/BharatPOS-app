@@ -71,6 +71,7 @@ dependencies:
   otp_text_field:
   widget_toolkit_otp:
   vibration: ^1.7.7
+  pretty_dio_logger: ^1.3.1
 
 
 

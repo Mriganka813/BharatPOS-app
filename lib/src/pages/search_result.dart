@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -345,15 +346,25 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
                 ),
               if (widget.args?.isSelecting ?? false) const SizedBox(width: 20),
               FloatingActionButton(
-                onPressed: () async {
-                  _productCubit.getProducts(_currentPage, _limit);
+                onPressed: ()  {
+                  // _productCubit.getProducts(_currentPage, _limit);
 
-                  await Navigator.pushNamed(
+
+                  Navigator.pushNamed(
                       context,
                       '/create-product',
                       arguments: CreateProductArgs()
                   );
-                  _productCubit.getProducts(_currentPage, _limit);
+                  // setState(() {});
+
+                  // if(x == "created") {
+                    setState(() {});
+                    print("FETCHING");
+                    // _productCubit = ProductCubit()..getProducts(_currentPage, _limit);
+                    _productCubit.getProducts(_currentPage, _limit);
+                    fetchSearchedProducts();
+                  // }
+
                 },
                 backgroundColor: Colors.green,
                 child: const Icon(
@@ -365,227 +376,272 @@ class _SearchProductListScreenState extends State<SearchProductListScreen> {
             ],
           ),
         ),
-        body: Stack(children: [
-          Column(
-            children: [
-              SizedBox(
-                height: 60,
-              ),
-              prodList.length == 0
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 15),
-                        child: Text('No products found!'),
-                      ),
-                    )
-                  : Expanded(
-                      child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(height: 5);
-                          },
-                          shrinkWrap: true,
-                          padding: EdgeInsets.all(8),
-                          physics: AlwaysScrollableScrollPhysics(),
-                          itemCount: isLoadingMore ? prodList.length + 1 : prodList.length,
-                          controller: scrollController,
-                          itemBuilder: (context, index) {
-                            if (index < prodList.length) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: height / 240,
-                                  ),
-                                  Stack(
-                                    children: [
-                                      ProductCardHorizontal(
-                                        showInStockSwitch: _showInStockSwitch,
-                                        color: 0XFFFFFFFF,
-                                        type: widget.args!.orderType,
-                                        noOfQuatityadded: countNoOfQuatityInArray(prodList[index]),
-                                        isSelecting: widget.args!.isSelecting,
-                                        onTap: (q) {
-                                          //here q represents the quantity
-                                          //if q is 1 that means we should remove the item from main list(productList)
-                                          // if q is we should add item to productList
+        body:
+        BlocListener<ProductCubit, ProductState>(
+          bloc: _productCubit,
+          listener: (context, state) {
 
-                                          //this logic is done becasue when we press the card only the (+-) button should show and should add item
-                                          //then when we again press the card the opposite should happen
-                                          print("value of q $q");//q represents item quantity
-                                          if (q == 0) {
-                                            print("if part q==0");
-                                            _selectProduct(prodList[index]);
-                                            itemCheckedFlag = true;
-                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
-                                            //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                            // } else if(widget.args!.orderType == OrderType.none){
-                                            //
-                                            // } else if(widget.args!.orderType == OrderType.estimate){
-                                            //
-                                            // } else {
-                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                            // }
-                                          } else if (q <= 1) {
-                                            print("if part q<=1");
-                                            decreaseTheQuantity(prodList[index], q);
-                                            itemCheckedFlag = false;
-                                            // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
-                                            //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                            // } else if(widget.args!.orderType == OrderType.none){
-                                            //
-                                            // }else if(widget.args!.orderType == OrderType.estimate){
-                                            //
-                                            // }else{
-                                            //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                            // }
-                                          }
-
-                                          setState(() {});
-                                        },
-
-                                        onAdd: (double value) {
-                                          increaseTheQuantity(prodList[index], value);
-                                          // if (widget.args!.orderType == OrderType.sale) {
-                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                          // }else if(widget.args!.orderType == OrderType.estimate){
-                                          //
-                                          // }else {
-                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                          // }
-                                          setState(() {});
-                                        },
-                                        onRemove: (double value) {
-                                          decreaseTheQuantity(prodList[index], value);
-                                          itemCheckedFlag = false;
-                                          // if (widget.args!.orderType == OrderType.sale) {
-                                          //   prodList[index].quantity = prodList[index].quantity! + 1;
-                                          // } else if(widget.args!.orderType == OrderType.estimate){
-                                          //
-                                          // } else {
-                                          //   prodList[index].quantity = prodList[index].quantity! - 1;
-                                          // }
-                                          setState(() {});
-                                        },
-                                        product: prodList[index],
-                                        isAvailable: prodList[index].available!,
-                                        onDelete: () async {
-                                          var result = true;
-                                          var x = await _pinService.pinStatus();
-                                          if (x == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
-
-                                          if (result) {
-                                            _productCubit.deleteProduct(prodList[index], _currentPage, _limit);
-                                            setState(() {
-                                              prodList.removeAt(index);
-                                            });
-                                          }
-                                        },
-                                        onEdit: () async {
-                                          var result = true;
-                                          var x = await _pinService.pinStatus();
-                                          if (x == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
-                                          if (result) {
-                                            await Navigator.pushNamed(
-                                              context,
-                                              CreateProduct.routeName,
-                                              arguments: CreateProductArgs(id: prodList[index].id),
-                                            );
-
-                                            _productCubit.getProducts(_currentPage, _limit);
-                                            pinController.clear();
-                                          }
-                                        },
-                                        onCopy:() async {
-                                          var result = true;
-
-                                          if (await _pinService.pinStatus() == true) {
-                                            result = await _showPinDialog() as bool;
-                                          }
-                                          if (result) {
-                                          await Navigator.pushNamed(
-                                            context,
-                                            CreateProduct.routeName,
-                                            arguments: CreateProductArgs(id: prodList[index].id, isCopy: true),
-                                          );
-
-                                          // _productCubit.getProducts(_currentPage, _limit);
-                                          pinController.clear();
-                                          }
-                                        },
-                                        onQuantityFieldChange: (double value){
-                                          print("line 412 in serch result: value coming is $value");
-                                          setQuantityToBeSold(prodList[index], value);
-
-                                        },
-                                      ),
-                                      if (countNoOfQuatityInArray(prodList[index]) > 0)
-                                        const Align(
-                                          alignment: Alignment.topRight,
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8.0),
-                                            child: CircleAvatar(
-                                              radius: 15,
-                                              backgroundColor: Colors.green,
-                                              child: Icon(
-                                                Icons.check,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height / 240,
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                          }),
-                    ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-//               child: CustomTextField(
-            child: CustomTextField(
-              prefixIcon: const Icon(Icons.search),
-              hintText: 'Search',
-              onChanged: (String e) async {
-                if (e.isNotEmpty) {
-                  prodList.clear();
-                  setState(() {});
-                  prodList = await searchProductServices.searchproduct(e);
-                  for (int i = 0; i < widget.args!.productlist.length; i++) {
-                    for (int j = 0; j < prodList.length; j++) {
-                      if (widget.args!.productlist[i].product!.id == prodList[j].id) {
-                        // prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
-                        prodList[j].quantityToBeSold = widget.args!.productlist[i].product?.quantityToBeSold ?? 0;
-                      }
-                    }
-                  }
-                  // print(_products);
-
-                  print("searchbar running");
-                  setState(() {});
+          },
+          child: BlocBuilder<ProductCubit, ProductState>(
+              bloc: _productCubit,
+              builder: (context,state) {
+                if (state is ProductLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
+                return
+                  Stack(
+                      children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 60,
+                            ),
+                            Expanded(
+                              child: ListView.separated(
+                                  separatorBuilder: (context, index) {
+                                    return const SizedBox(height: 5);
+                                  },
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.all(8),
+                                  physics: AlwaysScrollableScrollPhysics(),
+                                  itemCount: isLoadingMore
+                                      ? prodList.length + 1
+                                      : prodList.length,
+                                  controller: scrollController,
+                                  itemBuilder: (context, index) {
+                                    // int len = isLoadingMore
+                                    //     ? prodList.length + 1
+                                    //     : prodList.length;
+                                    // index = len - index - 1;
+                                    if (index < prodList.length) {
+                                      return Column(
+                                        children: [
+                                          SizedBox(
+                                            height: height / 240,
+                                          ),
+                                          Stack(
+                                            children: [
+                                              ProductCardHorizontal(
+                                                showInStockSwitch: _showInStockSwitch,
+                                                color: 0XFFFFFFFF,
+                                                type: widget.args!.orderType,
+                                                noOfQuatityadded: countNoOfQuatityInArray(
+                                                    prodList[index]),
+                                                isSelecting: widget.args!
+                                                    .isSelecting,
+                                                onTap: (q) {
+                                                  //here q represents the quantity
+                                                  //if q is 1 that means we should remove the item from main list(productList)
+                                                  // if q is we should add item to productList
+
+                                                  //this logic is done becasue when we press the card only the (+-) button should show and should add item
+                                                  //then when we again press the card the opposite should happen
+                                                  print(
+                                                      "value of q $q"); //q represents item quantity
+                                                  if (q == 0) {
+                                                    print("if part q==0");
+                                                    _selectProduct(
+                                                        prodList[index]);
+                                                    itemCheckedFlag = true;
+                                                    // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                                    //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                                    // } else if(widget.args!.orderType == OrderType.none){
+                                                    //
+                                                    // } else if(widget.args!.orderType == OrderType.estimate){
+                                                    //
+                                                    // } else {
+                                                    //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                                    // }
+                                                  } else if (q <= 1) {
+                                                    print("if part q<=1");
+                                                    decreaseTheQuantity(
+                                                        prodList[index], q);
+                                                    itemCheckedFlag = false;
+                                                    // if (widget.args!.orderType == OrderType.sale) {//to show the available quantity in product card horizontal
+                                                    //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                                    // } else if(widget.args!.orderType == OrderType.none){
+                                                    //
+                                                    // }else if(widget.args!.orderType == OrderType.estimate){
+                                                    //
+                                                    // }else{
+                                                    //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                                    // }
+                                                  }
+
+                                                  setState(() {});
+                                                },
+
+                                                onAdd: (double value) {
+                                                  increaseTheQuantity(
+                                                      prodList[index], value);
+                                                  // if (widget.args!.orderType == OrderType.sale) {
+                                                  //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                                  // }else if(widget.args!.orderType == OrderType.estimate){
+                                                  //
+                                                  // }else {
+                                                  //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                                  // }
+                                                  setState(() {});
+                                                },
+                                                onRemove: (double value) {
+                                                  decreaseTheQuantity(
+                                                      prodList[index], value);
+                                                  itemCheckedFlag = false;
+                                                  // if (widget.args!.orderType == OrderType.sale) {
+                                                  //   prodList[index].quantity = prodList[index].quantity! + 1;
+                                                  // } else if(widget.args!.orderType == OrderType.estimate){
+                                                  //
+                                                  // } else {
+                                                  //   prodList[index].quantity = prodList[index].quantity! - 1;
+                                                  // }
+                                                  setState(() {});
+                                                },
+                                                product: prodList[index],
+                                                isAvailable: prodList[index]
+                                                    .available!,
+                                                onDelete: () async {
+                                                  var result = true;
+                                                  var x = await _pinService
+                                                      .pinStatus();
+                                                  if (x == true) {
+                                                    result =
+                                                    await _showPinDialog() as bool;
+                                                  }
+
+                                                  if (result) {
+                                                    _productCubit.deleteProduct(
+                                                        prodList[index],
+                                                        _currentPage, _limit);
+                                                    setState(() {
+                                                      prodList.removeAt(index);
+                                                    });
+                                                  }
+                                                },
+                                                onEdit: () async {
+                                                  var result = true;
+                                                  var x = await _pinService
+                                                      .pinStatus();
+                                                  if (x == true) {
+                                                    result =
+                                                    await _showPinDialog() as bool;
+                                                  }
+                                                  if (result) {
+                                                    Object? xy = await Navigator
+                                                        .pushNamed(
+                                                      context,
+                                                      CreateProduct.routeName,
+                                                      arguments: CreateProductArgs(
+                                                          id: prodList[index].id),
+                                                    );
+                                                    if (xy == "created")
+                                                      _productCubit.getProducts(
+                                                          _currentPage, _limit);
+                                                    pinController.clear();
+                                                  }
+                                                },
+                                                onCopy: () async {
+                                                  var result = true;
+
+                                                  if (await _pinService
+                                                      .pinStatus() == true) {
+                                                    result =
+                                                    await _showPinDialog() as bool;
+                                                  }
+                                                  if (result) {
+                                                    await Navigator.pushNamed(
+                                                      context,
+                                                      CreateProduct.routeName,
+                                                      arguments: CreateProductArgs(
+                                                          id: prodList[index].id,
+                                                          isCopy: true),
+                                                    );
+
+                                                    // _productCubit.getProducts(_currentPage, _limit);
+                                                    pinController.clear();
+                                                  }
+                                                },
+                                                onQuantityFieldChange: (
+                                                    double value) {
+                                                  print(
+                                                      "line 412 in serch result: value coming is $value");
+                                                  setQuantityToBeSold(
+                                                      prodList[index], value);
+                                                },
+                                              ),
+                                              if (countNoOfQuatityInArray(
+                                                  prodList[index]) > 0)
+                                                const Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Padding(
+                                                    padding: EdgeInsets.all(8.0),
+                                                    child: CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundColor: Colors
+                                                          .green,
+                                                      child: Icon(
+                                                        Icons.check,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: height / 240,
+                                          ),
+                                        ],
+                                      );
+                                    } else {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  }),
+                            )
+
+                          ],
+                        )
+                      ,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  //               child: CustomTextField(
+                      child: CustomTextField(
+                        prefixIcon: const Icon(Icons.search),
+                        hintText: 'Search',
+                        onChanged: (String e) async {
+                          if (e.isNotEmpty) {
+                            prodList.clear();
+                            setState(() {});
+                            prodList = await searchProductServices.searchproduct(e);
+                            for (int i = 0; i < widget.args!.productlist.length; i++) {
+                              for (int j = 0; j < prodList.length; j++) {
+                                if (widget.args!.productlist[i].product!.id == prodList[j].id) {
+                                  // prodList[j].quantity = widget.args!.productlist[i].product!.quantity;
+                                  prodList[j].quantityToBeSold = widget.args!.productlist[i].product?.quantityToBeSold ?? 0;
+                                }
+                              }
+                            }
+                            // print(_products);
+
+                            print("searchbar running");
+                            setState(() {});
+                          }
+                        },
+                        // onsubmitted: (value) {
+                        //   Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         SearchProductListScreen(title: value!),
+                        //   ));
+                        // },
+                      ),
+                    ),
+                  ]);
               },
-              // onsubmitted: (value) {
-              //   Navigator.of(context).push(MaterialPageRoute(
-              //     builder: (context) =>
-              //         SearchProductListScreen(title: value!),
-              //   ));
-              // },
-            ),
           ),
-        ]));
+        ));
   }
 
   Future<bool?> _showPinDialog() {
