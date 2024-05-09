@@ -118,10 +118,10 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
       defaultBillSize = (await prefs.getString('defaultBill'))!;
     }
     if(prefs.containsKey('sale-gst-preference')){
-      defaultSaleGst = (await prefs.getBool('sale-gst-preference'))! ? "GST" : "NO GST";
+      defaultSaleGst = (await prefs.getBool('sale-gst-preference'))! ? "GST" : "Simple";
     }
     if(prefs.containsKey('purchase-gst-preference')){
-      defaultPurchaseGst = (await prefs.getBool('purchase-gst-preference'))! ? "GST" : "NO GST";
+      defaultPurchaseGst = (await prefs.getBool('purchase-gst-preference'))! ? "GST" : "Simple";
     }
 
     if(prefs.containsKey('default')){
@@ -332,7 +332,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                           trailing:  SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: CustomDropDownField(
-                              items: const <String> ["GST","NO GST"],
+                              items: const <String> ["GST","Simple"],
                               initialValue: defaultSaleGst,
                               onSelected: (e) async {
                                 defaultSaleGst = e;
@@ -359,7 +359,7 @@ class _DefaultPreferencesState extends State<DefaultPreferences> {
                           trailing:  SizedBox(
                             width: MediaQuery.of(context).size.width * 0.25,
                             child: CustomDropDownField(
-                              items: const <String> ["GST" , "NO GST"],
+                              items: const <String> ["GST" , "Simple"],
                               initialValue: defaultPurchaseGst,
                               onSelected: (e) async {
                                 defaultPurchaseGst = e;

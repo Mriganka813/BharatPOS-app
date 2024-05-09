@@ -1779,6 +1779,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _onTapSubmit() async {
     _formKey.currentState?.save();
     if (_formKey.currentState?.validate() ?? false) {
+
       // print("discountttttttt=${widget.args.order!.orderItems![0].discountAmt}");
       print("widget.args.order! ${widget.args.order!}");
       print("widget.args.order! ${widget.args.order!.kotId}");
@@ -1811,6 +1812,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
       }
 
+      _checkoutCubit.loading();
       salesInvoiceNo = await _checkoutCubit.getSalesNum() as int;
       purchasesInvoiceNo = await _checkoutCubit.getPurchasesNum() as int;
       estimateNo = await _checkoutCubit.getEstimateNum() as int;

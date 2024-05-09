@@ -147,7 +147,7 @@ class _ReportTableState extends State<ReportTable> {
       'Total',
     ];
     if (_salegstreport)  {
-      headersS.insert(5, 'Hsn');
+      headersS.insert(5, 'HSN');
       headersS.insert(8, 'GST');
       headersS.insert(8, 'SGST');
       headersS.insert(8, 'CGST');
@@ -165,7 +165,7 @@ class _ReportTableState extends State<ReportTable> {
     'Invoice No',
     'Party',
     'Product',
-    // 'Hsn',
+    // 'HSN',
     "Rate",
     "Discount",
     // "Taxable value", // 'Amount/Unit',
@@ -176,7 +176,7 @@ class _ReportTableState extends State<ReportTable> {
     'Total',
     ];
     if (_salegstreport)  {
-      headersSaleReturn.insert(5, 'Hsn');
+      headersSaleReturn.insert(5, 'HSN');
       headersSaleReturn.insert(8, 'GST');
       headersSaleReturn.insert(8, 'SGST');
       headersSaleReturn.insert(8, 'CGST');
@@ -193,7 +193,7 @@ class _ReportTableState extends State<ReportTable> {
       'Time',
       'Estimate No',
       'Product',
-      'Hsn',
+      'HSN',
       "Rate",
       "Discount",
       "Taxable value", // 'Amount/Unit',
@@ -215,7 +215,7 @@ class _ReportTableState extends State<ReportTable> {
       'Party',
       'Mode of Payment',
       'Product',
-      // 'Hsn',
+      // 'HSN',
       "Rate",
       "Discount",
       // "Taxable value", // 'Amount/Unit',
@@ -226,7 +226,7 @@ class _ReportTableState extends State<ReportTable> {
       'Total',
     ];
     if (_purchasegstreport)  {
-      headersP.insert(5, 'Hsn');
+      headersP.insert(5, 'HSN');
       headersP.insert(8, 'GST');
       headersP.insert(8, 'SGST');
       headersP.insert(8, 'CGST');
@@ -1143,7 +1143,7 @@ class _ReportTableState extends State<ReportTable> {
       'Invoice No',
       'Party',
       'Product',
-      'Hsn',
+      'HSN',
       "Rate",
       "Discount",
       "Taxable value", // 'Amount/Unit',
@@ -1202,7 +1202,7 @@ class _ReportTableState extends State<ReportTable> {
       'Party',
       'M.O.P.',
       'Product',
-      'Hsn',
+      'HSN',
       "Rate",
       "Discount",
       "Taxable value", // 'Amount/Unit',
@@ -1271,7 +1271,7 @@ class _ReportTableState extends State<ReportTable> {
       'Time',
       'Estimate No',
       'Product',
-      'Hsn',
+      'HSN',
       "Rate",
       "Discount",
       "Taxable value", // 'Amount/Unit',
@@ -1325,7 +1325,7 @@ class _ReportTableState extends State<ReportTable> {
       'Party',
       'M.O.P.',
       'Product',
-      'Hsn',
+      'HSN',
       "Rate",
       "Discount",
       "Taxable value", // 'Amount/Unit',
