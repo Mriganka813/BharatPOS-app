@@ -10,7 +10,7 @@ class ExpenseService {
     print(input.toMap());
 
     final response =
-        await ApiV1Service.postRequest('/add/expense', data: input.toMap());
+    await ApiV1Service.postRequest('/add/expense', data: input.toMap());
     return response;
   }
 
@@ -30,13 +30,28 @@ class ExpenseService {
   }
 
   ///
+  // New method for search and pagination
+  Future<Response> getAllExpenseAndSearch({
+    String keyword = '',
+    int page = 1,
+    int limit = 20,
+  }) async {
+    String query = 'page=$page&limit=$limit';
+    if (keyword.isNotEmpty) {
+      query += '&keyword=$keyword';
+    }
+
+    final response = await ApiV1Service.getRequest('/expense/me?$query');
+    return response;
+  }
+
+  ///
   Future<Response> getExpenseById(String id) async {
     final response = await ApiV1Service.getRequest('/expense/$id');
     return response;
   }
 
   ///
-
   Future<Response> deleteExpense(String id) async {
     final response = await ApiV1Service.deleteRequest('/del/expense/$id');
     return response;
