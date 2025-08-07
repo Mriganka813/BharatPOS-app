@@ -426,7 +426,7 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         "Create Invoice",
                         textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.headline6,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                     const SizedBox(
@@ -590,7 +590,7 @@ class HomeCard extends StatelessWidget {
           ),
           Text(
             title,
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
         ],
@@ -633,7 +633,7 @@ class OnlineStoreWidget extends StatelessWidget {
               SizedBox(width: 35.0),
               Text(
                 "Online Store",
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
             ],

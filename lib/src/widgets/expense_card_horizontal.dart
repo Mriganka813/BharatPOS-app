@@ -57,7 +57,7 @@ class ExpenseCardHorizontal extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       expense.header ?? "",
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                        const SizedBox(height: 5),
                     Divider(color: Colors.black,height: 2,),

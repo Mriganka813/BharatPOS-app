@@ -111,7 +111,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         "Sign Up",
-                        style: Theme.of(context).textTheme.headline3?.copyWith(
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
                               color: Colors.black,
                               fontWeight: FontWeight.normal,
                             ),
@@ -170,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     const Divider(color: Colors.transparent),
                     Text(
                       'Business Type',
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                           ),
@@ -245,7 +245,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           "Have GSTIN ?",
                           style: Theme.of(context)
                               .textTheme
-                              .headline6
+                              .titleLarge
                               ?.copyWith(
                                   color: Colors.black87,
                                   fontWeight: FontWeight.normal),
@@ -275,7 +275,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 "Type",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headline6
+                                    .titleLarge
                                     ?.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.normal),

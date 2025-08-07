@@ -376,7 +376,7 @@ class _CreateProductState extends State<CreateProduct> {
                   children: <Widget>[
                     Text(
                       "Add Image",
-                      style: Theme.of(context).textTheme.headline6?.copyWith(
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Colors.black,
                             fontWeight: FontWeight.normal,
                           ),
@@ -531,7 +531,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 "GST Details",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headline6
+                                    .titleLarge
                                     ?.copyWith(
                                         color: Colors.black12,
                                         fontWeight: FontWeight.normal),
@@ -540,7 +540,7 @@ class _CreateProductState extends State<CreateProduct> {
                                 "GST Details",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .headline6
+                                    .titleLarge
                                     ?.copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.normal),

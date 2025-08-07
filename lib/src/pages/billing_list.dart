@@ -522,11 +522,12 @@ class _BillingListScreenState extends State<BillingListScreen> {
     final provider = Provider.of<Billing>(
       context,
     );
-    return PopScope(
-      onPopInvoked: (_) async {
+    return WillPopScope(
+      onWillPop: () async {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(HomePage.routeName, (route) => false);
         if(buzzerSoundPref) flutterLocalNotificationsPlugin.cancelAll();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(

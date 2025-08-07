@@ -23,30 +23,30 @@ dependencies:
   firebase_messaging:
   firebase_analytics:
   lottie:
+  collection: ^1.16.0
   flutter_barcode_scanner: 
   flutter_bloc: 
   flutter_html_to_pdf: 
   flutter_localization: 
   # flutter_secure_storage: ^5.0.2
-  flutter_typeahead: 
+  flutter_typeahead: ^4.0.0
   flutter_vibrate: 
   get_it:
   image_picker: ^0.8.5
   image_cropper: ^1.5.1
-  in_app_update: 
+  in_app_update: ^4.2.2
   intl: 
   path_provider: 
   pdf: 
   permission_handler: 
   pin_code_fields: 
-  share_plus: 
+  share_plus:
   slidable_button: ^3.0.0+1
   whatsapp_share2: 
   rflutter_alert: 
   flutter_svg:
   flutter_pdfview: 
-  url_launcher: 
-  new_version: 
+  url_launcher:
   flutter_background_service: 
   flutter_background_service_android: 
   flutter_local_notifications:
@@ -58,15 +58,14 @@ dependencies:
   provider: ^6.0.2
   open_file:
   ntp: ^2.0.0
-  upgrader: 
+  upgrader: ^8.2.0
   pinput: ^3.0.1
   open_file_plus: ^3.4.1
   print_bluetooth_thermal: ^1.0.9
   esc_pos_utils: ^1.1.0
   # excel: ^2.1.0
-  syncfusion_flutter_xlsio: ^23.1.40
+  syncfusion_flutter_xlsio: 23.2.5
   sqflite:
-  # package_info_plus:
   path:
   otp_text_field:
   widget_toolkit_otp:

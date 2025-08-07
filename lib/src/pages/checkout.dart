@@ -1607,7 +1607,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           child: CustomButton(
                               style: Theme.of(context)
                                   .textTheme
-                                  .headline6
+                                  .titleLarge
                                   ?.copyWith(color: Colors.white, fontSize: 18),
                               title: "Submit",
                               onTap: (){
@@ -1648,7 +1648,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                               title: 'Save',
                               style: Theme.of(context)
                                   .textTheme
-                                  .headline6
+                                  .titleLarge
                                   ?.copyWith(color: Colors.white, fontSize: 16)
                           ),
                         )
@@ -1667,7 +1667,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   child: CustomButton(
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .titleLarge
                           ?.copyWith(color: Colors.white, fontSize: 18),
                       title: "Submit",
                       onTap: (){
@@ -1711,7 +1711,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   title: 'Save',
                   style: Theme.of(context)
                     .textTheme
-                    .headline6
+                    .titleLarge
                     ?.copyWith(color: Colors.white, fontSize: 16)
                 ),
               )

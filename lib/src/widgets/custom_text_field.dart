@@ -66,7 +66,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.label ?? '',
             style: Theme.of(context)
                 .textTheme
-                .headline6
+                .titleLarge
                 ?.copyWith(color: Colors.black, fontWeight: FontWeight.normal),
           ),
         if (widget.label != null) const SizedBox(height: 5),

@@ -817,8 +817,8 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (_) async {
+    return WillPopScope(
+      onWillPop: () async {
 
           if(widget.args.bluetoothArgs != null){
             final bargs = widget.args.bluetoothArgs!;
@@ -843,7 +843,7 @@ class _BluetoothPrinterListState extends State<BluetoothPrinterList> {
             // provider.updateTableNoInSalesBill(widget.args.bluetoothArgs!.order.id.toString(),widget.args.bluetoothArgs!.order.tableNo);
             // print("popping bluetooth printer list and value is ${widget.args.bluetoothArgs!.order.tableNo}");
           }
-
+          return true;
 
       },
       child: Scaffold(

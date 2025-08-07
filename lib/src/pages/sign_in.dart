@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/auth/auth_cubit.dart';
@@ -51,14 +50,6 @@ class _SignInPageState extends State<SignInPage> {
       });
     } catch (e) {
       // showRestartAppDialouge();
-    }
-  }
-
-  Future<void> _checkUpdate() async {
-    final newVersion = NewVersion(androidId: "com.shopos.magicstep");
-    final status = await newVersion.getVersionStatus();
-    if (status!.canUpdate) {
-      newVersion.showUpdateDialog(context: context, versionStatus: status, allowDismissal: false);
     }
   }
 
@@ -171,7 +162,7 @@ class _SignInPageState extends State<SignInPage> {
                       children: [
                         Text(
                           "      ",
-                          style: Theme.of(context).textTheme.headline6?.copyWith(
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Colors.black,
                                 fontWeight: FontWeight.normal,
                               ),

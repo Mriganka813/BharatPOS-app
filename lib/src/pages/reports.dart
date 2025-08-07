@@ -281,7 +281,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       title: "View",
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .titleLarge
                           ?.copyWith(color: Colors.white, fontSize: 18),
                       onTap: () {
                         _onSubmit();
