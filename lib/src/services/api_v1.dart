@@ -1,39 +1,57 @@
 import 'dart:io';
-
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:shopos/src/config/config_service.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/services/dio_interceptor.dart';
 
 class ApiV1Service {
-  static final Dio _dio = Dio(
-    BaseOptions(
-      contentType: 'application/json',
-      baseUrl: Const.apiV1Url,
-      connectTimeout: Duration(milliseconds: 5000),
-      receiveTimeout: Duration(milliseconds: 50000),
-    ),
-  );
-  const ApiV1Service();
+  // Make _dio nullable and late-initialized
+  static Dio? _dio;
+
+  // Make the initialization function
+  static Future<Dio> _initDio() async {
+    // 1. Get the base URL dynamically
+    final String baseUrl = await ConfigService.getBaseUrl();
+    print('Initializing Dio with baseUrl: $baseUrl');
+
+    // 2. Create the Dio instance with the dynamic baseUrl
+    final dioInstance = Dio(
+      BaseOptions(
+        contentType: 'application/json',
+        baseUrl: baseUrl + Const.apiV1Path, // Construct the full v1 endpoint
+        connectTimeout: const Duration(milliseconds: 5000),
+        receiveTimeout: const Duration(milliseconds: 50000),
+      ),
+    );
+
+    // 3. Add interceptors (keep your existing logic)
+    dioInstance.interceptors.clear();
+    final cj = await getCookieJar();
+    dioInstance.interceptors.add(CookieManager(cj));
+    dioInstance.interceptors.add(CustomInterceptor());
+    // ... your other interceptor logic (PrettyDioLogger)
+
+    return dioInstance;
+  }
+
+  // Getter for Dio that ensures initialization
+  static Future<Dio> get dio async {
+    _dio ??= await _initDio();
+    return _dio!;
+  }
 
   ///
   Future<PersistCookieJar> initCookiesManager() async {
-    // Cookie files will be saved in files in "./cookies"
-    _dio.interceptors.clear();
+    // Get the initialized Dio instance
+    final dioInstance = await dio;
     final cj = await getCookieJar();
-    _dio.interceptors.add(CookieManager(cj));
-    _dio.interceptors.add(CustomInterceptor());
-    // _dio.interceptors.add(PrettyDioLogger(
-    //     requestHeader: true,
-    //     requestBody: true,
-    //     responseBody: true,
-    //     responseHeader: false,
-    //     error: true,
-    //     compact: true,
-    //     maxWidth: 90));
+    // ... rest of your existing function remains the same
+    dioInstance.interceptors.add(CookieManager(cj));
+    dioInstance.interceptors.add(CustomInterceptor());
     return cj;
   }
 
@@ -53,101 +71,86 @@ class ApiV1Service {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    // _dio.interceptors.add(PrettyDioLogger(
-    //     requestHeader: true,
-    //     requestBody: true,
-    //     responseBody: false,
-    //     responseHeader: false,
-    //     error: true,
-    //     compact: true,
-    //     maxWidth: 90));
-    return await _dio.post(url, data: formData ?? data);
+    final dioInstance = await dio; // <- Get the initialized Dio client
+    return await dioInstance.post(url, data: formData ?? data);
   }
 
-  Future<void> saveCookie(response) async {
-    clearCookies();
-    List<Cookie> cookies;
-
-    String ck = 'token=${response.data['token']};';
-    if(response.data['token_subuser'] != null && response.data['token_subuser'] != ""){
-      ck += ' token_subuser=${response.data['token_subuser']};';
-      _dio.options.headers.addAll({"Authorization_subuser" : "Bearer_subuser ${response.data['token_subuser']}"});
-      cookies= [Cookie("token", response.data['token']), Cookie("token_subuser", response.data['token_subuser'])];
-      // cookies= [Cookie("token", 'abc'), Cookie("token_subuser", 'def')];
-    }
-    else{
-      cookies = [Cookie("token", response.data['token'])];
-      // cookies = [Cookie("token", 'abc')];
-    }
-    final cj = await ApiV1Service.getCookieJar();
-    await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
-    _dio.interceptors.add(CookieManager(cj));
-
-    // _dio.options.headers.addAll({"Cookie": ck});
-    _dio.options.headers.addAll({"Authorization": "Bearer ${response.data['token']}"});
-    print("\n\n COOKIE WAS UPDATED TO ${_dio.options.headers['cookie']} \n\n");
-  }
-  ///
-
-  ///
-  void clearCookies() {
-    _dio.interceptors.clear();
-    _dio.options.headers.clear();
-
-  }
-  ///
   static Future<Response> getRequest(
     String url, {
     Map<String, dynamic>? queryParameters,
   }) async {
-      // _dio.interceptors.add(PrettyDioLogger(
-      //     requestHeader: true,
-      //     requestBody: true,
-      //     responseBody: false,
-      //     responseHeader: false,
-      //     error: true,
-      //     compact: true,
-      //     maxWidth: 90));
-
-      // if(_dio.options.headers.containsKey('Authorization_subuser'))
-      // print("dio Authorization_subuser value = ${_dio.options.headers['Authorization_subuser']}");
-
-      final response = await _dio.get(url, queryParameters: queryParameters,);
-      if (response.statusCode == 401) {
-           print("401 error");
-            // await UserService.getNewToken();
-            // response = await _dio.get(url, queryParameters: queryParameters);
-      }
-      print("STATUSCODE ${response.statusCode}");
-      // print(  response.headers);
-      // print("First get ${url} resonse ${response}");
-      // if(url == '/logout') {
-      //   _dio.options.headers.clear();
-      //   _dio.options.headers.addAll({"Cookie": "token=j%3Anull; token_subuser=j%3Anull;"});
-      // }
-      return response;
+    final dioInstance = await dio; // <- Get the initialized Dio client
+    final response =
+        await dioInstance.get(url, queryParameters: queryParameters);
+    if (response.statusCode == 401) {
+      print("401 error");
+    }
+    print("STATUSCODE ${response.statusCode}");
+    return response;
   }
 
-  ///
+  // ... Similarly, update putRequest and deleteRequest
   static Future<Response> putRequest(
     String url, {
     Map<String, dynamic>? data,
     FormData? formData,
   }) async {
-    // _dio.interceptors.add(PrettyDioLogger(
-    //     requestHeader: true,
-    //     requestBody: true,
-    //     responseBody: false,
-    //     responseHeader: false,
-    //     error: true,
-    //     compact: true,
-    //     maxWidth: 90));
-    return await _dio.put(url, data: formData ?? data);
+    final dioInstance = await dio;
+    return await dioInstance.put(url, data: formData ?? data);
   }
 
-  ///
   static Future<Response> deleteRequest(String url,
       {Map<String, dynamic>? data}) async {
-    return await _dio.delete(url);
+    final dioInstance = await dio;
+    return await dioInstance.delete(url);
   }
+
+  // ... The rest of your existing functions (saveCookie, clearCookies, getCookieJar)
+  // need to be updated to use the async 'dio' getter as well.
+  Future<void> saveCookie(Response response) async {
+    clearCookies();
+    final dioInstance = await dio; // <- Get Dio here
+    List<Cookie> cookies;
+
+    String ck = 'token=${response.data['token']};';
+    if (response.data['token_subuser'] != null &&
+        response.data['token_subuser'] != "") {
+      ck += ' token_subuser=${response.data['token_subuser']};';
+      dioInstance.options.headers.addAll({
+        "Authorization_subuser":
+            "Bearer_subuser ${response.data['token_subuser']}"
+      });
+      cookies = [
+        Cookie("token", response.data['token']),
+        Cookie("token_subuser", response.data['token_subuser'])
+      ];
+      // cookies= [Cookie("token", 'abc'), Cookie("token_subuser", 'def')];
+    } else {
+      cookies = [Cookie("token", response.data['token'])];
+      // cookies = [Cookie("token", 'abc')];
+    }
+    final cj = await ApiV1Service.getCookieJar();
+    await cj.saveFromResponse(Uri.parse(Const.apiUrl), cookies);
+    dioInstance.interceptors.add(CookieManager(cj));
+
+    // _dio.options.headers.addAll({"Cookie": ck});
+    dioInstance.options.headers
+        .addAll({"Authorization": "Bearer ${response.data['token']}"});
+    print(
+        "\n\n COOKIE WAS UPDATED TO ${dioInstance.options.headers['cookie']} \n\n");
+    // ... rest of your existing saveCookie logic
+  }
+
+  void clearCookies() {
+    // This is tricky because _dio might not be initialized yet.
+    // You might need to make this async or handle the null case.
+    _dio?.interceptors.clear();
+    _dio?.options.headers.clear();
+  }
+// It's often better to make clearCookies async too:
+// Future<void> clearCookies() async {
+//   final dioInstance = await dio;
+//   dioInstance.interceptors.clear();
+//   dioInstance.options.headers.clear();
+// }
 }

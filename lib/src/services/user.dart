@@ -50,7 +50,7 @@ class UserService {
       return null;
     }
     print("GOT SOME TOKENSSS \N\N\N");
-    await const ApiV1Service().saveCookie(response);
+    await ApiV1Service().saveCookie(response);
   }
 
   /// shop open or close

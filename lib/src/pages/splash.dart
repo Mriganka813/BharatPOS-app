@@ -1,12 +1,11 @@
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:provider/provider.dart';
+import 'package:shopos/src/config/config_service.dart';
 import 'package:shopos/src/config/const.dart';
 import 'package:shopos/src/pages/home.dart';
 import 'package:shopos/src/pages/sign_in.dart';
@@ -36,23 +35,13 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     authStatus();
     checkForUpdate();
-  
   }
-
 
   checkForUpdate() async {
     update = await InAppUpdate.checkForUpdate();
     if (update.updateAvailability == UpdateAvailability.updateAvailable) {
       isUpdateAvailable = true;
     }
-    // // if (update.immediateUpdateAllowed) {
-    // //   await InAppUpdate.startFlexibleUpdate();
-    // //   await InAppUpdate.completeFlexibleUpdate();
-    // //   return;
-    // // }
-    // await InAppUpdate.performImmediateUpdate();
-
-    // showUpdateRequiredDialog();
   }
 
   Future<void> authStatus() async {
@@ -61,74 +50,62 @@ class _SplashScreenState extends State<SplashScreen> {
         pos = 0;
       });
     });
-    final cj = await const ApiV1Service().initCookiesManager();
-    final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
+
+    await ConfigService.clearCachedConfig();
+    // CRITICAL: Fetch the config FIRST before initializing API services
+    String currentBaseUrl;
+    try {
+      currentBaseUrl = await ConfigService.getBaseUrl(); // Get the actual URL being used
+    } catch (e) {
+      print("Error loading config: $e. Using fallback.");
+      currentBaseUrl = Const.apiUrl; // Fallback to hardcoded URL
+    }
+
+    // NOW initialize the API service with the updated config
+    final cj = await ApiV1Service().initCookiesManager();
+    final cookies = await cj.loadForRequest(Uri.parse(currentBaseUrl));
     final isAuthenticated = cookies.isNotEmpty;
+
     Future.delayed(
       const Duration(milliseconds: 3000),
-      () => Navigator.pushReplacement(
+          () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => (isAuthenticated
               ? isUpdateAvailable
-                  ? UpgradeAlert(
-                      upgrader: Upgrader(
-                        showIgnore: false,
-                        canDismissDialog: false,
-                        showLater: false,
-                        debugDisplayOnce: true,
-
-                        // debugDisplayAlways: true,
-                        showReleaseNotes: false,
-                        durationUntilAlertAgain: Duration(seconds: 2),
-                        //willDisplayUpgrade: ({appStoreVersion, required display, installedVersion, minAppVersion}) => ,
-                      ),
-                      child: HomePage(widget.context),
-                    )
-                  : HomePage(widget.context)  
+              ? UpgradeAlert(
+            upgrader: Upgrader(
+              showIgnore: false,
+              canDismissDialog: false,
+              showLater: false,
+              debugDisplayOnce: true,
+              showReleaseNotes: false,
+              durationUntilAlertAgain: Duration(seconds: 2),
+            ),
+            child: HomePage(widget.context),
+          )
+              : HomePage(widget.context)
               : SignInPage()),
         ),
       ),
     );
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       primary: false,
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarIconBrightness: Brightness.dark,
-          statusBarColor: /*Color.fromARGB(255, 81, 163, 251)*/Colors.white,
+          statusBarColor: Colors.white,
         ),
-        backgroundColor: /*Color.fromARGB(255, 81, 163, 251)*/Colors.white,
+        backgroundColor: Colors.white,
       ),
-      backgroundColor: /*Color.fromARGB(255, 81, 163, 251)*/Colors.white,
+      backgroundColor: Colors.white,
       body: Center(
         child: SvgPicture.asset("assets/icon/BharatPos.svg"),
       ),
     );
   }
-
-  // Future<bool?> showRestartAppDialouge() {
-  //   return showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (ctx) => AlertDialog(
-  //             content: Text('App needed to restart'),
-  //             title: Text('Alert'),
-  //             actions: [
-  //               Center(
-  //                   child: CustomButton(
-  //                       title: 'ok',
-  //                       onTap: () async {
-  //                            Navigator.of(context).pop();
-  //                       await  DatabaseHelper().deleteTHEDatabase();
-  //
-  //
-  //
-  //                       }))
-  //             ],
-  //           ));
-  // }
 }

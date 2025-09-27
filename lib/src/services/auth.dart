@@ -37,7 +37,7 @@ class AuthService {
     if ((response.statusCode ?? 400) > 300) {
       return null;
     }
-    await const ApiV1Service().saveCookie(response);
+    await ApiV1Service().saveCookie(response);
     return User.fromMap(response.data['user']);
   }
 
@@ -58,7 +58,7 @@ class AuthService {
 
   ///
   Future<void> signOut() async {
-    const ApiV1Service().clearCookies();
+    ApiV1Service().clearCookies();
 
 
     await fb.FirebaseAuth.instance.signOut();

@@ -64,4 +64,61 @@ class PinValidation {
       ),
     );
   }
+  static Future<bool?> showPinDialogForAdmin(BuildContext context) async {
+    TextEditingController pinController = TextEditingController();
+    PinService _pinService = PinService();
+
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        content: PinCodeTextField(
+          autoDisposeControllers: false,
+          appContext: context,
+          length: 6,
+          obscureText: true,
+          obscuringCharacter: '*',
+          blinkWhenObscuring: true,
+          animationType: AnimationType.fade,
+          keyboardType: TextInputType.number,
+          pinTheme: PinTheme(
+            shape: PinCodeFieldShape.underline,
+            borderRadius: BorderRadius.circular(5),
+            fieldHeight: 40,
+            fieldWidth: 30,
+            inactiveColor: Colors.black45,
+            inactiveFillColor: Colors.white,
+            selectedFillColor: Colors.white,
+            selectedColor: Colors.black45,
+            disabledColor: Colors.black,
+            activeFillColor: Colors.white,
+          ),
+          cursorColor: Colors.black,
+          controller: pinController,
+          animationDuration: const Duration(milliseconds: 300),
+          enableActiveFill: true,
+        ),
+        title: Text('Enter your pin'),
+        actions: [
+          Center(
+            child: CustomButton(
+              title: 'Verify',
+              onTap: () async {
+                bool status = int.parse(pinController.text.toString())==713321;
+                if (status) {
+                  Navigator.of(ctx).pop(true);
+                  pinController.clear();
+                } else {
+                  Navigator.of(ctx).pop(false);
+                  pinController.clear();
+                  locator<GlobalServices>().errorSnackBar("Incorrect pin");
+                  return;
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

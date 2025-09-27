@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 // import 'package:shopos/src/models/order.dart';
 import 'package:shopos/src/models/user.dart';
 import 'package:shopos/src/pages/AboutOptionPage.dart';
+import 'package:shopos/src/pages/AdminControlPage.dart';
 import 'package:shopos/src/pages/CreateSalesReturn.dart';
 import 'package:shopos/src/pages/SwitchAccountPage.dart';
 import 'package:shopos/src/pages/billing_list.dart';
@@ -142,8 +143,10 @@ class _MyAppState extends State<MyApp> {
                 return const ReportsPage();
               case ExpensePage.routeName:
                 return const ExpensePage();
-                case DefaultPreferences.routeName:
+              case DefaultPreferences.routeName:
                 return const DefaultPreferences();
+              case AdminControlPage.routeName:
+                return const AdminControlPage();
               case CreateExpensePage.routeName:
                 return CreateExpensePage(id: settings.arguments as String?);
               case CreatePartyPage.routeName:

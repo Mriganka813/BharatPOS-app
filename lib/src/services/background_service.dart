@@ -45,7 +45,7 @@ Future<void> onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  final cj = await const ApiV1Service().initCookiesManager();
+  final cj = await ApiV1Service().initCookiesManager();
   final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
   final isAuthenticated = cookies.isNotEmpty;
   Timer.periodic(Duration(seconds: 10), (timer) async {
@@ -57,7 +57,7 @@ Future<void> onStart(ServiceInstance service) async {
     }
     WidgetsFlutterBinding.ensureInitialized();
     try {
-      final cj = await const ApiV1Service().initCookiesManager();
+      final cj = await ApiV1Service().initCookiesManager();
       final cookies = await cj.loadForRequest(Uri.parse(Const.apiUrl));
       final isAuthenticated = cookies.isNotEmpty;
       if (isAuthenticated) {

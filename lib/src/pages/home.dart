@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopos/src/blocs/home/home_cubit.dart';
 import 'package:shopos/src/config/colors.dart';
 import 'package:shopos/src/pages/AboutOptionPage.dart';
+import 'package:shopos/src/pages/AdminControlPage.dart';
 import 'package:shopos/src/pages/CreateSalesReturn.dart';
 import 'package:shopos/src/pages/SwitchAccountPage.dart';
 import 'package:shopos/src/pages/checkout.dart';
@@ -324,6 +325,23 @@ class _HomePageState extends State<HomePage> {
                         title: Title(color: Colors.black, child: Text("About")),
                         onTap: () {
                           Navigator.pushNamed(context, AboutOptionPage.routeName); // Navigate to the PrivacyPolicyPage
+                        },
+                      ),
+                      ListTile(
+                        leading: Image.asset(
+                          "assets/images/settings-48.png",
+                          height: 32,
+                        ),
+                        title: Title(color: Colors.black, child: Text("Admin Control")),
+                        onTap: () async {
+                          var result = true;
+                          var x  = true;
+                          if (x == true ) {
+                            result = await PinValidation.showPinDialogForAdmin(context) as bool;
+                          }
+                          if(result){
+                            Navigator.of(context).pushNamed(AdminControlPage.routeName);
+                          }
                         },
                       ),
 
